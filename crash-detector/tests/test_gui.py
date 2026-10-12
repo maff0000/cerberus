@@ -47,7 +47,8 @@ def test_empty_store_shows_no_reading_on_both_dials_and_pending_reasons(db_path)
     page = gui_server.render_page(state)
     assert page.count("NO READING") >= 2
     pending = [i for i in state["indicators"] if i["state"] == "PENDING"]
-    assert len(pending) == 1 and all(i["why"] for i in pending)
+    assert not pending  # WO-1.8: nothing is PENDING any more; an unfed indicator reads MISSING, never calm
+    assert all(i["state"] != "LIVE" for i in state["indicators"])
 
 
 def test_full_store_shows_two_separate_values_and_live_indicators(db_path, wiring):
@@ -57,17 +58,18 @@ def test_full_store_shows_two_separate_values_and_live_indicators(db_path, wirin
     eq, mo = _dial(state, "equity_crash"), _dial(state, "monetary_debasement")
     assert eq["status"] == "VALUE" and mo["status"] == "VALUE"
     assert 0.0 <= eq["value"] <= 1.0 and 0.0 <= mo["value"] <= 1.0
-    assert state["counts"] == {"LIVE": 29, "PENDING": 1}
+    assert state["counts"] == {"LIVE": 30}
     # No key anywhere in the view-model combines the dials.
     assert set(state) == {"generated_utc", "provisional", "dials", "indicators", "counts"}
     live = {i["id"]: i for i in state["indicators"] if i["state"] == "LIVE"}
     assert live["hy_oas"]["value"] == CALM["hy_oas"] and live["hy_oas"]["dials"] == ["equity_crash"]
     assert "PROVISIONAL" in gui_server.render_page(state)
     for d in state["dials"]:
-        assert 0.0 < d["coverage"]["fraction"] < 1.0 and d["coverage"]["pending"]
+        assert (d["coverage"]["fraction"] == 1.0) == (not d["coverage"]["pending"]) and d["coverage"]["fraction"] > 0.0
     assert "gold_real_rate_cross" in gui_server.render_page(state)
     # WO-1.6: the two substituted feeds are LIVE but say, on the page, that they are not the ratified row's.
-    for substituted in ("buffett_indicator", "fiscal_dominance", "ism_manufacturing", "gold_real_rate_cross"):
+    for substituted in ("buffett_indicator", "fiscal_dominance", "ism_manufacturing", "gold_real_rate_cross",
+                        "private_credit_stress"):
         assert live[substituted]["substitute"] and "SUBSTITUTE FEED" in live[substituted]["why"]
     assert live["buffett_indicator"]["window_days"] == 120.0  # the recorded override, not the ratified 45
     assert live["fiscal_dominance"]["value"] == 0.0 and live["fiscal_dominance"]["dials"] == ["monetary_debasement"]

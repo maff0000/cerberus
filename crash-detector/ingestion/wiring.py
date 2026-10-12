@@ -97,6 +97,8 @@ DERIVED_FROM: dict = {
     "gold_real_rate_cross": ("lbma.gold_fix_usd.history", "fred.DFII10.history"),
     "ism_manufacturing": ("fred.GACDFSA066MSFRBPHI", "fred.GACDISA066MSFRBNY", "fred.BACTSAMFRBDAL"),
     "sloos_bank_lending": ("fred.DRTSCILM", "manual.sloos_ndfi"),
+    # WO-1.8 (SUBSTITUTED_FEEDS: a BIZD market-price proxy for the ratified filing-based composite):
+    "private_credit_stress": ("yahoo.BIZD.adj",),
 }
 
 #: Rows the ratified mapping still marks ``registration_pending`` that are wired anyway (WO-1.7), with the reason. The
@@ -127,8 +129,8 @@ def derived_as_of(indicator: str, observation_date: str, now_utc: datetime) -> d
 #: Newest source periods fetched per component: enough to find the latest date both share.
 DERIVATION_LOOKBACK = 10
 
-#: Why a derived indicator that is NOT wired cannot be. Empty since WO-1.7: every ratified row but
-#: ``private_credit_stress`` is now wired (see ``ingestion.catalog.NOT_TRACTABLE``).
+#: Why a derived indicator that is NOT wired cannot be. Empty since WO-1.7; every ratified row
+#: is wired since WO-1.8 (``private_credit_stress`` as a disclosed market-price proxy).
 DERIVATION_BLOCKED: dict = {}
 
 

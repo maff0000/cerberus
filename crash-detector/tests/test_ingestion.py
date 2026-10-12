@@ -225,7 +225,7 @@ def test_http_get_does_not_follow_redirects(monkeypatch):
 def test_report_never_reads_missing_as_live_and_marks_derived_partial_not_tractable(store):
     states = {s["id"]: s["state"] for s in indicator_states(store, NOW)}
     assert states["vix_level"] == "MISSING"
-    assert states["private_credit_stress"] == "NOT_TRACTABLE"
+    assert states["private_credit_stress"] == "MISSING"  # WO-1.8: wired; nothing fetched yet
     assert states["ism_manufacturing"] == "MISSING"
     assert states["sloos_bank_lending"] == "MISSING"  # the manual leg has never been entered: never complete on one leg
     _run(store, "fred.DFF", lambda *a: "observation_date,DFF\n2026-10-08,3.88\n")
@@ -334,23 +334,26 @@ def test_the_three_wo_1_6_indicators_are_served_and_no_longer_listed_not_tractab
     served = {i for ing in INGREDIENTS for i in ing.serves}
     for ind in ("gold_spot", "buffett_indicator", "fiscal_dominance"):
         assert ind in served and ind not in NOT_TRACTABLE
-    assert set(NOT_TRACTABLE) == {"private_credit_stress"}
+    assert set(NOT_TRACTABLE) == set()  # WO-1.8 wired the last one, as a disclosed proxy
 
 
-def test_substituted_feeds_are_exactly_the_four_that_differ_from_the_ratified_row_and_say_so():
+def test_substituted_feeds_are_exactly_the_five_that_differ_from_the_ratified_row_and_say_so():
     feeds = {row["id"]: row["source"]["feed"] for row in MAPPING}
-    assert set(SUBSTITUTED_FEEDS) == {"buffett_indicator", "fiscal_dominance", "ism_manufacturing", "gold_real_rate_cross"}
+    assert set(SUBSTITUTED_FEEDS) == {"buffett_indicator", "fiscal_dominance", "ism_manufacturing", "gold_real_rate_cross",
+                                       "private_credit_stress"}
     assert "PROVISIONAL" in SUBSTITUTED_FEEDS["gold_real_rate_cross"] and "NOT-OWNER-RATIFIED" in SUBSTITUTED_FEEDS["gold_real_rate_cross"]
     assert "provisional" in SUBSTITUTED_FEEDS["ism_manufacturing"] and "Richmond" in SUBSTITUTED_FEEDS["ism_manufacturing"]
     assert "Wilshire" in feeds["buffett_indicator"] and "Treasury/BEA" in feeds["fiscal_dominance"]
     assert "OWNER CONFIRMATION" in SUBSTITUTED_FEEDS["fiscal_dominance"]
 
 
-def test_the_buffett_window_override_never_exceeds_the_engines_relevance_ceiling_and_is_the_only_override():
+def test_the_window_overrides_never_exceed_the_engines_relevance_ceiling_and_are_exactly_the_recorded_two():
     from crash_detector.staleness import RELEVANCE_WINDOW_CEILING_SECONDS
     from ingestion.catalog import WINDOW_OVERRIDES, window_seconds
 
-    assert set(WINDOW_OVERRIDES) == {"buffett_indicator"}
+    assert set(WINDOW_OVERRIDES) == {"buffett_indicator", "private_credit_stress"}
+    assert window_seconds("private_credit_stress", 10368000) == 4 * 86400 <= RELEVANCE_WINDOW_CEILING_SECONDS
+    assert WINDOW_OVERRIDES["private_credit_stress"][1]
     assert window_seconds("buffett_indicator", 3888000) == 120 * 86400 <= RELEVANCE_WINDOW_CEILING_SECONDS
     assert window_seconds("hy_oas", 345600) == 345600.0
     assert WINDOW_OVERRIDES["buffett_indicator"][1]  # a reason is on record
