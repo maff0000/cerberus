@@ -30,9 +30,12 @@ from ingestion.adapters import (
 )
 
 __all__ = ["Ingredient", "INGREDIENTS", "NOT_TRACTABLE", "PARTIAL", "SUBSTITUTED_FEEDS", "WINDOW_OVERRIDES",
-           "window_seconds", "EGRESS_HOSTS", "build_adapter"]
+           "window_seconds", "EGRESS_HOSTS", "build_adapter", "MANUAL_SLOOS_NDFI"]
 
 DAY, WEEK = 86_400, 7 * 86_400
+
+#: The manual SLOOS NDFI leg's source id (a constant so ``ingestion.manual`` and the tests name the same thing).
+MANUAL_SLOOS_NDFI = "manual.sloos_ndfi"
 #: Polling interval, deliberately independent of publication cadence: a daily series is
 #: polled every 6h so a late print is caught the same day; slower series are polled daily.
 #: Re-polling is free of side effects on readings (idempotent on source period).
@@ -42,7 +45,7 @@ POLL_DAILY, POLL_SLOW = 6 * 3600, DAY
 @dataclass(frozen=True)
 class Ingredient:
     source_id: str
-    kind: str                      # fred | cboe | yahoo | multpl | lbma
+    kind: str                      # fred | cboe | yahoo | multpl | lbma | manual
     ref: str                       # series id / index / symbol
     unit: str
     declared_feed: str             # the mapping row's ``source.feed`` this implements
@@ -69,7 +72,7 @@ INGREDIENTS: tuple[Ingredient, ...] = (
     _f("BAMLC0A0CM", "percent", ["ig_oas"]),
     _f("T10Y3M", "percent", ["yield_curve_10y3m"]),
     _f("T10Y2Y", "percent", ["yield_curve_10y2y"]),
-    _f("DFII10", "percent", ["real_rate_10y_tips", "gold_real_rate_cross"], feed="FRED:DFII10"),
+    _f("DFII10", "percent", ["real_rate_10y_tips"], feed="FRED:DFII10"),
     _f("T5YIE", "percent", ["breakeven_5y"]),
     _f("DFF", "percent", ["fed_funds_rate"]),
     # ---- FRED, weekly ------------------------------------------------------------------
@@ -105,6 +108,32 @@ INGREDIENTS: tuple[Ingredient, ...] = (
     Ingredient("lbma.gold_fix_usd", "lbma", "gold_pm+gold_am", "usd_per_oz", "market:XAUUSD (LBMA PM fix, AM fallback)",
                ("gold_spot",), "DIRECT", POLL_DAILY,
                stands_for="LBMA daily gold fix in USD per troy ounce: the PM fix, else that date's AM fix"),
+    # ---- WO-1.7: gold_real_rate_cross (see SUBSTITUTED_FEEDS) -----------------------------------
+    # Two RAW daily histories the ENGINE correlates. NEW source ids on purpose: the store keeps the first payload
+    # admitted per source period, and ``fred.DFII10`` (history-less, serves real_rate_10y_tips) must not change.
+    # ~2600 rows is ~10 years of trading days (the schema's cap is MAX_HISTORY). Gold is the LBMA fix and NOT the
+    # COMEX futures close: if LBMA refuses this host (it does, HTTP 403) this indicator FAILS with it.
+    Ingredient("fred.DFII10.history", "fred", "DFII10", "percent", "FRED:DFII10", ("gold_real_rate_cross",), "COMPONENT",
+               POLL_DAILY, history=2600, stands_for="FRED DFII10 (10y TIPS real yield) with its last 2600 daily levels"),
+    Ingredient("lbma.gold_fix_usd.history", "lbma", "gold_pm+gold_am", "usd_per_oz", "market:XAUUSD (LBMA PM fix, AM fallback)",
+               ("gold_real_rate_cross",), "COMPONENT", POLL_DAILY, history=2600,
+               stands_for="LBMA daily gold fix (USD/oz, PM else AM) with its last 2600 dated fixes"),
+    # ---- WO-1.7: ism_manufacturing substitute = regional Fed surveys (see SUBSTITUTED_FEEDS) ------------
+    # FRED ids VERIFIED to return data 2026-10-12. Monthly diffusion indices, seasonally adjusted, dated the 1st.
+    _f("GACDFSA066MSFRBPHI", "diffusion_index", ["ism_manufacturing"], "COMPONENT", poll=POLL_SLOW, rule="month_end",
+       history=1000, feed="FRED:GACDFSA066MSFRBPHI",
+       stands="Philadelphia Fed Manufacturing Business Outlook, current general activity (FRED GACDFSA066MSFRBPHI)"),
+    _f("GACDISA066MSFRBNY", "diffusion_index", ["ism_manufacturing"], "COMPONENT", poll=POLL_SLOW, rule="month_end",
+       history=1000, feed="FRED:GACDISA066MSFRBNY",
+       stands="Empire State Manufacturing Survey, general business conditions (FRED GACDISA066MSFRBNY)"),
+    _f("BACTSAMFRBDAL", "diffusion_index", ["ism_manufacturing"], "COMPONENT", poll=POLL_SLOW, rule="month_end",
+       history=1000, feed="FRED:BACTSAMFRBDAL",
+       stands="Dallas Fed Texas Manufacturing Outlook, general business activity (FRED BACTSAMFRBDAL)"),
+    # ---- WO-1.7: sloos_bank_lending MANUAL leg. No feed exists; ``ingestion.manual`` records a hand-entered value ---
+    Ingredient(MANUAL_SLOOS_NDFI, "manual", "sloos_table2_q14", "net_percent_tightening",
+               "manual:Fed SLOOS Table 2 Q14 (avg of 5 sub-categories), hand-entered", ("sloos_bank_lending",),
+               "COMPONENT", 0, as_of_rule="obs_date",
+               stands_for="Fed SLOOS Table 2 Q14 NDFI net tightening, average of the 5 sub-categories, hand-entered quarterly"),
     # ---- CBOE public history CSVs ------------------------------------------------------
     Ingredient("cboe.SKEW", "cboe", "SKEW", "index", "CBOE:SKEW", ("cboe_skew",), "DIRECT", POLL_DAILY,
                column="SKEW", stands_for="CBOE SKEW index close"),
@@ -125,7 +154,7 @@ INGREDIENTS: tuple[Ingredient, ...] = (
                history=260, stands_for="S&P 500 close + last 260 closes for the 200-day average"),
     Ingredient("yahoo.HG=F", "yahoo", "HG=F", "usd_per_lb", "market:HG,GC", ("copper_gold",), "COMPONENT", POLL_DAILY,
                stands_for="COMEX copper front-month close"),
-    Ingredient("yahoo.GC=F", "yahoo", "GC=F", "usd_per_oz", "market:HG,GC", ("copper_gold", "gold_real_rate_cross"),
+    Ingredient("yahoo.GC=F", "yahoo", "GC=F", "usd_per_oz", "market:HG,GC", ("copper_gold",),
                "COMPONENT", POLL_DAILY, stands_for="COMEX gold front-month close"),
     # ---- multpl (declared: multpl/Shiller) ---------------------------------------------
     # A NEW source id (was ``multpl.shiller_pe``, latest figure only): the payload now carries the
@@ -137,20 +166,15 @@ INGREDIENTS: tuple[Ingredient, ...] = (
                stands_for="Shiller CAPE as published, with multpl's full monthly table (the engine percentiles it)"),
 )
 
-#: DRTSCILM is only the automatic leg of sloos_bank_lending; the NDFI leg is a manual
-#: transcription from the Fed's SLOOS Table 2 and has no feed. The indicator therefore stays
-#: ``registration_pending`` in the mapping and must not read as complete.
-PARTIAL: dict[str, str] = {
-    "sloos_bank_lending": "auto C&I leg (FRED:DRTSCILM) is live; the manual NDFI leg "
-    "(Fed SLOOS Table 2 Q14, avg of 5 sub-categories) has no machine-readable feed.",
-}
+#: Indicators that are only half-fed with no way to complete them. EMPTY since WO-1.7: sloos_bank_lending's manual
+#: NDFI leg is now a first-class ingredient (``MANUAL_SLOOS_NDFI``, entered with ``python -m ingestion.manual``). The
+#: indicator reads MISSING until a value is entered and STALE again 120 days after the survey it describes, so it can
+#: never read complete on one leg.
+PARTIAL: dict[str, str] = {}
 
 #: Indicators whose DECLARED source cannot be reached with public/free data, or whose
 #: definition needs a decision this module has no authority to make. No substitute is wired.
 NOT_TRACTABLE: dict[str, str] = {
-    "ism_manufacturing": "Declared feed 'ISM'. ISM PMI is licensed; FRED withdrew NAPM "
-    "(HTTP 404). Needs a paid/licensed feed or an approved substitute (e.g. regional Fed "
-    "surveys), which changes what the indicator means.",
     "private_credit_stress": "Declared composite of BDC NAV discount + non-accrual rate + PIK "
     "share (quarterly SEC filings) + a public-spread proxy. The composite's weighting and the "
     "per-BDC universe are undefined; filing extraction is a build in its own right.",
@@ -160,6 +184,21 @@ NOT_TRACTABLE: dict[str, str] = {
 #: A substitute is a provenance decision; each is recorded here with whose authority it rests on, and
 #: ``tests/test_ingestion.py`` allows a catalog/mapping feed mismatch for exactly these and no others.
 SUBSTITUTED_FEEDS: dict[str, str] = {
+    "ism_manufacturing": "Declared 'ISM' (licensed; FRED withdrew NAPM). Wired as an EQUAL-WEIGHTED COMPOSITE OF Z-SCORED "
+    "REGIONAL FED MANUFACTURING SURVEYS: Philadelphia (FRED GACDFSA066MSFRBPHI), Empire State/New York "
+    "(GACDISA066MSFRBNY) and Dallas (BACTSAMFRBDAL), each z-scored against its own full published history and the three "
+    "averaged. A DIFFERENT QUANTITY with different provenance from ISM PMI (regional, three districts, a z-score and not "
+    "a 0-100 PMI): the row's 'below 93' arm does not apply. Richmond and Kansas City were asked for but are NOT on FRED "
+    "(every plausible id returned 404 on 2026-10-12), so they are absent, not approximated. Substitute chosen by Trinity "
+    "(provisional, not Owner-ratified, easily revisable).",
+    "gold_real_rate_cross": "The ratified row says 'Gold vs 10y TIPS divergence, normalised 0-100' and defines neither. "
+    "Wired as TRINITY'S PROVISIONAL, UNCALIBRATED, NOT-OWNER-RATIFIED construction (WO-1.7; Matt may choose a different "
+    "one and nothing here is locked in): the 60-trading-day rolling Pearson correlation between daily gold changes "
+    "(simple return of the LBMA fix) and daily changes in the 10y TIPS real yield (FRED DFII10, in percentage points), "
+    "normally negative; the figure is the percentile (0-100) of the latest correlation within the ~10 years of "
+    "correlations the collector holds, so a flip toward positive reads high. GOLD IS THE LBMA FIX, NOT THE ROW'S "
+    "'market:GC' FUTURES: if LBMA is unreachable (it is, HTTP 403 from the build host) this indicator is FEED_FAILING "
+    "with it and shows no value; no futures substitution is made.",
     "buffett_indicator": "Declared 'Wilshire/GDP, percentiled'; Wilshire is unavailable (FRED withdrew WILL5000PRFC). "
     "Wired as the Z.1 ratio FRED NCBEILQ027S / (GDP*1000), in percent, banded as that ratio (the row's "
     "'percentiled' step is NOT applied). Substitute accepted by Matt per the Trinity dispatch of WO-1.6; the legacy "
@@ -213,5 +252,7 @@ def build_adapter(ing: Ingredient, clock: Callable[[], datetime]):
     if ing.kind == "multpl":
         return MultplShillerAdapter(history=ing.history, **common)
     if ing.kind == "lbma":
-        return LbmaGoldAdapter(**common)
+        return LbmaGoldAdapter(history=ing.history, **common)
+    if ing.kind == "manual":
+        raise ValueError(f"{ing.source_id} is hand-entered (ingestion.manual); it has no adapter to poll")
     raise ValueError(f"unknown ingredient kind {ing.kind!r}")

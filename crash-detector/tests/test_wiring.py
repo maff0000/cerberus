@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import random
+import statistics
 from datetime import datetime, timedelta, timezone
 
 import pytest
@@ -34,7 +36,56 @@ CALM = {
     "vix_term_structure": 0.85, "spx_vs_200dma": 5.0, "shiller_cape": 50.0,
     # WO-1.6: buffett_indicator and fiscal_dominance are DERIVED (figures the engine must compute); gold_spot is direct.
     "buffett_indicator": 100.0, "fiscal_dominance": 0.0, "gold_spot": 2000.0,
+    # WO-1.7: ism and sloos are seeded to exactly this figure; gold_real_rate_cross is whatever percentile the fixed
+    # pseudo-random series below yields (re-derived independently with statistics.correlation, see GOLD_FIGURE).
+    "ism_manufacturing": 0.0, "sloos_bank_lending": 0.0,
 }
+
+
+def _gold_rates_series(day_text):
+    """Deterministic aligned daily histories: (gold [[date, usd]], real yield [[date, pct]]), 800 dates ending day_text."""
+    rng = random.Random(7)
+    end = datetime.fromisoformat(day_text).date()
+    dates = [(end - timedelta(days=799 - i)).isoformat() for i in range(800)]
+    gold, real, g, r = [], [], 2000.0, 1.0
+    for d in dates:
+        shock = rng.gauss(0, 1)
+        g *= 1.0 + 0.005 * (-0.6 * shock + 0.8 * rng.gauss(0, 1))
+        r += 0.03 * (shock + 0.5 * rng.gauss(0, 1))
+        gold.append([d, g])
+        real.append([d, r])
+    return gold, real
+
+
+def _independent_gold_figure(gold, real):
+    """The percentile figure, re-derived with the stdlib (statistics.correlation), not the engine's code."""
+    gc = [b[1] / a[1] - 1 for a, b in zip(gold, gold[1:])]
+    rc = [b[1] - a[1] for a, b in zip(real, real[1:])]
+    cors = [statistics.correlation(gc[i - 60:i], rc[i - 60:i]) for i in range(60, len(gc) + 1)]
+    return 100.0 * (1 + sum(1 for c in cors[:-1] if c <= cors[-1])) / len(cors)
+
+
+GOLD_FIGURE = _independent_gold_figure(*_gold_rates_series("2026-10-10"))
+CALM["gold_real_rate_cross"] = GOLD_FIGURE
+
+
+def _ism_history(figure, day_text):
+    """A 120-point monthly history whose LAST point has z-score `figure` against it (bisection on the last value)."""
+    base = [1.0 if i % 2 else -1.0 for i in range(118)] + [0.0]
+
+    def z(last):
+        pts = base + [last]
+        mean = sum(pts) / len(pts)
+        std = (sum((x - mean) ** 2 for x in pts) / len(pts)) ** 0.5
+        return (last - mean) / std
+
+    lo, hi = -50.0, 50.0
+    for _ in range(200):
+        mid = (lo + hi) / 2
+        lo, hi = (mid, hi) if z(mid) < figure else (lo, mid)
+    pts = base + [(lo + hi) / 2]
+    dates = [f"{2010 + i // 12}-{i % 12 + 1:02d}-01" for i in range(119)] + [day_text]
+    return [[d, v] for d, v in zip(dates, pts)]
 
 
 def _fiscal_components(parts, fired, date_text):
@@ -68,6 +119,19 @@ def _derived_components(wiring, indicator, figure, date_text, vix=14.0):
         j = round(figure * 10) - 1  # history 1..999 => percentile of j+0.5 is 100*(1+j)/1000
         history = [[f"{1800 + i // 12:04d}-{1 + i % 12:02d}-01", float(i + 1)] for i in range(999)]
         return {parts[0].source_id: {"unit": unit, "observation_date": date_text, "value": j + 0.5, "history": history}}
+    if indicator == "gold_real_rate_cross":
+        assert figure == GOLD_FIGURE, "gold_real_rate_cross is seeded from the fixed series only"
+        gold, real = _gold_rates_series(date_text)
+        return {parts[0].source_id: {"unit": unit, "observation_date": date_text, "value": gold[-1][1], "history": gold},
+                parts[1].source_id: {"unit": unit, "observation_date": date_text, "value": real[-1][1], "history": real}}
+    if indicator == "ism_manufacturing":
+        out = {}
+        for part in parts:
+            history = _ism_history(figure, date_text)
+            out[part.source_id] = {"unit": unit, "observation_date": date_text, "value": history[-1][1], "history": history}
+        return out
+    if indicator == "sloos_bank_lending":
+        return {part.source_id: {"unit": unit, "observation_date": date_text, "value": figure} for part in parts}
     if indicator == "vix_term_structure":
         # cboe.VIX is SHARED with vix_level (its direct seed writes the numerator); only VIX3M is written here.
         return {parts[1].source_id: {"unit": unit, "observation_date": date_text, "value": vix / figure}}
@@ -144,14 +208,14 @@ def _mag(reading):
 
 def test_only_whole_quantity_ingredients_are_live_and_the_rest_is_pending_with_a_reason(wiring):
     assert len(wiring.ingredient_for) == 18  # + gold_spot (WO-1.6)
-    assert len(wiring.derived_for) == 8  # + buffett_indicator, fiscal_dominance (WO-1.6)
-    assert len(wiring.pending) == 4
+    assert len(wiring.derived_for) == 11  # + buffett_indicator, fiscal_dominance (WO-1.6); + gold_real_rate_cross, ism, sloos (WO-1.7)
+    assert set(wiring.pending) == {"private_credit_stress"}
     assert wiring.live_ids | set(wiring.pending) == {r["id"] for r in _rows()}
     assert not wiring.live_ids & set(wiring.pending)
     assert not set(wiring.ingredient_for) & set(wiring.derived_for)
-    for blocked in ("gold_real_rate_cross", "sloos_bank_lending"):
-        assert blocked in wiring.pending and wiring.pending[blocked]
-    assert wiring.pending["gold_real_rate_cross"].startswith("BLOCKED on definition")
+    assert wiring.pending["private_credit_stress"].startswith("NOT_TRACTABLE")
+    for wired in ("gold_real_rate_cross", "sloos_bank_lending", "ism_manufacturing"):
+        assert wired in wiring.derived_for and wired not in wiring.pending
 
 
 def test_scaling_band_order_agrees_with_the_ratified_polarity_for_every_dial(wiring):
@@ -266,7 +330,8 @@ def test_coverage_discloses_that_a_fully_live_dial_is_built_from_part_of_the_rat
         assert 0.0 < c["fraction"] < 1.0, "pending rows exist, so no dial may claim full coverage"
         assert c["wired_weight"] < c["nominal_weight"] and c["pending"]
         assert not set(c["pending"]) & set(wiring.ingredient_for)
-    assert "gold_real_rate_cross" in cov["monetary_debasement"]["pending"]
+    assert "private_credit_stress" in cov["equity_crash"]["pending"]
+    assert "gold_real_rate_cross" not in cov["monetary_debasement"]["pending"]
 
 
 def test_relevance_window_is_inclusive_at_its_limit_and_refuses_beyond_and_the_future():

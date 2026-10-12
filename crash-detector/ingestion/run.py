@@ -18,6 +18,7 @@ from datetime import datetime, timedelta, timezone
 from crash_detector.collectors import DelayKind, RetryPolicy, collect
 from crash_detector.observations import OK
 
+from ingestion.adapters import ManualEntryAdapter
 from ingestion.catalog import INGREDIENTS, Ingredient, build_adapter
 from ingestion.store import SqliteStore
 
@@ -46,6 +47,12 @@ def run_once(store: SqliteStore, *, force: bool = False, only: tuple = (), pace:
         if only and ing.source_id not in only:
             continue
         now = clock()
+        if ing.kind == "manual":
+            # Hand-entered (WO-1.7): there is nothing to poll. Registered so the store knows the source; its
+            # readings arrive only through ``ingestion.manual`` and it ages like any other.
+            store.register(ing.source_id, ManualEntryAdapter.adapter_id, ing.poll_seconds, ing.stands_for,
+                           ing.declared_feed, ing.serves, now)
+            continue
         adapter = build_adapter(ing, clock)
         store.register(ing.source_id, adapter.adapter_id, ing.poll_seconds, ing.stands_for,
                        ing.declared_feed, ing.serves, now)

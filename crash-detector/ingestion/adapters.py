@@ -37,6 +37,7 @@ __all__ = [
     "YahooChartAdapter",
     "MultplShillerAdapter",
     "LbmaGoldAdapter",
+    "ManualEntryAdapter",
     "LBMA_USER_AGENT",
     "parse_lbma_gold",
     "parse_fred_csv",
@@ -52,7 +53,7 @@ MAX_BODY_BYTES = 4_000_000
 
 #: Ceiling on the optional raw history a payload may carry: ~260 closes for the 200-day average,
 #: or multpl's full monthly CAPE table (~1,870 rows since 1871) for the engine's percentile.
-MAX_HISTORY = 2400
+MAX_HISTORY = 2700
 
 RESPONSE_SCHEMA: Mapping[str, Any] = {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -278,11 +279,14 @@ def _lbma_usd_by_date(text: str) -> Union[dict, None]:
     return out
 
 
-def parse_lbma_gold(pm_text: str, am_text: str, unit: str) -> dict:
+def parse_lbma_gold(pm_text: str, am_text: str, unit: str, history: int = 0) -> dict:
     """The newest LBMA gold fix in USD per troy ounce: the PM fix of a date, else that date's AM fix.
 
     Same selection as the legacy ARGUS gold tell: take the union of dates, prefer PM for a date
     that has one, fall back to AM only for a date with no PM (today, before the PM fix is made).
+
+    ``history`` (WO-1.7): when positive, also carry the last ``history`` dates' fixes as raw
+    ``[date, usd]`` pairs, oldest first, chosen by the same PM-else-AM rule. Nothing is computed.
     """
     pm, am = _lbma_usd_by_date(pm_text), _lbma_usd_by_date(am_text)
     if pm is None or am is None:
@@ -291,7 +295,10 @@ def parse_lbma_gold(pm_text: str, am_text: str, unit: str) -> dict:
     if not dates:
         return {"unit": unit}  # a conforming body with no fix: EMPTY
     day = dates[-1]
-    return {"unit": unit, "observation_date": day, "value": pm[day] if day in pm else am[day]}
+    out: dict = {"unit": unit, "observation_date": day, "value": pm[day] if day in pm else am[day]}
+    if history:
+        out["history"] = [[d, pm[d] if d in pm else am[d]] for d in dates[-history:]]
+    return out
 
 
 # --- transport ------------------------------------------------------------------------ #
@@ -491,8 +498,12 @@ class LbmaGoldAdapter(_BaseAdapter):
     recorded as ``HTTP_ERROR``/403 like any failure: this adapter does not try to get around it.
     """
 
-    __slots__ = ()
+    __slots__ = ("_history",)
     adapter_id = "cd.ingest.lbma_gold_fix.v1"
+
+    def __init__(self, history: int = 0, **kw: Any) -> None:
+        super().__init__(**kw)
+        self._history = history
 
     def _headers(self) -> Mapping[str, str]:
         return {"User-Agent": LBMA_USER_AGENT}
@@ -503,4 +514,24 @@ class LbmaGoldAdapter(_BaseAdapter):
     def _acquire(self, timeout_seconds: float) -> dict:
         pm_body = self._getter(LBMA_PM_URL, timeout_seconds, self._headers())
         am_body = self._getter(LBMA_AM_URL, timeout_seconds, self._headers())
-        return parse_lbma_gold(pm_body, am_body, self._unit)
+        return parse_lbma_gold(pm_body, am_body, self._unit, self._history)
+
+
+class ManualEntryAdapter(_BaseAdapter):
+    """A value a human typed in (WO-1.7), carried through the SAME boundary as a fetched one.
+
+    There is no feed: ``fetch`` returns the one payload it was constructed with and touches no
+    network. It exists so a hand-entered figure is validated by the closed ``RESPONSE_SCHEMA``,
+    recorded as an observation attempt, admitted to the append-only reading ledger and aged by the
+    same relevance window as any fetched reading. Nothing about it is special downstream.
+    """
+
+    __slots__ = ("_entry",)
+    adapter_id = "cd.ingest.manual_entry.v1"
+
+    def __init__(self, observation_date: str, value: float, **kw: Any) -> None:
+        super().__init__(**kw)
+        self._entry = {"unit": self._unit, "observation_date": observation_date, "value": value}
+
+    def _acquire(self, timeout_seconds: float) -> dict:
+        return dict(self._entry)

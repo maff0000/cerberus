@@ -57,7 +57,10 @@ def test_declared_feeds_name_a_feed_the_mapping_row_actually_declares():
 def test_every_declared_input_of_a_derived_indicator_is_ingested():
     """gold_real_rate_cross needs GC and DFII10; vix_term_structure needs VIX and VIX3M."""
     serving = lambda ind: {i.ref for i in INGREDIENTS if ind in i.serves}  # noqa: E731
-    assert {"GC=F", "DFII10"} <= serving("gold_real_rate_cross")
+    # WO-1.7: gold is the LBMA fix, NOT the COMEX futures; the futures close must not feed it silently.
+    assert {"gold_pm+gold_am", "DFII10"} <= serving("gold_real_rate_cross") and "GC=F" not in serving("gold_real_rate_cross")
+    assert {"GACDFSA066MSFRBPHI", "GACDISA066MSFRBNY", "BACTSAMFRBDAL"} <= serving("ism_manufacturing")
+    assert {"DRTSCILM", "sloos_table2_q14"} <= serving("sloos_bank_lending")
     assert {"VIX", "VIX3M"} <= serving("vix_term_structure")
     assert {"HYG", "LQD"} <= serving("credit_stress_hyg_lqd")
     assert {"RSP", "SPY"} <= serving("breadth_rsp_spy")
@@ -67,7 +70,7 @@ def test_every_declared_input_of_a_derived_indicator_is_ingested():
 def test_adapter_urls_reach_only_registered_egress_hosts_and_registry_matches():
     from urllib.parse import urlsplit
 
-    hosts = {urlsplit(build_adapter(i, lambda: NOW)._url()).hostname for i in INGREDIENTS}
+    hosts = {urlsplit(build_adapter(i, lambda: NOW)._url()).hostname for i in INGREDIENTS if i.kind != "manual"}
     assert hosts == set(EGRESS_HOSTS)
     registry = yaml.safe_load((ROOT / "deploy/egress-destinations.yaml").read_text())["destinations"]
     assert {d["host"] for d in registry} == hosts
@@ -222,7 +225,9 @@ def test_http_get_does_not_follow_redirects(monkeypatch):
 def test_report_never_reads_missing_as_live_and_marks_derived_partial_not_tractable(store):
     states = {s["id"]: s["state"] for s in indicator_states(store, NOW)}
     assert states["vix_level"] == "MISSING"
-    assert states["ism_manufacturing"] == "NOT_TRACTABLE"
+    assert states["private_credit_stress"] == "NOT_TRACTABLE"
+    assert states["ism_manufacturing"] == "MISSING"
+    assert states["sloos_bank_lending"] == "MISSING"  # the manual leg has never been entered: never complete on one leg
     _run(store, "fred.DFF", lambda *a: "observation_date,DFF\n2026-10-08,3.88\n")
     assert {s["id"]: s["state"] for s in indicator_states(store, NOW)}["fed_funds_rate"] == "LIVE"
 
@@ -329,12 +334,14 @@ def test_the_three_wo_1_6_indicators_are_served_and_no_longer_listed_not_tractab
     served = {i for ing in INGREDIENTS for i in ing.serves}
     for ind in ("gold_spot", "buffett_indicator", "fiscal_dominance"):
         assert ind in served and ind not in NOT_TRACTABLE
-    assert set(NOT_TRACTABLE) == {"ism_manufacturing", "private_credit_stress"}
+    assert set(NOT_TRACTABLE) == {"private_credit_stress"}
 
 
-def test_substituted_feeds_are_exactly_the_two_that_differ_from_the_ratified_row_and_say_so():
+def test_substituted_feeds_are_exactly_the_four_that_differ_from_the_ratified_row_and_say_so():
     feeds = {row["id"]: row["source"]["feed"] for row in MAPPING}
-    assert set(SUBSTITUTED_FEEDS) == {"buffett_indicator", "fiscal_dominance"}
+    assert set(SUBSTITUTED_FEEDS) == {"buffett_indicator", "fiscal_dominance", "ism_manufacturing", "gold_real_rate_cross"}
+    assert "PROVISIONAL" in SUBSTITUTED_FEEDS["gold_real_rate_cross"] and "NOT-OWNER-RATIFIED" in SUBSTITUTED_FEEDS["gold_real_rate_cross"]
+    assert "provisional" in SUBSTITUTED_FEEDS["ism_manufacturing"] and "Richmond" in SUBSTITUTED_FEEDS["ism_manufacturing"]
     assert "Wilshire" in feeds["buffett_indicator"] and "Treasury/BEA" in feeds["fiscal_dominance"]
     assert "OWNER CONFIRMATION" in SUBSTITUTED_FEEDS["fiscal_dominance"]
 
