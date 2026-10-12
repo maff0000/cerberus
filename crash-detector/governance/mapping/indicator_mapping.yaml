@@ -2,6 +2,7 @@
 # This is the CONTENT of the ratified mapping (answers Q30). It is DATA the engine registers,
 # not a fabric key — so it travels with the container (portable by construction).
 # WEIGHTS are PROVISIONAL starting tiers (x3/x2/x1) — calibrated by BACKTEST, never trusted on assertion.
+# DAILY WINDOWS (WO-1.9): 8d FRED business-day series, 7d market-day series; derivation in crash-detector/STATUS.md.
 # STALENESS WINDOW is per-indicator RELEVANCE (how old its data may be for ITS cadence) — a DIFFERENT
 # quantity from the assurance/publish liveness budget (Q32). A quarterly survey is not dead at 16 minutes.
 # DIALS ARE NEVER BLENDED. A "both" indicator scores into each dial with its own polarity.
@@ -38,7 +39,7 @@ indicators:
     tier: 1
     polarity: high_is_worse
     cadence: daily
-    staleness_window_seconds: 345600    # ~4 days (weekend+grace)
+    staleness_window_seconds: 691200    # 8 days (WO-1.9): FRED business-day series, worst-case 7d gap + 1d grace
     source: {feed: "FRED:BAMLH0A0HYM2", provenance: "ICE BofA US HY OAS"}
     calculation: "HY option-adjusted spread; 5.0% (500bps) red line"
   - id: ig_oas
@@ -48,7 +49,7 @@ indicators:
     tier: 2            # x2
     polarity: high_is_worse
     cadence: daily
-    staleness_window_seconds: 345600
+    staleness_window_seconds: 691200    # 8 days (WO-1.9): FRED business-day series, worst-case 7d gap + 1d grace
     source: {feed: "FRED:BAMLC0A0CM", provenance: "ICE BofA US Corp OAS"}
     calculation: "IG option-adjusted spread; widens before HY"
   - id: credit_stress_hyg_lqd
@@ -58,7 +59,7 @@ indicators:
     tier: 2
     polarity: low_is_worse
     cadence: daily
-    staleness_window_seconds: 345600
+    staleness_window_seconds: 604800    # 7 days (WO-1.9): market-day series, worst-case ~6d gap + 1d grace
     source: {feed: "market:HYG,LQD", provenance: "ETF prices"}
     calculation: "HYG/LQD price ratio; falling = HY underperforming"
   - id: private_credit_stress
@@ -90,7 +91,7 @@ indicators:
     tier: 1
     polarity: low_is_worse   # inversion (negative) is worse
     cadence: daily
-    staleness_window_seconds: 345600
+    staleness_window_seconds: 691200    # 8 days (WO-1.9): FRED business-day series, worst-case 7d gap + 1d grace
     source: {feed: "FRED:T10Y3M", provenance: "NY Fed preferred"}
     calculation: "10y minus 3m; predicted every recession since 1960"
   - id: yield_curve_10y2y
@@ -100,7 +101,7 @@ indicators:
     tier: 1
     polarity: low_is_worse
     cadence: daily
-    staleness_window_seconds: 345600
+    staleness_window_seconds: 691200    # 8 days (WO-1.9): FRED business-day series, worst-case 7d gap + 1d grace
     source: {feed: "FRED:T10Y2Y", provenance: "public series"}
     calculation: "10y minus 2y; inversion precedes ~89% of crashes"
   - id: real_rate_10y_tips
@@ -110,7 +111,7 @@ indicators:
     tier: 3            # x1
     polarity: {equity_crash: high_is_worse, monetary_debasement: high_is_better}  # high real rate = anti-debasement
     cadence: daily
-    staleness_window_seconds: 345600
+    staleness_window_seconds: 691200    # 8 days (WO-1.9): FRED business-day series, worst-case 7d gap + 1d grace
     source: {feed: "FRED:DFII10", provenance: "10y TIPS yield"}
     calculation: "High real rates = equity headwind AND debasement suppressant (opposite polarity)"
   - id: jobless_claims_4w
@@ -160,7 +161,7 @@ indicators:
     tier: 1
     polarity: low_is_worse
     cadence: daily
-    staleness_window_seconds: 345600
+    staleness_window_seconds: 604800    # 7 days (WO-1.9): market-day series, worst-case ~6d gap + 1d grace
     source: {feed: "market:RSP,SPY", provenance: "ETF prices"}
     calculation: "Equal- vs cap-weight S&P; falling = narrow leadership precedes tops"
   - id: cboe_skew
@@ -170,7 +171,7 @@ indicators:
     tier: 2
     polarity: high_is_worse
     cadence: daily
-    staleness_window_seconds: 345600
+    staleness_window_seconds: 604800    # 7 days (WO-1.9): market-day series, worst-case ~6d gap + 1d grace
     source: {feed: "CBOE:SKEW", provenance: "public series"}
     calculation: "Tail-risk pricing; high SKEW + low VIX = danger"
   - id: vix_term_structure
@@ -180,7 +181,7 @@ indicators:
     tier: 2
     polarity: high_is_worse
     cadence: daily
-    staleness_window_seconds: 345600
+    staleness_window_seconds: 604800    # 7 days (WO-1.9): market-day series, worst-case ~6d gap + 1d grace
     source: {feed: "CBOE:VIX,VIX3M", provenance: "public series"}
     calculation: "VIX/VIX3M > 1.0 = backwardation = acute stress"
   - id: vix_level
@@ -190,7 +191,7 @@ indicators:
     tier: 3
     polarity: high_is_worse
     cadence: daily
-    staleness_window_seconds: 345600
+    staleness_window_seconds: 604800    # 7 days (WO-1.9): market-day series, worst-case ~6d gap + 1d grace
     source: {feed: "CBOE:VIX", provenance: "public series"}
     calculation: "Concurrent gauge; DEMOTED for term structure"
   - id: spx_vs_200dma
@@ -200,7 +201,7 @@ indicators:
     tier: 3
     polarity: low_is_worse
     cadence: daily
-    staleness_window_seconds: 345600
+    staleness_window_seconds: 604800    # 7 days (WO-1.9): market-day series, worst-case ~6d gap + 1d grace
     source: {feed: "market:SPX", provenance: "index"}
     calculation: "Below 200-DMA = bear; >15% above = overextended"
   - id: copper_gold
@@ -210,7 +211,7 @@ indicators:
     tier: 2
     polarity: {equity_crash: low_is_worse, monetary_debasement: low_is_better}  # falling = gold strength side
     cadence: daily
-    staleness_window_seconds: 345600
+    staleness_window_seconds: 604800    # 7 days (WO-1.9): market-day series, worst-case ~6d gap + 1d grace
     source: {feed: "market:HG,GC", provenance: "futures"}
     calculation: "Falling = growth deterioration (equity) AND gold strength (debasement)"
   - id: chicago_fed_nfci
@@ -282,7 +283,7 @@ indicators:
     tier: 2
     polarity: high_is_worse
     cadence: daily
-    staleness_window_seconds: 345600
+    staleness_window_seconds: 604800    # 7 days (WO-1.9): market-day series, worst-case ~6d gap + 1d grace
     source: {feed: "market:XAUUSD", provenance: "spot"}
     calculation: "Absolute gold trend; corroborates the real-rate cross"
   - id: cpi_yoy
@@ -312,6 +313,6 @@ indicators:
     tier: 2
     polarity: high_is_worse
     cadence: daily
-    staleness_window_seconds: 345600
+    staleness_window_seconds: 691200    # 8 days (WO-1.9): FRED business-day series, worst-case 7d gap + 1d grace
     source: {feed: "FRED:T5YIE", provenance: "public series"}
     calculation: "5y nominal minus 5y TIPS; market-implied inflation expectations"

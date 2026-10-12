@@ -340,7 +340,7 @@ def test_the_three_wo_1_6_indicators_are_served_and_no_longer_listed_not_tractab
 def test_substituted_feeds_are_exactly_the_five_that_differ_from_the_ratified_row_and_say_so():
     feeds = {row["id"]: row["source"]["feed"] for row in MAPPING}
     assert set(SUBSTITUTED_FEEDS) == {"buffett_indicator", "fiscal_dominance", "ism_manufacturing", "gold_real_rate_cross",
-                                       "private_credit_stress"}
+                                       "private_credit_stress", "sloos_bank_lending"}
     assert "PROVISIONAL" in SUBSTITUTED_FEEDS["gold_real_rate_cross"] and "NOT-OWNER-RATIFIED" in SUBSTITUTED_FEEDS["gold_real_rate_cross"]
     assert "provisional" in SUBSTITUTED_FEEDS["ism_manufacturing"] and "Richmond" in SUBSTITUTED_FEEDS["ism_manufacturing"]
     assert "Wilshire" in feeds["buffett_indicator"] and "Treasury/BEA" in feeds["fiscal_dominance"]
@@ -352,10 +352,10 @@ def test_the_window_overrides_never_exceed_the_engines_relevance_ceiling_and_are
     from ingestion.catalog import WINDOW_OVERRIDES, window_seconds
 
     assert set(WINDOW_OVERRIDES) == {"buffett_indicator", "private_credit_stress"}
-    assert window_seconds("private_credit_stress", 10368000) == 4 * 86400 <= RELEVANCE_WINDOW_CEILING_SECONDS
+    assert window_seconds("private_credit_stress", 10368000) == 7 * 86400 <= RELEVANCE_WINDOW_CEILING_SECONDS
     assert WINDOW_OVERRIDES["private_credit_stress"][1]
     assert window_seconds("buffett_indicator", 3888000) == 120 * 86400 <= RELEVANCE_WINDOW_CEILING_SECONDS
-    assert window_seconds("hy_oas", 345600) == 345600.0
+    assert window_seconds("hy_oas", 691200) == 691200.0
     assert WINDOW_OVERRIDES["buffett_indicator"][1]  # a reason is on record
 
 

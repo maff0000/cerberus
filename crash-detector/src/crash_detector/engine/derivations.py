@@ -328,6 +328,10 @@ def _correlation_percentile(spec: Derivation, inputs: dict) -> Derived:
     and the real yield's change in percentage points. The rolling Pearson correlation of the last ``window`` such pairs
     is normally negative (gold rises as real yields fall); the figure is the percentile, 0-100, of the LATEST rolling
     correlation within every rolling correlation the stored history yields, so a flip toward positive reads high.
+    CAVEAT: this is relative to the series' own history, not an absolute test (the correlation level is never checked), so
+    ~10% of the time it reads stress with no sign flip. Provisional by design.
+    Changes are between consecutive SHARED dates whatever the gap (a holiday makes a multi-day change). A zero-variance
+    window in the old history is skipped; the latest window being flat is refused.
     Refused, never shortened, when there are too few correlations to percentile.
     """
     gold = dict(_dated_rows("gold", inputs["gold"][0]))
@@ -339,10 +343,15 @@ def _correlation_percentile(spec: Derivation, inputs: dict) -> Derived:
         raise DerivationUnavailable(f"only {len(shared)} shared dates; a {spec.window}-change correlation needs {spec.window + 1}")
     gold_change = [gold[b] / gold[a] - 1.0 for a, b in zip(shared, shared[1:])]
     real_change = [real[b] - real[a] for a, b in zip(shared, shared[1:])]
-    correlations = [
-        _pearson("gold_real_rate_cross", gold_change[i - spec.window:i], real_change[i - spec.window:i])
-        for i in range(spec.window, len(gold_change) + 1)
-    ]
+    # A degenerate (zero-variance) window has no defined correlation. One in the old history is skipped (it carries no
+    # information) rather than disabling the indicator for a decade; the LATEST window being degenerate is refused.
+    correlations = []
+    for i in range(spec.window, len(gold_change) + 1):
+        try:
+            correlations.append(_pearson("gold_real_rate_cross", gold_change[i - spec.window:i], real_change[i - spec.window:i]))
+        except DerivationUnavailable:
+            if i == len(gold_change):
+                raise
     latest, earlier = correlations[-1], correlations[:-1]
     if len(earlier) < MINIMUM_PERCENTILE_HISTORY:
         raise DerivationUnavailable(

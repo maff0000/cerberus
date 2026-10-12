@@ -33,6 +33,8 @@ import argparse
 import json
 import math
 import os
+import re
+import sqlite3
 import sys
 import uuid
 from datetime import date, datetime, timezone
@@ -46,6 +48,8 @@ from ingestion.store import SqliteStore
 
 POLICY = RetryPolicy(max_attempts=1, timeout_seconds=5.0, backoff_seconds=0.0)
 QUARTER_START_MONTHS = (1, 4, 7, 10)
+EARLIEST_SURVEY = date(1990, 1, 1)  # FRED DRTSCILM begins 1990; earlier is a typo and the ledger has no edit
+ISO_EXTENDED = re.compile(r"\d{4}-\d{2}-\d{2}")
 
 
 class EntryRefused(Exception):
@@ -54,11 +58,15 @@ class EntryRefused(Exception):
 
 def validate(survey_date: str, value: float, today: date) -> tuple:
     try:
+        if not ISO_EXTENDED.fullmatch(survey_date):
+            raise ValueError(survey_date)
         day = date.fromisoformat(survey_date)
     except ValueError:
         raise EntryRefused(f"--survey-date {survey_date!r} is not an ISO date (YYYY-MM-DD)") from None
     if day.day != 1 or day.month not in QUARTER_START_MONTHS:
         raise EntryRefused(f"--survey-date {survey_date} is not a quarter start (YYYY-01-01, -04-01, -07-01, -10-01)")
+    if day < EARLIEST_SURVEY:
+        raise EntryRefused(f"--survey-date {survey_date} is before {EARLIEST_SURVEY} (the series starts there)")
     if day > today:
         raise EntryRefused(f"--survey-date {survey_date} is in the future")
     if type(value) is not float or not math.isfinite(value) or not -100.0 <= value <= 100.0:
@@ -87,10 +95,12 @@ def record(store: SqliteStore, survey_date: str, value: float, now: datetime) ->
 
 
 def main(argv: list) -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter,
+                                     allow_abbrev=False)
     parser.add_argument("--db", default=os.environ.get("CD_DB_PATH"), help="ingestion store (default $CD_DB_PATH)")
     sub = parser.add_subparsers(dest="cmd", required=True)
-    entry = sub.add_parser("sloos-ndfi", help="enter the SLOOS Table 2 Q14 NDFI figure for one survey")
+    entry = sub.add_parser("sloos-ndfi", help="enter the SLOOS Table 2 Q14 NDFI figure for one survey",
+                          allow_abbrev=False)
     entry.add_argument("--survey-date", required=True)
     entry.add_argument("--value", required=True, type=float)
     entry.add_argument("--confirm", action="store_true", help="actually record it (default: preview)")
@@ -101,8 +111,12 @@ def main(argv: list) -> int:
         return 2
     now = datetime.now(timezone.utc)
     if args.cmd == "list":
-        with SqliteStore(args.db, read_only=True) as store:
-            rows = store.recent_readings(MANUAL_SLOOS_NDFI, 100)
+        try:
+            with SqliteStore(args.db, read_only=True) as store:
+                rows = store.recent_readings(MANUAL_SLOOS_NDFI, 100)
+        except sqlite3.Error as why:
+            print(f"REFUSED: cannot read {args.db}: {why}", file=sys.stderr)
+            return 2
         for payload in rows:
             print(f"{payload['observation_date']}  {payload['value']}  ({payload['unit']})")
         print(f"-- {len(rows)} hand-entered SLOOS NDFI value(s)")
@@ -110,11 +124,20 @@ def main(argv: list) -> int:
     try:
         survey_date, value = validate(args.survey_date, args.value, now.date())
         if not args.confirm:
+            # The preview must not promise what --confirm will refuse: open the store read-only and look for the date.
+            # A store that does not exist yet cannot hold a duplicate; --confirm will create it.
+            if os.path.exists(args.db):
+                with SqliteStore(args.db, read_only=True) as store:
+                    if any(p.get("observation_date") == survey_date for p in store.recent_readings(MANUAL_SLOOS_NDFI, 1000)):
+                        raise EntryRefused(f"{survey_date} already has a recorded value; --confirm would be refused")
             print(f"PREVIEW ONLY, nothing recorded: SLOOS NDFI survey {survey_date} = {value} net % tightening.\n"
                   "Re-run with --confirm to record it. There is no edit afterwards.")
             return 0
         with SqliteStore(args.db) as store:
             done = record(store, survey_date, value, now)
+    except sqlite3.Error as why:
+        print(f"REFUSED: cannot write {args.db}: {why}", file=sys.stderr)
+        return 2
     except EntryRefused as why:
         print(f"REFUSED: {why}", file=sys.stderr)
         return 2

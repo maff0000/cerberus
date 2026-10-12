@@ -236,3 +236,28 @@ def test_the_collector_loop_never_tries_to_poll_the_manual_source(db_path):
     assert summary == []  # skipped, not fetched, not a failure
     with SqliteStore(db_path, read_only=True) as ro:
         assert ro.latest_reading(MANUAL_SLOOS_NDFI) is None and ro.last_attempt(MANUAL_SLOOS_NDFI) is None
+
+
+def test_manual_cli_refuses_an_abbreviated_confirm_flag_and_records_nothing(db_path):
+    from ingestion import manual
+    args = ["--db", str(db_path), "sloos-ndfi", "--survey-date", "2026-07-01", "--value", "5"]
+    with pytest.raises(SystemExit) as exit_:
+        manual.main(args + ["--conf"])
+    assert exit_.value.code == 2
+    with SqliteStore(db_path) as s:
+        assert s.latest_reading(MANUAL_SLOOS_NDFI) is None
+
+
+def test_manual_cli_turns_an_unreadable_db_into_a_refusal_not_a_traceback(tmp_path, capsys):
+    from ingestion import manual
+    assert manual.main(["--db", str(tmp_path / "missing" / "x.sqlite"), "list"]) == 2
+    assert "REFUSED" in capsys.readouterr().err
+
+
+def test_manual_cli_preview_refuses_a_date_that_confirm_would_refuse(db_path, capsys):
+    from ingestion import manual
+    base = ["--db", str(db_path), "sloos-ndfi", "--survey-date", "2026-07-01", "--value", "5"]
+    assert manual.main(base + ["--confirm"]) == 0
+    capsys.readouterr()
+    assert manual.main(base) == 2
+    assert "already has a recorded value" in capsys.readouterr().err

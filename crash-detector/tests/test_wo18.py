@@ -150,7 +150,7 @@ def test_fed_it_is_live_on_the_equity_dial_only_and_carries_the_proxy_disclosure
         _seed(w, wiring, {"private_credit_stress": 18.0})
     row = _row(db_path)
     assert row["state"] == "LIVE" and row["value"] == pytest.approx(18.0) and row["dials"] == ["equity_crash"]
-    assert row["window_days"] == 4.0
+    assert row["window_days"] == 7.0   # WO-1.9: market-day daily window
     assert "SUBSTITUTE FEED" in row["why"] and "MARKET-PRICE" in row["why"] and "NOT the underlying loan" in row["why"]
 
 
@@ -173,10 +173,10 @@ def test_the_figure_is_scored_through_the_placeholder_band_and_moves_the_equity_
     assert "private_credit_stress" not in dials[5.0]["monetary_debasement"]["inputs_used"]
 
 
-def test_a_five_day_old_reading_is_stale_not_live(db_path):
+def test_an_eight_day_old_reading_is_stale_not_live(db_path):
     wiring = build_wiring()
     with SqliteStore(db_path) as w:
-        _seed(w, wiring, {"private_credit_stress": 18.0}, age=timedelta(days=5))
+        _seed(w, wiring, {"private_credit_stress": 18.0}, age=timedelta(days=8))
     row = _row(db_path)
     assert row["state"] == "STALE" and row["value"] is None  # the ratified 120 days would have shown it live
 
