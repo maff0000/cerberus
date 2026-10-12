@@ -281,7 +281,7 @@ def test_a_missing_contributing_input_is_degraded_and_names_it(wiring, store):
 
 
 def test_a_stale_required_input_is_unknown_on_its_own_cadence_window(wiring, store):
-    # hy_oas is daily: window 4 days. Its only print is 10 days old; everything else is fresh.
+    # hy_oas is daily: window 8 days (WO-1.9). Its only print is 10 days old; everything else is fresh.
     _seed(store, wiring, {k: v for k, v in CALM.items() if k != "hy_oas"})
     _seed(store, wiring, {"hy_oas": 3.0}, age=timedelta(days=10))
     dials = evaluate_from_store(store, NOW, wiring)

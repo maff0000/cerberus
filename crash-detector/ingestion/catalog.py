@@ -187,6 +187,7 @@ NOT_TRACTABLE: dict[str, str] = {}
 #: A substitute is a provenance decision; each is recorded here with whose authority it rests on, and
 #: ``tests/test_ingestion.py`` allows a catalog/mapping feed mismatch for exactly these and no others.
 SUBSTITUTED_FEEDS: dict[str, str] = {
+    "sloos_bank_lending": "Declared as the SLOOS C&I leg PLUS the NDFI leg; the row does not say how to combine them. Wired as the PLAIN MEAN of the automatic C&I leg (FRED DRTSCILM) and the HAND-ENTERED NDFI leg (python3 -m ingestion.manual): an engineering choice awaiting Owner acceptance. The figure is dated by the OLDER leg; it is MISSING until an NDFI value is entered and STALE 120 days after a survey quarter start, so expect a short STALE gap each quarter until the next print is hand-entered.",
     "ism_manufacturing": "Declared 'ISM' (licensed; FRED withdrew NAPM). Wired as an EQUAL-WEIGHTED COMPOSITE OF Z-SCORED "
     "REGIONAL FED MANUFACTURING SURVEYS: Philadelphia (FRED GACDFSA066MSFRBPHI), Empire State/New York "
     "(GACDISA066MSFRBNY) and Dallas (BACTSAMFRBDAL), each z-scored against its own full published history and the three "
@@ -199,7 +200,7 @@ SUBSTITUTED_FEEDS: dict[str, str] = {
     "one and nothing here is locked in): the 60-trading-day rolling Pearson correlation between daily gold changes "
     "(simple return of the LBMA fix) and daily changes in the 10y TIPS real yield (FRED DFII10, in percentage points), "
     "normally negative; the figure is the percentile (0-100) of the latest correlation within the ~10 years of "
-    "correlations the collector holds, so a flip toward positive reads high. GOLD IS THE LBMA FIX, NOT THE ROW'S "
+    "correlations the collector holds, so a flip toward positive reads high. RELATIVE, NOT ABSOLUTE: the figure ranks the latest correlation against the series' own history and never checks the correlation LEVEL, so even a stationary all-negative regime reads uniformly 0-100 and the dial will show stress roughly 10% of the time with no sign flip (Auditor 2026-10-12). A sustained POSITIVE-correlation regime reads mid-range, not high, for the same reason, and the rolling windows overlap so the percentile is not a probability. Changes are taken between consecutive shared dates whatever the gap (a holiday makes a multi-day change). GOLD IS THE LBMA FIX, NOT THE ROW'S "
     "'market:GC' FUTURES: if LBMA is unreachable (it is, HTTP 403 from the build host) this indicator is FEED_FAILING "
     "with it and shows no value; no futures substitution is made.",
     "buffett_indicator": "Declared 'Wilshire/GDP, percentiled'; Wilshire is unavailable (FRED withdrew WILL5000PRFC). "
@@ -214,7 +215,7 @@ SUBSTITUTED_FEEDS: dict[str, str] = {
     "quality; it is a different quantity from the declared composite, and it moves with equity beta and liquidity as well "
     "as credit. v2 (BDC NAV-discount leg, manual cadence) and v3 (non-accrual/PIK by filing-text extraction or a paid "
     "vendor) remain OPEN and are not attempted. Substitute directed by Trinity (provisional, not Owner-ratified). Its "
-    "staleness window is overridden to 4 days (see WINDOW_OVERRIDES).",
+    "staleness window is overridden to 7 days (see WINDOW_OVERRIDES).",
     "fiscal_dominance": "Declared 'Treasury/BEA deficit + interest-cost: deficit/GDP vs interest-cost/revenue, "
     "discriminated vs benign growth'. Wired instead as the legacy ARGUS crash-engine discriminator (fred_tells.py, "
     "R2D2-locked bands): Fed balance-sheet (WALCL) growth >= 10% over 12 months AND core CPI (CPILFESL) >= 4% "
@@ -236,11 +237,12 @@ WINDOW_OVERRIDES: dict[str, tuple[int, str]] = {
         "not hidden; widening it means raising a staleness ceiling, which is an Owner decision with external review.",
     ),
     "private_credit_stress": (
-        4 * DAY,
+        7 * DAY,
         "the ratified row's 120 days assumed QUARTERLY filings (NAV / non-accrual / PIK). v1 is a DAILY ETF price; under a "
         "120-day window a dead feed would keep a months-old drawdown reading as current, which is the opposite of the "
-        "row's own 'absence reads Unknown never calm'. 4 days is the same weekend-plus-grace window every other daily "
-        "row in the mapping declares (345,600 s), and is inside the engine's 120-day relevance ceiling. Revert this "
+        "row's own 'absence reads Unknown never calm'. 7 days is the market-day daily window the mapping declares for "
+        "every ETF/index/futures row (WO-1.9: worst-case holiday-weekend gap just under 6 days plus a day of grace; "
+        "it was 4 days before WO-1.9), and is inside the engine's 120-day relevance ceiling. Revert this "
         "override when a quarterly v2/v3 leg is added.",
     ),
 }
