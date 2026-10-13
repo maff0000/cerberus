@@ -13,6 +13,7 @@ import yaml
 
 from crash_detector.collectors import DelayKind, RetryPolicy, collect
 from crash_detector.collectors.adapter import AdapterFetchError
+from crash_detector.collectors.validation import JsonSchemaValidator, SchemaRejection
 from crash_detector.observations import OK, FetchFailed, Malformed
 from ingestion import adapters as A
 from ingestion.catalog import (EGRESS_HOSTS, INGREDIENTS, NON_HTTP_PEERS, NOT_TRACTABLE, PARTIAL,
@@ -515,3 +516,255 @@ def test_wo_1_6_ingredients_poll_slowly_and_the_fred_history_ones_ask_for_histor
     assert by_id["hermes.xau_usd.h4_close"].completes == "DIRECT" and by_id["hermes.xau_usd.h4_close"].serves == ("gold_spot",)
     assert "lbma.gold_fix_usd" not in by_id  # retired with its 403; its history leg keeps its own id
     assert by_id["lbma.gold_fix_usd.history"].serves == ("gold_real_rate_cross",)
+
+
+# --- WO-1.14: the ALFRED vintage adapter ------------------------------------------------- #
+#
+# ALFRED IS STOOD UP OFFLINE, not mocked at the function that answers. ``_Alfred`` below is a
+# model of the endpoint's THREE behaviours the vintage search turns on — a vintage trail that
+# begins somewhere (404 beneath it), vintages that exist but carry no row for the observation
+# yet, and vintages that carry the figure as it stood then. A fake that only returned bodies
+# could not distinguish the second from the first, which is the whole question being asked.
+
+_OBS = "2008-09-01"  # a quarter-start-dated figure, published weeks after the quarter ended
+
+
+class _Alfred:
+    """The endpoint, offline. Records every URL asked and the headers it was asked with."""
+
+    def __init__(self, *, trail_from: str = "1991-07-15", published: str = "2008-10-30",
+                 revisions=(("2008-10-30", "1.0"), ("2008-11-20", "1.5"), ("2009-07-31", "2.0")),
+                 column: str = "GDP", observation: str = _OBS, answers_vintage=None):
+        self.trail_from, self.published, self.revisions = trail_from, published, list(revisions)
+        self.column, self.observation = column, observation
+        #: when set, every body claims THIS vintage in its header whatever was asked for
+        self.answers_vintage = answers_vintage
+        self.asked: list[str] = []
+        self.headers: list = []
+
+    def vintages_asked(self) -> list[str]:
+        from urllib.parse import parse_qs, urlsplit
+        return [parse_qs(urlsplit(u).query)["vintage_date"][0] for u in self.asked]
+
+    def __call__(self, url, timeout, headers=None):
+        from urllib.parse import parse_qs, urlsplit
+        self.asked.append(url)
+        self.headers.append(headers)
+        asked = parse_qs(urlsplit(url).query)["vintage_date"][0]
+        if asked < self.trail_from:
+            raise AdapterFetchError("HTTP_ERROR", 404)  # ALFRED has no such vintage of this series
+        header = f"observation_date,{self.column}_{(self.answers_vintage or asked).replace('-', '')}"
+        if asked < self.published:
+            return header + "\n"  # the vintage exists; it had nothing to say about this date
+        value = [v for when, v in self.revisions if when <= asked][-1]
+        return f"{header}\n{self.observation},{value}\n"
+
+
+def _vintage_adapter(getter, observation=_OBS, series="GDP", transformation=None):
+    return A.AlfredVintageAdapter(
+        series=series, transformation=transformation, observation_date=observation,
+        source_id="alfred.GDP", as_of_rule="quarter_end", unit="usd_billions",
+        clock=lambda: NOW, getter=getter)
+
+
+def test_the_vintage_chosen_is_the_first_that_published_the_figure_not_the_latest_revision():
+    """THE RULE: the earliest vintage in [observation_date, today] that served a value."""
+    alfred = _Alfred()
+    payload = _vintage_adapter(alfred).fetch(timeout_seconds=30).payload
+    assert payload == {"unit": "usd_billions", "observation_date": _OBS,
+                       "value": 1.0, "vintage_date": "2008-10-30"}
+    # 1.5 and 2.0 are what the SAME observation says in later vintages, and are not chosen.
+    assert [v for _, v in alfred.revisions] == ["1.0", "1.5", "2.0"]
+
+
+@pytest.mark.parametrize("published", ["2008-09-01", "2008-09-02", "2008-10-30",
+                                       "2012-02-29", "2026-10-11"])
+def test_the_boundary_is_pinned_exactly_the_first_serving_day_and_never_the_day_before(published):
+    """Both arms of the bisection's answer: the day it picks served, the day before did not."""
+    alfred = _Alfred(published=published, revisions=((published, "7.25"),))
+    payload = _vintage_adapter(alfred).fetch(timeout_seconds=30).payload
+    assert payload["vintage_date"] == published and payload["value"] == 7.25
+
+
+def test_no_vintage_that_predates_the_observation_can_be_the_answer_and_the_floor_is_measured():
+    """The search window starts AT the observation; the day before it is probed, not assumed."""
+    alfred = _Alfred()
+    payload = _vintage_adapter(alfred).fetch(timeout_seconds=30).payload
+    asked = alfred.vintages_asked()
+    assert payload["vintage_date"] >= _OBS
+    assert min(asked) == "2008-08-31"  # the floor: probed to VERIFY it carries nothing
+    assert [v for v in asked if v < "2008-08-31"] == []
+    # 2 ends + a bisection over 6,615 days. Logarithmic, and inside the declared ceiling.
+    assert len(asked) <= 2 + 13 and len(asked) <= A.MAX_VINTAGE_PROBES
+
+
+def test_a_vintage_that_predates_the_observation_yet_already_serves_it_is_refused_not_answered():
+    """The premise broke (a projection series?), so the answer would not be the earliest."""
+    alfred = _Alfred(published="2008-08-01", revisions=(("2008-08-01", "1.0"),))
+    payload = _vintage_adapter(alfred).fetch(timeout_seconds=30).payload
+    assert payload == {"malformed": "vintage_floor"}
+    assert "value" not in payload  # refused, never approximated to 2008-09-01
+
+
+def test_a_series_whose_vintage_trail_begins_after_the_observation_answers_from_its_first_vintage():
+    """The two ICE BofA OAS series' situation: no vintage exists that is older than the trail."""
+    alfred = _Alfred(trail_from="2023-10-16", published="2023-10-16",
+                     revisions=(("2023-10-16", "3.5"),))
+    payload = _vintage_adapter(alfred).fetch(timeout_seconds=30).payload
+    assert payload["vintage_date"] == "2023-10-16" and payload["value"] == 3.5
+
+
+def test_today_s_vintage_carrying_no_value_for_the_date_is_empty_and_never_an_invented_one():
+    alfred = _Alfred(published="2027-01-01")  # nothing has ever published this observation
+    adapter = _vintage_adapter(alfred)
+    payload = adapter.fetch(timeout_seconds=30).payload
+    assert payload == {"unit": "usd_billions"} and adapter.is_empty(payload)
+    assert alfred.vintages_asked() == ["2026-10-11"]  # one probe; no search over an empty window
+
+
+def test_a_404_beneath_the_trail_is_an_answer_but_a_404_at_today_s_vintage_is_a_failure():
+    def gone(url, timeout, headers=None):
+        raise AdapterFetchError("HTTP_ERROR", 404)
+
+    with pytest.raises(AdapterFetchError) as refused:
+        _vintage_adapter(gone).fetch(timeout_seconds=30)
+    assert refused.value.error_class == "HTTP_ERROR" and refused.value.http_status == 404
+    # ...whereas beneath the ceiling the same 404 is read as "no such vintage" and the search
+    # completes; that is the arm the trail_from test above exercises.
+    assert _vintage_adapter(_Alfred(trail_from="2023-10-16", published="2023-10-16",
+                                    revisions=(("2023-10-16", "3.5"),))
+                            ).fetch(timeout_seconds=30).payload["value"] == 3.5
+
+
+def test_any_other_transport_failure_is_never_read_as_an_absent_vintage():
+    for failure in (AdapterFetchError("TIMEOUT"), AdapterFetchError("HTTP_ERROR", 500),
+                    AdapterFetchError("CONNECTION_FAILED")):
+        def boom(url, timeout, headers=None, _f=failure):
+            raise _f
+
+        with pytest.raises(AdapterFetchError) as raised:
+            _vintage_adapter(boom).fetch(timeout_seconds=30)
+        assert raised.value.error_class == failure.error_class
+
+
+def test_a_body_answering_a_different_vintage_than_the_one_asked_is_malformed_and_stops_the_search():
+    alfred = _Alfred(answers_vintage="2015-01-01")
+    payload = _vintage_adapter(alfred).fetch(timeout_seconds=30).payload
+    assert payload == {"malformed": "vintage"}
+    assert len(alfred.asked) == 1  # refused on the first answer; not searched around
+
+
+@pytest.mark.parametrize("body,expected", [
+    ("", "header"),
+    ("nonsense", "header"),
+    ("observation_date,GDP_20261011,extra\n", "header"),
+    ("observation_date,OTHER_20261011\n2008-09-01,1.0\n", "series"),
+])
+def test_an_unreadable_body_is_malformed_never_an_absent_vintage(body, expected):
+    payload = _vintage_adapter(lambda *a, **k: body).fetch(timeout_seconds=30).payload
+    assert payload == {"malformed": expected}
+
+
+def test_a_value_that_is_not_a_number_stops_the_search_and_is_passed_to_the_schema_to_reject():
+    alfred = _Alfred(revisions=(("2008-10-30", "n/a"),))
+    payload = _vintage_adapter(alfred).fetch(timeout_seconds=30).payload
+    assert payload["value"] == "n/a"  # carried untouched, exactly as parse_fred_csv does
+    assert len(alfred.asked) == 1     # and the bisection did not step over it
+    with pytest.raises(SchemaRejection):
+        JsonSchemaValidator().validate(payload, A.AlfredVintageAdapter.response_schema)
+
+
+def test_the_dot_for_no_data_is_an_absent_vintage_not_a_value():
+    """FRED writes ``.`` for no data, and a vintage printing one has not published a figure."""
+    out = A.parse_alfred_csv("observation_date,GDP_20081030\n2008-09-01,.\n",
+                             "GDP", "u", _OBS, "2008-10-30")
+    assert out == {"unit": "u"}
+
+
+def test_the_observation_is_matched_by_date_and_a_clamped_window_cannot_substitute_another_row():
+    """ALFRED clamps an out-of-range window instead of refusing it, so 'the only row' is unsafe."""
+    body = ("observation_date,GDP_20081030\n1960-01-01,99.0\n1960-04-01,98.0\n")
+    assert A.parse_alfred_csv(body, "GDP", "u", _OBS, "2008-10-30") == {"unit": "u"}
+    assert A.parse_alfred_csv(body + f"{_OBS},1.0\n", "GDP", "u", _OBS,
+                              "2008-10-30")["value"] == 1.0
+
+
+def test_a_payload_may_not_state_a_value_without_the_vintage_that_produced_it():
+    """The point of the schema: a point-in-time value that does not say WHICH vintage is
+    indistinguishable from today's value for the same period."""
+    schema = A.AlfredVintageAdapter.response_schema
+    good = {"unit": "u", "observation_date": _OBS, "value": 1.0, "vintage_date": "2008-10-30"}
+    JsonSchemaValidator().validate(good, schema)
+    JsonSchemaValidator().validate({"unit": "u"}, schema)  # EMPTY conforms
+    for bad in ({k: v for k, v in good.items() if k != "vintage_date"},
+                {k: v for k, v in good.items() if k != "observation_date"},
+                {**good, "history": [["2008-09-01", 1.0]]},  # a vintage read carries no history
+                {**good, "vintage_date": "30/10/2008"}):
+        with pytest.raises(SchemaRejection):
+            JsonSchemaValidator().validate(bad, schema)
+
+
+def test_the_whole_search_is_bounded_by_the_timeout_it_was_given_not_each_request():
+    alfred = _Alfred()
+    with pytest.raises(AdapterFetchError) as raised:
+        _vintage_adapter(alfred).fetch(timeout_seconds=0.0)
+    assert raised.value.error_class == "TIMEOUT" and alfred.asked == []
+
+
+def test_the_probe_count_is_capped_and_exhausting_it_is_a_failure_never_a_partial_answer(monkeypatch):
+    alfred = _Alfred()
+    monkeypatch.setattr(A, "MAX_VINTAGE_PROBES", 3)
+    with pytest.raises(AdapterFetchError) as raised:
+        _vintage_adapter(alfred).fetch(timeout_seconds=30)
+    assert raised.value.error_class == "VINTAGE_SEARCH_EXHAUSTED"
+    assert len(alfred.asked) == 3
+
+
+def test_every_request_goes_to_the_keyless_alfred_door_naming_its_vintage_and_carries_no_credential():
+    from urllib.parse import parse_qs, urlsplit
+
+    alfred = _Alfred(column="M2SL_PC1")
+    _vintage_adapter(alfred, series="M2SL", transformation="pc1").fetch(timeout_seconds=30)
+    for url in alfred.asked:
+        parts = urlsplit(url)
+        query = parse_qs(parts.query)
+        assert parts.hostname == A.ALFRED_HOST and parts.scheme == "https"
+        assert query["id"] == ["M2SL"] and query["transformation"] == ["pc1"]
+        assert query["cosd"] == [_OBS] and query["coed"] == [_OBS]
+        assert len(query["vintage_date"]) == 1
+        assert not {"api_key", "key", "token"} & set(query)
+    assert set(alfred.headers) == {None}  # FRED's edge resets on an unfamiliar agent
+    assert "api.stlouisfed.org" not in "".join(alfred.asked)
+
+
+def test_a_series_or_transformation_that_is_not_in_the_permitted_shape_is_refused_at_construction():
+    for bad in ("GDP&id=OTHER", "GDP ", "", "../x", "GDP#"):
+        with pytest.raises(ValueError):
+            _vintage_adapter(_Alfred(), series=bad)
+    for bad in ("pc1&vintage_date=2026-01-01", "PC1", " "):
+        with pytest.raises(ValueError):
+            _vintage_adapter(_Alfred(), transformation=bad)
+    with pytest.raises(ValueError):
+        _vintage_adapter(_Alfred(), observation="not-a-date")
+
+
+def test_an_observation_date_that_has_not_happened_yet_is_refused_rather_than_searched_for():
+    alfred = _Alfred()
+    payload = _vintage_adapter(alfred, observation="2027-03-01").fetch(timeout_seconds=30).payload
+    assert payload == {"malformed": "observation_date"} and alfred.asked == []
+
+
+def test_the_vintage_adapter_is_a_structurally_conformant_source_adapter_and_ages_from_the_period():
+    from crash_detector.collectors.adapter import missing_adapter_members
+
+    adapter = _vintage_adapter(_Alfred())
+    assert missing_adapter_members(adapter) == ()
+    fetched = adapter.fetch(timeout_seconds=30)
+    # quarter_end on a quarter-start-dated figure, the same rule any other adapter gets.
+    assert fetched.source_as_of_utc == datetime(2008, 9, 30, tzinfo=timezone.utc)
+
+
+def test_the_vintage_adapter_is_not_wired_into_the_live_catalog_in_this_round():
+    """Stated as a test so the next round's wiring has to come past it deliberately."""
+    assert not any(i.kind == "alfred" for i in INGREDIENTS)
+    assert A.ALFRED_HOST not in EGRESS_HOSTS
