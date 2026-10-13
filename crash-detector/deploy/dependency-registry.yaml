@@ -79,9 +79,10 @@
 # decisions at implementation level"), and NOTHING HERE REGISTERS AN INGREDIENT SOURCE.
 # CD-D-005 remains wholly owed by the Product Owner and is untouched by this file.
 #
-# The nine entries below are exactly the nine distributions this tree already declares. They
+# The ten entries below are exactly the ten distributions this tree already declares. They
 # were ENUMERATED FROM THE MANIFESTS, not chosen: every one appears in a manifest today, and
-# the check asserts that correspondence by equality in both directions.
+# the check asserts that correspondence by equality in both directions. (Nine at WO-2; redis
+# was added by WO-1.12 with the gold_spot feed change, see DEP-REDIS-001.)
 #
 # -----------------------------------------------------------------------------------------
 # WHAT THIS FILE DOES NOT CLAIM.
@@ -196,6 +197,38 @@ dependencies:
       invokes it, so a tree without it cannot demonstrate a single one of its own obligations.
     declared_in: "PBG-CI-001; required-tests.yaml — every declared test executes under pytest"
     needed_by:
+      - test-suite
+
+  - id: DEP-REDIS-001
+    distribution: redis
+    kind: DIRECT
+    purpose: >
+      WO-1.12: the Redis client `ingestion.adapters.redis_read` uses to perform ONE bounded
+      read-only GET of the single HERMES candle key that feeds `gold_spot`
+      (`hermes:candles:XAU_USD:H4:latest:v1`), replacing the LBMA gold-fix endpoint that
+      answers HTTP 403 to this host. THIS PROJECT RUNS NO REDIS AND REGISTERS NO SERVICE: it is
+      a read-only CONSUMER of a publication another system already maintains, BLUEPRINT §2
+      still declares no Redis service, and Q31 remains open and unanswered by this entry.
+      The only command the import is used to issue is GET of a key passed in; there is no write
+      path, no pub/sub and no second key.
+      DISCLOSED, NOT SMOOTHED OVER — TWO LIMITS ON THIS ENTRY.
+      (i) `needed_by` below is SHORT OF THE TRUTH because the closed consumer vocabulary has no
+      word for the importing surface. The import is in `ingestion/adapters.py`, which is neither
+      `src/crash_detector/**` (`application`) nor `tools/register/**` nor `tests/**`; only
+      `test-suite` is literally verifiable (tests/test_ingestion.py and tests/test_wo112.py
+      import it), and `application` is claimed because this is a RUNTIME dependency of the
+      collector and registering a runtime client as test-only would misdescribe it. A
+      vocabulary term for the ingestion surface is OWED and is a Product Owner / architecture
+      decision, exactly as per-service attribution is owed at WO-3.
+      (ii) redis is in `requirements.txt` and `pyproject.toml` but NOT in `requirements.lock`,
+      so a container built from the lock does not have it. Adding it needs verified digests for
+      redis AND for `async-timeout`, which redis 5.0.1 requires on this interpreter
+      (`python_full_version <= "3.11.2"`). OWED, not done; `async-timeout` is deliberately NOT
+      registered here because CD-DEP-003 would then fail it as a registered distribution that
+      appears in no manifest.
+    declared_in: "CD-D-005 feed wiring for gold_spot (market:XAUUSD, provenance spot); governance/mapping/indicator_mapping.yaml gold_spot WO-1.12 note; Baseline §3 — verify contents, never names"
+    needed_by:
+      - application
       - test-suite
 
   - id: DEP-ATTRS-001

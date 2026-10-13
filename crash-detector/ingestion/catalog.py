@@ -25,13 +25,16 @@ from crash_detector.engine.derivations import BREADTH_MINIMUM_RESOLVED, BREADTH_
 from ingestion.adapters import (
     CboeAdapter,
     FredAdapter,
+    HERMES_PEER,
+    HermesCandleAdapter,
     LbmaGoldAdapter,
     MultplShillerAdapter,
     YahooChartAdapter,
 )
 
 __all__ = ["Ingredient", "INGREDIENTS", "NOT_TRACTABLE", "PARTIAL", "SUBSTITUTED_FEEDS", "WINDOW_OVERRIDES",
-           "window_seconds", "EGRESS_HOSTS", "build_adapter", "MANUAL_SLOOS_NDFI", "QUORUM", "PROVISIONAL_CONSTRUCTIONS"]
+           "window_seconds", "EGRESS_HOSTS", "NON_HTTP_PEERS", "build_adapter", "MANUAL_SLOOS_NDFI", "QUORUM",
+           "PROVISIONAL_CONSTRUCTIONS"]
 
 DAY, WEEK = 86_400, 7 * 86_400
 
@@ -46,7 +49,7 @@ POLL_DAILY, POLL_SLOW = 6 * 3600, DAY
 @dataclass(frozen=True)
 class Ingredient:
     source_id: str
-    kind: str                      # fred | cboe | yahoo | multpl | lbma | manual
+    kind: str                      # fred | cboe | yahoo | multpl | lbma | hermes | manual
     ref: str                       # series id / index / symbol
     unit: str
     declared_feed: str             # the mapping row's ``source.feed`` this implements
@@ -105,10 +108,21 @@ INGREDIENTS: tuple[Ingredient, ...] = (
        stands="FRED WALCL (Fed total assets, $M) with its last 70 weekly levels"),
     _f("CPILFESL", "index", ["fiscal_dominance"], "COMPONENT", poll=POLL_SLOW, rule="month_end", history=8,
        feed="FRED:CPILFESL", stands="FRED CPILFESL (core CPI index) with its last 8 monthly levels"),
-    # ---- LBMA (gold_spot) ---------------------------------------------------------------
-    Ingredient("lbma.gold_fix_usd", "lbma", "gold_pm+gold_am", "usd_per_oz", "market:XAUUSD (LBMA PM fix, AM fallback)",
+    # ---- WO-1.12: gold_spot = HERMES' published XAU/USD H4 candle close ------------------------
+    # This IMPLEMENTS the ratified row's own feed (`market:XAUUSD`, provenance `spot`) and is therefore NOT a
+    # substitute: HERMES publishes live OANDA XAU/USD, which is spot gold, not a futures contract and not a fix.
+    # It REPLACES the LBMA gold-fix endpoint, which answers HTTP 403 to this host and delivered no reading at all
+    # from WO-1.6 to WO-1.12. A NEW source id, not a reuse of `lbma.gold_fix_usd`: the store keeps the first
+    # payload admitted per source period and the failed id's observation history is left untouched.
+    # H4 is the timeframe asked for because it FITS the row's daily cadence: M1/M5/M15/H1 are far more granular
+    # than a daily indicator can use, and HERMES' D1 timeframe is not active. See parse_hermes_candle for the
+    # disclosed consequence — the figure is the FIRST H4 close of each UTC day, not an intraday tick.
+    Ingredient("hermes.xau_usd.h4_close", "hermes", "XAU_USD:H4", "usd_per_oz",
+               "market:XAUUSD (HERMES published H4 candle close, instrument XAU_USD, live OANDA spot)",
                ("gold_spot",), "DIRECT", POLL_DAILY,
-               stands_for="LBMA daily gold fix in USD per troy ounce: the PM fix, else that date's AM fix"),
+               stands_for="XAU/USD spot in USD per troy ounce: the close of the first H4 candle HERMES publishes "
+                          "each UTC day (live OANDA prices; HERMES is a DEV/STAGING engineering candidate, see "
+                          "ingestion.adapters.HERMES_PEER)"),
     # ---- WO-1.7: gold_real_rate_cross (see SUBSTITUTED_FEEDS) -----------------------------------
     # Two RAW daily histories the ENGINE correlates. NEW source ids on purpose: the store keeps the first payload
     # admitted per source period, and ``fred.DFII10`` (history-less, serves real_rate_10y_tips) must not change.
@@ -285,6 +299,31 @@ EGRESS_HOSTS: dict[str, str] = {
 }
 
 
+#: NON-HTTP peers an ingredient reaches (WO-1.12). SEPARATE from :data:`EGRESS_HOSTS` because that dict is the
+#: set of HTTP hostnames the adapters' ``_url`` methods resolve to, mirrored by ``deploy/egress-destinations.yaml``.
+#:
+#: WHY THIS IS NOT IN THAT REGISTRY, STATED RATHER THAN QUIETLY OMITTED. The destination registry admits a `host`
+#: only in one POSITIVE PERMITTED SHAPE — a DNS hostname of two or more labels — and it refuses an address literal
+#: BY DESIGN (see that file's header: CD-ASR-F04 was an auditor slipping `198.51.100.24` past a name-matching
+#: check, and the repair was to make an address undeclarable rather than to recognise one more spelling). The
+#: HERMES publication peer IS an address literal on the LAN; there is no hostname for it. So it cannot be
+#: registered there without reopening exactly the hole that file exists to close, which is a change to a
+#: finding-closing control and not this WO's to make.
+#:
+#: WHAT THAT LEAVES OWED, NAMED HERE SO IT IS NOT INVISIBLE: the designed six-service stack
+#: (``deploy/compose.yaml``) is UNCHANGED by WO-1.12 and its ``cd-collectors`` allowlist still names only the five
+#: public data hosts. The live DEV stack (``deploy/live-dev/``) is the one that reads HERMES, and it was already
+#: outside the designed egress lane by its own header ("the design's egress lane is still OWED"). A declaration
+#: shape that can express a LAN peer, so that the WO-3 egress lane inherits this read rather than discovering it,
+#: is owed and is a Product Owner / architecture decision (it touches Q31, Redis, which BLUEPRINT §2 still does
+#: not declare as a service — and nothing here adds one: this project is a read-only CONSUMER of another system's).
+NON_HTTP_PEERS: dict[str, str] = {
+    f"{HERMES_PEER[0]}:{HERMES_PEER[1]}/db{HERMES_PEER[2]}":
+        "HERMES candle publication (read-only GET of hermes:candles:XAU_USD:H4:latest:v1 for gold_spot; "
+        "never written to, and no other hermes:* key is read)",
+}
+
+
 def build_adapter(ing: Ingredient, clock: Callable[[], datetime]):
     common = dict(source_id=ing.source_id, as_of_rule=ing.as_of_rule, unit=ing.unit, clock=clock)
     if ing.kind == "fred":
@@ -297,6 +336,9 @@ def build_adapter(ing: Ingredient, clock: Callable[[], datetime]):
         return MultplShillerAdapter(history=ing.history, **common)
     if ing.kind == "lbma":
         return LbmaGoldAdapter(history=ing.history, **common)
+    if ing.kind == "hermes":
+        instrument, timeframe = ing.ref.split(":")
+        return HermesCandleAdapter(instrument, timeframe, **common)
     if ing.kind == "manual":
         raise ValueError(f"{ing.source_id} is hand-entered (ingestion.manual); it has no adapter to poll")
     raise ValueError(f"unknown ingredient kind {ing.kind!r}")
