@@ -33,6 +33,7 @@ from ingestion.vintage import (
     REVISION_PRONE,
     REVISION_STABLE,
     REVISION_UNDETERMINED,
+    STABILITY_MEASURED_FROM,
     VINTAGE_CURRENT_ONLY,
     VINTAGE_LABELS,
     VINTAGE_ORIGINAL,
@@ -82,6 +83,49 @@ def test_the_three_sets_partition_the_probe_exactly_once_each(probe, derived):
 def test_the_probe_measured_with_the_threshold_the_declaration_describes(probe):
     assert probe["material_threshold"] == MATERIAL_THRESHOLD
     assert probe["probed_utc"] == EVIDENCE_PROBED_UTC
+
+
+def test_the_stability_claim_begins_where_the_probe_actually_measured_from(probe):
+    """``STABILITY_MEASURED_FROM`` is the probe's own left edge, not a date someone liked.
+
+    It is the one constant a backfill consults to decide whether REVISION_STABLE says
+    anything about an observation at all, so it has to BE the window the measurement was
+    taken over. Two halves, because the header and the per-series figures could drift apart:
+    the declared date is the probe's ``compare_from``, and ``compare_from`` is in fact the
+    left edge every ``replay_window`` figure :func:`classify` reads was computed against.
+    Move the probe's window back and leave the constant at 1999 and this goes red — which is
+    the failure that would otherwise let a pre-1999 DFF reading be stored as current-only.
+    """
+    assert STABILITY_MEASURED_FROM == probe["compare_from"]
+    edges = {entry["revision"]["replay_window"]["from"] for entry in probe["series"]}
+    assert edges == {STABILITY_MEASURED_FROM}, f"replay windows disagree on their left edge: {sorted(edges)}"
+
+
+def test_dff_is_why_the_window_is_load_bearing_and_the_evidence_still_says_so(probe):
+    """The concrete case the constant exists for: DFF is stable ONLY inside the window.
+
+    The declaration argues from DFF — clean across the replay window, materially revised 93
+    times over its full history, every one of those before the window opens. That argument
+    is a reading of this file, so it is pinned here. The pre-1999 part is derived, not
+    assumed: the replay window differs in ZERO observations at all (not merely zero
+    MATERIALLY), so every differing observation in the full overlap lies outside it.
+    """
+    dff = [
+        entry for entry in probe["series"]
+        if (entry["series"], entry["transformation"]) == ("DFF", None)
+    ]
+    assert len(dff) == 1, "the probe no longer measures DFF exactly once"
+    revision = dff[0]["revision"]
+    window = revision["replay_window"]
+
+    assert ("DFF", None) in REVISION_STABLE
+    # Inside the window: not one print moved, over a window far above the floor.
+    assert (window["differing"], window["differing_materially"]) == (0, 0)
+    assert window["shared_observations"] == 2369 >= MIN_SHARED_OBSERVATIONS
+    # Outside it: the 93 the prose cites, in an overlap that starts decades before 1999.
+    assert revision["differing_materially"] == 93
+    assert revision["shared_observations"] == 18624
+    assert revision["shared_span"][0] < STABILITY_MEASURED_FROM <= window["shared_span"][0]
 
 
 def test_every_fred_pair_the_catalog_collects_was_probed(probe):

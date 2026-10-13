@@ -57,6 +57,7 @@ __all__ = [
     "VINTAGE_LABELS",
     "MATERIAL_THRESHOLD",
     "MIN_SHARED_OBSERVATIONS",
+    "STABILITY_MEASURED_FROM",
     "EVIDENCE_FILE",
     "EVIDENCE_PROBED_UTC",
     "REVISION_PRONE",
@@ -67,10 +68,26 @@ __all__ = [
 ]
 
 #: A reading whose value is the one the source FIRST published for that period — what was
-#: knowable then. The only label a backfilled historical reading may carry.
+#: knowable then. Earned by READING A VINTAGE: in this tree, only
+#: ``ingestion.adapters.AlfredVintageAdapter`` produces one, and the reading carries the
+#: vintage date the server itself named.
+#:
+#: CORRECTION, recorded rather than edited away (PBG-CONT-003). This comment also said:
+#:
+#:     *"The only label a backfilled historical reading may carry."*
+#:
+#: WO-1.14's driver round measured that false, and the two sentences cannot both stand. A
+#: backfill of a MEASURED-STABLE pair does not read a vintage at all — it reads today's body,
+#: on the authority of :data:`REVISION_STABLE` — so what it stores is by definition
+#: :data:`VINTAGE_CURRENT_ONLY`, which is that label's own stated meaning word for word. The
+#: superseded sentence would have had a DFF reading from today's body claim to be the figure
+#: first published, which is the one claim this module exists to stop.
 VINTAGE_ORIGINAL = "original"
 #: A reading carrying today's value for a past period, because no vintage of it is
-#: available. Admissible only where revision was measured not to matter.
+#: available. Admissible only where revision was measured not to matter — which means
+#: :data:`REVISION_STABLE` for the pair AND an observation date at or after
+#: :data:`STABILITY_MEASURED_FROM`, the date the measurement itself begins at. Both halves,
+#: because "measured not to matter" is a claim about a window and not about a series.
 VINTAGE_CURRENT_ONLY = "current_only"
 #: The closed vocabulary of the ``raw_reading.vintage`` column. ``ingestion.store`` builds
 #: its CHECK constraint from this tuple so the SQL and the Python cannot drift apart.
@@ -82,6 +99,24 @@ MATERIAL_THRESHOLD = 0.005
 
 #: The floor below which "no material differences" is absence of evidence, not stability.
 MIN_SHARED_OBSERVATIONS = 250
+
+#: The DATE THE STABILITY CLAIM BEGINS AT, and therefore the date before which
+#: :data:`REVISION_STABLE` says nothing at all. It is the probe's own ``compare_from`` — the
+#: left edge of the replay window every ``replay_window`` figure in :data:`EVIDENCE_FILE`
+#: was measured over — and ``tests/test_vintage_declaration.py`` asserts the two agree, the
+#: same way it asserts :data:`MATERIAL_THRESHOLD` against the file's ``material_threshold``.
+#:
+#: WHY A BACKFILL NEEDS IT AND THE ROUTING DID NOT. ``requires_original_vintage`` answers for
+#: a PAIR, which is the whole question when the asker is "shall I search vintages at all".
+#: The backfill driver asks a narrower one — "may I store TODAY's body as the figure for
+#: observation D" — and the measured answer is yes only for a D the measurement covered. DFF
+#: is the case that makes this concrete rather than theoretical: it is REVISION-STABLE here
+#: because it differs in ZERO of 2,369 shared observations from 1999 onward, and over its
+#: FULL 18,624 shared observations it differs materially in 93, every one of them pre-1999.
+#: So a 1985 DFF reading taken from today's body is NOT the figure first published, and
+#: labelling it as though it were would be the forgery this module exists to prevent.
+#: ``ingestion.backfill`` refuses such a date rather than storing it; see that module.
+STABILITY_MEASURED_FROM = "1999-01-01"
 
 EVIDENCE_FILE = "evidence/wo114_alfred_probe.json"
 EVIDENCE_PROBED_UTC = "2026-10-13"
