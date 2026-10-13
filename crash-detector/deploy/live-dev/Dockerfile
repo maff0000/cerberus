@@ -15,8 +15,22 @@ LABEL org.opencontainers.image.title="cd-live-dev" \
       org.opencontainers.image.revision="${CD_BUILD_SHA}"
 
 # PyYAML 6.0.2 (not the 6.0 in requirements.txt: 6.0 has no wheel for current interpreters);
-# jsonschema pinned to the project's version.
-RUN pip install --no-cache-dir PyYAML==6.0.2 jsonschema==4.10.3
+# jsonschema pinned to the project's version; redis pinned to the WO-1.12 version (DEP-REDIS-001).
+#
+# THIS LINE IS NOT requirements.lock, AND THAT IS A PRE-EXISTING GAP, NOT A WO-1.12 CHOICE: the
+# designed install path is the hash-verified lockfile (PBG-CI-003), but this image has always
+# pip-installed these pins ad hoc instead. redis now joins PyYAML and jsonschema in that gap.
+# Recorded in STATUS.md 4a; fixing the lock pipeline is out of this WO's scope.
+#
+# redis is needed by BOTH services, not just the collector: ingestion/adapters.py imports redis at
+# module scope, and gui/state.py imports ingestion.catalog which imports ingestion.adapters, so the
+# GUI will not start without it either. One image, so both get it.
+#
+# async-timeout is deliberately NOT installed: redis 5.0.1 declares it
+# `async-timeout >=4.0.2 ; python_full_version <= "3.11.2"`, and this base image is CPython 3.12.14
+# (verified in the running container), so the marker is false here. The DEV HOST is 3.11.2 and does
+# need it; the container is not the host.
+RUN pip install --no-cache-dir PyYAML==6.0.2 jsonschema==4.10.3 redis==5.0.1
 
 RUN groupadd --system --gid 10010 cd-live \
  && useradd --system --uid 10010 --gid 10010 --no-create-home --shell /usr/sbin/nologin cd-live \
