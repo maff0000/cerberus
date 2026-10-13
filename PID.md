@@ -178,6 +178,23 @@ Complies with **FORGE** (`/srv/forge`): PID → PL (Rogue, driving session) → 
 - WO-1.4: MVP acceptance on DEV, then promote to IONOS PROD (host TBC — assumed `prod-web-1`, confirm with Helm).
 - WO-1.5: Define the actual re-entry decision rule — what dial reading triggers what LGT allocation conversation — so Epic 2's £850k question has a concrete trigger, not another open-ended wait.
 
+**Delivered so far (2026-10-11 → 2026-10-13, actual sequence — diverges from the WO-1.1–1.5 sketch above as real gaps were found during the recovery; this block is the honest record, not a rewrite of the original plan):**
+- WO-1.2 (`dbd7641`): standalone container recovered on FORGE — 586 commits of genuine build history salvaged from the PBGv2 archive, not re-derived.
+- WO-1.2b (`1a0def5`): real data ingestion wired for the ratified indicators (fail-safe: missing/stale never renders calm).
+- WO-1.3 (`de4eef1`): indicators registered in the engine.
+- WO-1.5 (`4b58c6c`): derived indicators + GUI, deployed as a Docker container on dell-debian.
+- WO-1.6 (`8d0ee45`): legacy-source reuse from the old ARGUS crash-engine code; `gold_spot`'s LBMA 403 first disclosed.
+- WO-1.7 (`2fa6aec`): remaining-pending indicators (`gold_real_rate_cross` attempt, `ism_manufacturing`, SLOOS manual-entry leg).
+- WO-1.8 (`2312e0f`): `private_credit_stress` (BIZD proxy).
+- WO-1.9 (`83d7057`): staleness-window recalibration (fixed the equity_crash "NO READING" bug — window too tight for routine holiday gaps).
+- WO-1.10 (`46808bd`): `constituent_breadth_200dma` — new S&P-breadth indicator, Matt's own proposal.
+- WO-1.11 (`393e0ba`): `MATH.md` — full, independently-verified dial mathematics, written for third-party (external architect) review.
+- WO-1.12 (`d377b69`, [PR #1](https://github.com/maff0000/cerberus/pull/1)): `gold_spot` re-sourced from HERMES's live XAU_USD feed, replacing the dead LBMA endpoint. First WO delivered through an actual reviewed GitHub PR.
+
+**Still open from the original sketch, not started:** WO-1.3 (backtest/R2D2 validation of the provisional weight mapping — real priority now that the external architect review is in motion), WO-1.4 (IONOS PROD promotion), WO-1.5 (the re-entry decision rule — now superseded in substance by the state-machine `DECISION-RULE.md` being drafted with the external architect; this PID line will be struck when that lands).
+
+**Process change, standing from 2026-10-13 (Matt):** every WO from here opens a real GitHub PR with a full description — what changed, why, verified evidence, disclosed-not-fixed items — before merge. WO-1.2 through WO-1.11 were merged directly with no PR trail; that gap is not being retroactively rewritten, only closed going forward.
+
 ### EPIC 2 — LGT Wealth Management System
 - WO-2.1: OpenBB fundamentals/macro feed into Trinity's portfolio review (via Epic 0).
 - WO-2.2: Fincept Terminal set up as Matt's personal interactive research console — screening, DCF, geopolitics desk. Token budget cap set before regular use.
