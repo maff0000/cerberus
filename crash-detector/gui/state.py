@@ -19,7 +19,7 @@ from datetime import datetime, timezone
 
 from crash_detector.dials.reading import Degraded, Value
 from crash_detector.serving.dial_presentation import Shown, present_dial
-from ingestion.catalog import SUBSTITUTED_FEEDS, window_seconds
+from ingestion.catalog import PROVISIONAL_CONSTRUCTIONS, QUORUM, SUBSTITUTED_FEEDS, window_seconds
 from ingestion.report import indicator_states
 from ingestion.store import SqliteStore
 from ingestion.wiring import DIALS, _rows, build_wiring, coverage, derive_from_store, derived_as_of, observations_from_store
@@ -102,7 +102,7 @@ def build_state(store: SqliteStore, now_utc: datetime) -> dict:
         elif ind in wiring.derived_for:
             got = derived[ind]
             entry["state"] = info["state"]
-            entry["why"] = "" if info["state"] == "DERIVED" else info["detail"]
+            entry["why"] = "" if info["state"] == "DERIVED" and ind not in QUORUM else info["detail"]
             if isinstance(got, str):
                 # the engine could not compute it from what is stored: say why, show no number
                 if info["state"] == "DERIVED":
@@ -132,6 +132,8 @@ def build_state(store: SqliteStore, now_utc: datetime) -> dict:
         if ind in SUBSTITUTED_FEEDS and live_candidate:
             entry["substitute"] = SUBSTITUTED_FEEDS[ind]
             entry["why"] = " ".join(filter(None, [entry["why"], "[SUBSTITUTE FEED, not the ratified row's] " + SUBSTITUTED_FEEDS[ind]]))
+        if ind in PROVISIONAL_CONSTRUCTIONS and live_candidate:
+            entry["why"] = " ".join(filter(None, [entry["why"], "[PROVISIONAL, SAMPLE-DEFINED] " + PROVISIONAL_CONSTRUCTIONS[ind]]))
         held = {d: why for (i, d), why in wiring.held.items() if i == ind}
         if held:
             entry["held"] = held

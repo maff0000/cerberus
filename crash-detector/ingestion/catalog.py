@@ -21,6 +21,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Callable, Union
 
+from crash_detector.engine.derivations import BREADTH_MINIMUM_RESOLVED, BREADTH_SAMPLE
 from ingestion.adapters import (
     CboeAdapter,
     FredAdapter,
@@ -30,7 +31,7 @@ from ingestion.adapters import (
 )
 
 __all__ = ["Ingredient", "INGREDIENTS", "NOT_TRACTABLE", "PARTIAL", "SUBSTITUTED_FEEDS", "WINDOW_OVERRIDES",
-           "window_seconds", "EGRESS_HOSTS", "build_adapter", "MANUAL_SLOOS_NDFI"]
+           "window_seconds", "EGRESS_HOSTS", "build_adapter", "MANUAL_SLOOS_NDFI", "QUORUM", "PROVISIONAL_CONSTRUCTIONS"]
 
 DAY, WEEK = 86_400, 7 * 86_400
 
@@ -163,6 +164,13 @@ INGREDIENTS: tuple[Ingredient, ...] = (
     Ingredient("yahoo.BIZD.adj", "yahoo", "BIZD", "usd", "market:BIZD (VanEck BDC Income ETF), dividend-adjusted close",
                ("private_credit_stress",), "COMPONENT", POLL_DAILY, column="adjclose", history=520,
                stands_for="BIZD dividend-adjusted close + last 520 adjusted closes for the 252-day trailing high"),
+    # ---- WO-1.10: constituent_breadth_200dma = % of a DEFINED 50-name large-cap sample above its own 200-day mean -------
+    # One COMPONENT per name, dividend-adjusted close like the legacy tell (yfinance auto_adjust=True). history=210 keeps
+    # the 200 closes the mean needs plus a small margin for bars Yahoo nulls; the ENGINE counts and fails loud (<30 of 50).
+    *(Ingredient(f"yahoo.{name}.adj", "yahoo", name, "usd", f"market:{name}, dividend-adjusted close (breadth sample)",
+                 ("constituent_breadth_200dma",), "COMPONENT", POLL_DAILY, column="adjclose", history=210,
+                 stands_for=f"{name} dividend-adjusted close + last 210 adjusted closes for its 200-day mean")
+      for name in BREADTH_SAMPLE),
     # ---- multpl (declared: multpl/Shiller) ---------------------------------------------
     # A NEW source id (was ``multpl.shiller_pe``, latest figure only): the payload now carries the
     # whole published monthly table for the engine's percentile, and the store keeps the first
@@ -182,6 +190,20 @@ PARTIAL: dict[str, str] = {}
 #: Indicators whose DECLARED source cannot be reached with public/free data, or whose
 #: definition needs a decision this module has no authority to make. No substitute is wired.
 NOT_TRACTABLE: dict[str, str] = {}
+
+#: Derived indicators that tolerate some absent components: indicator id -> the fewest components that must be healthy.
+#: Every other derived indicator needs ALL of its components. The floor is the engine's own (``BREADTH_MINIMUM_RESOLVED``).
+QUORUM: dict[str, int] = {"constituent_breadth_200dma": BREADTH_MINIMUM_RESOLVED}
+
+#: Indicators the ratified mapping never declared, built in a later WO as a DEFINED, uncalibrated construction. Each
+#: reason travels with the indicator onto the GUI so a number is never read as more than it is.
+PROVISIONAL_CONSTRUCTIONS: dict[str, str] = {
+    "constituent_breadth_200dma": "WO-1.10 addition, not a ratified row: the percent of a FIXED 50-name large-cap SAMPLE "
+    "(ported from the legacy ARGUS equity_tells BREADTH_SAMPLE) whose latest dividend-adjusted close is above its own "
+    "200-day mean. It is a defined sample, NOT the S&P 500 and not an index constituent list. It needs at least "
+    f"{BREADTH_MINIMUM_RESOLVED} of the 50 names to resolve and otherwise shows no number. Its band is a placeholder (no "
+    "backtest) and its weight is the lowest tier (x1). breadth_rsp_spy is a different, indirect signal and is unchanged.",
+}
 
 #: Indicators WIRED (WO-1.6) from a feed or rule that is NOT the one the ratified mapping row declares.
 #: A substitute is a provenance decision; each is recorded here with whose authority it rests on, and

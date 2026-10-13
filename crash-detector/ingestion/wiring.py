@@ -33,7 +33,7 @@ from pathlib import Path
 import yaml
 
 from crash_detector.dials.dialset import DialSet
-from crash_detector.engine.derivations import DERIVATIONS, DerivationKind, DerivationUnavailable, derive
+from crash_detector.engine.derivations import BREADTH_SAMPLE, DERIVATIONS, DerivationKind, DerivationUnavailable, derive
 from crash_detector.engine.config import ConfigSnapshot, DialSpec
 from crash_detector.engine.evaluate import evaluate
 from crash_detector.engine.model import (
@@ -99,6 +99,8 @@ DERIVED_FROM: dict = {
     "sloos_bank_lending": ("fred.DRTSCILM", "manual.sloos_ndfi"),
     # WO-1.8 (SUBSTITUTED_FEEDS: a BIZD market-price proxy for the ratified filing-based composite):
     "private_credit_stress": ("yahoo.BIZD.adj",),
+    # WO-1.10 (PROVISIONAL_CONSTRUCTIONS: a new indicator over a DEFINED 50-name sample; one component per name, in sample order):
+    "constituent_breadth_200dma": tuple(f"yahoo.{name}.adj" for name in BREADTH_SAMPLE),
 }
 
 #: Rows the ratified mapping still marks ``registration_pending`` that are wired anyway (WO-1.7), with the reason. The

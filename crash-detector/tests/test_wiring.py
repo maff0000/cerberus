@@ -41,6 +41,8 @@ CALM = {
     "ism_manufacturing": 0.0, "sloos_bank_lending": 0.0,
     # WO-1.8: percent BIZD sits below its 252-day high; seeded to exactly this figure (the calm end of the band).
     "private_credit_stress": 5.0,
+    # WO-1.10: percent of the 50-name sample above its 200dma; 70.0 == 35 names above, seeded exactly (see _breadth_components).
+    "constituent_breadth_200dma": 70.0,
 }
 
 
@@ -106,6 +108,19 @@ def _fiscal_components(parts, fired, date_text):
             parts[1].source_id: {"unit": "x", "observation_date": core[-1][0], "value": core[-1][1], "history": core}}
 
 
+def _breadth_components(parts, figure, date_text, *, absent=(), history_len=210):
+    """50 name histories whose engine figure is `figure` percent: 199 closes of 100, then 110 (above its mean) or 90 (below)."""
+    above = round(figure / 100.0 * len(parts))
+    out = {}
+    for n, part in enumerate(parts):
+        if n in absent:
+            continue
+        latest = 110.0 if n < above else 90.0
+        history = [[f"2025-{1 + i // 28:02d}-{1 + i % 28:02d}", 100.0] for i in range(history_len - 1)] + [[date_text, latest]]
+        out[part.source_id] = {"unit": "usd", "observation_date": date_text, "value": latest, "history": history}
+    return out
+
+
 def _derived_components(wiring, indicator, figure, date_text, vix=14.0):
     """{ingredient source_id: payload} whose engine derivation is `figure`, built independently of the engine."""
     parts = wiring.derived_for[indicator]
@@ -121,6 +136,8 @@ def _derived_components(wiring, indicator, figure, date_text, vix=14.0):
         latest = 100.0 * (1.0 - figure / 100.0)  # 259 closes of 100, then this one: 1 - latest/high == figure %
         history = [[f"2025-{1 + i // 28:02d}-{1 + i % 28:02d}", 100.0] for i in range(259)] + [[date_text, latest]]
         return {parts[0].source_id: {"unit": unit, "observation_date": date_text, "value": latest, "history": history}}
+    if indicator == "constituent_breadth_200dma":
+        return _breadth_components(parts, figure, date_text)
     if indicator == "shiller_cape":
         j = round(figure * 10) - 1  # history 1..999 => percentile of j+0.5 is 100*(1+j)/1000
         history = [[f"{1800 + i // 12:04d}-{1 + i % 12:02d}-01", float(i + 1)] for i in range(999)]
@@ -214,7 +231,7 @@ def _mag(reading):
 
 def test_only_whole_quantity_ingredients_are_live_and_the_rest_is_pending_with_a_reason(wiring):
     assert len(wiring.ingredient_for) == 18  # + gold_spot (WO-1.6)
-    assert len(wiring.derived_for) == 12  # + buffett_indicator, fiscal_dominance (WO-1.6); + gold_real_rate_cross, ism, sloos (WO-1.7); + private_credit_stress (WO-1.8)
+    assert len(wiring.derived_for) == 13  # + buffett_indicator, fiscal_dominance (WO-1.6); + gold_real_rate_cross, ism, sloos (WO-1.7); + private_credit_stress (WO-1.8); + constituent_breadth_200dma (WO-1.10)
     assert set(wiring.pending) == set()  # WO-1.8: every ratified row is wired (private_credit_stress as a disclosed proxy)
     assert wiring.live_ids | set(wiring.pending) == {r["id"] for r in _rows()}
     assert not wiring.live_ids & set(wiring.pending)
