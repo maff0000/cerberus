@@ -28,6 +28,8 @@ import urllib.request
 from datetime import date, datetime, timezone
 from typing import Any, Callable, Mapping, Union
 
+import redis
+
 from crash_detector.collectors.adapter import AdapterFetchError, FetchedResponse
 
 __all__ = [
@@ -37,8 +39,14 @@ __all__ = [
     "YahooChartAdapter",
     "MultplShillerAdapter",
     "LbmaGoldAdapter",
+    "HermesCandleAdapter",
     "ManualEntryAdapter",
     "LBMA_USER_AGENT",
+    "HERMES_PEER",
+    "HERMES_CANDLE_CONTRACT",
+    "HERMES_CANDLE_CONTRACT_VERSION",
+    "hermes_latest_key",
+    "parse_hermes_candle",
     "parse_lbma_gold",
     "parse_fred_csv",
     "parse_cboe_csv",
@@ -306,6 +314,90 @@ def parse_lbma_gold(pm_text: str, am_text: str, unit: str, history: int = 0) -> 
     return out
 
 
+#: WO-1.12. HERMES is a SEPARATE SYSTEM in another seat's domain (Helm's), and this project is one
+#: READ-ONLY CONSUMER of a contract it publishes — the same relationship it has to FRED, Cboe, Yahoo
+#: and multpl.com, differing only in that the transport is a Redis GET on the LAN rather than HTTPS.
+#: Nothing in this module writes, expires, renames or otherwise touches a ``hermes:*`` key, and
+#: nothing here may be pointed at HERMES' own container, compose project or files.
+#:
+#: HERMES' CURRENT CLASSIFICATION, recorded because a reader of a gold price is owed it rather than
+#: having to go and find it: the publishing service is labelled ``NON_PROMOTED_ENGINEERING_CANDIDATE``
+#: with ``ENVIRONMENT=DEV`` and ``RUN_ENV=STAGING``, i.e. it is NOT a promoted production service.
+#: Its price data is nevertheless REAL: it runs with ``OANDA_ENVIRONMENT=live``, so these are live
+#: OANDA quotes and not a demo/practice feed. Matt has accepted that maturity caveat explicitly
+#: ("good enough, will be maintained"); it is disclosed here, in the mapping row and in STATUS.md
+#: rather than smoothed over, and it is not re-argued in code.
+HERMES_PEER = ("192.168.11.10", 6379, 0)
+#: The published contract this adapter reads, by name and version. A body claiming anything else is
+#: NOT read as if it were this one: it is MALFORMED. The contract may change under us, and the only
+#: safe response to a contract we were not written against is to refuse it loudly.
+HERMES_CANDLE_CONTRACT = "hermes.candles.latest"
+HERMES_CANDLE_CONTRACT_VERSION = "v1"
+
+
+def hermes_latest_key(instrument: str, timeframe: str) -> str:
+    """The key HERMES publishes its newest closed candle for one instrument/timeframe under."""
+    return f"hermes:candles:{instrument}:{timeframe}:latest:{HERMES_CANDLE_CONTRACT_VERSION}"
+
+
+def parse_hermes_candle(text: Union[str, None], instrument: str, timeframe: str, unit: str) -> dict:
+    """The CLOSE of HERMES' newest closed candle for ``instrument``/``timeframe``.
+
+    ``text`` is the raw key body, or ``None`` for a key that is not there. An absent key is the
+    publisher saying it has nothing (its own TTL is 4h, so a stopped HERMES empties it rather than
+    leaving a stale body behind): that is EMPTY, which reads MISSING downstream and never calm.
+
+    REFUSED, NOT INTERPRETED. The envelope must name the contract and version this function was
+    written against, and the candle must be for the instrument and timeframe that were ASKED FOR —
+    the key says one thing and the body must agree, or we are reading a different series under a
+    familiar name. Any of those is MALFORMED.
+
+    EMPTY, NOT A NUMBER. ``status`` other than ``OK`` is the publisher declining to vouch for the
+    candle, and ``is_closed`` false is a bar still forming. Either yields no value: the store keeps
+    the FIRST payload admitted for a source period (Auditor finding 2, WO-1.2b), so admitting a
+    partial bar would lock it in as the close for the whole period.
+
+    THE DATE IS THE CANDLE'S OWN UTC DAY, and that is a deliberate, disclosed coarsening. The
+    payload schema carries a DATE, the row's cadence is daily and its staleness window is 7 days, so
+    the figure is "the close of the FIRST H4 candle HERMES publishes on each UTC day" — a defined,
+    reproducible once-a-day reference in the same spirit as the LBMA daily fix it replaces, not an
+    intraday tick. Later candles the same UTC day are not admitted, because the period is already
+    filled; nothing is averaged, carried forward or overwritten.
+
+    NOTHING IS COMPUTED. ``open``, ``high``, ``low``, the body/wick geometry and the derivation
+    metadata HERMES also publishes are READ PAST, not combined: a close is what the mapping row's
+    ``market:XAUUSD`` spot asks for (collector-never-computes, BLUEPRINT §5).
+    """
+    if text is None:
+        return {"unit": unit}  # the key is absent or expired: EMPTY, never a defaulted price
+    try:
+        envelope = json.loads(text)
+    except ValueError:
+        return {"malformed": "shape"}  # no "unit": fails the closed schema -> MALFORMED
+    if type(envelope) is not dict:
+        return {"malformed": "shape"}
+    if (envelope.get("contract") != HERMES_CANDLE_CONTRACT
+            or envelope.get("contract_version") != HERMES_CANDLE_CONTRACT_VERSION):
+        return {"malformed": "contract"}
+    candle = envelope.get("data")
+    if type(candle) is not dict:
+        return {"malformed": "shape"}
+    if candle.get("instrument") != instrument or candle.get("timeframe") != timeframe:
+        return {"malformed": "series"}
+    if envelope.get("status") != "OK" or candle.get("is_closed") is not True:
+        return {"unit": unit}  # the publisher does not vouch for it, or it is still forming: EMPTY
+    stamp = candle.get("timestamp_utc")
+    if type(stamp) is not str:
+        return {"malformed": "date"}
+    try:
+        day = date.fromisoformat(stamp[:10]).isoformat()
+    except ValueError:
+        return {"malformed": "date"}
+    close = candle.get("close")
+    numeric = type(close) in (int, float) and not isinstance(close, bool) and math.isfinite(close)
+    return {"unit": unit, "observation_date": day, "value": close if numeric else str(close)}
+
+
 # --- transport ------------------------------------------------------------------------ #
 
 
@@ -338,6 +430,38 @@ def http_get(url: str, timeout_seconds: float, headers: Union[Mapping[str, str],
         raise AdapterFetchError("CONNECTION_FAILED") from None
     except OSError:
         raise AdapterFetchError("CONNECTION_FAILED") from None
+    if len(body) > MAX_BODY_BYTES:
+        raise AdapterFetchError("BODY_TOO_LARGE")
+    return body.decode("utf-8", errors="replace")
+
+
+def redis_read(key: str, timeout_seconds: float) -> Union[str, None]:
+    """One bounded READ of ONE key on the HERMES publication peer. Returns ``None`` for no key.
+
+    READ-ONLY BY CONSTRUCTION, not by intention: the only command this function can issue is
+    ``GET`` of the key it was handed. There is no write path here to misuse, and the connection is
+    closed again immediately rather than pooled.
+
+    Failure discipline is the same as :func:`http_get`: a stable class and NO message, URL or
+    exception text (PBG-SEC-002). The body is bounded by the same ceiling, so a key somebody grew
+    without bound cannot make us buffer without bound.
+    """
+    host, port, database = HERMES_PEER
+    client = redis.Redis(
+        host=host, port=port, db=database,
+        socket_connect_timeout=timeout_seconds, socket_timeout=timeout_seconds,
+        single_connection_client=True, decode_responses=False,
+    )
+    try:
+        body = client.get(key)
+    except redis.exceptions.TimeoutError:
+        raise AdapterFetchError("TIMEOUT") from None
+    except (redis.exceptions.RedisError, OSError):
+        raise AdapterFetchError("CONNECTION_FAILED") from None
+    finally:
+        client.close()
+    if body is None:
+        return None
     if len(body) > MAX_BODY_BYTES:
         raise AdapterFetchError("BODY_TOO_LARGE")
     return body.decode("utf-8", errors="replace")
@@ -521,6 +645,36 @@ class LbmaGoldAdapter(_BaseAdapter):
         pm_body = self._getter(LBMA_PM_URL, timeout_seconds, self._headers())
         am_body = self._getter(LBMA_AM_URL, timeout_seconds, self._headers())
         return parse_lbma_gold(pm_body, am_body, self._unit, self._history)
+
+
+class HermesCandleAdapter(_BaseAdapter):
+    """HERMES' published latest-closed-candle contract, read over its Redis publication (WO-1.12).
+
+    ONE bounded ``GET`` of ONE key, and the key is derived from the instrument and timeframe this
+    adapter was constructed with — it is not taken from anything a response says, so a body cannot
+    redirect the next read. See :data:`HERMES_PEER` for what HERMES is, what its build labels say
+    and why its data is live despite them, and :func:`parse_hermes_candle` for what is refused.
+
+    It has no ``_url``: the transport is not HTTP, so this adapter is NOT part of the HTTP egress
+    allowlist and does not appear in ``ingestion.catalog.EGRESS_HOSTS``. The peer it reaches is
+    declared in ``ingestion.catalog.NON_HTTP_PEERS`` instead, and why it cannot be registered in
+    ``deploy/egress-destinations.yaml`` is recorded there.
+    """
+
+    __slots__ = ("_instrument", "_timeframe")
+    adapter_id = "cd.ingest.hermes_candle_latest.v1"
+
+    def __init__(self, instrument: str, timeframe: str, **kw: Any) -> None:
+        # The default getter on the shared shell is http_get, which is the WRONG transport here;
+        # it is replaced rather than inherited, and a test still injects its own in its place.
+        kw.setdefault("getter", redis_read)
+        super().__init__(**kw)
+        self._instrument = instrument
+        self._timeframe = timeframe
+
+    def _acquire(self, timeout_seconds: float) -> dict:
+        body = self._getter(hermes_latest_key(self._instrument, self._timeframe), timeout_seconds)
+        return parse_hermes_candle(body, self._instrument, self._timeframe, self._unit)
 
 
 class ManualEntryAdapter(_BaseAdapter):

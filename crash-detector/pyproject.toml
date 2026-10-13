@@ -29,9 +29,19 @@ keywords = ["market-stress", "advisory", "detection"]
 # distribution actually installed on this host is psycopg2-binary 2.9.11 (import name
 # `psycopg2`). The distribution name is pinned to what is installed and verified, not to
 # what was written down.
+#
+# WO-1.12 adds redis: the client ingestion.adapters.redis_read uses to GET the HERMES candle
+# key that now feeds gold_spot. 5.0.1 is the version already installed here, read from
+# importlib.metadata. Its lockfile entry (and that of its 3.11.2 marker dependency
+# async-timeout) is OWED — see requirements.txt.
+#
+# PyYAML IS DELIBERATELY NOT ADDED HERE BY THIS WO, and the discrepancy is pre-existing, not
+# introduced: requirements.txt pins PyYAML==6.0 and this table has never listed it. Reconciling
+# the two manifests is a separate, unrelated correction and WO-1.12 does not make it.
 dependencies = [
   "jsonschema==4.10.3",
   "psycopg2-binary==2.9.11",
+  "redis==5.0.1",
 ]
 
 [project.optional-dependencies]

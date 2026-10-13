@@ -16,5 +16,18 @@ jsonschema==4.10.3
 psycopg2-binary==2.9.11
 PyYAML==6.0
 
+# WO-1.12: the client ``ingestion.adapters.redis_read`` uses to GET the HERMES candle key for
+# gold_spot. 5.0.1 is the version ALREADY INSTALLED on the DEV host interpreter, read from
+# importlib.metadata and not chosen, so this pin needs no network install either.
+#
+# NOT YET IN requirements.lock, STATED RATHER THAN QUIETLY OMITTED. The lock is the artefact a
+# build installs from, and adding redis there needs TWO verified sha256 digest sets, not one:
+# on this host's CPython 3.11.2 redis 5.0.1's own metadata requires ``async-timeout>=4.0.2``
+# (the marker is ``python_full_version <= "3.11.2"``, which this interpreter satisfies exactly).
+# Both would also need registry entries. That is a bounded piece of work with its own evidence
+# and it is OWED, not done: until it lands, a container built from the lock will NOT have redis
+# and gold_spot will not collect there. See STATUS.md §4a.
+redis==5.0.1
+
 # Test dependency, present on the host, declared in pyproject.toml [dev] as well:
 pytest==9.0.2

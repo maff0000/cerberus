@@ -295,8 +295,9 @@ indicators:
     polarity: high_is_worse
     cadence: daily
     staleness_window_seconds: 604800    # 7 days (WO-1.9): market-day series, worst-case ~6d gap + 1d grace
-    source: {feed: "market:XAUUSD", provenance: "spot"}
+    source: {feed: "market:XAUUSD (HERMES published H4 candle close, instrument XAU_USD, live OANDA spot)", provenance: "spot"}
     calculation: "Absolute gold trend; corroborates the real-rate cross"
+    note: "WO-1.12 SOURCE CHANGE, NOT A FEED SUBSTITUTION: the ratified feed is still market:XAUUSD with provenance spot, and HERMES publishes live OANDA XAU/USD, which IS spot gold — not a futures contract and not a fix. It REPLACES the LBMA gold-fix endpoint, which answers HTTP 403 to this host and delivered no reading at all from WO-1.6 to WO-1.12. DISCLOSED MATURITY CAVEAT, stated rather than smoothed over: HERMES is a SEPARATE SYSTEM in another seat's domain and its publishing service is labelled NON_PROMOTED_ENGINEERING_CANDIDATE with ENVIRONMENT=DEV and RUN_ENV=STAGING — it is NOT a promoted production service. Its PRICE DATA is nevertheless real: it runs OANDA_ENVIRONMENT=live, so these are live OANDA quotes and not a demo feed. Matt accepted that maturity caveat explicitly ('good enough, will be maintained'). DISCLOSED COARSENING: the figure is the close of the FIRST H4 candle HERMES publishes each UTC day — a defined, reproducible once-a-day reference in the same spirit as the LBMA daily fix it replaces, NOT an intraday tick. Transport is a read-only Redis GET on a LAN peer, so it is declared in ingestion.catalog.NON_HTTP_PEERS and NOT in deploy/egress-destinations.yaml; the reason is recorded there. See ingestion.catalog (hermes.xau_usd.h4_close) and ingestion.adapters.HERMES_PEER."
   - id: cpi_yoy
     name: "CPI YoY"
     dial: monetary_debasement

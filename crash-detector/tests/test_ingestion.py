@@ -15,7 +15,8 @@ from crash_detector.collectors import DelayKind, RetryPolicy, collect
 from crash_detector.collectors.adapter import AdapterFetchError
 from crash_detector.observations import OK, FetchFailed, Malformed
 from ingestion import adapters as A
-from ingestion.catalog import EGRESS_HOSTS, INGREDIENTS, NOT_TRACTABLE, PARTIAL, SUBSTITUTED_FEEDS, build_adapter
+from ingestion.catalog import (EGRESS_HOSTS, INGREDIENTS, NON_HTTP_PEERS, NOT_TRACTABLE, PARTIAL,
+                               SUBSTITUTED_FEEDS, build_adapter)
 from ingestion.report import indicator_states
 from ingestion.store import SqliteStore
 
@@ -71,10 +72,23 @@ def test_every_declared_input_of_a_derived_indicator_is_ingested():
 def test_adapter_urls_reach_only_registered_egress_hosts_and_registry_matches():
     from urllib.parse import urlsplit
 
-    hosts = {urlsplit(build_adapter(i, lambda: NOW)._url()).hostname for i in INGREDIENTS if i.kind != "manual"}
+    # WO-1.12: the HERMES ingredient's transport is a Redis GET, not HTTP. It has no ``_url`` and is
+    # therefore NOT an egress host. It is excluded BY KIND AND NAMED, not skipped by a try/except, so a
+    # SECOND non-HTTP transport cannot be added silently — the two assertions below fail until it is
+    # declared in NON_HTTP_PEERS and listed here too.
+    non_http = [i for i in INGREDIENTS if i.kind == "hermes"]
+    assert [i.source_id for i in non_http] == ["hermes.xau_usd.h4_close"]
+    assert len(NON_HTTP_PEERS) == len(non_http)
+    assert all(f"{A.HERMES_PEER[0]}:{A.HERMES_PEER[1]}" in peer for peer in NON_HTTP_PEERS)
+
+    hosts = {urlsplit(build_adapter(i, lambda: NOW)._url()).hostname
+             for i in INGREDIENTS if i.kind not in ("manual", "hermes")}
     assert hosts == set(EGRESS_HOSTS)
     registry = yaml.safe_load((ROOT / "deploy/egress-destinations.yaml").read_text())["destinations"]
     assert {d["host"] for d in registry} == hosts
+    # The LAN peer is absent from BOTH the HTTP allowlist and the destination registry, deliberately:
+    # that registry refuses an address literal by design (CD-ASR-F04). See catalog.NON_HTTP_PEERS.
+    assert A.HERMES_PEER[0] not in hosts and A.HERMES_PEER[0] not in {d["host"] for d in registry}
 
 
 def test_source_ids_are_unique():
@@ -295,13 +309,19 @@ def test_lbma_unrecognised_bodies_are_malformed_and_an_empty_one_is_empty():
 
 
 def test_lbma_adapter_asks_for_both_fixes_with_the_browser_style_agent_and_records_a_403_not_a_value(store):
+    # WO-1.12 retarget, NOT a weakening: ``lbma.gold_fix_usd`` (gold_spot) is gone — HERMES serves that row
+    # now — but the LBMA adapter is STILL WIRED, as the gold leg of ``gold_real_rate_cross``
+    # (``lbma.gold_fix_usd.history``). The same two GETs, the same agent and the same 403 are asserted
+    # against that id, so the failing-endpoint evidence this test carries is kept rather than deleted. The
+    # indicator it now sinks is gold_real_rate_cross; gold_spot is asserted UNAFFECTED, which is the whole
+    # point of giving HERMES a NEW source id.
     seen = []
 
     def fake(url, timeout, headers):
         seen.append((url, dict(headers or {})))
         return PM if "gold_pm" in url else AM
 
-    result, ing = _run(store, "lbma.gold_fix_usd", fake)
+    result, ing = _run(store, "lbma.gold_fix_usd.history", fake)
     assert [u for u, _ in seen] == [A.LBMA_PM_URL, A.LBMA_AM_URL]
     assert all(h == {"User-Agent": A.LBMA_USER_AGENT} for _, h in seen)
     assert isinstance(result.final_outcome, OK) and result.final_outcome.payload["value"] == 4216.5
@@ -309,9 +329,11 @@ def test_lbma_adapter_asks_for_both_fixes_with_the_browser_style_agent_and_recor
     def blocked(url, timeout, headers):
         raise AdapterFetchError("HTTP_ERROR", 403)  # the Cloudflare "Attention Required" refusal seen on 2026-10-11
 
-    refused, _ = _run(store, "lbma.gold_fix_usd", blocked)
+    refused, _ = _run(store, "lbma.gold_fix_usd.history", blocked)
     assert isinstance(refused.final_outcome, FetchFailed) and refused.final_outcome.http_status == 403
-    assert {x["id"]: x["state"] for x in indicator_states(store, NOW)}["gold_spot"] == "FEED_FAILING"
+    states = {x["id"]: x["state"] for x in indicator_states(store, NOW)}
+    assert states["gold_real_rate_cross"] == "FEED_FAILING"
+    assert states["gold_spot"] == "MISSING"  # its own id, never read in this test: NOT dragged down by LBMA
 
 
 def test_fred_history_carries_raw_levels_oldest_first_and_a_bad_level_is_malformed_not_dropped():
@@ -364,4 +386,8 @@ def test_wo_1_6_ingredients_poll_slowly_and_the_fred_history_ones_ask_for_histor
     by_id = {i.source_id: i for i in INGREDIENTS}
     assert by_id["fred.WALCL"].history >= 54 and by_id["fred.CPILFESL"].history >= 4
     assert by_id["fred.NCBEILQ027S"].as_of_rule == by_id["fred.GDP"].as_of_rule == "quarter_end"
-    assert by_id["lbma.gold_fix_usd"].completes == "DIRECT" and by_id["lbma.gold_fix_usd"].serves == ("gold_spot",)
+    # WO-1.12: gold_spot's DIRECT ingredient is HERMES' candle close, not the LBMA fix. The LBMA
+    # ingredient that remains is the gold_real_rate_cross history leg, and it is a COMPONENT.
+    assert by_id["hermes.xau_usd.h4_close"].completes == "DIRECT" and by_id["hermes.xau_usd.h4_close"].serves == ("gold_spot",)
+    assert "lbma.gold_fix_usd" not in by_id  # retired with its 403; its history leg keeps its own id
+    assert by_id["lbma.gold_fix_usd.history"].serves == ("gold_real_rate_cross",)
