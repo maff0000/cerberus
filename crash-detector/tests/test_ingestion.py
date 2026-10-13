@@ -31,7 +31,8 @@ POLICY = RetryPolicy(max_attempts=1, timeout_seconds=5.0, backoff_seconds=0.0)
 def test_every_ratified_indicator_is_served_or_listed_not_tractable_never_both():
     ids = {row["id"] for row in MAPPING}
     served = {i for ing in INGREDIENTS for i in ing.serves}
-    assert len(ids) == 30
+    assert len(ids - {"constituent_breadth_200dma"}) == 30  # the 30 ratified rows; WO-1.10 added exactly one, named here
+    assert "constituent_breadth_200dma" in ids
     assert served | set(NOT_TRACTABLE) == ids
     assert not served & set(NOT_TRACTABLE)
 

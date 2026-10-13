@@ -125,7 +125,7 @@ def test_the_bizd_ingredient_asks_for_the_adjusted_close_with_enough_history():
     assert adapter._field == "adjclose" and "BIZD" in adapter._url() and "range=2y" in adapter._url()
     # every OTHER yahoo ingredient still reads the printed close
     for other in INGREDIENTS:
-        if other.kind == "yahoo" and other is not ing:
+        if other.kind == "yahoo" and other is not ing and "constituent_breadth_200dma" not in other.serves:
             assert build_adapter(other, lambda: NOW)._field == "close"
 
 

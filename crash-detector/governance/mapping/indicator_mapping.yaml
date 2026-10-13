@@ -164,6 +164,17 @@ indicators:
     staleness_window_seconds: 604800    # 7 days (WO-1.9): market-day series, worst-case ~6d gap + 1d grace
     source: {feed: "market:RSP,SPY", provenance: "ETF prices"}
     calculation: "Equal- vs cap-weight S&P; falling = narrow leadership precedes tops"
+  - id: constituent_breadth_200dma
+    name: "Constituent breadth (% of 50 large-caps above 200dma)"
+    dial: equity_crash
+    category: volatility_internals
+    tier: 3             # x1 -- lowest weight: provisional, sample-defined, never scored in the legacy engine
+    polarity: low_is_worse
+    cadence: daily
+    staleness_window_seconds: 604800    # 7 days, same market-day window as breadth_rsp_spy (WO-1.9)
+    source: {feed: "market:50-name large-cap sample (Yahoo chart, dividend-adjusted)", provenance: "stock prices; a DEFINED SAMPLE, not the S&P 500"}
+    calculation: "Percent of a fixed 50-name large-cap sample whose latest close is above its own 200-day mean; needs >=30 of 50 to resolve"
+    note: "WO-1.10 addition (NOT part of the 2026-08-24 ratified set; Matt's narrow-leadership concern, dispatched by Trinity). Direct breadth, where breadth_rsp_spy is an indirect proxy; both stay."
   - id: cboe_skew
     name: "CBOE SKEW"
     dial: equity_crash

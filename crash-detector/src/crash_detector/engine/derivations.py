@@ -57,6 +57,8 @@ __all__ = [
     "FISCAL_CORE_CPI_ANNUALISED_FIRE_PERCENT",
     "CORRELATION_WINDOW",
     "DRAWDOWN_WINDOW",
+    "BREADTH_SAMPLE",
+    "BREADTH_MINIMUM_RESOLVED",
     "MINIMUM_SURVEY_HISTORY",
     "derive",
 ]
@@ -88,6 +90,22 @@ MINIMUM_SURVEY_HISTORY = 120
 DRAWDOWN_WINDOW = 252
 
 
+#: WO-1.10 ``constituent_breadth_200dma``: the FIXED, reproducible 50-name large-cap sample, ported verbatim from the
+#: legacy ARGUS ``equity_tells.BREADTH_SAMPLE`` (author Helm; ran live 2026-07-07 at ~70%). It is a DEFINED SAMPLE, not
+#: the S&P 500 and not an index constituent list: the names were chosen by hand and are never refreshed.
+BREADTH_SAMPLE = (
+    "AAPL", "MSFT", "NVDA", "AMZN", "GOOGL", "META", "TSLA", "BRK-B", "JPM", "V",
+    "UNH", "XOM", "JNJ", "WMT", "MA", "PG", "HD", "AVGO", "CVX", "LLY",
+    "ABBV", "KO", "PEP", "MRK", "COST", "ADBE", "CRM", "BAC", "MCD", "CSCO",
+    "ACN", "TMO", "ABT", "LIN", "DHR", "NKE", "DIS", "VZ", "TXN", "WFC",
+    "PM", "INTC", "CMCSA", "AMD", "IBM", "QCOM", "CAT", "GE", "HON", "UNP",
+)
+
+#: Fail-loud floor, ported from the legacy tell: fewer than this many of the 50 names resolving yields NO figure,
+#: never a percentage over a thinned sample dressed up as the whole.
+BREADTH_MINIMUM_RESOLVED = 30
+
+
 class DerivationKind(Enum):
     RATIO = "ratio"
     PERCENT_VS_AVERAGE = "percent_vs_average"
@@ -97,6 +115,7 @@ class DerivationKind(Enum):
     Z_COMPOSITE = "z_composite"
     LEG_MEAN = "leg_mean"
     DRAWDOWN = "drawdown"
+    BREADTH_PERCENT = "breadth_percent"
 
 
 class DerivationUnavailable(Exception):
@@ -162,6 +181,10 @@ DERIVATIONS = {
     # WO-1.8: a MARKET-PRICE PROXY for the ratified composite (BDC NAV discount + non-accrual + PIK), see SUBSTITUTED_FEEDS.
     "private_credit_stress": Derivation(
         DerivationKind.DRAWDOWN, ("series",), "percent_below_trailing_high", 1.0, DRAWDOWN_WINDOW
+    ),
+    # WO-1.10: a NEW indicator (not a replacement for breadth_rsp_spy): percent of a DEFINED 50-name sample above its 200dma.
+    "constituent_breadth_200dma": Derivation(
+        DerivationKind.BREADTH_PERCENT, BREADTH_SAMPLE, "percent_of_sample_above_200dma", 1.0, 200
     ),
 }
 
@@ -433,6 +456,50 @@ def _drawdown(spec: Derivation, inputs: dict) -> Derived:
     return Derived(value=(1.0 - closes[-1] / max(closes)) * 100.0, observation_date=date_text, unit=spec.unit)
 
 
+def _breadth_percent(spec: Derivation, inputs: dict) -> Derived:
+    """``constituent_breadth_200dma`` (ported from the legacy ``fetch_breadth``; a DEFINED 50-name sample, not the S&P 500).
+
+    A name RESOLVES when its stored history holds at least ``window`` (200) real closes ending on the reading's own date
+    and value; it is then ABOVE when its latest close exceeds the simple mean of its last 200 closes. All names are
+    measured on the NEWEST close date any of them has: a name whose latest close is older is unresolved, not carried
+    forward (hardening beyond the legacy tell, which compared whatever each name last printed). The figure is
+    ``100 * above / resolved``; fewer than ``BREADTH_MINIMUM_RESOLVED`` resolved refuses with the count and the missing
+    names, never a partial number.
+    """
+    measured, unresolved = {}, {}
+    for name in spec.roles:
+        readings = inputs.get(name) or []
+        if not readings:
+            unresolved[name] = "no stored reading"
+            continue
+        try:
+            date_text, value = _dated_value(name, readings[0])
+            rows = _history_of(name, readings[0])
+        except DerivationUnavailable as why:
+            unresolved[name] = str(why)
+            continue
+        if len(rows) < spec.window:
+            unresolved[name] = f"{len(rows)} closes, needs {spec.window}"
+        elif rows[-1][0] != date_text or not math.isclose(rows[-1][1], value, rel_tol=1e-9):
+            unresolved[name] = "the reading is not the last close of its own history"
+        else:
+            closes = [close for _, close in rows[-spec.window:]]
+            if any(close <= 0.0 for close in closes):
+                unresolved[name] = "a non-positive close"
+            else:
+                measured[name] = (date_text, closes[-1] > sum(closes) / len(closes))
+    newest = max((day for day, _ in measured.values()), default=None)
+    for name in [n for n, (day, _) in measured.items() if day != newest]:
+        unresolved[name] = f"latest close {measured.pop(name)[0]} is older than the newest ({newest})"
+    if len(measured) < BREADTH_MINIMUM_RESOLVED:
+        raise DerivationUnavailable(
+            f"only {len(measured)} of {len(spec.roles)} sample names resolved (<{BREADTH_MINIMUM_RESOLVED}); "
+            f"no figure over a thinned sample. Unresolved: {sorted(unresolved)}"
+        )
+    above = sum(1 for _, is_above in measured.values() if is_above)
+    return Derived(value=100.0 * above / len(measured), observation_date=newest, unit=spec.unit)
+
+
 @admits(indicator_id=str, inputs=dict)
 def derive(indicator_id: str, inputs: dict) -> Derived:
     """Compute one derived indicator from its stored component readings.
@@ -447,7 +514,9 @@ def derive(indicator_id: str, inputs: dict) -> Derived:
     if set(inputs) != set(spec.roles):
         raise ValueError(f"{indicator_id!r} takes inputs {sorted(spec.roles)}, got {sorted(inputs)}")
     for role, readings in inputs.items():
-        if type(readings) is not list or not readings:
+        if type(readings) is not list:
+            raise DerivationUnavailable(f"no stored reading for {role}")
+        if not readings and spec.kind is not DerivationKind.BREADTH_PERCENT:  # breadth tolerates absent names, up to its floor
             raise DerivationUnavailable(f"no stored reading for {role}")
     if spec.kind is DerivationKind.RATIO:
         return _ratio(spec, inputs)
@@ -463,4 +532,6 @@ def derive(indicator_id: str, inputs: dict) -> Derived:
         return _leg_mean(spec, inputs)
     if spec.kind is DerivationKind.DRAWDOWN:
         return _drawdown(spec, inputs)
+    if spec.kind is DerivationKind.BREADTH_PERCENT:
+        return _breadth_percent(spec, inputs)
     return _percentile(spec, inputs)

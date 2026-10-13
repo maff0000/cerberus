@@ -22,7 +22,8 @@ MARKET_DAILY_WINDOW = 7 * DAY    # market-day series dated on the trading day it
 FRED_CALENDAR_DAY_SERIES = {"fed_funds_rate"}   # DFF has a print for every calendar day; its 7-day window predates WO-1.9
 FRED_BUSINESS_DAY = {"hy_oas", "ig_oas", "yield_curve_10y3m", "yield_curve_10y2y", "real_rate_10y_tips", "breakeven_5y"}
 MARKET_DAILY = {"credit_stress_hyg_lqd", "breadth_rsp_spy", "cboe_skew", "vix_term_structure", "vix_level",
-                "spx_vs_200dma", "copper_gold", "gold_spot", "private_credit_stress"}
+                "spx_vs_200dma", "copper_gold", "gold_spot", "private_credit_stress",
+                "constituent_breadth_200dma"}
 
 
 def _worst_gap_seconds(closed_days: set, publish_lag_business_days: int) -> float:
@@ -101,7 +102,7 @@ def test_classification_is_untouched_by_the_calibration():
     equity, monetary = w.snapshot.spec_for("equity_crash"), w.snapshot.spec_for("monetary_debasement")
     assert sorted(equity.required_input_ids) == ["hy_oas", "yield_curve_10y2y", "yield_curve_10y3m"]
     assert sorted(monetary.required_input_ids) == ["breakeven_5y", "broad_dollar"]
-    assert len(equity.contributing_input_ids) == 20 and len(monetary.contributing_input_ids) == 8
+    assert len(equity.contributing_input_ids) == 21 and len(monetary.contributing_input_ids) == 8
 
 
 @pytest.fixture

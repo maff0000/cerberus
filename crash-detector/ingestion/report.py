@@ -25,7 +25,7 @@ from pathlib import Path
 
 import yaml
 
-from ingestion.catalog import INGREDIENTS, NOT_TRACTABLE, PARTIAL, window_seconds
+from ingestion.catalog import INGREDIENTS, NOT_TRACTABLE, PARTIAL, QUORUM, window_seconds
 from ingestion.store import SqliteStore
 
 MAPPING = Path(__file__).resolve().parents[1] / "governance" / "mapping" / "indicator_mapping.yaml"
@@ -43,9 +43,11 @@ def indicator_states(store: SqliteStore, now: datetime) -> list[dict]:
         window = window_seconds(ind, row["staleness_window_seconds"])
         worst, parts = "LIVE", []
         failing = []
+        healthy = 0  # components with a fresh reading whose latest attempt was OK (the QUORUM rows only count these)
         for ing in ings:
             last = store.last_attempt(ing.source_id)
-            if last is not None and last[1] != "OK":
+            ok_attempt = last is None or last[1] == "OK"
+            if not ok_attempt:
                 failing.append(f"{ing.source_id}: last attempt {last[1]} at {last[0].isoformat()}")
             reading = store.latest_reading(ing.source_id)
             if reading is None:
@@ -57,7 +59,18 @@ def indicator_states(store: SqliteStore, now: datetime) -> list[dict]:
             age = (now - as_of).total_seconds()
             if age > window and worst != "MISSING":
                 worst = "STALE"
+            elif age <= window and ok_attempt:
+                healthy += 1
             parts.append(f"{ing.source_id}={reading['payload'].get('value')} as_of={as_of.date()} age={age/86400:.1f}d")
+        if ind in QUORUM:
+            # WO-1.10: a sample-defined indicator tolerates absent components down to its floor and no further. At or
+            # above the floor it is as live as any derived row (the engine still decides whether a number exists);
+            # below it, the worst component state speaks.
+            if healthy >= QUORUM[ind]:
+                out.append({"id": ind, "state": "DERIVED",
+                            "detail": f"{healthy}/{len(ings)} components fresh (floor {QUORUM[ind]})"})
+                continue
+            parts = [f"only {healthy}/{len(ings)} components fresh (floor {QUORUM[ind]})"] + (failing + parts)[:6]
         if failing:
             # Auditor finding 1 (WO-1.2b): a feed whose latest attempt failed must not read
             # LIVE just because its last good reading is still inside the window.
