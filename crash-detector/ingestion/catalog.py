@@ -290,6 +290,14 @@ def window_seconds(indicator_id: str, ratified_seconds: float) -> float:
     return float(override[0]) if override else float(ratified_seconds)
 
 
+#: The HTTP hostnames the LIVE collector's adapters resolve to, and ONLY those: this dict is
+#: mirrored host-for-host by ``deploy/egress-destinations.yaml`` and by ``cd-collectors``'
+#: ``x-egress.hosts``, and ``tests/test_ingestion.py`` asserts it equals the hostnames of
+#: ``build_adapter(i)._url()`` over :data:`INGREDIENTS` by EQUALITY. A host reached by
+#: something that is NOT the live collector therefore does not belong here, however real the
+#: egress: WO-1.14's backfill-only ALFRED host is declared in
+#: ``ingestion.backfill_adapters.BACKFILL_EGRESS_HOSTS``, with the reason, and the non-HTTP
+#: HERMES peer in :data:`NON_HTTP_PEERS`.
 EGRESS_HOSTS: dict[str, str] = {
     "fred.stlouisfed.org": "Federal Reserve Bank of St. Louis",
     "cdn-api.cboe.com": "Cboe Global Markets",
@@ -325,6 +333,15 @@ NON_HTTP_PEERS: dict[str, str] = {
 
 
 def build_adapter(ing: Ingredient, clock: Callable[[], datetime]):
+    """The LIVE collector's adapter for ``ing`` — one bounded GET for the latest observation.
+
+    This is the constructor ``ingestion.run`` calls on every pass, and the only one it can
+    call: there is no argument here that selects a point-in-time adapter, because the vintage
+    search is a different question under a budget this loop does not have. WO-1.14's
+    backfill-path constructor is ``ingestion.backfill_adapters.build_backfill_adapter``,
+    which imports this module and is never imported BY it (that module's docstring states
+    why the dependency runs only that way, and ``tests/test_wo114.py`` holds it).
+    """
     common = dict(source_id=ing.source_id, as_of_rule=ing.as_of_rule, unit=ing.unit, clock=clock)
     if ing.kind == "fred":
         return FredAdapter(ing.ref, ing.transformation, ing.history, **common)

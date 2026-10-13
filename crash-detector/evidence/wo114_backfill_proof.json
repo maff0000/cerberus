@@ -1,0 +1,216 @@
+{
+  "as_of_rule": "quarter_end",
+  "backfill": {
+    "admitted": [
+      "2024-07-01",
+      "2024-10-01",
+      "2025-01-01",
+      "2025-04-01",
+      "2025-07-01",
+      "2025-10-01",
+      "2026-01-01"
+    ],
+    "counts": {
+      "admitted": 7,
+      "failed": 0,
+      "fetches": 7,
+      "refused": 0,
+      "skipped": 1
+    },
+    "failed": [],
+    "fetches": 7,
+    "refused": [],
+    "skipped": [
+      "2026-04-01"
+    ],
+    "vintage": "original"
+  },
+  "current_values_endpoint": "https://fred.stlouisfed.org/graph/fredgraph.csv",
+  "database": "/srv/cerberus-proof-runs/wo-1.14/ingestion-copy.sqlite",
+  "elapsed_seconds": 48.0,
+  "finished_utc": "2026-10-13T21:17:46.983144Z",
+  "ran_utc": "2026-10-13T21:16:59.014426Z",
+  "requested_dates": [
+    "2024-07-01",
+    "2024-10-01",
+    "2025-01-01",
+    "2025-04-01",
+    "2025-07-01",
+    "2025-10-01",
+    "2026-01-01",
+    "2026-04-01"
+  ],
+  "requires_original_vintage": true,
+  "revision": [
+    {
+      "current_value": 29568.256,
+      "first_published_value": 29349.924,
+      "first_serving_vintage_date": "2024-10-30",
+      "observation_date": "2024-07-01",
+      "revised_by": 218.332,
+      "revised_by_relative": 0.00743893,
+      "source_as_of_utc": "2024-09-30T00:00:00Z",
+      "vintage_label": "original"
+    },
+    {
+      "current_value": 29929.552,
+      "first_published_value": 29700.58,
+      "first_serving_vintage_date": "2025-01-30",
+      "observation_date": "2024-10-01",
+      "revised_by": 228.972,
+      "revised_by_relative": 0.00770934,
+      "source_as_of_utc": "2024-12-31T00:00:00Z",
+      "vintage_label": "original"
+    },
+    {
+      "current_value": 30171.979,
+      "first_published_value": 29977.632,
+      "first_serving_vintage_date": "2025-04-30",
+      "observation_date": "2025-01-01",
+      "revised_by": 194.347,
+      "revised_by_relative": 0.00648307,
+      "source_as_of_utc": "2025-03-31T00:00:00Z",
+      "vintage_label": "original"
+    },
+    {
+      "current_value": 30630.174,
+      "first_published_value": 30331.117,
+      "first_serving_vintage_date": "2025-07-30",
+      "observation_date": "2025-04-01",
+      "revised_by": 299.057,
+      "revised_by_relative": 0.00985974,
+      "source_as_of_utc": "2025-06-30T00:00:00Z",
+      "vintage_label": "original"
+    },
+    {
+      "current_value": 31180.493,
+      "first_published_value": 31095.089,
+      "first_serving_vintage_date": "2025-12-23",
+      "observation_date": "2025-07-01",
+      "revised_by": 85.404,
+      "revised_by_relative": 0.00274654,
+      "source_as_of_utc": "2025-09-30T00:00:00Z",
+      "vintage_label": "original"
+    },
+    {
+      "current_value": 31462.523,
+      "first_published_value": 31490.07,
+      "first_serving_vintage_date": "2026-02-20",
+      "observation_date": "2025-10-01",
+      "revised_by": -27.547,
+      "revised_by_relative": -0.00087478,
+      "source_as_of_utc": "2025-12-31T00:00:00Z",
+      "vintage_label": "original"
+    },
+    {
+      "current_value": 31906.274,
+      "first_published_value": 31856.257,
+      "first_serving_vintage_date": "2026-04-30",
+      "observation_date": "2026-01-01",
+      "revised_by": 50.017,
+      "revised_by_relative": 0.00157008,
+      "source_as_of_utc": "2026-03-31T00:00:00Z",
+      "vintage_label": "original"
+    },
+    {
+      "current_value": 32563.03,
+      "first_published_value": 32563.03,
+      "first_serving_vintage_date": null,
+      "observation_date": "2026-04-01",
+      "revised_by": 0.0,
+      "revised_by_relative": 0.0,
+      "source_as_of_utc": "2026-06-30T00:00:00Z",
+      "vintage_label": null
+    }
+  ],
+  "source_id": "fred.GDP",
+  "stored": [
+    {
+      "admitted_utc": "2026-10-13T21:17:06.792463Z",
+      "payload": {
+        "observation_date": "2024-07-01",
+        "unit": "usd_billions",
+        "value": 29349.924,
+        "vintage_date": "2024-10-30"
+      },
+      "source_as_of_utc": "2024-09-30T00:00:00Z",
+      "vintage": "original"
+    },
+    {
+      "admitted_utc": "2026-10-13T21:17:14.093496Z",
+      "payload": {
+        "observation_date": "2024-10-01",
+        "unit": "usd_billions",
+        "value": 29700.58,
+        "vintage_date": "2025-01-30"
+      },
+      "source_as_of_utc": "2024-12-31T00:00:00Z",
+      "vintage": "original"
+    },
+    {
+      "admitted_utc": "2026-10-13T21:17:21.046133Z",
+      "payload": {
+        "observation_date": "2025-01-01",
+        "unit": "usd_billions",
+        "value": 29977.632,
+        "vintage_date": "2025-04-30"
+      },
+      "source_as_of_utc": "2025-03-31T00:00:00Z",
+      "vintage": "original"
+    },
+    {
+      "admitted_utc": "2026-10-13T21:17:26.903740Z",
+      "payload": {
+        "observation_date": "2025-04-01",
+        "unit": "usd_billions",
+        "value": 30331.117,
+        "vintage_date": "2025-07-30"
+      },
+      "source_as_of_utc": "2025-06-30T00:00:00Z",
+      "vintage": "original"
+    },
+    {
+      "admitted_utc": "2026-10-13T21:17:34.147816Z",
+      "payload": {
+        "observation_date": "2025-07-01",
+        "unit": "usd_billions",
+        "value": 31095.089,
+        "vintage_date": "2025-12-23"
+      },
+      "source_as_of_utc": "2025-09-30T00:00:00Z",
+      "vintage": "original"
+    },
+    {
+      "admitted_utc": "2026-10-13T21:17:40.605632Z",
+      "payload": {
+        "observation_date": "2025-10-01",
+        "unit": "usd_billions",
+        "value": 31490.07,
+        "vintage_date": "2026-02-20"
+      },
+      "source_as_of_utc": "2025-12-31T00:00:00Z",
+      "vintage": "original"
+    },
+    {
+      "admitted_utc": "2026-10-13T21:17:46.980246Z",
+      "payload": {
+        "observation_date": "2026-01-01",
+        "unit": "usd_billions",
+        "value": 31856.257,
+        "vintage_date": "2026-04-30"
+      },
+      "source_as_of_utc": "2026-03-31T00:00:00Z",
+      "vintage": "original"
+    },
+    {
+      "admitted_utc": "2026-10-11T20:55:02.812762Z",
+      "payload": {
+        "observation_date": "2026-04-01",
+        "unit": "usd_billions",
+        "value": 32563.03
+      },
+      "source_as_of_utc": "2026-06-30T00:00:00Z",
+      "vintage": null
+    }
+  ]
+}

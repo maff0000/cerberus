@@ -9,6 +9,11 @@ number, a unit — and, for the one source whose declared calculation needs a pr
 (the 200-day average), the raw closes. Ratios, spreads, percentiles and scores belong to
 the engine's executor behind the raw/dial boundary.
 
+WO-1.14 adds ONE adapter that asks a different question of the same kind of source:
+:class:`AlfredVintageAdapter` fetches one observation AS FIRST PUBLISHED, by searching
+ALFRED's vintages for the earliest one that served it. It still only fetches and reports;
+the ``vintage`` label on the stored reading is the caller's to write.
+
 Failure discipline: a transport failure raises :class:`AdapterFetchError` with a stable
 class and NO message, URL or exception text (PBG-SEC-002). A response that arrives but is
 unparseable is NOT converted into a fetch failure and is NOT defaulted: the raw token is
@@ -23,9 +28,10 @@ import json
 import math
 import re
 import socket
+import time
 import urllib.error
 import urllib.request
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from typing import Any, Callable, Mapping, Union
 
 import redis
@@ -34,7 +40,9 @@ from crash_detector.collectors.adapter import AdapterFetchError, FetchedResponse
 
 __all__ = [
     "RESPONSE_SCHEMA",
+    "VINTAGE_RESPONSE_SCHEMA",
     "FredAdapter",
+    "AlfredVintageAdapter",
     "CboeAdapter",
     "YahooChartAdapter",
     "MultplShillerAdapter",
@@ -42,6 +50,9 @@ __all__ = [
     "HermesCandleAdapter",
     "ManualEntryAdapter",
     "LBMA_USER_AGENT",
+    "ALFRED_HOST",
+    "ALFRED_BASE",
+    "MAX_VINTAGE_PROBES",
     "HERMES_PEER",
     "HERMES_CANDLE_CONTRACT",
     "HERMES_CANDLE_CONTRACT_VERSION",
@@ -49,6 +60,7 @@ __all__ = [
     "parse_hermes_candle",
     "parse_lbma_gold",
     "parse_fred_csv",
+    "parse_alfred_csv",
     "parse_cboe_csv",
     "parse_yahoo_chart",
     "parse_multpl_table",
@@ -89,6 +101,38 @@ RESPONSE_SCHEMA: Mapping[str, Any] = {
     # observation_date and value travel together or not at all: a date with no value, or a
     # value with no date, is a half-observation and is not accepted as one.
     "dependentRequired": {"observation_date": ["value"], "value": ["observation_date"]},
+}
+
+#: WO-1.14. The schema for a payload read out of ONE NAMED VINTAGE of a source, i.e. the
+#: value as the source FIRST published it rather than as it stands today.
+#:
+#: It is :data:`RESPONSE_SCHEMA` with ONE addition and ONE removal, DERIVED from it rather
+#: than retyped so the two cannot drift:
+#:
+#: * ``vintage_date`` is added, and the ``dependentRequired`` below makes it travel WITH the
+#:   value, never optionally. A point-in-time value that does not state which vintage
+#:   produced it is indistinguishable from today's value for the same period, which is the
+#:   exact confusion this whole work order exists to prevent. The field is the vintage the
+#:   SERVER's own column header named (see :func:`parse_alfred_csv`), not the one we asked
+#:   for, so it is a record of what was answered.
+#: * ``history`` is removed. A vintage read is ONE observation at ONE vintage; a history
+#:   carried alongside it would be a mixture of vintages under a single label.
+#:
+#: The ``vintage`` LABEL (``ingestion.vintage.VINTAGE_ORIGINAL``) is deliberately NOT in
+#: here. That is a column on the stored reading and it is the caller's to write; this
+#: adapter reports what the source said and writes nothing, like every other adapter in
+#: this file.
+VINTAGE_RESPONSE_SCHEMA: Mapping[str, Any] = {
+    **RESPONSE_SCHEMA,
+    "properties": {
+        **{name: shape for name, shape in RESPONSE_SCHEMA["properties"].items() if name != "history"},
+        "vintage_date": {"type": "string", "pattern": r"^\d{4}-\d{2}-\d{2}$"},
+    },
+    "dependentRequired": {
+        "observation_date": ["value", "vintage_date"],
+        "value": ["observation_date", "vintage_date"],
+        "vintage_date": ["observation_date", "value"],
+    },
 }
 
 
@@ -170,6 +214,103 @@ def parse_fred_csv(text: str, column: str, unit: str, history: int = 0) -> dict:
     if history:
         out["history"] = [[d, v] for d, v in reversed(rows)]
     return out
+
+
+#: ALFRED's keyless graph CSV — the SAME public, credential-free door as ``fredgraph.csv``
+#: (see :class:`FredAdapter`) with one extra query parameter, ``vintage_date``. No API key
+#: is involved: ``api.stlouisfed.org`` is never contacted. Confirmed by direct probe on
+#: 2026-10-13 over all 23 FRED pairs the catalog collects
+#: (``tools/probe/alfred_vintage_probe.py``, ``evidence/wo114_alfred_probe.json``).
+#:
+#: DELIBERATELY NOT IN ``ingestion.catalog.EGRESS_HOSTS`` NOR IN
+#: ``deploy/egress-destinations.yaml``, and WO-1.14's wiring round settled that rather than
+#: deferring it again. Both of those are the LIVE collector's egress declaration — the first
+#: is asserted equal to the hostnames of ``build_adapter(i)._url()`` over the INGREDIENTS, the
+#: second is registered per compose service — so an entry for this host would assert that
+#: ``cd-collectors`` reaches ALFRED, which it structurally does not and must not. The host is
+#: declared instead in ``ingestion.backfill_adapters.BACKFILL_EGRESS_HOSTS``, where the full
+#: reasoning and the compose/registry work that is OWED to the backfill driver round are
+#: recorded. This adapter still cannot be reached through ``ingestion.catalog.build_adapter``
+#: at all: its only constructor is
+#: ``ingestion.backfill_adapters.build_backfill_adapter``.
+ALFRED_HOST = "alfred.stlouisfed.org"
+ALFRED_BASE = f"https://{ALFRED_HOST}/graph/alfredgraph.csv"
+
+#: Hard ceiling on the GETs ONE :meth:`AlfredVintageAdapter.fetch` may issue. The bisection
+#: needs ``2 + ceil(log2(days))`` — 17 for an observation in 1960 asked today — so this is a
+#: guard against a broken invariant looping, not a budget the search is expected to approach.
+#: Reaching it is a recorded failure and never a partial answer.
+MAX_VINTAGE_PROBES = 24
+
+#: A series id and a transformation are interpolated into a URL, so what may appear there is
+#: stated POSITIVELY and anything else is refused at construction. Not a leak control (that is
+#: PBG-SEC-002, below) — a refusal to build a request out of a string nobody vouched for.
+_SERIES_ID = re.compile(r"^[A-Za-z0-9_]{1,64}$")
+_TRANSFORMATION = re.compile(r"^[a-z0-9]{1,16}$")
+
+
+def parse_alfred_csv(text: str, column: str, unit: str, observation_date: str,
+                     vintage_date: str) -> dict:
+    """ONE named observation read out of ONE named vintage of an ``alfredgraph.csv`` body.
+
+    Three outcomes, and they are kept apart because the vintage search in
+    :class:`AlfredVintageAdapter` turns on exactly this distinction:
+
+    * **a value** — this vintage carried a figure for ``observation_date``;
+    * **``{"unit": ...}``** — this vintage is served and carried NO figure for that date
+      (the row is absent, or present with FRED's ``.`` for no data). EMPTY, not zero;
+    * **``{"malformed": ...}``** — a body we do not understand. Never read as either of the
+      other two, because "I could not read the answer" and "the answer was no" would send
+      the bisection in opposite directions.
+
+    THE HEADER IS CHECKED AGAINST THE VINTAGE WE ASKED FOR. ALFRED labels its value column
+    ``<ID>[_<TRANSFORM>]_<YYYYMMDD>``, so the response STATES which vintage it is. A body
+    that answered a different vintage is MALFORMED and is not read as the one requested —
+    otherwise a server-side substitution would be recorded as a point-in-time fact.
+
+    THE OBSERVATION IS MATCHED BY EXACT DATE, never taken as "the only row". ALFRED does not
+    REFUSE an out-of-range ``cosd``/``coed`` window, it silently CLAMPS it (verified
+    2026-10-13; recorded in ``tools/probe/alfred_vintage_probe.py``), so a body may carry a
+    span nobody asked for. An exact-key match cannot be fooled by that; "the only row" could.
+    """
+    lines = text.strip().splitlines()
+    header = lines[0].split(",") if lines else []
+    if len(header) != 2 or header[0] != "observation_date":
+        return {"malformed": "header"}  # no "unit": fails the closed schema -> MALFORMED
+    prefix = column + "_"
+    if not header[1].startswith(prefix):
+        return {"malformed": "series"}
+    if header[1][len(prefix):] != vintage_date.replace("-", ""):
+        return {"malformed": "vintage"}
+    for line in lines[1:]:
+        cells = line.split(",")
+        if len(cells) != 2 or cells[0] != observation_date:
+            continue
+        if cells[1] in ("", "."):
+            break  # served, and this vintage had nothing to say about this date
+        return {"unit": unit, "observation_date": observation_date,
+                "value": _number_or_token(cells[1]), "vintage_date": vintage_date}
+    return {"unit": unit}
+
+
+#: What one probed vintage said about the observation. Three states, named rather than
+#: inferred from the shape at each of the four places the search branches on them.
+_SERVED, _ABSENT, _UNREADABLE = "SERVED", "ABSENT", "UNREADABLE"
+
+
+def _vintage_state(payload: Mapping[str, Any]) -> str:
+    """Which of the three :func:`parse_alfred_csv` outcomes this payload is.
+
+    A value that is not a finite number is ``_UNREADABLE``, NOT ``_SERVED``. The token is
+    still carried out of the search untouched so the closed schema is the thing that rejects
+    it (the convention :func:`parse_fred_csv` follows), but the search stops on it: a
+    bisection cannot step over an answer it could not read without guessing which way to go.
+    """
+    if "malformed" in payload:
+        return _UNREADABLE
+    if "value" not in payload:
+        return _ABSENT
+    return _SERVED if type(payload["value"]) is float else _UNREADABLE
 
 
 def parse_cboe_csv(text: str, column: str, unit: str) -> dict:
@@ -553,6 +694,173 @@ class FredAdapter(_BaseAdapter):
     def _parse(self, body: str) -> dict:
         column = self._series + (f"_{self._transformation.upper()}" if self._transformation else "")
         return parse_fred_csv(body, column, self._unit, self._history)
+
+
+class AlfredVintageAdapter(_BaseAdapter):
+    """``alfred.stlouisfed.org/graph/alfredgraph.csv`` — ONE observation as it was FIRST published.
+
+    WO-1.14. :class:`FredAdapter` asks "what is this series' latest value?" and gets today's
+    revised history. This adapter asks a different question: "for the observation dated D,
+    what number would a collector running back then actually have SEEN?" For a revised series
+    those are different numbers, and storing the first as though it were the second is
+    lookahead bias wearing a backfill's clothes.
+
+    THE VINTAGE-SELECTION RULE, STATED ONCE AND IMPLEMENTED EXACTLY ONCE (:meth:`_acquire`):
+
+        **The EARLIEST vintage date, within ``[observation_date, today]``, at which ALFRED
+        serves a non-empty value for this observation date.**
+
+    That is the first vintage that could have published the figure, so its value is the
+    figure as first published — what was knowable then, which is the only thing a replay is
+    entitled to use. Found by bisection on ``_SERVED`` vs ``_ABSENT``, the same instrument
+    ``tools/probe/alfred_vintage_probe.py::vintage_depth`` used to find a SERIES' earliest
+    vintage, anchored to one observation instead of to the series.
+
+    WHY THE SEARCH FLOOR IS THE OBSERVATION DATE AND NOT THE PROBE'S 1990. A vintage dated
+    before the observation date could not have known about the observation: the period had
+    not happened. Making that the floor is both the tighter window (the bisection costs
+    ``2 + ceil(log2(days))`` GETs instead of searching back to 1990) and the property the
+    whole exercise is about — the returned vintage is NEVER one that could not have known.
+    It is not left as an assumption: the day BEFORE the observation is probed, and if it
+    already serves a value the premise is wrong for this series (a projection series, say),
+    so the fetch is refused as MALFORMED rather than answered with a vintage that is not in
+    fact the earliest.
+
+    THE TWO ENDS ARE MEASURED, THE MIDDLE IS ASSUMED MONOTONE — a DECLARED limit. Bisection
+    is only sound if "serves a value at D" never goes true-then-false as the vintage
+    advances. Publishers overwhelmingly do not WITHDRAW a published observation, but if one
+    ever did, this would return the earliest vintage of the LATER served run, not the true
+    first publication. Detecting that needs a linear scan of every vintage, which this
+    endpoint cannot be asked for at backfill scale. The limit is recorded here rather than
+    left for a reader to discover.
+
+    WHAT IT RETURNS, AND WHAT IT DOES NOT DO WITH IT. A payload conforming to
+    :data:`VINTAGE_RESPONSE_SCHEMA`: the value, the observation date, and the vintage the
+    SERVER named in its own column header. The caller is the one that decides this pair
+    needed point-in-time treatment at all (``ingestion.vintage.requires_original_vintage``)
+    and the one that stores the reading with ``vintage=ingestion.vintage.VINTAGE_ORIGINAL``.
+    This adapter fetches what it is told to fetch and writes nothing, exactly like every
+    other adapter in this file.
+
+    BOUNDED, AND HOW. ``timeout_seconds`` is honoured as a TOTAL deadline across the whole
+    bisection, not per request: each GET is given only the time left, and a budget that runs
+    out mid-search is ``TIMEOUT``, never a partial answer. The number of GETs is capped by
+    :data:`MAX_VINTAGE_PROBES`. Both ceilings are the reason this adapter does NOT belong in
+    the live polling loop, whose per-attempt budget is a few seconds: it is for the backfill
+    driver, which is a later round's work. Courtesy pacing between observations is that
+    driver's call and is deliberately not done here — an adapter that slept would be
+    deciding a policy nobody asked it to hold.
+
+    Failure discipline is the shared one: a stable class and NO message, URL or exception
+    text (PBG-SEC-002). ONE exception is carved out and it is an ANSWER rather than a
+    failure: below the ceiling, an ``HTTP_ERROR``/404 is ALFRED saying "no such vintage of
+    this series", which is precisely the ``_ABSENT`` the search is looking for. At the
+    CEILING, where we asked for today's vintage and today's vintage must exist, a 404 is a
+    real failure and is raised as one — swallowing it there would turn a mistyped series id
+    into a tidy "this observation was never published".
+    """
+
+    __slots__ = ("_series", "_transformation", "_observation_date")
+    adapter_id = "cd.ingest.alfred_vintage_csv.v1"
+    response_schema = VINTAGE_RESPONSE_SCHEMA
+
+    def __init__(self, series: str, transformation: Union[str, None], observation_date: str,
+                 **kw: Any) -> None:
+        super().__init__(**kw)
+        if not isinstance(series, str) or not _SERIES_ID.match(series):
+            raise ValueError("series id is not in the permitted shape")
+        if transformation is not None and (
+            not isinstance(transformation, str) or not _TRANSFORMATION.match(transformation)
+        ):
+            raise ValueError("transformation is not in the permitted shape")
+        date.fromisoformat(observation_date)  # a date we cannot read is not one we may ask for
+        self._series = series
+        self._transformation = transformation
+        self._observation_date = observation_date
+
+    def _column(self) -> str:
+        return self._series + (f"_{self._transformation.upper()}" if self._transformation else "")
+
+    def _url_for(self, vintage: Union[str, None]) -> str:
+        """The request for ONE vintage. ``None`` asks for the current one (see :meth:`_url`)."""
+        parts = [f"id={self._series}"]
+        if self._transformation:
+            parts.append(f"transformation={self._transformation}")
+        if vintage:
+            parts.append(f"vintage_date={vintage}")
+        # A COURTESY bound on the body, never a guarantee: ALFRED clamps an out-of-range
+        # window instead of refusing it, so the parser matches the date exactly as well.
+        parts += [f"cosd={self._observation_date}", f"coed={self._observation_date}"]
+        return ALFRED_BASE + "?" + "&".join(parts)
+
+    def _url(self) -> str:
+        """The host-declaring URL (current vintage). The fetch asks :meth:`_url_for` instead.
+
+        It exists so this adapter's egress host can be read off it the way every other
+        adapter's is, by whatever registers it when it is wired up. ``fetch`` never uses it.
+        """
+        return self._url_for(None)
+
+    def _acquire(self, timeout_seconds: float) -> dict:
+        observed = date.fromisoformat(self._observation_date)
+        today = self._clock().date()
+        if observed > today:
+            # Nothing can have published an observation that has not happened. Refused
+            # rather than searched for in an empty window.
+            return {"malformed": "observation_date"}
+
+        deadline = time.monotonic() + timeout_seconds
+        spent = [0]
+
+        def probe(vintage: date, *, absent_on_404: bool = True) -> dict:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise AdapterFetchError("TIMEOUT")
+            spent[0] += 1
+            if spent[0] > MAX_VINTAGE_PROBES:
+                raise AdapterFetchError("VINTAGE_SEARCH_EXHAUSTED")
+            asked = vintage.isoformat()
+            try:
+                body = self._getter(self._url_for(asked), remaining, self._headers())
+            except AdapterFetchError as failure:
+                if absent_on_404 and failure.error_class == "HTTP_ERROR" and failure.http_status == 404:
+                    return {"unit": self._unit}  # ALFRED serves no such vintage: an ANSWER
+                raise
+            return parse_alfred_csv(body, self._column(), self._unit, self._observation_date, asked)
+
+        # The ceiling. If TODAY's vintage has no value for this date, no vintage does: the
+        # observation was never published and there is nothing here to backfill. EMPTY.
+        high, found = today, probe(today, absent_on_404=False)
+        state = _vintage_state(found)
+        if state == _UNREADABLE:
+            return found
+        if state == _ABSENT:
+            return {"unit": self._unit}
+
+        # The floor, VERIFIED rather than assumed: the day before the observation existed.
+        low = observed - timedelta(days=1)
+        beneath = probe(low)
+        state = _vintage_state(beneath)
+        if state == _UNREADABLE:
+            return beneath
+        if state == _SERVED:
+            # A vintage published before the observation date already carries the figure, so
+            # the earliest-serving vintage is OUTSIDE the window this rule searches and the
+            # answer would not be the earliest. Refused, never approximated.
+            return {"malformed": "vintage_floor"}
+
+        # Invariant: ``low`` is ABSENT, ``high`` is SERVED. Narrow to adjacent days.
+        while (high - low).days > 1:
+            middle = low + timedelta(days=(high - low).days // 2)
+            payload = probe(middle)
+            state = _vintage_state(payload)
+            if state == _UNREADABLE:
+                return payload
+            if state == _SERVED:
+                high, found = middle, payload
+            else:
+                low = middle
+        return found
 
 
 class CboeAdapter(_BaseAdapter):
