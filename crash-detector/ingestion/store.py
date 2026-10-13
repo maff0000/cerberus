@@ -32,10 +32,11 @@ HOW AN EXISTING FILE MOVES FORWARD (WO-1.14)
     pre-dates vintage tracking, which is neither a measured ``original`` nor an admitted
     ``current_only``. A read-only handle never migrates; the GUI holds one.
 
-    Nothing writes ``vintage`` yet. The backfill's ALFRED adapter is what will, and it must
-    do so at INSERT: the append-only trigger means this column can never be filled in
-    afterwards for a row already admitted. That is the intended constraint, not a gap —
-    a vintage claim is part of the reading or it is not evidence.
+    ``vintage`` is written by ``ingestion.backfill`` and by nothing else — the live loop
+    passes no label and its readings carry ``NULL``. It is written at INSERT because the
+    append-only trigger means this column can never be filled in afterwards for a row
+    already admitted. That is the intended constraint, not a gap — a vintage claim is part
+    of the reading or it is not evidence.
 """
 
 from __future__ import annotations
@@ -195,19 +196,52 @@ class SqliteStore:
 
     # -- ReadingLedger --------------------------------------------------------------- #
 
-    def admit_if_absent(self, key: ReadingKey) -> bool:
+    def admit_if_absent(self, key: ReadingKey, *, vintage: Union[str, None] = None) -> bool:
+        """Claim one source period, optionally stating its VINTAGE (WO-1.14).
+
+        ``vintage`` is KEYWORD-ONLY and defaults to ``None``, which is the three-state the
+        column declares: the reading makes no vintage claim. That default is what keeps the
+        ``ReadingLedger`` protocol — and therefore ``crash_detector.collectors.collect`` and
+        the whole live loop — unchanged by this parameter: a caller that has nothing to say
+        about vintage says nothing, rather than being handed a label to guess at.
+
+        It is written HERE, in the INSERT, because it cannot be written anywhere else: the
+        append-only trigger refuses the UPDATE that would add it to an admitted row. A
+        vintage claim is part of the reading or it is not evidence.
+        """
+        if vintage is not None and vintage not in VINTAGE_LABELS:
+            # Refused in Python as well as by the column's CHECK, so the caller gets a named
+            # defect rather than an IntegrityError from three layers down.
+            raise ValueError(f"not an admissible vintage label: {vintage!r}")
         pending = self._pending.pop(key, None)
         if pending is None:
             raise LookupError("admit_if_absent called for a key no OK attempt recorded")
         observation_id, payload_json = pending
         cursor = self._db.execute(
             "INSERT OR IGNORE INTO raw_reading (source_id, source_as_of_utc, payload, observation_id,"
-            " admitted_utc) VALUES (?,?,?,?,?)",
-            (key[0], key[1], payload_json, observation_id, format_utc(datetime.now(timezone.utc))),
+            " admitted_utc, vintage) VALUES (?,?,?,?,?,?)",
+            (key[0], key[1], payload_json, observation_id, format_utc(datetime.now(timezone.utc)),
+             vintage),
         )
         return cursor.rowcount == 1
 
     # -- reads ----------------------------------------------------------------------- #
+
+    def is_admitted(self, key: ReadingKey) -> bool:
+        """Is this source period ALREADY claimed? A read, and it claims nothing itself.
+
+        ``admit_if_absent`` answers the same question by trying, and that is the right
+        instrument for a live collector: it has fetched already, so a prior SELECT would be a
+        race for no gain. A BACKFILL asks BEFORE fetching — the whole point of a re-runnable
+        range is that a date already in the store costs no GET — so it needs the question
+        asked without a reading in hand to offer. The answer is advisory by construction: the
+        ``UNIQUE (source_id, source_as_of_utc)`` is still what decides, so a period admitted
+        between this call and a later ``admit_if_absent`` is refused there, not here.
+        """
+        row = self._db.execute(
+            "SELECT 1 FROM raw_reading WHERE source_id=? AND source_as_of_utc=?",
+            (key[0], key[1])).fetchone()
+        return row is not None
 
     def last_attempt(self, source_id: str) -> Union[tuple[datetime, str], None]:
         row = self._db.execute(
