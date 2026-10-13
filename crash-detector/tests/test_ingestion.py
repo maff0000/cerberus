@@ -221,6 +221,130 @@ def test_store_is_append_only(store):
             store._db.execute(sql)
 
 
+# --- WO-1.14: the vintage column, and what an already-written file does with it ----------- #
+
+#: ``raw_reading`` exactly as it stood BEFORE the vintage column — the shape of the live DEV
+#: collector's file. Written out in full rather than derived, because a migration test that
+#: builds its "old" file from today's schema is testing nothing.
+_PRE_VINTAGE_RAW_READING = """
+CREATE TABLE raw_reading (
+    reading_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    source_id TEXT NOT NULL, source_as_of_utc TEXT NOT NULL,
+    payload TEXT NOT NULL CHECK (json_type(payload) = 'object'),
+    observation_id INTEGER NOT NULL REFERENCES raw_observation(observation_id),
+    admitted_utc TEXT NOT NULL,
+    UNIQUE (source_id, source_as_of_utc)
+);
+CREATE TRIGGER raw_reading_no_update BEFORE UPDATE ON raw_reading
+    BEGIN SELECT RAISE(ABORT, 'raw_reading is append-only'); END;
+CREATE TRIGGER raw_reading_no_delete BEFORE DELETE ON raw_reading
+    BEGIN SELECT RAISE(ABORT, 'raw_reading is append-only'); END;
+"""
+
+
+def _pre_vintage_file(path) -> None:
+    """A file at the old schema carrying one admitted reading, as the live collector's is."""
+    import sqlite3 as _sqlite3
+
+    from ingestion.store import _SCHEMA
+
+    db = _sqlite3.connect(str(path), isolation_level=None)
+    before = _SCHEMA.split("CREATE TABLE IF NOT EXISTS raw_reading")[0]
+    db.executescript(before + _PRE_VINTAGE_RAW_READING)
+    db.execute("INSERT INTO raw_observation (source_id, adapter_id, collector_run_id, attempt_number,"
+               " requested_utc, observed_utc, outcome, source_as_of_utc) VALUES"
+               " ('fred.DFF','a','r',1,'2026-10-13T00:00:00Z','2026-10-13T00:00:01Z','OK','2026-10-08T00:00:00Z')")
+    db.execute("INSERT INTO raw_reading (source_id, source_as_of_utc, payload, observation_id, admitted_utc)"
+               " VALUES ('fred.DFF','2026-10-08T00:00:00Z','{\"value\": 3.88}',1,'2026-10-13T00:00:01Z')")
+    db.close()
+
+
+def _reading_columns(path) -> list:
+    import sqlite3 as _sqlite3
+
+    db = _sqlite3.connect(f"file:{path}?mode=ro", uri=True)
+    try:
+        return [row[1] for row in db.execute("PRAGMA table_info(raw_reading)")]
+    finally:
+        db.close()
+
+
+def test_the_vintage_check_is_built_from_the_declared_vocabulary_not_retyped():
+    from ingestion.store import _VINTAGE_COLUMN
+    from ingestion.vintage import VINTAGE_LABELS
+
+    for label in VINTAGE_LABELS:
+        assert f"'{label}'" in _VINTAGE_COLUMN
+    assert _VINTAGE_COLUMN.count("'") == 2 * len(VINTAGE_LABELS), "a label the vocabulary does not declare"
+
+
+def test_a_label_that_is_not_a_bare_word_is_refused_rather_than_interpolated():
+    """The CHECK cannot be parameterised; the refusal is what stands in for the placeholder."""
+    from ingestion.store import _as_sql_literals
+
+    assert _as_sql_literals(("original", "current_only")) == "'original', 'current_only'"
+    for bad in ("o'brien", "DROP", "two words", "", "1st"):
+        with pytest.raises(ValueError, match="not an admissible vintage label"):
+            _as_sql_literals((bad,))
+
+
+def test_an_existing_file_gains_the_column_and_keeps_every_row(tmp_path):
+    """The live DEV collector's file: already written, opened again by a newer store."""
+    path = tmp_path / "live.sqlite"
+    _pre_vintage_file(path)
+    assert "vintage" not in _reading_columns(path)
+
+    with SqliteStore(str(path)) as store:
+        rows = store._db.execute("SELECT source_id, payload, vintage FROM raw_reading").fetchall()
+    assert rows == [("fred.DFF", '{"value": 3.88}', None)], "a pre-existing reading was lost or guessed at"
+    assert _reading_columns(path)[-1] == "vintage"
+
+
+def test_bringing_an_old_file_forward_is_idempotent_and_leaves_the_same_schema_as_a_new_one(tmp_path):
+    migrated, fresh = tmp_path / "old.sqlite", tmp_path / "new.sqlite"
+    _pre_vintage_file(migrated)
+    for _ in range(3):  # every collector pass re-opens the file; only the first may alter it
+        SqliteStore(str(migrated)).close()
+    SqliteStore(str(fresh)).close()
+
+    def ddl(path):
+        import sqlite3 as _sqlite3
+
+        db = _sqlite3.connect(f"file:{path}?mode=ro", uri=True)
+        try:
+            return db.execute("SELECT sql FROM sqlite_master WHERE name='raw_reading'").fetchone()[0]
+        finally:
+            db.close()
+
+    assert _reading_columns(migrated) == _reading_columns(fresh)
+    assert "vintage" in ddl(migrated) and "vintage" in ddl(fresh)
+
+
+def test_the_column_admits_the_two_declared_labels_and_null_and_refuses_anything_else(store):
+    from ingestion.vintage import VINTAGE_CURRENT_ONLY, VINTAGE_ORIGINAL
+
+    store._db.execute("INSERT INTO raw_observation (source_id, adapter_id, collector_run_id, attempt_number,"
+                      " requested_utc, observed_utc, outcome) VALUES ('s','a','r',1,'t','t','OK')")
+    def admit(as_of, vintage):
+        store._db.execute("INSERT INTO raw_reading (source_id, source_as_of_utc, payload, observation_id,"
+                          " admitted_utc, vintage) VALUES ('s',?,'{}',1,'t',?)", (as_of, vintage))
+
+    admit("1", VINTAGE_ORIGINAL)
+    admit("2", VINTAGE_CURRENT_ONLY)
+    admit("3", None)  # pre-dates vintage tracking: a third state, not a default
+    for bad in ("ORIGINAL", "original ", "backfilled", "revised"):
+        with pytest.raises(Exception, match="CHECK constraint failed"):
+            admit("4", bad)
+
+
+def test_the_gui_door_never_migrates_the_file_it_only_reads(tmp_path):
+    """A read-only handle must not be the thing that changes a schema, even by accident."""
+    path = tmp_path / "live.sqlite"
+    _pre_vintage_file(path)
+    SqliteStore(str(path), read_only=True).close()
+    assert "vintage" not in _reading_columns(path)
+
+
 def test_http_get_does_not_follow_redirects(monkeypatch):
     import urllib.error
 
