@@ -63,13 +63,12 @@ def test_the_key_is_derived_from_the_adapters_own_instrument_and_timeframe_not_f
     ing = next(i for i in INGREDIENTS if i.source_id == ING_ID)
     adapter = build_adapter(ing, lambda: NOW)
     adapter._getter = lambda key, timeout: seen.append(key) or _body()
-    adapter.fetch(5.0)
+    adapter.fetch(timeout_seconds=5.0)
     # ONE read, of the one key, and a body claiming a different instrument cannot redirect the next one
     assert seen == [KEY]
     adapter._getter = lambda key, timeout: seen.append(key) or _body(instrument="EUR_USD")
-    with pytest.raises(Exception):  # refused as MALFORMED below; the point here is the key did not move
-        pass
-    assert seen == [KEY]
+    assert adapter.fetch(timeout_seconds=5.0).payload == {"malformed": "series"}
+    assert seen == [KEY, KEY]   # the second read went to the same key
 
 
 def test_the_peer_is_declared_and_the_adapter_has_no_http_url():
