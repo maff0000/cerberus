@@ -764,7 +764,15 @@ def test_the_vintage_adapter_is_a_structurally_conformant_source_adapter_and_age
     assert fetched.source_as_of_utc == datetime(2008, 9, 30, tzinfo=timezone.utc)
 
 
-def test_the_vintage_adapter_is_not_wired_into_the_live_catalog_in_this_round():
-    """Stated as a test so the next round's wiring has to come past it deliberately."""
+def test_the_vintage_adapter_is_not_a_live_ingredient_kind_nor_a_live_egress_host():
+    """NOT a "not yet" any more — WO-1.14's wiring round came past this and left it TRUE.
+
+    The vintage adapter is now constructible, through
+    ``ingestion.backfill_adapters.build_backfill_adapter`` and only through it. It is still
+    not an ingredient ``kind`` the live catalog polls and ``alfred.stlouisfed.org`` is still
+    absent from the live egress declaration, because both of those would say the live
+    collector reaches it. ``tests/test_wo114.py`` holds the whole boundary; these two lines
+    stay here so the live catalog's own test module fails too if it is reopened.
+    """
     assert not any(i.kind == "alfred" for i in INGREDIENTS)
     assert A.ALFRED_HOST not in EGRESS_HOSTS

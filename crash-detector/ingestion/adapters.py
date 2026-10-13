@@ -222,11 +222,17 @@ def parse_fred_csv(text: str, column: str, unit: str, history: int = 0) -> dict:
 #: 2026-10-13 over all 23 FRED pairs the catalog collects
 #: (``tools/probe/alfred_vintage_probe.py``, ``evidence/wo114_alfred_probe.json``).
 #:
-#: NOT YET IN ``ingestion.catalog.EGRESS_HOSTS`` NOR IN ``deploy/egress-destinations.yaml``,
-#: and that is a stated gap, not an oversight: those two are derived from the INGREDIENTS the
-#: live collector polls, and nothing wires this adapter into them yet. Registering the host
-#: belongs to the round that wires the backfill up, and until then this adapter cannot be
-#: reached through ``ingestion.catalog.build_adapter`` at all.
+#: DELIBERATELY NOT IN ``ingestion.catalog.EGRESS_HOSTS`` NOR IN
+#: ``deploy/egress-destinations.yaml``, and WO-1.14's wiring round settled that rather than
+#: deferring it again. Both of those are the LIVE collector's egress declaration — the first
+#: is asserted equal to the hostnames of ``build_adapter(i)._url()`` over the INGREDIENTS, the
+#: second is registered per compose service — so an entry for this host would assert that
+#: ``cd-collectors`` reaches ALFRED, which it structurally does not and must not. The host is
+#: declared instead in ``ingestion.backfill_adapters.BACKFILL_EGRESS_HOSTS``, where the full
+#: reasoning and the compose/registry work that is OWED to the backfill driver round are
+#: recorded. This adapter still cannot be reached through ``ingestion.catalog.build_adapter``
+#: at all: its only constructor is
+#: ``ingestion.backfill_adapters.build_backfill_adapter``.
 ALFRED_HOST = "alfred.stlouisfed.org"
 ALFRED_BASE = f"https://{ALFRED_HOST}/graph/alfredgraph.csv"
 
