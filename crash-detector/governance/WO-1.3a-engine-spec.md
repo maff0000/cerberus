@@ -261,3 +261,45 @@ documented in the deploy instructions this round writes down for whoever actuall
 runs it live. Verify the per-service config-hash stability claim Rogue already
 measured (adding the service must not change `cd-live-collector`'s or
 `cd-live-gui`'s own hashes) as an actual check, not just a repeated assertion.
+
+## 12. Output contract scope (Trinity, PO, 2026-10-14) — DECISION-RULE.md §7
+
+Building the contract now, against what the state machine actually computes today. Two
+real gaps, decided here rather than guessed at implementation time:
+
+**`sizing_multiplier` — OUT OF SCOPE for this round, and NOT emitted as a plain 0.0.**
+§7 says it is "non-zero only in CALM and RECOVERY" and derives from valuation inputs (CAPE,
+Buffett substitute, gold extension) that no code anywhere computes. Emitting `0.0` as a
+placeholder in CALM/RECOVERY would be actively misleading — it reads as "the detector
+recommends sizing to zero," the opposite of the untouched-advisory truth. The contract this
+round therefore carries `sizing_multiplier: null` together with a sibling
+`sizing_not_computed: true`, and the schema/identity block states the `decision_rule_version`
+this contract implements does not yet include real sizing. Building the valuation logic is
+its own work order (WO-1.3c, not started), not a guess folded into this one.
+
+**`coverage_bracket.dial_value_min`/`dial_value_max` — build `scored_weight_fraction` for
+real this round (a known, well-understood gap, MATH.md R-10); the min/max re-score (breadth
+recomputed with every missing input imputed at 0, then at 1) is a genuinely new engine
+computation, not yet built anywhere.** If time in this round allows, build it; if not, it is
+`null` with the same `not_computed` disclosure pattern as sizing, and gets its own follow-up
+rather than blocking the rest of the contract.
+
+**`dial` enum: `equity_crash` | `monetary_debasement` only.** No `monetary_debasement_gbp`/
+`_usd` split — the GBP dial doesn't exist (tracked separately, not fabricated here).
+
+**`identity` block, all real and buildable now:** `build_sha` from `CD_BUILD_SHA` (already
+wired into the image's env); `scaling_version`/`mapping_version` as a hash of
+`indicator-scaling.json`/`indicator_mapping.yaml` (same technique already used for other
+content-addressed identity elsewhere in this repo — find and reuse it, don't invent a new
+hashing convention); `decision_rule_version` hardcoded to `DECISION-RULE.md`'s own stated
+version (currently v1, with the `sizing_not_computed`/`coverage_bracket` caveats noted
+alongside it).
+
+## 13. Scope for this round
+
+Build the contract-assembly function: given a `MachineStateRow` (already written) plus the
+identity inputs above, produce the §7 shape as a plain dict (serializing to YAML/JSON is the
+caller's choice — build the dict first, matching the schema's field names exactly). This is
+a pure, testable function, same discipline as everything else in this WO — no new engine
+computation beyond `scored_weight_fraction` if time allows, no serving/HTTP endpoint yet
+(that's a later round, once the contract shape itself is settled and tested).
