@@ -67,6 +67,27 @@ acute statistic is :class:`~crash_detector.engine.statistics.AcuteUnknown` and s
 rule 1 makes the state UNKNOWN — so a CALM row with a missing number is not a partial
 reading, it is a row that disagrees with the engine that wrote it.
 
+====================================================================================
+``candidate_state``, AND WHY THE OFFICIAL STATE ALONE MAKES THE CLOCK UNREADABLE
+====================================================================================
+
+Added by WO-1.3a's next round (the persistence resolver,
+:func:`evaluator.resolve.official_state_for_dial`) and found to be NECESSARY by it rather
+than wanted: spec §3's ``persistence = 3`` means the official state does NOT change until
+the SAME candidate has been computed three readings running, so during a pending
+transition ``machine_state`` is deliberately the OLD state and ``persistence_counter``
+counts readings toward a new one. **A counter whose row does not say WHAT it is counting
+cannot be continued by the next reading** — "does this reading's candidate match the one
+accumulating?" is unanswerable from a state name that is, by construction, not it.
+
+Re-deriving a preceding row's candidate from its stored statistics was considered first
+(spec §7 asks for "enough of the raw breadth/acute/count to re-derive persistence checks")
+and does not close: rule 5 needs ``trend_confirmed``, which is a caller-supplied input
+this round does not compute and no column holds, so a re-derived candidate could not tell
+``RECOVERY`` from ``CALM`` — the one distinction a recovery transition turns on. Recording
+the candidate the engine actually computed is both smaller and honest, and it makes the
+pending transition legible in the history instead of inferred from it.
+
 ``acute_rising`` is NULL on an UNKNOWN row for the same reason and not as a tidy-up: it
 is a comparison BETWEEN acute readings, and the absence of an acute reading cannot be
 rising. A ``0`` there would be a claim this evaluation did not make.
@@ -79,9 +100,12 @@ Same habit as ``ingestion/store.py``, and no more than that habit: :data:`_SCHEM
 ``CREATE TABLE IF NOT EXISTS`` throughout and is executed on every write-mode open, so a
 second open of a live file is a no-op and never re-creates or re-shapes what is there. A
 read-only handle creates nothing and migrates nothing — the GUI's door, once it reads
-this series (spec §8.2). There is no ``ALTER TABLE`` step here yet because this table has
-only ever had one shape; when it gains a column it gains an ``ingestion.store``-style
-``_bring_forward`` with it, additive and idempotent, and not a migration ledger.
+this series (spec §8.2). The table gained its second shape with
+``candidate_state`` (above), and with it the ``ingestion.store``-style
+:func:`_bring_forward` this docstring promised: additive, idempotent, guarded by ``PRAGMA
+table_info`` and not by a migration ledger. There is no live file of this table anywhere
+yet, so that step carries nothing forward today — it exists so that the next column does
+not have to be the first one to need it.
 """
 
 from __future__ import annotations
@@ -141,6 +165,23 @@ _MACHINE_STATE_COLUMN = (
     f"machine_state TEXT NOT NULL CHECK (machine_state IN ({_as_sql_literals(_MACHINE_STATE_VALUES)}))"
 )
 
+#: ``candidate_state`` — WHAT THIS READING'S OWN NUMBERS CALLED FOR, which is deliberately
+#: NOT the same question ``machine_state`` answers. See the module docstring's section on
+#: why the persistence clock is unreadable without it.
+#:
+#: NULLABLE, and the ``NULL`` is a THIRD STATE rather than a tidy-up (``raw_reading.vintage``
+#: is the precedent, WO-1.14): it means THIS ROW PRE-DATES CANDIDATE RECORDING, which is
+#: neither a recorded candidate nor an absent one. SQLite cannot ``ADD COLUMN ... NOT NULL``
+#: without a DEFAULT, and a default here would be a state nobody computed, so the column is
+#: nullable in BOTH the fresh DDL and the brought-forward one — the same DDL either way,
+#: :func:`_bring_forward`'s own rule. :func:`evaluator.resolve.official_state_for_dial`
+#: treats a ``NULL`` candidate on a preceding row as "cannot confirm a streak" and never as
+#: "the streak held", so an unrecorded candidate can only ever DELAY a transition.
+_CANDIDATE_STATE_COLUMN = (
+    f"candidate_state TEXT CHECK (candidate_state IS NULL"
+    f" OR candidate_state IN ({_as_sql_literals(_MACHINE_STATE_VALUES)}))"
+)
+
 #: ``crash_detector.dials.dialset.DIAL_IDS``. Two. A third is a PID amendment — the same
 #: constraint ``dial.history`` carries as ``dial_history_dial_admitted``, read from the
 #: declaring module rather than retyped.
@@ -189,6 +230,7 @@ CREATE TABLE IF NOT EXISTS {TABLE} (
     {_DIAL_ID_COLUMN},
     as_of TEXT NOT NULL,
     {_MACHINE_STATE_COLUMN},
+    {_CANDIDATE_STATE_COLUMN},
     persistence_counter INTEGER NOT NULL CHECK (persistence_counter >= 0),
     acute_rising INTEGER CHECK (acute_rising IS NULL OR acute_rising IN (0, 1)),
     breadth REAL {_finite('breadth')},
@@ -208,10 +250,35 @@ CREATE TRIGGER IF NOT EXISTS {TABLE}_no_delete BEFORE DELETE ON {TABLE}
     BEGIN SELECT RAISE(ABORT, '{TABLE} is append-only'); END;
 """
 
+def _bring_forward(db: sqlite3.Connection) -> None:
+    """Add the columns an older file is missing. Additive, idempotent, no table rewrite.
+
+    ``ingestion.store._bring_forward``'s habit, and no more than that habit: ``CREATE TABLE
+    IF NOT EXISTS`` is a no-op on a table that already exists, so a file created before a
+    column was declared needs the ``ALTER TABLE`` as well. Each step is guarded by what the
+    file ACTUALLY HAS — ``PRAGMA table_info`` — rather than by a recorded version number,
+    because there is no migration ledger in this store to be trusted.
+
+    ``ADD COLUMN`` rewrites SQLite's schema record only: no row is touched, no table is
+    copied, and the append-only triggers are not dropped and re-created. Existing rows take
+    ``NULL``, which :data:`_CANDIDATE_STATE_COLUMN` documents as a third state and which the
+    resolver reads as "cannot confirm", never as "confirmed".
+
+    NO FILE OF THIS TABLE EXISTS ANYWHERE YET — nothing in spec §9 is deployed — so this
+    function has no live file to carry forward today. It is written anyway, and tested
+    against a file created without the column, because the alternative is a store whose
+    "one shape" assumption is true only until the first evaluator runs.
+    """
+    columns = {row[1] for row in db.execute(f"PRAGMA table_info({TABLE})")}
+    if "candidate_state" not in columns:  # WO-1.3a, the persistence resolver
+        db.execute(f"ALTER TABLE {TABLE} ADD COLUMN {_CANDIDATE_STATE_COLUMN}")
+
+
 _COLUMNS = (
     "dial_id",
     "as_of",
     "machine_state",
+    "candidate_state",
     "persistence_counter",
     "acute_rising",
     "breadth",
@@ -242,6 +309,12 @@ class MachineStateRow:
     as_of: datetime
     machine_state: State
     persistence_counter: int
+    #: WHAT THIS READING'S OWN NUMBERS CALLED FOR, before persistence was applied —
+    #: :func:`crash_detector.engine.statistics.candidate_state_for_one_reading`'s answer.
+    #: It is EQUAL to ``machine_state`` on a settled row and DIFFERENT on a row whose
+    #: transition is still accumulating, which is the whole reason it is stored: see the
+    #: module docstring. ``None`` only on a row written before the column existed.
+    candidate_state: Union[State, None] = None
     acute_rising: Union[bool, None] = None
     breadth: Union[float, None] = None
     acute: Union[float, None] = None
@@ -281,6 +354,7 @@ class MachineStateHistoryStore:
         self._db.execute("PRAGMA journal_mode=WAL")
         self._db.execute("PRAGMA synchronous=FULL")
         self._db.executescript(_SCHEMA)
+        _bring_forward(self._db)
 
     def close(self) -> None:
         self._db.close()
@@ -309,6 +383,7 @@ class MachineStateHistoryStore:
                 row.dial_id,
                 format_utc(row.as_of),
                 row.machine_state.value,
+                None if row.candidate_state is None else row.candidate_state.value,
                 row.persistence_counter,
                 None if row.acute_rising is None else int(row.acute_rising),
                 row.breadth,
@@ -339,12 +414,14 @@ class MachineStateHistoryStore:
 
 
 def _as_row(record: tuple) -> MachineStateRow:
-    (dial_id, as_of, machine_state, persistence_counter, acute_rising, breadth, acute,
-     acute_from_master_id, master_scores, indicator_count, count_at_or_beyond) = record
+    (dial_id, as_of, machine_state, candidate_state, persistence_counter, acute_rising,
+     breadth, acute, acute_from_master_id, master_scores, indicator_count,
+     count_at_or_beyond) = record
     return MachineStateRow(
         dial_id=dial_id,
         as_of=parse_utc(as_of),
         machine_state=State(machine_state),  # refuses a text the vocabulary no longer has
+        candidate_state=None if candidate_state is None else State(candidate_state),
         persistence_counter=persistence_counter,
         acute_rising=None if acute_rising is None else bool(acute_rising),
         breadth=breadth,

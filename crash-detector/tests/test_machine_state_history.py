@@ -19,7 +19,7 @@ import pytest
 
 from crash_detector.engine.statistics import State
 from evaluator.history_store import (TABLE, MachineStateHistoryStore, MachineStateRow,
-                                     _as_sql_literals)
+                                     _CANDIDATE_STATE_COLUMN, _SCHEMA, _as_sql_literals)
 
 AS_OF = datetime(2026, 10, 14, 12, 0, tzinfo=timezone.utc)
 WRITTEN = AS_OF + timedelta(seconds=2)
@@ -32,6 +32,7 @@ def _resolved(**overrides) -> MachineStateRow:
         dial_id=DIAL,
         as_of=AS_OF,
         machine_state=State.WATCH,
+        candidate_state=State.WATCH,
         persistence_counter=2,
         acute_rising=True,
         breadth=0.41,
@@ -51,6 +52,7 @@ def _unknown(**overrides) -> MachineStateRow:
         dial_id=DIAL,
         as_of=AS_OF,
         machine_state=State.UNKNOWN,
+        candidate_state=State.UNKNOWN,
         persistence_counter=0,
     )
     row.update(overrides)
@@ -163,7 +165,10 @@ def test_the_state_vocabulary_in_the_ddl_is_built_from_the_enum_not_retyped(stor
     ).fetchone()[0]
     for member in State:
         assert f"'{member.value}'" in ddl
-    assert ddl.count("'state.") == len(State) + 1, "a state the enum does not declare"
+    # TWO columns carry the vocabulary — `machine_state` and `candidate_state` — plus the
+    # ONE `WHEN 'state.unknown'` arm of the coherence CHECK. A count rather than a regex:
+    # a sixth state reaching the DDL from anywhere but the enum shows up here as a number.
+    assert ddl.count("'state.") == 2 * len(State) + 1, "a state the enum does not declare"
     # ... and a state the enum does declare still has to be spelled exactly:
     with pytest.raises(sqlite3.IntegrityError, match="CHECK constraint failed"):
         store._db.execute(
@@ -211,6 +216,40 @@ def test_opening_the_file_again_keeps_the_schema_and_every_row(tmp_path):
     with MachineStateHistoryStore(str(path)) as last:
         with pytest.raises(sqlite3.IntegrityError, match="append-only"):
             last._db.execute(f"DELETE FROM {TABLE}")
+
+
+def test_a_file_created_before_candidate_state_gains_the_column_and_keeps_its_rows(tmp_path):
+    """:func:`_bring_forward` against a REAL file that genuinely lacks the column.
+
+    The old file is built from :data:`_SCHEMA` with the ``candidate_state`` line removed,
+    so it is this table's FIRST shape and not an approximation of it, and a row is written
+    through raw SQL because the writer no longer knows how to produce one. What the
+    brought-forward file must then do is all three of: carry the old row unchanged, read it
+    back as a ``candidate_state`` of ``None`` (the third state — not a guessed state), and
+    accept a new row that records one.
+    """
+    path = str(tmp_path / "before.sqlite")
+    first_shape = _SCHEMA.replace(f"    {_CANDIDATE_STATE_COLUMN},\n", "")
+    assert "candidate_state" not in first_shape, "the old shape still declares the column"
+    db = sqlite3.connect(path, isolation_level=None)
+    db.executescript(first_shape)
+    db.execute(
+        f"INSERT INTO {TABLE} (dial_id, as_of, machine_state, persistence_counter,"
+        " written_utc) VALUES (?,?,?,?,?)",
+        (DIAL, "2026-10-14T11:00:00Z", State.UNKNOWN.value, 0, "2026-10-14T11:00:02Z"),
+    )
+    db.close()
+
+    with MachineStateHistoryStore(path) as brought_forward:
+        (old_row,) = brought_forward.recent(DIAL, limit=3)
+        assert old_row.machine_state is State.UNKNOWN  # the one state raw SQL can write
+        assert old_row.breadth is None
+        assert old_row.candidate_state is None, "a column added guessed at a past candidate"
+
+        brought_forward.append(_resolved(candidate_state=State.WATCH), written_utc=WRITTEN)
+        newest, older = brought_forward.recent(DIAL, limit=3)
+        assert newest.candidate_state is State.WATCH
+        assert older == old_row, "bringing the file forward disturbed a row already written"
 
 
 def test_the_readers_door_creates_nothing_and_writes_nothing(tmp_path):
