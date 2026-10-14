@@ -412,6 +412,56 @@ class MachineStateHistoryStore:
         ).fetchall()
         return tuple(_as_row(record) for record in rows)
 
+    def state_since(self, dial_id: str):
+        """The ``as_of`` OF THE ROW THAT STARTED this dial's current ``machine_state`` streak.
+
+        DECISION-RULE.md §7's ``state_since``, and it is a QUERY rather than a column
+        because the answer is a property of the whole series and the writer does not know
+        it: :func:`evaluator.resolve.official_state_for_dial` sees
+        :data:`~evaluator.resolve.BREADTH_LOOKBACK_ROWS` rows and a dial that has been CALM
+        for six months at a five-minute cadence has fifty thousand. Deriving it from
+        :meth:`recent` would therefore not be conservative-but-imprecise, it would be WRONG
+        in the one direction that matters — a 20-row window answers "CALM for 100 minutes"
+        about a state that has held since spring — so the window is not asked. No column was
+        added either: a stored ``state_since`` would be a denormalised copy of what these
+        two indexed reads already answer exactly, and the first row written with it stale
+        would be a historical fact that is wrong forever (the table is append-only).
+
+        The streak is run over ROW ID and not over ``as_of``, for :meth:`recent`'s reason:
+        the id is the order the evaluations were appended in and cannot be reordered by a
+        feed that republished an older vintage. What is returned is accordingly the as_of of
+        the row that FIRST SAID SO and not ``MIN(as_of)`` across the streak — "the state has
+        held since the reading that first reached it", which is the claim §7's consumer
+        reads, and which stays true even where two readings' as_ofs are out of order.
+
+        ``None`` only when this dial has NO rows at all. That is not a state that began at
+        an unknown time, it is a dial with no history, and the caller holding the row it is
+        about to append knows the answer for that case and this handle does not.
+
+        A read, through both doors: it creates nothing, writes nothing and is available on a
+        ``read_only=True`` handle.
+        """
+        latest = self._db.execute(
+            f"SELECT machine_state FROM {TABLE} WHERE dial_id = ?"
+            f" ORDER BY {TABLE}_id DESC LIMIT 1",
+            (dial_id,),
+        ).fetchone()
+        if latest is None:
+            return None
+        # The newest row BELOW which this dial said something else. NULL (-> 0, and every
+        # id is >= 1) means the whole of this dial's history is the one streak.
+        broke_at = self._db.execute(
+            f"SELECT MAX({TABLE}_id) FROM {TABLE}"
+            f" WHERE dial_id = ? AND machine_state != ?",
+            (dial_id, latest[0]),
+        ).fetchone()[0]
+        started = self._db.execute(
+            f"SELECT as_of FROM {TABLE} WHERE dial_id = ? AND {TABLE}_id > ?"
+            f" ORDER BY {TABLE}_id ASC LIMIT 1",
+            (dial_id, broke_at or 0),
+        ).fetchone()
+        return parse_utc(started[0])
+
 
 def _as_row(record: tuple) -> MachineStateRow:
     (dial_id, as_of, machine_state, candidate_state, persistence_counter, acute_rising,

@@ -303,3 +303,32 @@ caller's choice — build the dict first, matching the schema's field names exac
 a pure, testable function, same discipline as everything else in this WO — no new engine
 computation beyond `scored_weight_fraction` if time allows, no serving/HTTP endpoint yet
 (that's a later round, once the contract shape itself is settled and tested).
+
+## 14. PO sign-off on the output contract (Trinity, 2026-10-14)
+
+Approved `evaluator/contract.py`, the `state_since` query, and `scored_coverage` without
+reservation. Two things specifically called out as excellent beyond what was asked:
+
+1. **`dial_value_min`/`dial_value_max` built, not deferred** — the closed-form derivation
+   (`min = breadth · f`, `max = breadth · f + (1 − f)`) is a real algebraic identity of the
+   re-score, needs no per-indicator detail, and closes a gap spec §12 explicitly allowed to
+   be left open. Correct, and verified in this round's own test against a long-form re-score.
+2. **The `inputs` gap reported, not papered over.** `master_scores` is keyed by MASTER id, not
+   indicator id, and publishing it under `inputs` would mislabel it; nothing stored today
+   carries per-input age. Correctly refused a plausible-but-wrong shape in the one field
+   Epic 2 reads verbatim. **Ruling: `inputs: null` + `inputs_not_computed: true` stands as
+   built.** Filling it for real is its own follow-up (WO-1.3d) — it needs either a new
+   `MachineStateRow` column carrying the engine's `Contribution` detail, or a second read of
+   the raw store's `raw_observation` ages at contract-assembly time, and that is a real
+   data-shape decision, not a guess for this round to make.
+
+**The `as_of`/"newest input" question, answered.** `DECISION-RULE.md` §7's own prose is
+wrong, not the code: the engine has always dated a reading by its OLDEST input (`_oldest_as_of`,
+"a reading is only as fresh as its oldest input"), which is the conservative choice and the
+one every freshness/staleness decision in this product already depends on. Publishing the
+newest input's timestamp instead would make a reading LOOK fresher than its stalest
+contributor — the exact opposite of "missing or stale data must never render as calm."
+**Ruling: publish the oldest-input `as_of`, unchanged, as built.** `DECISION-RULE.md` §7's
+own comment should read "oldest" rather than "newest" — recorded here as a wording
+correction owed to that document, not a behaviour question, and raised with Matt/the
+architect separately rather than edited into their document unilaterally from this seat.
