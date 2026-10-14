@@ -97,3 +97,38 @@ pure-function computation signatures — given a dial's already-scored indicator
 existing), acute (new, per masters table), count (new). NO state-machine wiring yet, NO
 persistence counting yet, NO output contract yet — those are later rounds, same discipline as
 WO-1.14.
+
+## 5. Addendum (Trinity, 2026-10-14) — architecture sign-off, after Rogue's round-1 investigation
+
+**Approved: a parallel module (`engine/statistics.py` or `engine/masters.py`), not a new
+`MappingKind` member.** `MappingKind`/`ScoreComputation` are sealed around "one magnitude per
+dial" for a real incident's sake (ASR3-F02); a three-statistic member would either need
+multiple `ModelSpec` rows per dial (structurally forbidden) or widen the sealed type. The
+precedent is `derivations.py`'s own `DerivationKind` — a second closed enum added without
+touching `MappingKind` when a genuinely new kind of computation was needed. Same shape here.
+`mapping.py` is untouched; `breadth` stays byte-identical to today's `_banded_weighted_mean`.
+
+**Approved: two separate per-dial master tables, no `check_no_blend.py` allowlist entry.**
+`real_rate_10y_tips` scores 1.0 on equity and 0.0 on monetary from the same underlying value
+(opposite polarity, both dials) — a shared "scaled score for indicator X" helper would be
+exactly the cross-dial function that rule exists to catch. Keep the two tables separate and
+stay out of the allowlist; that fixes the actual hazard rather than suppressing the lint.
+
+**Flagged, not fixed, carried into WO-1.3b:** `count` (≥0.9 scaled) right now equals `k` only
+because three indicators (`michigan_sentiment`, `real_rate_10y_tips`, `shiller_cape`) are
+CLAMPED at exactly 1.0 on their provisional bands — saturated, not necessarily genuinely
+acute (same root cause as `MATH.md` R-6). `count` as specified measures band-narrowness as
+much as market stress. R2D2's WO-1.3b calibration pass should consider counting unclamped
+distance-to-stress rather than clamped scaled score — recorded here as an open question for
+that pass, not decided in this document.
+
+## 6. Scope for round 2
+
+Build the `State` enum, `MasterCombine` closed enum (`IDENTITY`, `MAX`) with its own
+executor-branch set-equality assertion (mirroring `mapping.py`'s own pattern), the two
+separate per-dial masters tables as frozen data, and the pure acute/count functions — each
+taking one dial's `Contribution` tuple (already produced by `_banded_weighted_mean`, no new
+scaling). Re-establish `mapping.py`'s three structural properties (no code, no state, cannot
+span two dials) in the new module explicitly, since they are not inherited. NO state-machine
+wiring yet (rules 1-6 of §3 above), no persistence counting, no output contract — those stay
+later rounds.
