@@ -88,13 +88,24 @@ computed, not only in a governance file.
 WHAT THIS MODULE DOES NOT DO YET (spec §6, and it is the deliverable rather than a gap)
 ====================================================================================
 
-NO STATE MACHINE. :class:`State` is the five-member vocabulary and nothing below resolves
-one: rules 1-6 of spec §3, the persistence counter and the second-leg rule are round 3.
-NO PERSISTENCE and NO OUTPUT CONTRACT — later rounds, the same increment discipline WO-1.14
-was built under. What IS here is what the state machine will stand on, including its
-ability to say ``UNKNOWN``: see :class:`AcuteUnknown`, which exists NOW rather than being
-bolted on later, because a statistic that cannot express "I do not know" has already turned
-an absence into a number.
+NO PERSISTENCE COUNTING, NO SECOND-LEG RULE, NO PREVIOUS STATE AND NO OUTPUT CONTRACT.
+
+Round 4 added ONE HALF of spec §3's state machine: :func:`candidate_state_for_one_reading`,
+which answers *"ignoring how long anything has held, what state does THIS SINGLE READING's
+data call for?"* — rules 1-6 read as a precedence over one reading's numbers. It has no
+memory by construction. It never reads ``MachineStateHistoryStore``, it does not know what
+the dial's previous official state was, and it does not count consecutive readings.
+
+The OTHER half — spec §3's ``persistence = 3`` counting (spec §7: the current evaluation plus
+the 2 immediately preceding rows), the second-leg rule, and rule 5's "the PREVIOUS state was
+``ALARM``" condition — is the next round's wrapper around this function, and rule 5's
+declared limit on that boundary is written out on the function itself. Read it before reading
+a ``RECOVERY`` out of this module as a verdict; it is a candidate.
+
+What round 2 left here is what both halves stand on, including the ability to say
+``UNKNOWN``: see :class:`AcuteUnknown`, which exists NOW rather than being bolted on later,
+because a statistic that cannot express "I do not know" has already turned an absence into a
+number — and it is what makes rule 1 a type check rather than a sentinel comparison.
 """
 
 from __future__ import annotations
@@ -102,7 +113,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 
-from crash_detector.admission import admits
+from crash_detector.admission import admits, one_of
 from crash_detector.dials.provenance import require_finite_float
 from crash_detector.dials.scores import EQUITY_DIAL_ID, MONETARY_DIAL_ID, Contribution
 from crash_detector.establishment import each_of, establishes
@@ -124,6 +135,9 @@ __all__ = [
     "PROVISIONAL_STRESS",
     "PROVISIONAL_EXIT",
     "COUNT_THRESHOLD",
+    "PROVISIONAL_BREADTH_MID",
+    "PROVISIONAL_BREADTH_HIGH",
+    "PROVISIONAL_COUNT_K",
     "EQUITY_CRASH_MASTERS",
     "MONETARY_DEBASEMENT_MASTERS",
     "equity_crash_masters",
@@ -131,6 +145,7 @@ __all__ = [
     "monetary_debasement_masters",
     "monetary_debasement_acute",
     "count_for_one_dial",
+    "candidate_state_for_one_reading",
 ]
 
 
@@ -255,6 +270,38 @@ PROVISIONAL_EXIT = 0.5
 #: score of exactly 1.0 is counted here and clamping is saturation, not necessarily stress;
 #: that is a known, disclosed defect carried into WO-1.3b, not a property of the market.
 COUNT_THRESHOLD = 0.9
+
+#: PROVISIONAL (spec §3, ``B_mid``). The breadth at or beyond which breadth ALONE — when it
+#: is ALSO rising over the 20-reading lookback — is enough for ``WATCH`` under rule 4. Not
+#: calibrated, not backtested; one of spec §10's own "unset — calibration" rows.
+PROVISIONAL_BREADTH_MID = 0.35
+
+#: PROVISIONAL (spec §3, ``B_high``). The breadth which, TOGETHER WITH ``count`` at or
+#: beyond :data:`PROVISIONAL_COUNT_K`, fires ``ALARM`` under rule 3. Not calibrated.
+#:
+#: Strictly ABOVE :data:`PROVISIONAL_BREADTH_MID`, asserted at import below for the reason
+#: :class:`Master` asserts ``exit < warning < stress`` about its own three: a high band at or
+#: under the mid band would have rules 3 and 4 disagree about which reading is the more
+#: serious, and the numbers being provisional is no licence for them to be incoherent.
+PROVISIONAL_BREADTH_HIGH = 0.55
+
+#: PROVISIONAL (spec §3, ``k``). How many of a dial's contributing indicators must be at or
+#: beyond :data:`COUNT_THRESHOLD` for rule 3's breadth-and-count ``ALARM``. An ``int``,
+#: because it is compared against :attr:`Count.count`, which is a LENGTH and not a
+#: measurement — there is no finite-float establishment to do on a count of names.
+#:
+#: **READ THE MODULE DOCSTRING'S NOTE ON ``count``.** Three indicators sit CLAMPED at exactly
+#: 1.0 on today's provisional bands, so this threshold is reachable by SATURATION alone and
+#: rule 3 is correspondingly easier to fire than the spec's sentence sounds.
+PROVISIONAL_COUNT_K = 3
+
+if not PROVISIONAL_BREADTH_MID < PROVISIONAL_BREADTH_HIGH:
+    raise AssertionError(
+        f"the provisional breadth bands read mid={PROVISIONAL_BREADTH_MID}, "
+        f"high={PROVISIONAL_BREADTH_HIGH}. The two must read mid < high: spec §3 rule 3 "
+        "treats the high band as MORE serious than rule 4's mid band, and bands that "
+        "invert or coincide make the two rules describe the same reading differently."
+    )
 
 
 @establishes(
@@ -713,6 +760,40 @@ if _one_dial_only(MONETARY_DEBASEMENT_MASTERS, MONETARY_DIAL_ID) != MONETARY_DIA
     raise AssertionError("the monetary masters table does not name the monetary dial")
 
 
+# **WHY :func:`candidate_state_for_one_reading` MAY READ THE MODULE-LEVEL THRESHOLDS, AND
+# WHAT STOPS THAT BEING A LIE THE DAY THE TABLES CHANGE.**
+#
+# Spec §3 rules 2, 4 and 5 say "its stress threshold", "its warning threshold", "its exit
+# threshold" — PER MASTER. :class:`Master` carries exactly those three fields per row, and it
+# is :class:`MasterScore`, with no thresholds on it, that the state machine actually receives
+# inside :attr:`Acute.masters`. Resolving a score's own row would mean a ``master_id`` lookup
+# into the dial's table SELECTED BY :attr:`Acute.dial_id` — a dial-keyed dispatch, which is
+# precisely the structure PROPERTY 3 of the module docstring says does not exist here and
+# which spec §5 refused.
+#
+# So the state machine compares against the module-level constants, which is CORRECT ONLY
+# BECAUSE EVERY ROW OF BOTH TABLES CARRIES EXACTLY THOSE CONSTANTS — and that is asserted
+# here, at import, rather than left as a thing a reader would have to go and check. The day a
+# master is given its own calibrated numbers (WO-1.3b's whole purpose), THIS MODULE STOPS
+# IMPORTING and the next seat has to thread per-master thresholds through the state machine
+# properly. It does not quietly judge a recalibrated master against the old shared number.
+if any(
+    (row.warning_threshold, row.stress_threshold, row.exit_threshold)
+    != (PROVISIONAL_WARNING, PROVISIONAL_STRESS, PROVISIONAL_EXIT)
+    for table in (EQUITY_CRASH_MASTERS, MONETARY_DEBASEMENT_MASTERS)
+    for row in table
+):
+    raise AssertionError(
+        "a master row carries thresholds of its own, and candidate_state_for_one_reading "
+        "compares every master's score against the module-level PROVISIONAL_WARNING / "
+        "PROVISIONAL_STRESS / PROVISIONAL_EXIT. That shortcut was sound only while the "
+        "tables were uniform. Thread each master's OWN warning/stress/exit through the "
+        "state machine now — do not relax this assertion, and do not judge a recalibrated "
+        "master against a threshold it no longer declares (spec §3 rules 2, 4 and 5 each "
+        "say *its* threshold)."
+    )
+
+
 def _combined(combine: MasterCombine, scores: tuple) -> float:
     """Execute ``combine``'s NAMED reduction over one master's component scores.
 
@@ -912,3 +993,148 @@ def count_for_one_dial(contributions: tuple) -> Count:
         indicator for indicator in considered if scaled[indicator] >= COUNT_THRESHOLD
     )
     return Count(at_or_beyond=at_or_beyond, considered=considered)
+
+
+@admits(
+    breadth=float,
+    acute=one_of(*ACUTE_RESULTS),
+    count=Count,
+    breadth_20_rows_ago=one_of(float, None),
+    trend_confirmed=bool,
+)
+def candidate_state_for_one_reading(
+    breadth: float,
+    acute,
+    count: Count,
+    breadth_20_rows_ago: float | None,
+    trend_confirmed: bool,
+) -> State:
+    """WHAT THIS ONE READING'S DATA CALLS FOR, IGNORING HOW LONG ANYTHING HAS HELD.
+
+    Rules 1-6 of spec §3 as a PRECEDENCE over one reading's numbers, and nothing else. This
+    is deliberately the smaller half of the state machine, and the split is the point:
+
+    * **THIS function** asks *"on this reading's numbers alone, which rule fires?"* It has no
+      memory. It does not know the dial's previous official state, it does not count
+      consecutive readings, and it never reads ``MachineStateHistoryStore``.
+    * **The next round's wrapper** decides whether that answer BECOMES the dial's state:
+      spec §3's ``persistence = 3`` counting (spec §7's reading of it — the current
+      evaluation plus the 2 immediately preceding rows for this dial), the second-leg rule,
+      and the previous-state condition rule 5 carries.
+
+    Persistence is a property of a SEQUENCE of readings; rules 1-6 are properties of ONE. A
+    single function doing both would have to consult the history to answer "which rule
+    fires", and every test of the rules would then be a test of the store as well.
+
+    ====================================================================================
+    **RULE 5'S DECLARED LIMIT — A ``RECOVERY`` FROM HERE IS A CANDIDATE, NOT A VERDICT.**
+    ====================================================================================
+
+    Spec §3 rule 5 reads *"Else if the dial's PREVIOUS state was ``ALARM`` AND (every
+    master's acute ≤ its exit threshold for ``persistence`` consecutive readings) AND
+    (trend-confirmed)"*. TWO of those three conditions are outside what one reading can
+    answer — the previous state, and "for ``persistence`` consecutive readings" — and this
+    function is built not to know either. What it computes is the REST of rule 5: every
+    master back under its exit threshold ON THIS READING, and ``trend_confirmed``.
+
+    So ``State.RECOVERY`` returned from here means *"this reading satisfies everything about
+    rule 5 that a single reading can satisfy"*. **THE CALLER MUST DECIDE WHAT THAT IS WORTH.**
+    When the previous state was not ``ALARM``, spec §3's own "Else" chain falls through to
+    rule 6 and the state is ``CALM``; making that call needs the previous state, which is the
+    wrapper's input and not this function's. **THIS IS A SCOPE BOUNDARY AND NOT A BUG** — it
+    is written here, on the function, so that no caller can reach a ``RECOVERY`` out of this
+    module without meeting the sentence that says it is not yet one.
+
+    ``trend_confirmed`` is a PARAMETER THE CALLER SUPPLIES and is not computed from any wired
+    indicator (spec §7's explicit scope cut): ``spx_vs_200dma`` exists in the mapping as a
+    SCALED SCORE, not as a raw "above a flattening 200-day mean" boolean, and fabricating a
+    trend signal to make ``RECOVERY`` work end to end was refused rather than overlooked.
+
+    ====================================================================================
+    THE PARAMETERS, AND THE ONE THING THIS FUNCTION CANNOT CHECK ABOUT THEM
+    ====================================================================================
+
+    ``breadth`` is :func:`crash_detector.engine.mapping._banded_weighted_mean`'s number for
+    THIS reading, unchanged. ``breadth_20_rows_ago`` is the ONE earlier number rule 4's
+    lookback needs — spec §7's provisional reading of "breadth rising over the last 20
+    readings" is a simple lookback comparison and not a monotonicity requirement, so one
+    number is the whole of it. **``None`` MEANS "FEWER THAN 20 ROWS OF HISTORY EXIST", WHICH
+    IS "CANNOT CONFIRM RISING" AND NEVER "DID NOT RISE"** — and the consequence is that
+    rule 4's breadth limb cannot fire, while its per-master limb is unaffected. A young
+    history therefore cannot be read as a calm one, which is the same sentence
+    :class:`AcuteUnknown` exists for one storey down. Fetching that number is the caller's
+    job; this function performs no query.
+
+    **DECLARED LIMIT: NOTHING HERE PROVES ``breadth``, ``count`` AND ``acute`` CAME FROM THE
+    SAME DIAL.** ``acute`` carries a ``dial_id``; ``breadth`` is a bare ``float`` and
+    :class:`Count` carries no dial at all. Adding a ``dial_id`` parameter to compare against
+    would be a CALLER'S CLAIM this function could not check — the exact reasoning
+    :class:`Count` already records for having no dial field — and a dial-keyed dispatch is
+    the structure PROPERTY 3 of the module docstring says is absent here. The three
+    statistics are PAIRED at the site that computes them for one dial from one evaluation,
+    and that site is the next round's wrapper, not this function.
+
+    Returns one :class:`State` member. It never returns ``None`` and there is no branch that
+    falls out of the bottom: rule 6 is an answer, and :data:`State.CALM`'s own docstring says
+    it is the last branch rather than a default.
+    """
+    # ESTABLISHED BEFORE ANY RULE IS JUDGED, AND BEFORE RULE 1'S EARLY RETURN. A NaN breadth
+    # is refused on an UNKNOWN reading too: `NaN >= PROVISIONAL_BREADTH_HIGH` is False and
+    # `NaN > earlier` is False, so an unestablished number would not raise here — it would
+    # quietly make every breadth limb fail and read as the calm answer. The door's
+    # `breadth=float` admits the TYPE; finiteness is this line's job.
+    here = require_finite_float("candidate_state_for_one_reading", "breadth", breadth)
+    earlier = (
+        None
+        if breadth_20_rows_ago is None
+        else require_finite_float(
+            "candidate_state_for_one_reading",
+            "breadth_20_rows_ago",
+            breadth_20_rows_ago,
+        )
+    )
+
+    # RULE 1. FIRST, UNCONDITIONAL, AND A TYPE IDENTITY RATHER THAN A SENTINEL. "Stop; no
+    # other rule overrides this" is the spec's own sentence, and `AcuteUnknown` has no
+    # `score` field at all, so there is no number here to compare against a threshold even
+    # by accident. Rules 2-6 below may therefore read `acute.masters` unguarded: past this
+    # line `acute` is exactly an `Acute`, whose `masters` is non-empty by construction.
+    if type(acute) is AcuteUnknown:
+        return State.UNKNOWN
+
+    # RULE 2. ANY master at or beyond its stress threshold, read PER MASTER and not off
+    # `acute.score`'s maximum — the two agree today, and the spec says "any master", so the
+    # code says it too. Masters override breadth and count: no amount of calm elsewhere in
+    # the reading outvotes a firing master (spec §3's parenthesis on this rule).
+    if any(master.score >= PROVISIONAL_STRESS for master in acute.masters):
+        return State.ALARM
+
+    # RULE 3. Breadth AND count together, never either alone.
+    if here >= PROVISIONAL_BREADTH_HIGH and count.count >= PROVISIONAL_COUNT_K:
+        return State.ALARM
+
+    # RULE 4. EITHER limb is enough, and they are independent: a master at warning fires
+    # WATCH with breadth flat or falling, and breadth rising past the mid band fires WATCH
+    # with every master quiet. `earlier is not None` is the first term because an absent
+    # lookback means the comparison cannot be made at all.
+    rising_into_the_mid_band = (
+        earlier is not None and here > earlier and here >= PROVISIONAL_BREADTH_MID
+    )
+    if (
+        any(master.score >= PROVISIONAL_WARNING for master in acute.masters)
+        or rising_into_the_mid_band
+    ):
+        return State.WATCH
+
+    # RULE 5. EVERY master under exit AND the trend confirmed — both, never either (spec §3,
+    # DECISION-RULE.md §6: late by design). Read the DECLARED LIMIT above: this is a
+    # candidate, because the previous state and the consecutive-readings requirement are
+    # the wrapper's to check.
+    if (
+        all(master.score <= PROVISIONAL_EXIT for master in acute.masters)
+        and trend_confirmed
+    ):
+        return State.RECOVERY
+
+    # RULE 6. The last branch of the precedence, and an answer in its own right.
+    return State.CALM
