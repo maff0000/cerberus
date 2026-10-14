@@ -8,6 +8,25 @@
 #     is still OWED; this runs the WO-1.2b runner directly with a plain bridge network.
 #   * cd-live-gui is a read-only view over the same SQLite volume; it computes the dials on request.
 #     It publishes ONE port. The market read touches no book data.
+#   * cd-live-evaluator (WO-1.3a) runs the state machine on a timer. network_mode: none, no port,
+#     no egress. It is the ONE process that writes cd-live-state.
+#
+# DEPLOYING cd-live-evaluator ON TOP OF THE RUNNING STACK — the command, and why each part of it:
+#
+#   CD_PYTHON_BASE=<digest ref> CD_BUILD_SHA=$(git rev-parse --short HEAD) \
+#   CD_GUI_BIND=192.168.11.10 \
+#   docker compose -p cerberus-live -f deploy/live-dev/compose.yaml up -d --build --no-deps \
+#     cd-live-evaluator
+#
+#   * --no-deps and naming cd-live-evaluator: MANDATORY (spec §10 item 4). --build gives the new
+#     image a new CD_BUILD_SHA tag, and `image:` is in the shared anchor, so a whole-stack `up`
+#     would change the collector's and the GUI's resolved config and recreate both. Naming one
+#     service with --no-deps is what keeps a 24-hour-old collector running.
+#   * CD_GUI_BIND=192.168.11.10: MANDATORY (spec §10 item 4). The running GUI is published on the
+#     LAN address, NOT this file's documented 127.0.0.1 default. Omitting it on an invocation that
+#     does touch the GUI would silently relocate it.
+#   * At a FIXED CD_BUILD_SHA, adding this service leaves cd-live-collector's and cd-live-gui's
+#     resolved config and `docker compose config --hash` byte-identical. Measured, not assumed.
 x-live: &live
   build:
     context: ../../..
@@ -33,6 +52,42 @@ services:
     environment:
       CD_COLLECT_INTERVAL_SECONDS: "300"
 
+  # THE EVALUATOR: the WO-1.3a state machine, one pass every CD_EVALUATE_INTERVAL_SECONDS.
+  #
+  # network_mode: none — spec §10 item 1. Kernel-enforced and measured, not a declared policy
+  # nothing in this stack reads: this process reaches SQLite files and nothing else, so it is given
+  # no network at all rather than a network it is asked not to use.
+  #
+  # NO depends_on, AND THAT IS A DECISION. The GUI declares one; this does not, for two reasons.
+  # (1) It needs no start order: a raw store that is absent, empty or mid-write makes one pass fail,
+  # which evaluator_loop.py logs before continuing — the same answer it already gives for a store
+  # that exists and has no usable readings. (2) depends_on widens the blast radius of forgetting
+  # --no-deps: with --build the image tag changes, so a `up` that CONSIDERS cd-live-collector would
+  # recreate it. The data dependency is real and is written down here; the startup edge is not, and
+  # declaring one would buy nothing and risk the collector.
+  cd-live-evaluator:
+    <<: *live
+    network_mode: none
+    command: ["python3", "-B", "/app/evaluator_loop.py"]
+    # BOTH MOUNTS WRITTEN OUT, because `<<: *live` REPLACES the anchor's `volumes:` list rather than
+    # appending to it — a merge key does not deep-merge a sequence, so an entry here that listed
+    # only /state would have silently dropped /data.
+    #
+    # cd-live-data IS MOUNTED READ-WRITE AND THAT IS THE ONLY MOUNT THAT WORKS (spec §10 item 2).
+    # The read discipline is at the Python level — pass_once._raw_reader opens it read_only=True,
+    # structurally, with no argument through which a writable handle could be passed — exactly as
+    # cd-live-gui has always done it. A genuine :ro mount was MEASURED to fail intermittently
+    # against this WAL database, whose -shm/-wal sidecars are created and destroyed per connection:
+    # a read-only bind cannot create the sidecar a reader needs, so the failure is the mount's and
+    # not the reader's. This is not a concession; it is the finding.
+    #
+    # cd-live-state is this service's alone. Neither the collector nor the GUI mounts it.
+    volumes:
+      - cd-live-data:/data
+      - cd-live-state:/state
+    environment:
+      CD_EVALUATE_INTERVAL_SECONDS: "300"
+
   cd-live-gui:
     <<: *live
     depends_on:
@@ -52,3 +107,8 @@ services:
 volumes:
   cd-live-data:
     name: cd-live-data
+  # NEW IN WO-1.3a, AND NOT A SECOND DOOR ONTO cd-live-data. The machine-state history is this
+  # product's own conclusions; the raw store is what the feeds said. One volume per writer: the
+  # collector owns cd-live-data, the evaluator owns cd-live-state, and the GUI reads.
+  cd-live-state:
+    name: cd-live-state

@@ -33,6 +33,7 @@ from pathlib import Path
 import yaml
 
 from crash_detector.dials.dialset import DialSet
+from crash_detector.dials.scores import Contribution
 from crash_detector.engine.derivations import BREADTH_SAMPLE, DERIVATIONS, DerivationKind, DerivationUnavailable, derive
 from crash_detector.engine.config import ConfigSnapshot, DialSpec
 from crash_detector.engine.evaluate import evaluate
@@ -63,7 +64,7 @@ from ingestion.adapters import as_of_for
 from ingestion.catalog import INGREDIENTS, NOT_TRACTABLE, PARTIAL, Ingredient, window_seconds
 from ingestion.store import SqliteStore
 
-__all__ = ["Wiring", "build_wiring", "coverage", "observations_from_store", "evaluate_from_store",
+__all__ = ["Wiring", "build_wiring", "coverage", "scored_coverage", "observations_from_store", "evaluate_from_store",
            "DERIVED_FROM", "HELD_BINDINGS", "WIRED_DESPITE_PENDING_STATUS", "derive_from_store", "derived_as_of"]
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -367,3 +368,71 @@ def coverage(wiring: Wiring) -> dict:
         out[dial] = {"wired_weight": live, "nominal_weight": total,
                      "fraction": live / total if total else 0.0, "pending": pending}
     return out
+
+
+def scored_coverage(wiring: Wiring, dial_id: str, contributions: tuple) -> dict:
+    """ONE dial's REAL coverage: the nominal tier weight THIS READING ACTUALLY SCORED.
+
+    **THIS IS THE FIGURE MATH.md R-10 SAID WAS MISSING**, and :func:`coverage` above is not
+    it. That function answers "which ratified rows are WIRED", which is a fact about the
+    configuration and does not move between readings; a wired indicator whose feed has
+    published nothing, or whose newest reading has aged past its relevance window, is
+    counted there and is ABSENT from the mean. R-10's two worked cases are exactly that
+    gap: ``coverage.fraction`` reads 1.0 for a dial missing ``sloos_bank_lending``, and
+    0.905 for one in which neither gold leg has a value, where by scored weight it reads
+    0.667. DECISION-RULE.md §7's ``scored_weight_fraction`` is "scored weight / nominal
+    weight" and this is the only function in the product that computes it.
+
+    ``contributions`` is ONE dial's ``Contribution`` tuple as the engine produced it for
+    this reading (``crash_detector.engine.mapping._banded_weighted_mean`` builds one per
+    input it released, carrying the weight that input contributed to the mean), so the
+    numerator here is the same weight that produced the magnitude rather than a second
+    opinion about which inputs were live.
+
+    The DENOMINATOR is read back out of :func:`coverage` rather than re-summed here, so the
+    honest figure and the existing disclosure cannot drift onto two different nominal
+    totals: the fraction below and ``coverage(...)['fraction']`` differ in their numerator
+    only, which is the whole of what R-10 is about.
+
+    Refuses, rather than counting, a contribution whose indicator the ratified mapping does
+    not bind to ``dial_id``: a weight scored on the equity dial is not coverage of the
+    monetary one (CD-AC-002), and a caller holding both dials' contributions could otherwise
+    pair the wrong one with no complaint. Refuses a repeated indicator for the same reason
+    :func:`crash_detector.engine.statistics._scaled_scores` does — the second entry would
+    silently double-count its weight.
+
+    Returns ``scored_weight``, ``nominal_weight``, ``fraction`` and ``not_scored`` (every
+    ratified indicator bound to this dial that this reading did NOT score, named, so the
+    number is explainable and not merely published).
+    """
+    if dial_id not in DIALS:
+        raise ValueError(f"{dial_id!r} is not a dial. The dials are {list(DIALS)}.")
+    bound = {r["id"] for r in _rows() if dial_id in _polarities(r)}
+    scored_weight = 0.0
+    scored: set = set()
+    for contribution in contributions:
+        if type(contribution) is not Contribution:
+            raise TypeError(
+                "a dial's contributions are exactly Contribution values, got "
+                f"{type(contribution).__name__}"
+            )
+        if contribution.source_id not in bound:
+            raise ValueError(
+                f"indicator {contribution.source_id!r} is not bound to {dial_id!r} by the "
+                "ratified mapping, so its weight is not this dial's coverage. One dial's "
+                "scored weight may not be counted from another dial's contributions."
+            )
+        if contribution.source_id in scored:
+            raise ValueError(
+                f"indicator {contribution.source_id!r} appears twice in one dial's "
+                "contributions; the second entry would double-count its weight."
+            )
+        scored.add(contribution.source_id)
+        scored_weight += contribution.weight
+    nominal_weight = coverage(wiring)[dial_id]["nominal_weight"]
+    return {
+        "scored_weight": scored_weight,
+        "nominal_weight": nominal_weight,
+        "fraction": scored_weight / nominal_weight if nominal_weight else 0.0,
+        "not_scored": sorted(bound - scored),
+    }
