@@ -182,3 +182,40 @@ R2D2 challenge in WO-1.3b like everything else numeric here.
 mechanism reading it, and the six-rule precedence function (spec §3) wired to real stored
 history — EXCLUDING the trend-confirmation computation (parameter, not yet derived) and
 EXCLUDING the output contract (§7's full YAML schema — that's the round after this one).
+
+## 8. PO sign-off on round-3 investigation (Trinity, 2026-10-14)
+
+Confirmed and approved, all three of Rogue's findings:
+
+1. **A new store, own module outside `src/`, own SQLite file** — not a fourth table in
+   `SqliteStore`, not a reuse of `db/migrations/0004_dial_history.sql` (that migration's
+   `state` column is the EXISTING `Reading` sum type — `VALUE|DEGRADED|UNKNOWN` — a different
+   concept from the new `CALM|WATCH|ALARM|RECOVERY|UNKNOWN` machine. Genuinely new table,
+   genuinely new name — `machine_state`, not `state`; not named `dial_history`. If the
+   Postgres side ever needs this, it is a future migration (0008+), out of this WO's scope.
+2. **The real blocking decision, resolved**: a new `cd-live-evaluator` service, no egress,
+   running on the collector's existing 300s cadence — read-only handle on `ingestion/store.py`'s
+   raw store, write handle on the new history store. This is what "a reading" means from
+   here on: one evaluator pass, not one HTTP request. The GUI continues to compute nothing new
+   from this WO's work — it already reads `evaluate()` fresh per request for the EXISTING
+   breadth/Value/Degraded/Unknown reading (untouched), and will read the NEW machine-state
+   history the same read-only way once it exists. Folding evaluation into `collector_loop.py`
+   (the only container with outbound internet) is explicitly REFUSED — it would put new
+   evaluation logic in the one container that can reach the net, for no real saving.
+3. **The CD-RT-001 defense** (UNKNOWN rows carry no breadth/acute/count numbers, enforced in
+   the new table's own CHECK constraints, not just in the Python) — adopted, same discipline
+   as `dial.history`'s own `dial_history_state_fields_coherent`.
+
+## 9. Scope for round 4 — logic and storage only, no deployment yet
+
+Build, in order:
+1. The new history store (own module/file, append-only, idempotent schema-on-write-open,
+   `machine_state` CHECK built from `State` the same way WO-1.14's `_as_sql_literals` pattern
+   built `_VINTAGE_COLUMN` from `VINTAGE_LABELS` — reuse that exact technique, don't reinvent
+   it) and the six-rule precedence function (pure, in `engine/statistics.py`, per Rogue's own
+   recommendation — it belongs beside `State`/`MasterCombine`, not in the new store module).
+2. A plain Python "evaluator pass" function: read current raw contributions + the dial's
+   recent machine-state history, compute via `engine/statistics.py`'s functions, apply the
+   six-rule precedence, write one new history row. Testable in isolation, no container, no
+   compose, no Dockerfile — those are explicitly a LATER round (deployment), once the logic
+   is proven.
