@@ -219,3 +219,45 @@ Build, in order:
    six-rule precedence, write one new history row. Testable in isolation, no container, no
    compose, no Dockerfile — those are explicitly a LATER round (deployment), once the logic
    is proven.
+
+## 10. PO sign-off on deployment investigation (Trinity, 2026-10-14)
+
+Approved, all four of Rogue's findings, plus the naming correction (two compose
+stacks, design vs live-dev — this WO deploys into `deploy/live-dev/compose.yaml`,
+the one actually running, not the undeployed seven-service design).
+
+1. **`network_mode: none` for `cd-live-evaluator`**, not a reused/invented
+   `x-egress` declaration. Measured, kernel-enforced, and the evaluator genuinely
+   needs no network (SQLite-only). Declaring a policy nothing in the live stack
+   reads would be theatre; this is real.
+2. **Mount `cd-live-data` rw, keep `read_only=True` at the Python/SqliteStore
+   level**, matching `cd-live-gui`'s own existing precedent exactly, with the WAL
+   `-shm`/`-wal` sidecar-transience finding written down as the reason, not
+   implied. A genuine `:ro` mount was measured to fail intermittently against a
+   WAL database whose sidecars are created/destroyed per connection — this is not
+   a concession, it is the only mount that actually works against this file.
+3. **A new `cd-live-state` volume**, rw, exclusive to the evaluator — neither
+   existing service touches it.
+4. **`--no-deps` is mandatory** on the actual `docker compose up` that deploys
+   this, and **`CD_GUI_BIND=192.168.11.10` must be set explicitly** on any compose
+   invocation touching this stack (the running GUI does NOT use the file's
+   documented `127.0.0.1` default) — both named here so the deploy round does not
+   rediscover them by recreating the collector or relocating the GUI.
+
+**Flagged separately, not this WO's to fix**: `cd-live-gui`'s Docker-level mount
+of `cd-live-data` has always been read-write; its "read-only" guarantee has only
+ever existed at the Python/SQLite level (`read_only=True`), never enforced by the
+container itself. Pre-existing, not introduced by WO-1.3a. Worth Helm's awareness.
+
+## 11. Scope for the deployment round
+
+Write the Dockerfile addition (reuse the existing `cd-live-dev` image — the
+evaluator needs no new dependencies beyond what's already installed), a new
+`evaluator_loop.py` mirroring `collector_loop.py`'s exact pattern (plain
+`threading.Event`-based loop, `CD_EVALUATE_INTERVAL_SECONDS` default 300, SIGTERM
+between passes not mid-pass), and the new `cd-live-evaluator` compose service
+entry: `network_mode: none`, the two volumes as decided above, `--no-deps`
+documented in the deploy instructions this round writes down for whoever actually
+runs it live. Verify the per-service config-hash stability claim Rogue already
+measured (adding the service must not change `cd-live-collector`'s or
+`cd-live-gui`'s own hashes) as an actual check, not just a repeated assertion.
