@@ -132,3 +132,53 @@ scaling). Re-establish `mapping.py`'s three structural properties (no code, no s
 span two dials) in the new module explicitly, since they are not inherited. NO state-machine
 wiring yet (rules 1-6 of §3 above), no persistence counting, no output contract — those stay
 later rounds.
+
+## 7. The state machine's memory (Trinity, PO, 2026-10-14) — round 3 scope
+
+Confirmed by investigation: `evaluate()` is genuinely stateless today — each call computes
+fresh from current observations with no memory of a prior call. There is no existing
+"previous state" or "reading history" concept anywhere in the engine. The state machine
+(spec §3) needs real cross-reading memory (persistence counting, recovery tracking), so this
+round has to design that storage, not just the transition logic.
+
+**Design: a new append-only table, one row per dial per EVALUATION RUN** (not per raw
+indicator observation — this is a NEW record distinct from `raw_reading`), holding at minimum:
+`dial_id`, `as_of` (the evaluation's own timestamp), `state`, `persistence_counter`,
+`acute_rising` (bool), and enough of the raw breadth/acute/count to re-derive persistence
+checks without re-running the whole engine (store the computed values, not just the state
+name — this is what "a reading is explainable a year later" already means elsewhere in this
+codebase and should mean here too). Append-only, same discipline as `raw_reading`: a run's
+result is a historical fact once written, never corrected in place (a bug fix produces a new,
+later row with the right number, same philosophy as every observation in this product).
+
+**Persistence, mechanically**: to check "the new state's rule has held for 3 consecutive
+readings," look at the last `persistence - 1` rows plus the current one (4 rows checked, 3
+transitions needed is actually "the rule held for this evaluation and the 2 before it" —
+state this precisely in code, since "3 consecutive readings" is ambiguous between "3 past
+rows" and "the current one plus 2 past" and the spec doesn't disambiguate; Trinity's call:
+**the current evaluation plus the 2 most immediately preceding rows for this dial — 3 rows
+total, all satisfying the same candidate-state's rule** — flag this interpretation plainly as
+provisional/Trinity's-reading, same as the earlier persistence-reset interpretation already
+flagged in the spec §3.
+
+**RECOVERY's two conditions, checked the same way**: "every master's acute ≤ exit threshold
+for `persistence` consecutive readings" reads the last 3 rows' stored acute/per-master detail;
+"trend confirmed" (reference index above a flattening 200-day mean, or a higher low on the
+acute statistic) is NOT yet backed by any wired indicator — `spx_vs_200dma` exists in the
+mapping but as a SCALED SCORE, not as a raw "is it above/below and is the mean flattening"
+boolean. **Scope cut for this round: build the state machine with a `trend_confirmed` INPUT
+PARAMETER the caller supplies (not yet computed from real data)** — wiring that from
+`spx_vs_200dma`'s raw series is its own follow-up, same discipline as deferring the
+20-day/6-month CHANGE masters. Say so plainly in the code; do not fabricate a trend signal to
+make RECOVERY "work" end-to-end this round.
+
+**"Breadth rising over the last 20 readings" (WATCH trigger)**: the last 20 rows' stored
+breadth values for this dial, strictly increasing is too strict (noisy data); Trinity's
+provisional reading: **the current breadth exceeds the breadth from 20 evaluation-rows ago**
+(a simple lookback comparison, not a monotonicity requirement) — flagged provisional, open to
+R2D2 challenge in WO-1.3b like everything else numeric here.
+
+**Scope for this round**: the new history table/record type, the persistence-counting
+mechanism reading it, and the six-rule precedence function (spec §3) wired to real stored
+history — EXCLUDING the trend-confirmation computation (parameter, not yet derived) and
+EXCLUDING the output contract (§7's full YAML schema — that's the round after this one).
