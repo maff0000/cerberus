@@ -1,6 +1,7 @@
 """THE DIAL'S OFFICIAL STATE OVER TIME: persistence, the second leg, rule 5's gate.
 
-WO-1.3a round 5. :func:`evaluator.resolve.official_state_for_dial` is the half of spec §3's
+WO-1.3a round 5, extended by WO-1.3e round 1 (R2D2's finding B2 — ``ALARM``'s exit path,
+under "ALARM's exit path" below). :func:`evaluator.resolve.official_state_for_dial` is the half of spec §3's
 state machine that HAS a memory — ``test_engine_candidate_state.py`` covers the half that
 does not, and nothing in that file constructs a history. So everything under test here is a
 property of a SEQUENCE: what the dial officially says given its preceding rows and one
@@ -514,6 +515,198 @@ def test_rule_5s_previous_state_gate_corrects_the_candidate_before_persistence()
 
     assert first_ever.candidate_state is State.CALM
     assert first_ever.machine_state is State.CALM
+
+
+# --- ALARM's exit path (WO-1.3e, R2D2's finding B2) ---------------------------------------- #
+
+
+def _drive(readings: list, *, history: tuple) -> list:
+    """Run ``readings`` in order, feeding each returned row back as the next one's history.
+
+    THE SEQUENCE IS THE SUBJECT of every test below — "corrected to WATCH, then normal
+    persistence applies" is a claim about four or six consecutive readings and cannot be
+    made against one. Rows are PREPENDED because the history is most-recent-first, and
+    ``as_of`` advances one fixture cadence per reading so the rows are rows the real store
+    would hold; the resolver reads neither (it counts rows), which is why driving it this
+    way proves the same thing the production evaluator pass would see.
+
+    Returns every row produced, oldest first, so a test can assert on the whole path.
+    """
+    produced = []
+    for position, reading in enumerate(readings):
+        row = official_state_for_dial(
+            history=history, as_of=AS_OF + A_CADENCE * position, **reading
+        )
+        produced.append(row)
+        history = (row,) + history
+    return produced
+
+
+def test_alarm_never_exits_straight_to_calm_the_candidate_is_corrected_to_watch():
+    """R2D2's observed live scenario: previous ALARM + a plainly calm reading → candidate WATCH.
+
+    THE PREMISE IS ESTABLISHED ON THE SPOT, as rule 5's gate test does it: the identical
+    reading goes through :func:`~crash_detector.engine.statistics.candidate_state_for_one_reading`
+    first and returns CALM. So the WATCH on the row is the correction firing, not a reading
+    that was never a CALM candidate — which is the whole of finding B2, since a CALM
+    candidate out of ALARM is exactly what rule 6 produces while ``trend_confirmed`` is
+    hard-wired False and rule 5 cannot fire.
+
+    AND IT IS NOT AN INSTANT JUMP EITHER. The corrected candidate is counted, not applied:
+    the official state is still ALARM on this reading with the clock at 1, and the contrast
+    run — the same reading out of CALM — shows the correction is keyed on the previous state
+    and not a blanket ban on CALM candidates.
+    """
+    reading = calm_reading()
+    assert candidate_state_for_one_reading(breadth_20_rows_ago=None, **reading) is State.CALM
+
+    from_alarm = official_state_for_dial(
+        history=(_row(State.ALARM, as_of=AS_OF - A_CADENCE),), as_of=AS_OF, **reading
+    )
+    from_calm = official_state_for_dial(
+        history=(_row(State.CALM, as_of=AS_OF - A_CADENCE),), as_of=AS_OF, **reading
+    )
+
+    assert from_alarm.candidate_state is State.WATCH
+    assert from_alarm.machine_state is State.ALARM
+    assert from_alarm.persistence_counter == 1
+
+    assert from_calm.candidate_state is State.CALM
+    assert from_calm.machine_state is State.CALM
+    assert from_calm.persistence_counter == 0
+
+
+def test_the_correction_fires_on_every_reading_out_of_alarm_and_then_stops_by_itself():
+    """ROGUE'S CALL UNDER TEST: every reading while ALARM is official, needing no clock of its own.
+
+    ``PROVISIONAL_PERSISTENCE`` calm readings are driven out of an ALARM row and the
+    candidate on EVERY one of them is asserted to be WATCH. That is what makes the
+    correction a gate rather than a one-off: were it corrected only on the first reading,
+    rows 2 and 3 would carry CALM, the WATCH streak would break on row 2 and the CALM streak
+    would complete one reading later — the illegal ALARM → CALM jump, reinstated.
+
+    THE LAST ASSERTION IS THE SELF-EXTINGUISHING HALF. The reading AFTER the transition sees
+    a preceding row that says WATCH, so the correction's condition is false and the
+    candidate is left as the CALM the engine computed. The correction needs no memory
+    because the transition it causes removes its own trigger.
+    """
+    out_of_alarm = (_row(State.ALARM, as_of=AS_OF - A_CADENCE),)
+    path = _drive([calm_reading() for _ in range(PROVISIONAL_PERSISTENCE + 1)], history=out_of_alarm)
+
+    assert [row.candidate_state for row in path[:PROVISIONAL_PERSISTENCE]] == (
+        [State.WATCH] * PROVISIONAL_PERSISTENCE
+    )
+    assert [row.machine_state for row in path[: PROVISIONAL_PERSISTENCE - 1]] == (
+        [State.ALARM] * (PROVISIONAL_PERSISTENCE - 1)
+    )
+    assert [row.persistence_counter for row in path[: PROVISIONAL_PERSISTENCE - 1]] == (
+        list(range(1, PROVISIONAL_PERSISTENCE))
+    )
+
+    transition = path[PROVISIONAL_PERSISTENCE - 1]
+    assert transition.machine_state is State.WATCH
+    assert transition.persistence_counter == 0
+
+    after = path[PROVISIONAL_PERSISTENCE]
+    assert after.candidate_state is State.CALM
+    assert after.machine_state is State.WATCH
+    assert after.persistence_counter == 1
+
+
+def test_a_calm_count_already_running_out_of_alarm_is_restarted_toward_watch_not_completed():
+    """THE LIVE ROW R2D2 FOUND: machine_state ALARM, candidate_state CALM, clock one short.
+
+    This is not a hypothetical history. The defect was observed running, so the store holds
+    rows mid-count toward the illegal transition — and the reading that lands on such a row
+    is the one that would have completed it. The corrected candidate is WATCH, which is not
+    the candidate the preceding row recorded, so the streak cannot be extended: the clock
+    restarts at 1 and the official state is still ALARM.
+
+    An already-accumulated count toward a transition the rule now forbids is therefore
+    DISCARDED rather than honoured, which is the only safe reading of it — the readings that
+    built it were readings nothing should have been counting.
+    """
+    one_short = PROVISIONAL_PERSISTENCE - 1
+    mid_count = (
+        _row(State.ALARM, candidate=State.CALM, counter=one_short, as_of=AS_OF - A_CADENCE),
+    )
+
+    row = official_state_for_dial(history=mid_count, as_of=AS_OF, **calm_reading())
+
+    assert row.candidate_state is State.WATCH
+    assert row.machine_state is State.ALARM
+    assert row.persistence_counter == 1
+
+
+def test_calm_is_still_reachable_from_alarm_by_way_of_a_watch_that_really_became_official():
+    """THE CORRECTION REMOVES ONE TRANSITION'S WORTH OF SHORTCUT, NOT THE DESTINATION.
+
+    Twice ``PROVISIONAL_PERSISTENCE`` identical calm readings are driven out of ALARM and
+    the official path is asserted end to end: ALARM while the first count runs, WATCH when
+    it completes, WATCH while the second runs, CALM when THAT completes. CALM out of ALARM
+    now costs two transitions instead of one, which is DECISION-RULE.md §3's "the re-entry
+    threshold is demanding" — and the last row proves it is a cost and not a prohibition.
+
+    The intermediate WATCH is a state the dial GENUINELY OCCUPIED for the required readings,
+    not a label passed through on the way: it is official on every row between the two
+    transitions, which is what finding B2 says was missing.
+    """
+    out_of_alarm = (_row(State.ALARM, as_of=AS_OF - A_CADENCE),)
+    path = _drive([calm_reading() for _ in range(2 * PROVISIONAL_PERSISTENCE)], history=out_of_alarm)
+
+    assert [row.machine_state for row in path] == (
+        [State.ALARM] * (PROVISIONAL_PERSISTENCE - 1)
+        + [State.WATCH] * PROVISIONAL_PERSISTENCE
+        + [State.CALM]
+    )
+    assert path[-1].candidate_state is State.CALM
+    assert path[-1].persistence_counter == 0
+
+
+def test_the_alarm_exit_correction_leaves_the_recovery_paths_exactly_as_they_were():
+    """THE TWO PATHS OUT OF ALARM AND RECOVERY THAT ALREADY WORKED, RE-ASSERTED UNCHANGED.
+
+    The correction's condition is "previous ALARM **and** candidate CALM", and each path
+    below fails one half of it, so each must compute what it computed before WO-1.3e:
+
+    * **Rule 5's gate, condition met** — previous ALARM, candidate RECOVERY. The candidate
+      is NOT CALM, so this correction is inert and RECOVERY survives to be counted. The two
+      corrections cannot fight: the gate only produces a CALM when the dial was NOT in
+      ALARM, which is the one case this correction will not act on.
+    * **The second-leg rule** — previous RECOVERY, candidate ALARM. Neither half holds, and
+      the relapse is still immediate with the clock cleared.
+    * **A genuine WATCH reading out of ALARM** — candidate already WATCH, nothing to
+      correct, ordinary persistence. Run against ALARM and against CALM to show the
+      correction has not quietly made ALARM a special case for readings it never touches.
+    """
+    recovery = official_state_for_dial(
+        history=(_row(State.ALARM, as_of=AS_OF - A_CADENCE),),
+        as_of=AS_OF,
+        **recovering_reading(),
+    )
+    assert recovery.candidate_state is State.RECOVERY
+    assert recovery.machine_state is State.ALARM
+    assert recovery.persistence_counter == 1
+
+    relapse = official_state_for_dial(
+        history=(_row(State.RECOVERY, as_of=AS_OF - A_CADENCE),), as_of=AS_OF, **alarm_reading()
+    )
+    assert relapse.candidate_state is State.ALARM
+    assert relapse.machine_state is State.ALARM
+    assert relapse.persistence_counter == 0
+
+    watch_from_alarm = official_state_for_dial(
+        history=(_row(State.ALARM, as_of=AS_OF - A_CADENCE),), as_of=AS_OF, **watch_reading()
+    )
+    watch_from_calm = official_state_for_dial(
+        history=(_row(State.CALM, as_of=AS_OF - A_CADENCE),), as_of=AS_OF, **watch_reading()
+    )
+    assert watch_from_alarm.candidate_state is State.WATCH
+    assert watch_from_alarm.machine_state is State.ALARM
+    assert watch_from_alarm.persistence_counter == 1
+    assert watch_from_calm.candidate_state is State.WATCH
+    assert watch_from_calm.machine_state is State.CALM
+    assert watch_from_calm.persistence_counter == 1
 
 
 # --- leaving UNKNOWN ----------------------------------------------------------------------- #

@@ -4,6 +4,12 @@ WO-1.3a round 5, built to ``governance/WO-1.3a-engine-spec.md`` §3 (the second-
 rule 5's previous-state condition, ``persistence = 3``) and §7 (how persistence is counted,
 and the 20-row breadth lookback).
 
+AMENDED BY WO-1.3e ROUND 1 for R2D2's WO-1.3b finding B2: ``ALARM`` may no longer exit
+directly to ``CALM``. One candidate correction, its own section below. Nothing else in
+R2D2's RED verdict is addressed here — the cadence/persistence-unit mismatch (B1), rule 3's
+breadth-only fix (B3), the ``curve_master``/``fiscal_master`` demotion and the UNKNOWN-exit
+floor are later rounds of the same WO and this module is deliberately unchanged for them.
+
 ====================================================================================
 WHY THIS IS HERE AND NOT IN ``engine/statistics.py`` BESIDE THE CANDIDATE FUNCTION
 ====================================================================================
@@ -41,14 +47,83 @@ WHAT THIS FUNCTION DECIDES, IN THE ORDER SPEC §3 DECIDES IT
    is not a recovery at all. Spec §3's own "Else" chain falls through past rule 5 to rule
    6, so the candidate becomes ``CALM`` — and it is the CANDIDATE that is corrected here,
    before persistence, not the official state after it.
-3. **The second-leg rule** (spec §3, DECISION-RULE.md §6): previous official state
+3. **``ALARM``'s exit is corrected to ``WATCH``** (R2D2's WO-1.3b finding B2, remediated
+   in WO-1.3e): the dial's last official state ``ALARM`` and this reading's candidate
+   ``CALM`` → the candidate is corrected to ``WATCH``. ``ALARM`` leaves only toward
+   ``WATCH`` or toward ``RECOVERY``, never to ``CALM`` in one step. The same shape, the
+   same place and the same reason as item 2 — a previous-state condition the memoryless
+   candidate function cannot apply, applied to the CANDIDATE before any clock runs. It has
+   its own section below, because whether it fires once or on every reading is a judgement
+   call and the reasoning is load-bearing.
+4. **The second-leg rule** (spec §3, DECISION-RULE.md §6): previous official state
    ``RECOVERY`` and this reading's candidate ``ALARM`` (rule 2 or rule 3 fired again) →
    ``ALARM`` NOW, no persistence, counter cleared. A relapse out of recovery is the one
    transition this product will not make the market wait three readings for.
-4. **Normal persistence** (spec §3, §7's reading of it): the official state changes to a new
+5. **Normal persistence** (spec §3, §7's reading of it): the official state changes to a new
    candidate only once THIS reading and the 2 immediately preceding rows have all produced
    that same candidate — 3 rows total, Trinity's provisional reading of "3 consecutive
    readings", flagged as such in the spec and not settled doctrine.
+
+====================================================================================
+``ALARM`` NEVER EXITS DIRECTLY TO ``CALM`` — AND WHY THE CORRECTION NEEDS NO CLOCK
+====================================================================================
+
+**THE DEFECT THIS CORRECTS WAS LIVE.** R2D2's WO-1.3b audit (verdict RED, finding B2) found
+this state machine stepping a dial from ``ALARM`` to ``CALM`` with no intermediate ``WATCH``.
+The route is item 2's mirror image and round 5 closed only item 2's direction: with
+``trend_confirmed`` hard-wired ``False`` (spec §7's disclosed scope cut) rule 5 cannot fire,
+so a dial sitting in ``ALARM`` whose masters and breadth have genuinely quietened falls
+through spec §3's "Else" chain past rules 2, 3, 4 and 5 to rule 6 — ``CALM``. Three such
+readings and the dial officially says deploy. DECISION-RULE.md §3 asks for exactly the
+opposite ("the halt/exit threshold is hair-trigger; the re-entry threshold is demanding")
+and §6's hysteresis is the mechanism it names for it; a one-step ``ALARM`` → ``CALM`` is not
+hysteresis, it is the absence of it.
+
+So: **previous official state ``ALARM`` and a ``CALM`` candidate → the candidate is
+``WATCH``.** ``ALARM`` may exit toward ``WATCH`` or toward ``RECOVERY``, and nowhere else.
+``WATCH`` is the right floor rather than some new state because DECISION-RULE.md §6 already
+assigns it exactly the permission this case needs — "halt new tranches; hold existing" — and
+already uses it as the conservative read of a state that must not be mistaken for ``CALM``
+(``UNKNOWN`` is "treated as WATCH for permission purposes, never as CALM").
+
+**EVERY READING, OR ONLY THE FIRST ONE? EVERY READING — AND THE CORRECTION THEREFORE NEEDS
+NO PERSISTENCE-LIKE GATE OF ITS OWN. ROGUE'S CALL, AND THE REASONING IS THE POINT.** The
+condition is read fresh off the preceding row on every reading (``previous.machine_state is
+ALARM`` and ``candidate is CALM``); there is no "have I corrected already" memory, no new
+column and no second clock. The reason that is sufficient rather than lazy is that **the
+correction's own trigger is extinguished by the transition it causes**:
+
+* Reading 1 out of ``ALARM``: candidate ``CALM`` → corrected ``WATCH``. Normal persistence
+  starts a fresh count toward ``WATCH`` — the preceding row's candidate was not ``WATCH``,
+  so there is no streak to extend — and the official state stays ``ALARM``.
+* Readings 2 and 3: the same correction fires again on the same condition, the count reaches
+  :data:`PROVISIONAL_PERSISTENCE`, and the official state becomes ``WATCH``.
+* Reading 4: the preceding row now says ``WATCH``, not ``ALARM``. **The correction's
+  condition is false and it stops applying by itself** — the candidate stays ``CALM`` and
+  ordinary persistence counts toward ``CALM`` from a dial that is genuinely in ``WATCH``.
+
+``CALM`` is still reachable from ``ALARM``; it now costs two transitions instead of one,
+which is what "the re-entry threshold is demanding" means. Nothing is suppressed, and no
+state is made unreachable.
+
+**THE FIRST-READING-ONLY ALTERNATIVE IS NOT MERELY MORE MACHINERY — IT REINSTATES THE
+DEFECT**, and that is what settles the question rather than a preference for less code.
+Correct only the first reading and the candidate stream out of ``ALARM`` reads ``WATCH``,
+``CALM``, ``CALM``: reading 2's switch to a different pending candidate destroys the
+``WATCH`` streak (this module's own rule, above — the new candidate writes 1), the ``CALM``
+streak then completes on reading 4, and the official state steps ``ALARM`` → ``CALM`` with
+no ``WATCH`` ever having become official. The illegal jump returns one reading later than
+before, now wearing a correction that fired once. A gate that holds for one reading in three
+is not a gate.
+
+**IT CANNOT COLLIDE WITH ITEM 2, AND THE CONDITIONS PROVE THAT RATHER THAN THE ORDERING.**
+Item 2 corrects a ``RECOVERY`` candidate to ``CALM`` only when the dial was NOT in ``ALARM``;
+this correction requires that it WAS. The two previous-state conditions are mutually
+exclusive, so item 2 can never hand this one the ``CALM`` it would act on, and writing the
+two in the opposite order would compute the same candidate. Nor can it disturb the second-leg
+rule or rule 1: each of those needs a candidate this correction does not produce (``ALARM``
+out of ``RECOVERY``, and ``UNKNOWN`` respectively). A dial with no history at all has no
+previous ``ALARM`` to leave, so its first reading is untouched.
 
 ====================================================================================
 ``persistence_counter`` IS A TRANSITION CLOCK, NOT AN AGE — THE INVARIANT, STATED
@@ -104,6 +179,16 @@ passed straight through to the candidate function, and this round does not compu
 ``spx_vs_200dma`` or anything else. It is NOT stored on the row either, which means a
 ``RECOVERY`` candidate's second condition is not recoverable from the history a year later
 — named here as an OWED COLUMN for the round that computes it, not as a gap nobody noticed.
+
+**THE 0.5 EXIT THRESHOLD IS STILL NOT AN INDEPENDENT GATE, AND THIS ROUND DOES NOT MAKE IT
+ONE.** R2D2's recommended fix (1) has two halves; WO-1.3e round 1 delivers the first —
+``ALARM`` exits only toward ``WATCH`` — and leaves the second standing.
+``PROVISIONAL_EXIT`` is read in exactly one place, rule 5 inside the candidate function,
+which ``trend_confirmed=False`` still makes unreachable; so leaving ``ALARM`` for ``WATCH``
+is NOT today conditioned on every master having fallen back under its exit threshold, and a
+dial can reach ``WATCH`` out of ``ALARM`` on rule 6's calm reading alone. Named here as the
+remainder of finding B2, owed by the round that computes ``trend_confirmed`` or lifts the
+exit check out of rule 5 — not as a gap nobody noticed.
 
 **NOTHING HERE WRITES.** The row comes back ready to append; the append, its ``written_utc``
 and the store handle belong to the evaluator pass (spec §9 item 2), which is the next step
@@ -250,6 +335,25 @@ def official_state_for_dial(
         previous is None or previous.machine_state is not State.ALARM
     ):
         candidate = State.CALM
+
+    # ALARM MAY NOT EXIT STRAIGHT TO CALM (R2D2's WO-1.3b finding B2; module docstring has
+    # the section). The candidate function cannot apply this either — it is a previous-state
+    # condition and that function has no memory — so it is corrected HERE, in the same place
+    # and the same style as rule 5's gate above, to the CANDIDATE and before any clock runs.
+    #
+    # ON EVERY READING WHILE THE DIAL IS STILL IN ALARM, not only the first: the condition is
+    # read off the preceding row each time and is extinguished by the transition it causes
+    # (once WATCH is official, `previous.machine_state` is no longer ALARM and this stops
+    # firing by itself), so the normal persistence below is the only clock needed. Correcting
+    # only the first reading would let the CALM streak complete on reading 4 and would put
+    # the illegal jump straight back — reasoned out in full in the docstring.
+    #
+    # Disjoint from the gate above by construction: that one needs a dial NOT in ALARM, this
+    # one needs a dial that WAS, so neither can feed the other.
+    if previous is not None and (
+        previous.machine_state is State.ALARM and candidate is State.CALM
+    ):
+        candidate = State.WATCH
 
     if candidate is State.UNKNOWN:
         # RULE 1, UNCONDITIONAL AND IMMEDIATE: "Stop; no other rule overrides this". No
