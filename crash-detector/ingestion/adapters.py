@@ -69,6 +69,7 @@ __all__ = [
     "parse_fred_csv_for_date",
     "parse_alfred_csv",
     "parse_cboe_csv",
+    "parse_cboe_csv_for_date",
     "parse_yahoo_chart",
     "parse_multpl_table",
     "as_of_for",
@@ -396,6 +397,73 @@ def parse_cboe_csv(text: str, column: str, unit: str) -> dict:
         return {"unit": unit, "observation_date": observed, "value": _number_or_token(cells[index])}
     return {"unit": unit}
 
+
+
+def parse_cboe_csv_for_date(text: str, column: str, unit: str, observation_date: str) -> dict:
+    """ONE named observation read out of a CBOE ``*_History.csv`` body, matched by EXACT DATE.
+
+    WO-1.16, and the reason it sits beside :func:`parse_cboe_csv` rather than replacing it is
+    the same reason :func:`parse_fred_csv_for_date` sits beside :func:`parse_fred_csv`: the
+    last row is the right answer to "what is this index at now?" and cannot be the answer to
+    "what was it on 2015-06-15?".
+
+    HERE THERE IS NO WINDOW TO ASK FOR, WHICH IS MEASURED, NOT ASSUMED. ``cdn-api.cboe.com``
+    honours NO date-windowing parameter at all: eight spellings (``dt``, ``date``,
+    ``startDate``/``endDate``, ``start``/``end``, ``from``/``to``, ``start_date``/``end_date``,
+    FRED's own ``cosd``/``coed``, and a nonsense control) each came back ``200`` with a body
+    BYTE-IDENTICAL to the bare URL's and the same row count — probed 2026-10-15,
+    ``tools/probe/cboe_history_probe.py``, ``evidence/wo116_cboe_probe.json``. So the
+    body is always the WHOLE static history, oldest row first and the latest session last
+    (VIX: 9,294 rows, 1990-01-02..2026-10-14). That makes the position read strictly worse
+    than FRED's was: FRED at least sometimes filtered, while here EVERY per-date request is
+    answered with a body whose last row is today. Reading it by position would answer a 2015
+    backfill with this week's close under a 2015 key, every time.
+
+    So the match is on the KEY and never on the position. The one thing that differs from
+    :func:`parse_fred_csv_for_date` is that CBOE's ``DATE`` is ``MM/DD/YYYY``, so
+    ``observation_date`` (ISO) is compared against the CONVERTED date, never against the raw
+    cell — the conversion :func:`parse_cboe_csv` already does. A row whose date cell will not
+    parse is SKIPPED, not returned: a date we cannot read is a date we cannot prove is the one
+    that was asked for. (:func:`parse_cboe_csv` carries such a cell through verbatim, which is
+    defensible for "the latest row" and is not available to an exact match.)
+
+    Three outcomes, kept apart:
+
+    * **a value** — a row whose converted date is exactly ``observation_date``, carrying a
+      figure. The raw token is passed through by :func:`_number_or_token`, never defaulted;
+    * **``{"unit": ...}``** — no such row. CBOE publishes no missing-data marker: every row of
+      every probed body carries a figure in every column and non-sessions are simply ABSENT
+      (``rows_for_month_verbatim`` for 2015-06 has no 06/06 or 06/07 weekend rows). A weekend,
+      a holiday or a date before the index existed is therefore this case, not the next one.
+      The empty-cell guard below is kept anyway, so a body that one day does carry a blank is
+      EMPTY rather than a reading with no value;
+    * **``{"malformed": ...}``** — a header that does not start with ``DATE`` (``header``), or
+      one that lacks ``column`` (``column``). Split out, where :func:`parse_cboe_csv` folds
+      both into ``header``, because an unreadable body and a body that is simply not carrying
+      the asked-for series are different failures to read in a backfill log.
+    """
+    lines = text.strip().splitlines()
+    header = lines[0].split(",") if lines else []
+    if not header or header[0] != "DATE":
+        return {"malformed": "header"}  # no "unit": fails the closed schema -> MALFORMED
+    if column not in header:
+        return {"malformed": "column"}
+    index = header.index(column)
+    for line in lines[1:]:
+        cells = line.split(",")
+        if len(cells) != len(header):
+            continue
+        try:
+            observed = datetime.strptime(cells[0], "%m/%d/%Y").date().isoformat()
+        except ValueError:
+            continue  # unreadable date: cannot be proven to be the one asked for
+        if observed != observation_date:
+            continue
+        if cells[index] == "":
+            break  # the body carries this session and no figure for it
+        return {"unit": unit, "observation_date": observation_date,
+                "value": _number_or_token(cells[index])}
+    return {"unit": unit}
 
 def parse_yahoo_chart(text: str, unit: str, history: int = 0, today: Union[date, None] = None,
                       field: str = "close") -> dict:

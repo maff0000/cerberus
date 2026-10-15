@@ -197,6 +197,92 @@ def test_cboe_missing_column_is_malformed():
     assert "unit" not in A.parse_cboe_csv("DATE,X\n10/09/2026,1\n", "CLOSE", "index")
 
 
+
+# WO-1.16. ``parse_cboe_csv_for_date`` asks of the SAME body the question the two tests above
+# do not: not "what is this index at now" — the LATEST row — but "what was it on date D". The
+# bodies below are real: every row is copied verbatim out of
+# ``evidence/wo116_cboe_probe.json``'s ``rows_for_month_verbatim`` (2015-06) and
+# ``rows_tail``, so the shape under test is the shape the endpoint actually serves.
+
+#: VIX_History.csv, header verbatim, four 2015-06 sessions and the four latest ones, exactly as
+#: probed. A per-date request gets the WHOLE history back — CBOE honours no window — so the
+#: last row of this body is what a position read would wrongly answer a 2015 backfill with.
+_CBOE_VIX_BODY = (
+    "DATE,OPEN,HIGH,LOW,CLOSE\n"
+    "06/11/2015,13.040000,13.220000,12.560000,12.850000\n"
+    "06/12/2015,13.310000,14.020000,13.300000,13.780000\n"
+    "06/15/2015,15.480000,15.570000,14.910000,15.390000\n"
+    "06/16/2015,15.620000,15.620000,14.810000,14.810000\n"
+    "10/13/2026,15.610000,15.610000,15.170000,15.270000\n"
+    "10/14/2026,15.170000,17.450000,14.980000,16.870000\n"
+)
+
+
+def test_cboe_for_date_reads_the_row_dated_exactly_that_date_and_not_the_latest_one():
+    """The whole point: the latest row is present, carries a different figure, and is not it."""
+    assert A.parse_cboe_csv_for_date(_CBOE_VIX_BODY, "CLOSE", "index", "2015-06-15") == {
+        "unit": "index", "observation_date": "2015-06-15", "value": 15.39}
+    # parse_cboe_csv, asked of the same body, answers for the last row instead. Both are
+    # right about their own question, which is why there are two functions.
+    assert A.parse_cboe_csv(_CBOE_VIX_BODY, "CLOSE", "index")["observation_date"] == "2026-10-14"
+
+
+def test_cboe_for_date_matches_the_converted_date_and_never_the_raw_mm_dd_yyyy_cell():
+    """The one thing that differs from FRED: ``DATE`` is ``MM/DD/YYYY``, the key asked for is
+    ISO. The row's raw cell reads ``06/15/2015`` and no ISO string will ever equal it, so a
+    comparison against the raw cell answers EMPTY for a date the body plainly carries. Pinned
+    both ways: the ISO key matches, and the raw spelling of that same date matches nothing."""
+    assert A.parse_cboe_csv_for_date(_CBOE_VIX_BODY, "CLOSE", "index", "2015-06-15")["value"] == 15.39
+    assert A.parse_cboe_csv_for_date(_CBOE_VIX_BODY, "CLOSE", "index", "06/15/2015") == {"unit": "index"}
+
+
+def test_cboe_for_date_a_date_with_no_row_is_empty_not_a_neighbouring_session():
+    """CBOE publishes NO missing-data marker — no FRED-style ``.``, no blank cells: every row
+    of every probed body carries a figure in every column (``unreadable_date_cells: 0``), and
+    non-sessions are simply ABSENT. 2015-06-13 and 06-14 were a weekend and have no rows at
+    all, so "the source has no figure for this date" arrives here as an unmatched date, which
+    is why this is the EMPTY case that matters for CBOE rather than a missing-value one."""
+    assert A.parse_cboe_csv_for_date(_CBOE_VIX_BODY, "CLOSE", "index", "2015-06-13") == {"unit": "index"}
+    # Before the index existed, and after the body's last session: same answer, never a row.
+    assert A.parse_cboe_csv_for_date(_CBOE_VIX_BODY, "CLOSE", "index", "1985-01-02") == {"unit": "index"}
+    assert A.parse_cboe_csv_for_date(_CBOE_VIX_BODY, "CLOSE", "index", "2026-10-15") == {"unit": "index"}
+
+
+def test_cboe_for_date_an_empty_cell_on_the_matched_row_would_be_empty_not_zero():
+    """Defensive, and labelled as such: no probed CBOE body carries a blank cell. If one ever
+    does, the matched row has no figure and that is EMPTY — emphatically not zero, and not the
+    next session down, which does carry one."""
+    body = "DATE,OPEN,CLOSE\n06/15/2015,15.480000,\n06/16/2015,15.620000,14.810000\n"
+    assert A.parse_cboe_csv_for_date(body, "CLOSE", "index", "2015-06-15") == {"unit": "index"}
+
+
+@pytest.mark.parametrize("body,expected", [
+    ("", "header"),
+    ("nonsense", "header"),
+    ("observation_date,CLOSE\n06/15/2015,15.39\n", "header"),
+    ("DATE,OPEN,HIGH,LOW\n06/15/2015,15.48,15.57,14.91\n", "column"),
+    ("DATE,SKEW\n06/15/2015,119.250000\n", "column"),
+])
+def test_cboe_for_date_an_unreadable_body_is_malformed_never_an_absent_observation(body, expected):
+    """MALFORMED and EMPTY are different answers: the first says we cannot read what arrived,
+    the second says the source has no figure for the date. No ``unit`` key, so the closed
+    response schema rejects it rather than a reading being admitted with no value."""
+    out = A.parse_cboe_csv_for_date(body, "CLOSE", "index", "2015-06-15")
+    assert out == {"malformed": expected} and "unit" not in out
+
+
+def test_cboe_for_date_a_garbage_value_is_passed_through_for_the_schema_to_reject():
+    """Exactly as ``parse_cboe_csv`` does: the raw token is carried, never defaulted."""
+    out = A.parse_cboe_csv_for_date("DATE,CLOSE\n06/15/2015,abc\n", "CLOSE", "index", "2015-06-15")
+    assert out["value"] == "abc"
+
+
+def test_cboe_for_date_reads_a_single_column_body_by_name():
+    """SKEW_History.csv is ``DATE,SKEW`` — the column asked for is not always the fifth."""
+    body = "DATE,SKEW\n06/12/2015,119.260000\n06/15/2015,119.250000\n10/14/2026,157.300000\n"
+    assert A.parse_cboe_csv_for_date(body, "SKEW", "index", "2015-06-15") == {
+        "unit": "index", "observation_date": "2015-06-15", "value": 119.25}
+
 def test_yahoo_skips_null_closes_and_never_fills():
     body = '{"chart":{"result":[{"timestamp":[1791244800,1791331200],"indicators":{"quote":[{"close":[10.5,null]}]}}]}}'
     out = A.parse_yahoo_chart(body, "usd")
