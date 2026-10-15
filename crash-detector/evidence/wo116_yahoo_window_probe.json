@@ -1,0 +1,2970 @@
+{
+  "credential": "none (this endpoint takes none)",
+  "endpoint": "https://query1.finance.yahoo.com/v8/finance/chart/",
+  "parser_imported": true,
+  "probed_utc": "2026-10-15",
+  "scope_note": "plain close symbols only; PID.md's WO-1.16 correction (2026-10-15) rules the adjclose ingredients out of this round and the probe never asks for adjclose",
+  "symbols": [
+    {
+      "adapter_url_today": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?range=10d&interval=1d",
+      "cases": [
+        {
+          "asks": "the URL YahooChartAdapter._url builds TODAY, unchanged; establishes the response shape and meta.firstTradeDate so the impossible window below is derived rather than typed from memory",
+          "case": "baseline_range_as_adapter_builds_it",
+          "content_type": "application/json;charset=utf-8",
+          "http_status": 200,
+          "observed": {
+            "bar_count": 10,
+            "bars": [
+              [
+                1790947800,
+                "2026-10-02",
+                "2026-10-02",
+                769.6400146484375
+              ],
+              [
+                1791207000,
+                "2026-10-05",
+                "2026-10-05",
+                774.8300170898438
+              ],
+              [
+                1791293400,
+                "2026-10-06",
+                "2026-10-06",
+                779.0900268554688
+              ],
+              [
+                1791379800,
+                "2026-10-07",
+                "2026-10-07",
+                777.219970703125
+              ],
+              [
+                1791466200,
+                "2026-10-08",
+                "2026-10-08",
+                773.9299926757812
+              ],
+              [
+                1791552600,
+                "2026-10-09",
+                "2026-10-09",
+                778.5700073242188
+              ],
+              [
+                1791811800,
+                "2026-10-12",
+                "2026-10-12",
+                778.0999755859375
+              ],
+              [
+                1791898200,
+                "2026-10-13",
+                "2026-10-13",
+                778.010009765625
+              ],
+              [
+                1791984600,
+                "2026-10-14",
+                "2026-10-14",
+                769.5999755859375
+              ],
+              [
+                1792071000,
+                "2026-10-15",
+                "2026-10-15",
+                769.97998046875
+              ]
+            ],
+            "body_bytes": 2295,
+            "body_verbatim": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"SPY\",\"exchangeName\":\"PCX\",\"fullExchangeName\":\"NYSEArca\",\"instrumentType\":\"ETF\",\"firstTradeDate\":728317800,\"regularMarketTime\":1792089973,\"hasPrePostMarketData\":true,\"gmtoffset\":-14400,\"timezone\":\"EDT\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":769.98,\"regularMarketChangePercent\":0.049,\"fulldayPrice\":769.98,\"fulldayChange\":0.38,\"fulldayChangePercent\":0.049,\"fiftyTwoWeekHigh\":781.62,\"fiftyTwoWeekLow\":629.28,\"regularMarketDayHigh\":771.91,\"regularMarketDayLow\":764.44,\"regularMarketVolume\":26567488,\"longName\":\"State Street SPDR S&P 500 ETF Trust\",\"shortName\":\"State Street SPDR S&P 500 ETF T\",\"chartPreviousClose\":763.99,\"priceHint\":2,\"currentTradingPeriod\":{\"pre\":{\"timezone\":\"EDT\",\"end\":1792071000,\"start\":1792051200,\"gmtoffset\":-14400},\"regular\":{\"timezone\":\"EDT\",\"end\":1792094400,\"start\":1792071000,\"gmtoffset\":-14400},\"post\":{\"timezone\":\"EDT\",\"end\":1792108800,\"start\":1792094400,\"gmtoffset\":-14400}},\"dataGranularity\":\"1d\",\"range\":\"10d\",\"validRanges\":[\"1d\",\"5d\",\"1mo\",\"3mo\",\"6mo\",\"1y\",\"2y\",\"5y\",\"10y\",\"ytd\",\"max\"]},\"timestamp\":[1790947800,1791207000,1791293400,1791379800,1791466200,1791552600,1791811800,1791898200,1791984600,1792071000],\"indicators\":{\"quote\":[{\"open\":[770.5800170898438,769.6900024414062,778.1500244140625,775.77001953125,774.8599853515625,776.239990234375,778.780029296875,777.3400268554688,774.9199829101562,766.25],\"high\":[772.6500244140625,776.6099853515625,781.6199951171875,779.0999755859375,777.0900268554688,779.4199829101562,779.4000244140625,778.75,776.3499755859375,771.9099731445312],\"close\":[769.6400146484375,774.8300170898438,779.0900268554688,777.219970703125,773.9299926757812,778.5700073242188,778.0999755859375,778.010009765625,769.5999755859375,769.97998046875],\"low\":[767.1500244140625,769.6300048828125,777.9600219726562,773.6099853515625,770.4400024414062,775.1400146484375,777.0499877929688,775.9500122070312,766.7100219726562,764.4400024414062],\"volume\":[46335300,44840200,36054300,30989200,40431100,22624500,18685000,25848000,55376100,26567488]}],\"adjclose\":[{\"adjclose\":[769.6400146484375,774.8300170898438,779.0900268554688,777.219970703125,773.9299926757812,778.5700073242188,778.0999755859375,778.010009765625,769.5999755859375,769.97998046875]}]}}],\"error\":null}}",
+            "chart_error": null,
+            "chart_keys": [
+              "error",
+              "result"
+            ],
+            "close_count": 10,
+            "has_quote_close_key": true,
+            "has_timestamp_key": true,
+            "indicator_keys": [
+              "adjclose",
+              "quote"
+            ],
+            "json": true,
+            "last_bar_is": [
+              1792071000,
+              "2026-10-15",
+              "2026-10-15",
+              769.97998046875
+            ],
+            "meta": {
+              "chartPreviousClose": 763.99,
+              "currency": "USD",
+              "currentTradingPeriod": {
+                "post": {
+                  "end": 1792108800,
+                  "gmtoffset": -14400,
+                  "start": 1792094400,
+                  "timezone": "EDT"
+                },
+                "pre": {
+                  "end": 1792071000,
+                  "gmtoffset": -14400,
+                  "start": 1792051200,
+                  "timezone": "EDT"
+                },
+                "regular": {
+                  "end": 1792094400,
+                  "gmtoffset": -14400,
+                  "start": 1792071000,
+                  "timezone": "EDT"
+                }
+              },
+              "dataGranularity": "1d",
+              "exchangeName": "PCX",
+              "exchangeTimezoneName": "America/New_York",
+              "fiftyTwoWeekHigh": 781.62,
+              "fiftyTwoWeekLow": 629.28,
+              "firstTradeDate": 728317800,
+              "fullExchangeName": "NYSEArca",
+              "fulldayChange": 0.38,
+              "fulldayChangePercent": 0.049,
+              "fulldayPrice": 769.98,
+              "gmtoffset": -14400,
+              "hasPrePostMarketData": true,
+              "instrumentType": "ETF",
+              "longName": "State Street SPDR S&P 500 ETF Trust",
+              "priceHint": 2,
+              "range": "10d",
+              "regularMarketChangePercent": 0.049,
+              "regularMarketDayHigh": 771.91,
+              "regularMarketDayLow": 764.44,
+              "regularMarketPrice": 769.98,
+              "regularMarketTime": 1792089973,
+              "regularMarketVolume": 26567488,
+              "shortName": "State Street SPDR S&P 500 ETF T",
+              "symbol": "SPY",
+              "timezone": "EDT",
+              "validRanges": [
+                "1d",
+                "5d",
+                "1mo",
+                "3mo",
+                "6mo",
+                "1y",
+                "2y",
+                "5y",
+                "10y",
+                "ytd",
+                "max"
+              ]
+            },
+            "parse_yahoo_chart_says": {
+              "observation_date": "2026-10-15",
+              "unit": "usd",
+              "value": 769.97998046875
+            },
+            "quote_keys": [
+              "close",
+              "high",
+              "low",
+              "open",
+              "volume"
+            ],
+            "result_keys": [
+              "indicators",
+              "meta",
+              "timestamp"
+            ],
+            "timestamp_count": 10,
+            "top_level_keys": [
+              "chart"
+            ],
+            "truncated": false,
+            "utc_dates": [
+              "2026-10-02",
+              "2026-10-05",
+              "2026-10-06",
+              "2026-10-07",
+              "2026-10-08",
+              "2026-10-09",
+              "2026-10-12",
+              "2026-10-13",
+              "2026-10-14",
+              "2026-10-15"
+            ],
+            "utc_dates_span": [
+              "2026-10-02",
+              "2026-10-15"
+            ]
+          },
+          "period1": null,
+          "period2": null,
+          "question": "baseline",
+          "range_param": "10d",
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?range=10d&interval=1d"
+        },
+        {
+          "asks": "period1/period2 over 2015-06-08..2015-06-19: does an absolute window work at all, is the shape the one parse_yahoo_chart already requires, and does a WIDER window return wider (which is the only thing that proves the window is applied rather than ignored)",
+          "bounds_derivation": "00:00:00Z of 2015-06-08 .. 23:59:59Z of 2015-06-19",
+          "case": "q1_window_multi_day",
+          "content_type": "application/json;charset=utf-8",
+          "http_status": 200,
+          "observed": {
+            "bar_count": 10,
+            "bars": [
+              [
+                1433770200,
+                "2015-06-08",
+                "2015-06-08",
+                208.47999572753906
+              ],
+              [
+                1433856600,
+                "2015-06-09",
+                "2015-06-09",
+                208.4499969482422
+              ],
+              [
+                1433943000,
+                "2015-06-10",
+                "2015-06-10",
+                210.9499969482422
+              ],
+              [
+                1434029400,
+                "2015-06-11",
+                "2015-06-11",
+                211.6300048828125
+              ],
+              [
+                1434115800,
+                "2015-06-12",
+                "2015-06-12",
+                210.00999450683594
+              ],
+              [
+                1434375000,
+                "2015-06-15",
+                "2015-06-15",
+                209.11000061035156
+              ],
+              [
+                1434461400,
+                "2015-06-16",
+                "2015-06-16",
+                210.25
+              ],
+              [
+                1434547800,
+                "2015-06-17",
+                "2015-06-17",
+                210.58999633789062
+              ],
+              [
+                1434634200,
+                "2015-06-18",
+                "2015-06-18",
+                212.77999877929688
+              ],
+              [
+                1434720600,
+                "2015-06-19",
+                "2015-06-19",
+                210.80999755859375
+              ]
+            ],
+            "body_bytes": 2358,
+            "body_verbatim": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"SPY\",\"exchangeName\":\"PCX\",\"fullExchangeName\":\"NYSEArca\",\"instrumentType\":\"ETF\",\"firstTradeDate\":728317800,\"regularMarketTime\":1792089975,\"hasPrePostMarketData\":true,\"gmtoffset\":-14400,\"timezone\":\"EDT\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":769.99,\"regularMarketChangePercent\":0.051,\"fulldayPrice\":769.99,\"fulldayChange\":0.39,\"fulldayChangePercent\":0.051,\"fiftyTwoWeekHigh\":781.62,\"fiftyTwoWeekLow\":629.28,\"regularMarketDayHigh\":771.91,\"regularMarketDayLow\":764.44,\"regularMarketVolume\":26567914,\"longName\":\"State Street SPDR S&P 500 ETF Trust\",\"shortName\":\"State Street SPDR S&P 500 ETF T\",\"chartPreviousClose\":209.77,\"priceHint\":2,\"currentTradingPeriod\":{\"pre\":{\"timezone\":\"EDT\",\"end\":1792071000,\"start\":1792051200,\"gmtoffset\":-14400},\"regular\":{\"timezone\":\"EDT\",\"end\":1792094400,\"start\":1792071000,\"gmtoffset\":-14400},\"post\":{\"timezone\":\"EDT\",\"end\":1792108800,\"start\":1792094400,\"gmtoffset\":-14400}},\"dataGranularity\":\"1d\",\"range\":\"\",\"validRanges\":[\"1d\",\"5d\",\"1mo\",\"3mo\",\"6mo\",\"1y\",\"2y\",\"5y\",\"10y\",\"ytd\",\"max\"]},\"timestamp\":[1433770200,1433856600,1433943000,1434029400,1434115800,1434375000,1434461400,1434547800,1434634200,1434720600],\"indicators\":{\"quote\":[{\"open\":[209.63999938964844,208.4499969482422,209.3699951171875,211.47999572753906,210.63999938964844,208.63999938964844,208.92999267578125,210.58999633789062,211.30999755859375,211.4600067138672],\"low\":[208.38999938964844,207.69000244140625,209.3000030517578,211.1999969482422,209.67999267578125,207.7899932861328,208.72000122070312,209.36000061035156,210.6300048828125,210.36000061035156],\"high\":[209.82000732421875,209.10000610351562,211.41000366210938,212.08999633789062,211.47999572753906,209.4499969482422,210.35000610351562,211.32000732421875,213.33999633789062,211.5500030517578],\"volume\":[89063300,105034700,134551300,73876400,135382400,124384200,85308200,126708600,165867900,130478700],\"close\":[208.47999572753906,208.4499969482422,210.9499969482422,211.6300048828125,210.00999450683594,209.11000061035156,210.25,210.58999633789062,212.77999877929688,210.80999755859375]}],\"adjclose\":[{\"adjclose\":[172.5474395751953,172.52256774902344,174.59170532226562,175.15451049804688,173.81370544433594,173.06881713867188,174.01231384277344,174.29371643066406,176.10629272460938,175.32449340820312]}]}}],\"error\":null}}",
+            "chart_error": null,
+            "chart_keys": [
+              "error",
+              "result"
+            ],
+            "close_count": 10,
+            "has_quote_close_key": true,
+            "has_timestamp_key": true,
+            "indicator_keys": [
+              "adjclose",
+              "quote"
+            ],
+            "json": true,
+            "last_bar_is": [
+              1434720600,
+              "2015-06-19",
+              "2015-06-19",
+              210.80999755859375
+            ],
+            "meta": {
+              "chartPreviousClose": 209.77,
+              "currency": "USD",
+              "currentTradingPeriod": {
+                "post": {
+                  "end": 1792108800,
+                  "gmtoffset": -14400,
+                  "start": 1792094400,
+                  "timezone": "EDT"
+                },
+                "pre": {
+                  "end": 1792071000,
+                  "gmtoffset": -14400,
+                  "start": 1792051200,
+                  "timezone": "EDT"
+                },
+                "regular": {
+                  "end": 1792094400,
+                  "gmtoffset": -14400,
+                  "start": 1792071000,
+                  "timezone": "EDT"
+                }
+              },
+              "dataGranularity": "1d",
+              "exchangeName": "PCX",
+              "exchangeTimezoneName": "America/New_York",
+              "fiftyTwoWeekHigh": 781.62,
+              "fiftyTwoWeekLow": 629.28,
+              "firstTradeDate": 728317800,
+              "fullExchangeName": "NYSEArca",
+              "fulldayChange": 0.39,
+              "fulldayChangePercent": 0.051,
+              "fulldayPrice": 769.99,
+              "gmtoffset": -14400,
+              "hasPrePostMarketData": true,
+              "instrumentType": "ETF",
+              "longName": "State Street SPDR S&P 500 ETF Trust",
+              "priceHint": 2,
+              "range": "",
+              "regularMarketChangePercent": 0.051,
+              "regularMarketDayHigh": 771.91,
+              "regularMarketDayLow": 764.44,
+              "regularMarketPrice": 769.99,
+              "regularMarketTime": 1792089975,
+              "regularMarketVolume": 26567914,
+              "shortName": "State Street SPDR S&P 500 ETF T",
+              "symbol": "SPY",
+              "timezone": "EDT",
+              "validRanges": [
+                "1d",
+                "5d",
+                "1mo",
+                "3mo",
+                "6mo",
+                "1y",
+                "2y",
+                "5y",
+                "10y",
+                "ytd",
+                "max"
+              ]
+            },
+            "parse_yahoo_chart_says": {
+              "observation_date": "2015-06-19",
+              "unit": "usd",
+              "value": 210.80999755859375
+            },
+            "quote_keys": [
+              "close",
+              "high",
+              "low",
+              "open",
+              "volume"
+            ],
+            "result_keys": [
+              "indicators",
+              "meta",
+              "timestamp"
+            ],
+            "timestamp_count": 10,
+            "top_level_keys": [
+              "chart"
+            ],
+            "truncated": false,
+            "utc_dates": [
+              "2015-06-08",
+              "2015-06-09",
+              "2015-06-10",
+              "2015-06-11",
+              "2015-06-12",
+              "2015-06-15",
+              "2015-06-16",
+              "2015-06-17",
+              "2015-06-18",
+              "2015-06-19"
+            ],
+            "utc_dates_span": [
+              "2015-06-08",
+              "2015-06-19"
+            ]
+          },
+          "period1": 1433721600,
+          "period2": 1434758399,
+          "period_bounds_utc": [
+            "2015-06-08T00:00:00+00:00",
+            "2015-06-19T23:59:59+00:00"
+          ],
+          "question": "Q1",
+          "range_param": null,
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?period1=1433721600&period2=1434758399&interval=1d"
+        },
+        {
+          "asks": "a ONE-DAY window as the whole UTC day: exactly one bar, more, or none?",
+          "bounds_derivation": "00:00:00Z .. 23:59:59Z of 2015-06-08 (a 1d bar is stamped at the exchange session OPEN, 13:30Z/14:30Z for a US listing, which this span contains under either DST offset)",
+          "case": "q2_window_one_day_utc_day",
+          "content_type": "application/json;charset=utf-8",
+          "http_status": 200,
+          "observed": {
+            "bar_count": 1,
+            "bars": [
+              [
+                1433770200,
+                "2015-06-08",
+                "2015-06-08",
+                208.47999572753906
+              ]
+            ],
+            "body_bytes": 1341,
+            "body_verbatim": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"SPY\",\"exchangeName\":\"PCX\",\"fullExchangeName\":\"NYSEArca\",\"instrumentType\":\"ETF\",\"firstTradeDate\":728317800,\"regularMarketTime\":1792089976,\"hasPrePostMarketData\":true,\"gmtoffset\":-14400,\"timezone\":\"EDT\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":770.01,\"regularMarketChangePercent\":0.053,\"fulldayPrice\":770.01,\"fulldayChange\":0.41,\"fulldayChangePercent\":0.053,\"fiftyTwoWeekHigh\":781.62,\"fiftyTwoWeekLow\":629.28,\"regularMarketDayHigh\":771.91,\"regularMarketDayLow\":764.44,\"regularMarketVolume\":26568391,\"longName\":\"State Street SPDR S&P 500 ETF Trust\",\"shortName\":\"State Street SPDR S&P 500 ETF T\",\"chartPreviousClose\":209.77,\"priceHint\":2,\"currentTradingPeriod\":{\"pre\":{\"timezone\":\"EDT\",\"start\":1792051200,\"end\":1792071000,\"gmtoffset\":-14400},\"regular\":{\"timezone\":\"EDT\",\"start\":1792071000,\"end\":1792094400,\"gmtoffset\":-14400},\"post\":{\"timezone\":\"EDT\",\"start\":1792094400,\"end\":1792108800,\"gmtoffset\":-14400}},\"dataGranularity\":\"1d\",\"range\":\"\",\"validRanges\":[\"1d\",\"5d\",\"1mo\",\"3mo\",\"6mo\",\"1y\",\"2y\",\"5y\",\"10y\",\"ytd\",\"max\"]},\"timestamp\":[1433770200],\"indicators\":{\"quote\":[{\"close\":[208.47999572753906],\"high\":[209.82000732421875],\"low\":[208.38999938964844],\"volume\":[89063300],\"open\":[209.63999938964844]}],\"adjclose\":[{\"adjclose\":[172.54739379882812]}]}}],\"error\":null}}",
+            "chart_error": null,
+            "chart_keys": [
+              "error",
+              "result"
+            ],
+            "close_count": 1,
+            "has_quote_close_key": true,
+            "has_timestamp_key": true,
+            "indicator_keys": [
+              "adjclose",
+              "quote"
+            ],
+            "json": true,
+            "last_bar_is": [
+              1433770200,
+              "2015-06-08",
+              "2015-06-08",
+              208.47999572753906
+            ],
+            "meta": {
+              "chartPreviousClose": 209.77,
+              "currency": "USD",
+              "currentTradingPeriod": {
+                "post": {
+                  "end": 1792108800,
+                  "gmtoffset": -14400,
+                  "start": 1792094400,
+                  "timezone": "EDT"
+                },
+                "pre": {
+                  "end": 1792071000,
+                  "gmtoffset": -14400,
+                  "start": 1792051200,
+                  "timezone": "EDT"
+                },
+                "regular": {
+                  "end": 1792094400,
+                  "gmtoffset": -14400,
+                  "start": 1792071000,
+                  "timezone": "EDT"
+                }
+              },
+              "dataGranularity": "1d",
+              "exchangeName": "PCX",
+              "exchangeTimezoneName": "America/New_York",
+              "fiftyTwoWeekHigh": 781.62,
+              "fiftyTwoWeekLow": 629.28,
+              "firstTradeDate": 728317800,
+              "fullExchangeName": "NYSEArca",
+              "fulldayChange": 0.41,
+              "fulldayChangePercent": 0.053,
+              "fulldayPrice": 770.01,
+              "gmtoffset": -14400,
+              "hasPrePostMarketData": true,
+              "instrumentType": "ETF",
+              "longName": "State Street SPDR S&P 500 ETF Trust",
+              "priceHint": 2,
+              "range": "",
+              "regularMarketChangePercent": 0.053,
+              "regularMarketDayHigh": 771.91,
+              "regularMarketDayLow": 764.44,
+              "regularMarketPrice": 770.01,
+              "regularMarketTime": 1792089976,
+              "regularMarketVolume": 26568391,
+              "shortName": "State Street SPDR S&P 500 ETF T",
+              "symbol": "SPY",
+              "timezone": "EDT",
+              "validRanges": [
+                "1d",
+                "5d",
+                "1mo",
+                "3mo",
+                "6mo",
+                "1y",
+                "2y",
+                "5y",
+                "10y",
+                "ytd",
+                "max"
+              ]
+            },
+            "parse_yahoo_chart_says": {
+              "observation_date": "2015-06-08",
+              "unit": "usd",
+              "value": 208.47999572753906
+            },
+            "quote_keys": [
+              "close",
+              "high",
+              "low",
+              "open",
+              "volume"
+            ],
+            "result_keys": [
+              "indicators",
+              "meta",
+              "timestamp"
+            ],
+            "timestamp_count": 1,
+            "top_level_keys": [
+              "chart"
+            ],
+            "truncated": false,
+            "utc_dates": [
+              "2015-06-08"
+            ],
+            "utc_dates_span": [
+              "2015-06-08",
+              "2015-06-08"
+            ]
+          },
+          "period1": 1433721600,
+          "period2": 1433807999,
+          "period_bounds_utc": [
+            "2015-06-08T00:00:00+00:00",
+            "2015-06-08T23:59:59+00:00"
+          ],
+          "question": "Q2",
+          "range_param": null,
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?period1=1433721600&period2=1433807999&interval=1d"
+        },
+        {
+          "asks": "period1 == period2 == midnight UTC: the bound a caller derives when they forget the bar is stamped at the session open. Does it answer with the day's bar anyway, or with nothing? Only one of the two encodings can be the recommendation",
+          "bounds_derivation": "00:00:00Z of 2015-06-08, twice \u2014 a zero-width window",
+          "case": "q2_window_one_day_zero_width",
+          "content_type": "application/json;charset=utf-8",
+          "http_status": 200,
+          "observed": {
+            "bar_count": 0,
+            "bars": [],
+            "body_bytes": 1153,
+            "body_verbatim": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"SPY\",\"exchangeName\":\"PCX\",\"fullExchangeName\":\"NYSEArca\",\"instrumentType\":\"ETF\",\"firstTradeDate\":728317800,\"regularMarketTime\":1792089976,\"hasPrePostMarketData\":true,\"gmtoffset\":-14400,\"timezone\":\"EDT\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":770.01,\"regularMarketChangePercent\":0.053,\"fulldayPrice\":770.01,\"fulldayChange\":0.41,\"fulldayChangePercent\":0.053,\"fiftyTwoWeekHigh\":781.62,\"fiftyTwoWeekLow\":629.28,\"regularMarketDayHigh\":771.91,\"regularMarketDayLow\":764.44,\"regularMarketVolume\":26568432,\"longName\":\"State Street SPDR S&P 500 ETF Trust\",\"shortName\":\"State Street SPDR S&P 500 ETF T\",\"chartPreviousClose\":769.6,\"priceHint\":2,\"currentTradingPeriod\":{\"pre\":{\"timezone\":\"EDT\",\"end\":1792071000,\"start\":1792051200,\"gmtoffset\":-14400},\"regular\":{\"timezone\":\"EDT\",\"end\":1792094400,\"start\":1792071000,\"gmtoffset\":-14400},\"post\":{\"timezone\":\"EDT\",\"end\":1792108800,\"start\":1792094400,\"gmtoffset\":-14400}},\"dataGranularity\":\"1d\",\"range\":\"\",\"validRanges\":[\"1d\",\"5d\",\"1mo\",\"3mo\",\"6mo\",\"1y\",\"2y\",\"5y\",\"10y\",\"ytd\",\"max\"]},\"indicators\":{\"quote\":[{}],\"adjclose\":[{}]}}],\"error\":null}}",
+            "chart_error": null,
+            "chart_keys": [
+              "error",
+              "result"
+            ],
+            "close_count": 0,
+            "has_quote_close_key": false,
+            "has_timestamp_key": false,
+            "indicator_keys": [
+              "adjclose",
+              "quote"
+            ],
+            "json": true,
+            "last_bar_is": null,
+            "meta": {
+              "chartPreviousClose": 769.6,
+              "currency": "USD",
+              "currentTradingPeriod": {
+                "post": {
+                  "end": 1792108800,
+                  "gmtoffset": -14400,
+                  "start": 1792094400,
+                  "timezone": "EDT"
+                },
+                "pre": {
+                  "end": 1792071000,
+                  "gmtoffset": -14400,
+                  "start": 1792051200,
+                  "timezone": "EDT"
+                },
+                "regular": {
+                  "end": 1792094400,
+                  "gmtoffset": -14400,
+                  "start": 1792071000,
+                  "timezone": "EDT"
+                }
+              },
+              "dataGranularity": "1d",
+              "exchangeName": "PCX",
+              "exchangeTimezoneName": "America/New_York",
+              "fiftyTwoWeekHigh": 781.62,
+              "fiftyTwoWeekLow": 629.28,
+              "firstTradeDate": 728317800,
+              "fullExchangeName": "NYSEArca",
+              "fulldayChange": 0.41,
+              "fulldayChangePercent": 0.053,
+              "fulldayPrice": 770.01,
+              "gmtoffset": -14400,
+              "hasPrePostMarketData": true,
+              "instrumentType": "ETF",
+              "longName": "State Street SPDR S&P 500 ETF Trust",
+              "priceHint": 2,
+              "range": "",
+              "regularMarketChangePercent": 0.053,
+              "regularMarketDayHigh": 771.91,
+              "regularMarketDayLow": 764.44,
+              "regularMarketPrice": 770.01,
+              "regularMarketTime": 1792089976,
+              "regularMarketVolume": 26568432,
+              "shortName": "State Street SPDR S&P 500 ETF T",
+              "symbol": "SPY",
+              "timezone": "EDT",
+              "validRanges": [
+                "1d",
+                "5d",
+                "1mo",
+                "3mo",
+                "6mo",
+                "1y",
+                "2y",
+                "5y",
+                "10y",
+                "ytd",
+                "max"
+              ]
+            },
+            "parse_yahoo_chart_says": {
+              "malformed": "shape"
+            },
+            "quote_keys": [],
+            "result_keys": [
+              "indicators",
+              "meta"
+            ],
+            "timestamp_count": 0,
+            "top_level_keys": [
+              "chart"
+            ],
+            "truncated": false,
+            "utc_dates": [],
+            "utc_dates_span": null
+          },
+          "period1": 1433721600,
+          "period2": 1433721600,
+          "period_bounds_utc": [
+            "2015-06-08T00:00:00+00:00",
+            "2015-06-08T00:00:00+00:00"
+          ],
+          "question": "Q2",
+          "range_param": null,
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?period1=1433721600&period2=1433721600&interval=1d"
+        },
+        {
+          "asks": "a one-day window on a date the symbol does NOT print on: empty, an error, or a NEIGHBOURING bar? This decides whether a parser may ever trust 'the only bar in the window' or whether exact-date matching is mandatory",
+          "bounds_derivation": "00:00:00Z .. 23:59:59Z of 2015-06-13",
+          "case": "q3_window_on_non_trading_day",
+          "content_type": "application/json;charset=utf-8",
+          "http_status": 200,
+          "observed": {
+            "bar_count": 0,
+            "bars": [],
+            "body_bytes": 1154,
+            "body_verbatim": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"SPY\",\"exchangeName\":\"PCX\",\"fullExchangeName\":\"NYSEArca\",\"instrumentType\":\"ETF\",\"firstTradeDate\":728317800,\"regularMarketTime\":1792089978,\"hasPrePostMarketData\":true,\"gmtoffset\":-14400,\"timezone\":\"EDT\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":770.01,\"regularMarketChangePercent\":0.053,\"fulldayPrice\":770.01,\"fulldayChange\":0.41,\"fulldayChangePercent\":0.053,\"fiftyTwoWeekHigh\":781.62,\"fiftyTwoWeekLow\":629.28,\"regularMarketDayHigh\":771.91,\"regularMarketDayLow\":764.44,\"regularMarketVolume\":26568561,\"longName\":\"State Street SPDR S&P 500 ETF Trust\",\"shortName\":\"State Street SPDR S&P 500 ETF T\",\"chartPreviousClose\":210.01,\"priceHint\":2,\"currentTradingPeriod\":{\"pre\":{\"timezone\":\"EDT\",\"end\":1792071000,\"start\":1792051200,\"gmtoffset\":-14400},\"regular\":{\"timezone\":\"EDT\",\"end\":1792094400,\"start\":1792071000,\"gmtoffset\":-14400},\"post\":{\"timezone\":\"EDT\",\"end\":1792108800,\"start\":1792094400,\"gmtoffset\":-14400}},\"dataGranularity\":\"1d\",\"range\":\"\",\"validRanges\":[\"1d\",\"5d\",\"1mo\",\"3mo\",\"6mo\",\"1y\",\"2y\",\"5y\",\"10y\",\"ytd\",\"max\"]},\"indicators\":{\"quote\":[{}],\"adjclose\":[{}]}}],\"error\":null}}",
+            "chart_error": null,
+            "chart_keys": [
+              "error",
+              "result"
+            ],
+            "close_count": 0,
+            "has_quote_close_key": false,
+            "has_timestamp_key": false,
+            "indicator_keys": [
+              "adjclose",
+              "quote"
+            ],
+            "json": true,
+            "last_bar_is": null,
+            "meta": {
+              "chartPreviousClose": 210.01,
+              "currency": "USD",
+              "currentTradingPeriod": {
+                "post": {
+                  "end": 1792108800,
+                  "gmtoffset": -14400,
+                  "start": 1792094400,
+                  "timezone": "EDT"
+                },
+                "pre": {
+                  "end": 1792071000,
+                  "gmtoffset": -14400,
+                  "start": 1792051200,
+                  "timezone": "EDT"
+                },
+                "regular": {
+                  "end": 1792094400,
+                  "gmtoffset": -14400,
+                  "start": 1792071000,
+                  "timezone": "EDT"
+                }
+              },
+              "dataGranularity": "1d",
+              "exchangeName": "PCX",
+              "exchangeTimezoneName": "America/New_York",
+              "fiftyTwoWeekHigh": 781.62,
+              "fiftyTwoWeekLow": 629.28,
+              "firstTradeDate": 728317800,
+              "fullExchangeName": "NYSEArca",
+              "fulldayChange": 0.41,
+              "fulldayChangePercent": 0.053,
+              "fulldayPrice": 770.01,
+              "gmtoffset": -14400,
+              "hasPrePostMarketData": true,
+              "instrumentType": "ETF",
+              "longName": "State Street SPDR S&P 500 ETF Trust",
+              "priceHint": 2,
+              "range": "",
+              "regularMarketChangePercent": 0.053,
+              "regularMarketDayHigh": 771.91,
+              "regularMarketDayLow": 764.44,
+              "regularMarketPrice": 770.01,
+              "regularMarketTime": 1792089978,
+              "regularMarketVolume": 26568561,
+              "shortName": "State Street SPDR S&P 500 ETF T",
+              "symbol": "SPY",
+              "timezone": "EDT",
+              "validRanges": [
+                "1d",
+                "5d",
+                "1mo",
+                "3mo",
+                "6mo",
+                "1y",
+                "2y",
+                "5y",
+                "10y",
+                "ytd",
+                "max"
+              ]
+            },
+            "parse_yahoo_chart_says": {
+              "malformed": "shape"
+            },
+            "quote_keys": [],
+            "result_keys": [
+              "indicators",
+              "meta"
+            ],
+            "timestamp_count": 0,
+            "top_level_keys": [
+              "chart"
+            ],
+            "truncated": false,
+            "utc_dates": [],
+            "utc_dates_span": null
+          },
+          "period1": 1434153600,
+          "period2": 1434239999,
+          "period_bounds_utc": [
+            "2015-06-13T00:00:00+00:00",
+            "2015-06-13T23:59:59+00:00"
+          ],
+          "question": "Q3",
+          "range_param": null,
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?period1=1434153600&period2=1434239999&interval=1d"
+        },
+        {
+          "asks": "the same question generalised: a MULTI-day window that matches no bar at all. Confirms whether the single-day answer is the endpoint's shape for an empty window or a one-off",
+          "bounds_derivation": "00:00:00Z of 2015-06-13 .. 23:59:59Z of 2015-06-14",
+          "case": "q3_window_wholly_inside_non_trading_run",
+          "content_type": "application/json;charset=utf-8",
+          "http_status": 200,
+          "observed": {
+            "bar_count": 0,
+            "bars": [],
+            "body_bytes": 1154,
+            "body_verbatim": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"SPY\",\"exchangeName\":\"PCX\",\"fullExchangeName\":\"NYSEArca\",\"instrumentType\":\"ETF\",\"firstTradeDate\":728317800,\"regularMarketTime\":1792089978,\"hasPrePostMarketData\":true,\"gmtoffset\":-14400,\"timezone\":\"EDT\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":770.01,\"regularMarketChangePercent\":0.053,\"fulldayPrice\":770.01,\"fulldayChange\":0.41,\"fulldayChangePercent\":0.053,\"fiftyTwoWeekHigh\":781.62,\"fiftyTwoWeekLow\":629.28,\"regularMarketDayHigh\":771.91,\"regularMarketDayLow\":764.44,\"regularMarketVolume\":26568726,\"longName\":\"State Street SPDR S&P 500 ETF Trust\",\"shortName\":\"State Street SPDR S&P 500 ETF T\",\"chartPreviousClose\":210.01,\"priceHint\":2,\"currentTradingPeriod\":{\"pre\":{\"timezone\":\"EDT\",\"start\":1792051200,\"end\":1792071000,\"gmtoffset\":-14400},\"regular\":{\"timezone\":\"EDT\",\"start\":1792071000,\"end\":1792094400,\"gmtoffset\":-14400},\"post\":{\"timezone\":\"EDT\",\"start\":1792094400,\"end\":1792108800,\"gmtoffset\":-14400}},\"dataGranularity\":\"1d\",\"range\":\"\",\"validRanges\":[\"1d\",\"5d\",\"1mo\",\"3mo\",\"6mo\",\"1y\",\"2y\",\"5y\",\"10y\",\"ytd\",\"max\"]},\"indicators\":{\"quote\":[{}],\"adjclose\":[{}]}}],\"error\":null}}",
+            "chart_error": null,
+            "chart_keys": [
+              "error",
+              "result"
+            ],
+            "close_count": 0,
+            "has_quote_close_key": false,
+            "has_timestamp_key": false,
+            "indicator_keys": [
+              "adjclose",
+              "quote"
+            ],
+            "json": true,
+            "last_bar_is": null,
+            "meta": {
+              "chartPreviousClose": 210.01,
+              "currency": "USD",
+              "currentTradingPeriod": {
+                "post": {
+                  "end": 1792108800,
+                  "gmtoffset": -14400,
+                  "start": 1792094400,
+                  "timezone": "EDT"
+                },
+                "pre": {
+                  "end": 1792071000,
+                  "gmtoffset": -14400,
+                  "start": 1792051200,
+                  "timezone": "EDT"
+                },
+                "regular": {
+                  "end": 1792094400,
+                  "gmtoffset": -14400,
+                  "start": 1792071000,
+                  "timezone": "EDT"
+                }
+              },
+              "dataGranularity": "1d",
+              "exchangeName": "PCX",
+              "exchangeTimezoneName": "America/New_York",
+              "fiftyTwoWeekHigh": 781.62,
+              "fiftyTwoWeekLow": 629.28,
+              "firstTradeDate": 728317800,
+              "fullExchangeName": "NYSEArca",
+              "fulldayChange": 0.41,
+              "fulldayChangePercent": 0.053,
+              "fulldayPrice": 770.01,
+              "gmtoffset": -14400,
+              "hasPrePostMarketData": true,
+              "instrumentType": "ETF",
+              "longName": "State Street SPDR S&P 500 ETF Trust",
+              "priceHint": 2,
+              "range": "",
+              "regularMarketChangePercent": 0.053,
+              "regularMarketDayHigh": 771.91,
+              "regularMarketDayLow": 764.44,
+              "regularMarketPrice": 770.01,
+              "regularMarketTime": 1792089978,
+              "regularMarketVolume": 26568726,
+              "shortName": "State Street SPDR S&P 500 ETF T",
+              "symbol": "SPY",
+              "timezone": "EDT",
+              "validRanges": [
+                "1d",
+                "5d",
+                "1mo",
+                "3mo",
+                "6mo",
+                "1y",
+                "2y",
+                "5y",
+                "10y",
+                "ytd",
+                "max"
+              ]
+            },
+            "parse_yahoo_chart_says": {
+              "malformed": "shape"
+            },
+            "quote_keys": [],
+            "result_keys": [
+              "indicators",
+              "meta"
+            ],
+            "timestamp_count": 0,
+            "top_level_keys": [
+              "chart"
+            ],
+            "truncated": false,
+            "utc_dates": [],
+            "utc_dates_span": null
+          },
+          "period1": 1434153600,
+          "period2": 1434326399,
+          "period_bounds_utc": [
+            "2015-06-13T00:00:00+00:00",
+            "2015-06-14T23:59:59+00:00"
+          ],
+          "question": "Q3",
+          "range_param": null,
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?period1=1434153600&period2=1434326399&interval=1d"
+        },
+        {
+          "asks": "the body for 2015-07-01..2015-07-07, fetched only so the holiday below is DERIVED from which dates the server returned rather than from a remembered exchange calendar",
+          "bounds_derivation": "00:00:00Z of 2015-07-01 .. 23:59:59Z of 2015-07-07",
+          "case": "q3_holiday_week_span",
+          "content_type": "application/json;charset=utf-8",
+          "http_status": 200,
+          "observed": {
+            "bar_count": 4,
+            "bars": [
+              [
+                1435757400,
+                "2015-07-01",
+                "2015-07-01",
+                207.5
+              ],
+              [
+                1435843800,
+                "2015-07-02",
+                "2015-07-02",
+                207.30999755859375
+              ],
+              [
+                1436189400,
+                "2015-07-06",
+                "2015-07-06",
+                206.72000122070312
+              ],
+              [
+                1436275800,
+                "2015-07-07",
+                "2015-07-07",
+                208.02000427246094
+              ]
+            ],
+            "body_bytes": 1672,
+            "body_verbatim": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"SPY\",\"exchangeName\":\"PCX\",\"fullExchangeName\":\"NYSEArca\",\"instrumentType\":\"ETF\",\"firstTradeDate\":728317800,\"regularMarketTime\":1792089982,\"hasPrePostMarketData\":true,\"gmtoffset\":-14400,\"timezone\":\"EDT\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":769.99,\"regularMarketChangePercent\":0.051,\"fulldayPrice\":769.99,\"fulldayChange\":0.39,\"fulldayChangePercent\":0.051,\"fiftyTwoWeekHigh\":781.62,\"fiftyTwoWeekLow\":629.28,\"regularMarketDayHigh\":771.91,\"regularMarketDayLow\":764.44,\"regularMarketVolume\":26570071,\"longName\":\"State Street SPDR S&P 500 ETF Trust\",\"shortName\":\"State Street SPDR S&P 500 ETF T\",\"chartPreviousClose\":205.85,\"priceHint\":2,\"currentTradingPeriod\":{\"pre\":{\"timezone\":\"EDT\",\"start\":1792051200,\"end\":1792071000,\"gmtoffset\":-14400},\"regular\":{\"timezone\":\"EDT\",\"start\":1792071000,\"end\":1792094400,\"gmtoffset\":-14400},\"post\":{\"timezone\":\"EDT\",\"start\":1792094400,\"end\":1792108800,\"gmtoffset\":-14400}},\"dataGranularity\":\"1d\",\"range\":\"\",\"validRanges\":[\"1d\",\"5d\",\"1mo\",\"3mo\",\"6mo\",\"1y\",\"2y\",\"5y\",\"10y\",\"ytd\",\"max\"]},\"timestamp\":[1435757400,1435843800,1436189400,1436275800],\"indicators\":{\"quote\":[{\"volume\":[135979900,104373700,117975400,173820200],\"low\":[206.55999755859375,206.80999755859375,205.52999877929688,204.11000061035156],\"close\":[207.5,207.30999755859375,206.72000122070312,208.02000427246094],\"open\":[207.72999572753906,208.07000732421875,205.77000427246094,206.9600067138672],\"high\":[208.02999877929688,208.27000427246094,207.64999389648438,208.1699981689453]}],\"adjclose\":[{\"adjclose\":[172.57171630859375,172.4136505126953,171.9230194091797,173.0041046142578]}]}}],\"error\":null}}",
+            "chart_error": null,
+            "chart_keys": [
+              "error",
+              "result"
+            ],
+            "close_count": 4,
+            "has_quote_close_key": true,
+            "has_timestamp_key": true,
+            "indicator_keys": [
+              "adjclose",
+              "quote"
+            ],
+            "json": true,
+            "last_bar_is": [
+              1436275800,
+              "2015-07-07",
+              "2015-07-07",
+              208.02000427246094
+            ],
+            "meta": {
+              "chartPreviousClose": 205.85,
+              "currency": "USD",
+              "currentTradingPeriod": {
+                "post": {
+                  "end": 1792108800,
+                  "gmtoffset": -14400,
+                  "start": 1792094400,
+                  "timezone": "EDT"
+                },
+                "pre": {
+                  "end": 1792071000,
+                  "gmtoffset": -14400,
+                  "start": 1792051200,
+                  "timezone": "EDT"
+                },
+                "regular": {
+                  "end": 1792094400,
+                  "gmtoffset": -14400,
+                  "start": 1792071000,
+                  "timezone": "EDT"
+                }
+              },
+              "dataGranularity": "1d",
+              "exchangeName": "PCX",
+              "exchangeTimezoneName": "America/New_York",
+              "fiftyTwoWeekHigh": 781.62,
+              "fiftyTwoWeekLow": 629.28,
+              "firstTradeDate": 728317800,
+              "fullExchangeName": "NYSEArca",
+              "fulldayChange": 0.39,
+              "fulldayChangePercent": 0.051,
+              "fulldayPrice": 769.99,
+              "gmtoffset": -14400,
+              "hasPrePostMarketData": true,
+              "instrumentType": "ETF",
+              "longName": "State Street SPDR S&P 500 ETF Trust",
+              "priceHint": 2,
+              "range": "",
+              "regularMarketChangePercent": 0.051,
+              "regularMarketDayHigh": 771.91,
+              "regularMarketDayLow": 764.44,
+              "regularMarketPrice": 769.99,
+              "regularMarketTime": 1792089982,
+              "regularMarketVolume": 26570071,
+              "shortName": "State Street SPDR S&P 500 ETF T",
+              "symbol": "SPY",
+              "timezone": "EDT",
+              "validRanges": [
+                "1d",
+                "5d",
+                "1mo",
+                "3mo",
+                "6mo",
+                "1y",
+                "2y",
+                "5y",
+                "10y",
+                "ytd",
+                "max"
+              ]
+            },
+            "parse_yahoo_chart_says": {
+              "observation_date": "2015-07-07",
+              "unit": "usd",
+              "value": 208.02000427246094
+            },
+            "quote_keys": [
+              "close",
+              "high",
+              "low",
+              "open",
+              "volume"
+            ],
+            "result_keys": [
+              "indicators",
+              "meta",
+              "timestamp"
+            ],
+            "timestamp_count": 4,
+            "top_level_keys": [
+              "chart"
+            ],
+            "truncated": false,
+            "utc_dates": [
+              "2015-07-01",
+              "2015-07-02",
+              "2015-07-06",
+              "2015-07-07"
+            ],
+            "utc_dates_span": [
+              "2015-07-01",
+              "2015-07-07"
+            ]
+          },
+          "period1": 1435708800,
+          "period2": 1436313599,
+          "period_bounds_utc": [
+            "2015-07-01T00:00:00+00:00",
+            "2015-07-07T23:59:59+00:00"
+          ],
+          "question": "Q3",
+          "range_param": null,
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?period1=1435708800&period2=1436313599&interval=1d"
+        },
+        {
+          "asks": "a one-day window on a WEEKDAY the market was shut: same question as the weekend case, asked of the case that is easier to get wrong because the date looks like a business day",
+          "bounds_derivation": "00:00:00Z .. 23:59:59Z of 2015-07-03",
+          "case": "q3_window_on_market_holiday",
+          "content_type": "application/json;charset=utf-8",
+          "http_status": 200,
+          "observed": {
+            "bar_count": 0,
+            "bars": [],
+            "body_bytes": 1154,
+            "body_verbatim": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"SPY\",\"exchangeName\":\"PCX\",\"fullExchangeName\":\"NYSEArca\",\"instrumentType\":\"ETF\",\"firstTradeDate\":728317800,\"regularMarketTime\":1792089982,\"hasPrePostMarketData\":true,\"gmtoffset\":-14400,\"timezone\":\"EDT\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":769.99,\"regularMarketChangePercent\":0.051,\"fulldayPrice\":769.99,\"fulldayChange\":0.39,\"fulldayChangePercent\":0.051,\"fiftyTwoWeekHigh\":781.62,\"fiftyTwoWeekLow\":629.28,\"regularMarketDayHigh\":771.91,\"regularMarketDayLow\":764.44,\"regularMarketVolume\":26570071,\"longName\":\"State Street SPDR S&P 500 ETF Trust\",\"shortName\":\"State Street SPDR S&P 500 ETF T\",\"chartPreviousClose\":207.31,\"priceHint\":2,\"currentTradingPeriod\":{\"pre\":{\"timezone\":\"EDT\",\"start\":1792051200,\"end\":1792071000,\"gmtoffset\":-14400},\"regular\":{\"timezone\":\"EDT\",\"start\":1792071000,\"end\":1792094400,\"gmtoffset\":-14400},\"post\":{\"timezone\":\"EDT\",\"start\":1792094400,\"end\":1792108800,\"gmtoffset\":-14400}},\"dataGranularity\":\"1d\",\"range\":\"\",\"validRanges\":[\"1d\",\"5d\",\"1mo\",\"3mo\",\"6mo\",\"1y\",\"2y\",\"5y\",\"10y\",\"ytd\",\"max\"]},\"indicators\":{\"quote\":[{}],\"adjclose\":[{}]}}],\"error\":null}}",
+            "chart_error": null,
+            "chart_keys": [
+              "error",
+              "result"
+            ],
+            "close_count": 0,
+            "has_quote_close_key": false,
+            "has_timestamp_key": false,
+            "indicator_keys": [
+              "adjclose",
+              "quote"
+            ],
+            "json": true,
+            "last_bar_is": null,
+            "meta": {
+              "chartPreviousClose": 207.31,
+              "currency": "USD",
+              "currentTradingPeriod": {
+                "post": {
+                  "end": 1792108800,
+                  "gmtoffset": -14400,
+                  "start": 1792094400,
+                  "timezone": "EDT"
+                },
+                "pre": {
+                  "end": 1792071000,
+                  "gmtoffset": -14400,
+                  "start": 1792051200,
+                  "timezone": "EDT"
+                },
+                "regular": {
+                  "end": 1792094400,
+                  "gmtoffset": -14400,
+                  "start": 1792071000,
+                  "timezone": "EDT"
+                }
+              },
+              "dataGranularity": "1d",
+              "exchangeName": "PCX",
+              "exchangeTimezoneName": "America/New_York",
+              "fiftyTwoWeekHigh": 781.62,
+              "fiftyTwoWeekLow": 629.28,
+              "firstTradeDate": 728317800,
+              "fullExchangeName": "NYSEArca",
+              "fulldayChange": 0.39,
+              "fulldayChangePercent": 0.051,
+              "fulldayPrice": 769.99,
+              "gmtoffset": -14400,
+              "hasPrePostMarketData": true,
+              "instrumentType": "ETF",
+              "longName": "State Street SPDR S&P 500 ETF Trust",
+              "priceHint": 2,
+              "range": "",
+              "regularMarketChangePercent": 0.051,
+              "regularMarketDayHigh": 771.91,
+              "regularMarketDayLow": 764.44,
+              "regularMarketPrice": 769.99,
+              "regularMarketTime": 1792089982,
+              "regularMarketVolume": 26570071,
+              "shortName": "State Street SPDR S&P 500 ETF T",
+              "symbol": "SPY",
+              "timezone": "EDT",
+              "validRanges": [
+                "1d",
+                "5d",
+                "1mo",
+                "3mo",
+                "6mo",
+                "1y",
+                "2y",
+                "5y",
+                "10y",
+                "ytd",
+                "max"
+              ]
+            },
+            "parse_yahoo_chart_says": {
+              "malformed": "shape"
+            },
+            "quote_keys": [],
+            "result_keys": [
+              "indicators",
+              "meta"
+            ],
+            "timestamp_count": 0,
+            "top_level_keys": [
+              "chart"
+            ],
+            "truncated": false,
+            "utc_dates": [],
+            "utc_dates_span": null
+          },
+          "period1": 1435881600,
+          "period2": 1435967999,
+          "period_bounds_utc": [
+            "2015-07-03T00:00:00+00:00",
+            "2015-07-03T23:59:59+00:00"
+          ],
+          "question": "Q3",
+          "range_param": null,
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?period1=1435881600&period2=1435967999&interval=1d"
+        },
+        {
+          "asks": "a one-day window a DECADE before the symbol's first trade: refusal, empty, a CLAMP to the first real bar (what public write-ups claim, and what ALFRED was measured to do), or the whole unrelated series? This is WO-1.15's dangerous FRED case asked of Yahoo",
+          "bounds_derivation": "00:00:00Z .. 23:59:59Z of 1983-01-30",
+          "case": "q4_window_before_first_trade_one_day",
+          "content_type": "application/json;charset=utf-8",
+          "http_error": true,
+          "http_status": 400,
+          "observed": {
+            "body_bytes": 138,
+            "body_verbatim": "{\"chart\":{\"result\":null,\"error\":{\"code\":\"Bad Request\",\"description\":\"Data doesn't exist for startDate = 412732800, endDate = 412819199\"}}}",
+            "chart_error": {
+              "code": "Bad Request",
+              "description": "Data doesn't exist for startDate = 412732800, endDate = 412819199"
+            },
+            "chart_keys": [
+              "error",
+              "result"
+            ],
+            "json": true,
+            "result_is": "null",
+            "top_level_keys": [
+              "chart"
+            ]
+          },
+          "period1": 412732800,
+          "period2": 412819199,
+          "period_bounds_utc": [
+            "1983-01-30T00:00:00+00:00",
+            "1983-01-30T23:59:59+00:00"
+          ],
+          "question": "Q4",
+          "range_param": null,
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?period1=412732800&period2=412819199&interval=1d"
+        },
+        {
+          "asks": "the same impossible span widened to a whole year, which separates clamping (one bar, the first real one) from ignoring the window (hundreds of bars from a period nobody asked about)",
+          "bounds_derivation": "00:00:00Z of 1983-01-01 .. 23:59:59Z of 1983-12-31",
+          "case": "q4_window_before_first_trade_one_year",
+          "content_type": "application/json;charset=utf-8",
+          "http_error": true,
+          "http_status": 400,
+          "observed": {
+            "body_bytes": 138,
+            "body_verbatim": "{\"chart\":{\"result\":null,\"error\":{\"code\":\"Bad Request\",\"description\":\"Data doesn't exist for startDate = 410227200, endDate = 441763199\"}}}",
+            "chart_error": {
+              "code": "Bad Request",
+              "description": "Data doesn't exist for startDate = 410227200, endDate = 441763199"
+            },
+            "chart_keys": [
+              "error",
+              "result"
+            ],
+            "json": true,
+            "result_is": "null",
+            "top_level_keys": [
+              "chart"
+            ]
+          },
+          "period1": 410227200,
+          "period2": 441763199,
+          "period_bounds_utc": [
+            "1983-01-01T00:00:00+00:00",
+            "1983-12-31T23:59:59+00:00"
+          ],
+          "question": "Q4",
+          "range_param": null,
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?period1=410227200&period2=441763199&interval=1d"
+        },
+        {
+          "asks": "a window opening a decade before the first trade and closing just after it: clamp-to-start answers with the real first bars, a flat refusal answers with neither \u2014 and the cases above cannot tell those two apart from one side",
+          "bounds_derivation": "00:00:00Z of 1983-01-30 .. 23:59:59Z of 1993-02-03 (firstTradeDate + 5 days)",
+          "case": "q4_window_spanning_first_trade",
+          "content_type": "application/json;charset=utf-8",
+          "http_status": 200,
+          "observed": {
+            "bar_count": 4,
+            "bars": [
+              [
+                728317800,
+                "1993-01-29",
+                "1993-01-29",
+                43.9375
+              ],
+              [
+                728577000,
+                "1993-02-01",
+                "1993-02-01",
+                44.25
+              ],
+              [
+                728663400,
+                "1993-02-02",
+                "1993-02-02",
+                44.34375
+              ],
+              [
+                728749800,
+                "1993-02-03",
+                "1993-02-03",
+                44.8125
+              ]
+            ],
+            "body_bytes": 1498,
+            "body_verbatim": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"SPY\",\"exchangeName\":\"PCX\",\"fullExchangeName\":\"NYSEArca\",\"instrumentType\":\"ETF\",\"firstTradeDate\":728317800,\"regularMarketTime\":1792089985,\"hasPrePostMarketData\":true,\"gmtoffset\":-14400,\"timezone\":\"EDT\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":770.01,\"regularMarketChangePercent\":0.053,\"fulldayPrice\":770.01,\"fulldayChange\":0.41,\"fulldayChangePercent\":0.053,\"fiftyTwoWeekHigh\":781.62,\"fiftyTwoWeekLow\":629.28,\"regularMarketDayHigh\":771.91,\"regularMarketDayLow\":764.44,\"regularMarketVolume\":26573081,\"longName\":\"State Street SPDR S&P 500 ETF Trust\",\"shortName\":\"State Street SPDR S&P 500 ETF T\",\"chartPreviousClose\":43.969,\"priceHint\":2,\"currentTradingPeriod\":{\"pre\":{\"timezone\":\"EDT\",\"end\":1792071000,\"start\":1792051200,\"gmtoffset\":-14400},\"regular\":{\"timezone\":\"EDT\",\"end\":1792094400,\"start\":1792071000,\"gmtoffset\":-14400},\"post\":{\"timezone\":\"EDT\",\"end\":1792108800,\"start\":1792094400,\"gmtoffset\":-14400}},\"dataGranularity\":\"1d\",\"range\":\"\",\"validRanges\":[\"1d\",\"5d\",\"1mo\",\"3mo\",\"6mo\",\"1y\",\"2y\",\"5y\",\"10y\",\"ytd\",\"max\"]},\"timestamp\":[728317800,728577000,728663400,728749800],\"indicators\":{\"quote\":[{\"volume\":[1003200,480500,201300,529400],\"high\":[43.96875,44.25,44.375,44.84375],\"open\":[43.96875,43.96875,44.21875,44.40625],\"close\":[43.9375,44.25,44.34375,44.8125],\"low\":[43.75,43.96875,44.125,44.375]}],\"adjclose\":[{\"adjclose\":[24.053529739379883,24.224607467651367,24.275936126708984,24.532541275024414]}]}}],\"error\":null}}",
+            "chart_error": null,
+            "chart_keys": [
+              "error",
+              "result"
+            ],
+            "close_count": 4,
+            "has_quote_close_key": true,
+            "has_timestamp_key": true,
+            "indicator_keys": [
+              "adjclose",
+              "quote"
+            ],
+            "json": true,
+            "last_bar_is": [
+              728749800,
+              "1993-02-03",
+              "1993-02-03",
+              44.8125
+            ],
+            "meta": {
+              "chartPreviousClose": 43.969,
+              "currency": "USD",
+              "currentTradingPeriod": {
+                "post": {
+                  "end": 1792108800,
+                  "gmtoffset": -14400,
+                  "start": 1792094400,
+                  "timezone": "EDT"
+                },
+                "pre": {
+                  "end": 1792071000,
+                  "gmtoffset": -14400,
+                  "start": 1792051200,
+                  "timezone": "EDT"
+                },
+                "regular": {
+                  "end": 1792094400,
+                  "gmtoffset": -14400,
+                  "start": 1792071000,
+                  "timezone": "EDT"
+                }
+              },
+              "dataGranularity": "1d",
+              "exchangeName": "PCX",
+              "exchangeTimezoneName": "America/New_York",
+              "fiftyTwoWeekHigh": 781.62,
+              "fiftyTwoWeekLow": 629.28,
+              "firstTradeDate": 728317800,
+              "fullExchangeName": "NYSEArca",
+              "fulldayChange": 0.41,
+              "fulldayChangePercent": 0.053,
+              "fulldayPrice": 770.01,
+              "gmtoffset": -14400,
+              "hasPrePostMarketData": true,
+              "instrumentType": "ETF",
+              "longName": "State Street SPDR S&P 500 ETF Trust",
+              "priceHint": 2,
+              "range": "",
+              "regularMarketChangePercent": 0.053,
+              "regularMarketDayHigh": 771.91,
+              "regularMarketDayLow": 764.44,
+              "regularMarketPrice": 770.01,
+              "regularMarketTime": 1792089985,
+              "regularMarketVolume": 26573081,
+              "shortName": "State Street SPDR S&P 500 ETF T",
+              "symbol": "SPY",
+              "timezone": "EDT",
+              "validRanges": [
+                "1d",
+                "5d",
+                "1mo",
+                "3mo",
+                "6mo",
+                "1y",
+                "2y",
+                "5y",
+                "10y",
+                "ytd",
+                "max"
+              ]
+            },
+            "parse_yahoo_chart_says": {
+              "observation_date": "1993-02-03",
+              "unit": "usd",
+              "value": 44.8125
+            },
+            "quote_keys": [
+              "close",
+              "high",
+              "low",
+              "open",
+              "volume"
+            ],
+            "result_keys": [
+              "indicators",
+              "meta",
+              "timestamp"
+            ],
+            "timestamp_count": 4,
+            "top_level_keys": [
+              "chart"
+            ],
+            "truncated": false,
+            "utc_dates": [
+              "1993-01-29",
+              "1993-02-01",
+              "1993-02-02",
+              "1993-02-03"
+            ],
+            "utc_dates_span": [
+              "1993-01-29",
+              "1993-02-03"
+            ]
+          },
+          "period1": 412732800,
+          "period2": 728783999,
+          "period_bounds_utc": [
+            "1983-01-30T00:00:00+00:00",
+            "1993-02-03T23:59:59+00:00"
+          ],
+          "question": "Q4",
+          "range_param": null,
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?period1=412732800&period2=728783999&interval=1d"
+        },
+        {
+          "asks": "a one-day window a YEAR FROM NOW: the mirror of the impossible case. Public write-ups claim out-of-range highs are 'rounded down to the most recent timestamp available'; if that were true here, a caller whose clock or date arithmetic ran ahead would be handed TODAY's bar labelled with a date that has not happened",
+          "bounds_derivation": "00:00:00Z .. 23:59:59Z of 2027-10-15 (today + 365 days)",
+          "case": "q4_window_after_last_bar",
+          "content_type": "application/json;charset=utf-8",
+          "http_error": true,
+          "http_status": 400,
+          "observed": {
+            "body_bytes": 140,
+            "body_verbatim": "{\"chart\":{\"result\":null,\"error\":{\"code\":\"Bad Request\",\"description\":\"Data doesn't exist for startDate = 1823558400, endDate = 1823644799\"}}}",
+            "chart_error": {
+              "code": "Bad Request",
+              "description": "Data doesn't exist for startDate = 1823558400, endDate = 1823644799"
+            },
+            "chart_keys": [
+              "error",
+              "result"
+            ],
+            "json": true,
+            "result_is": "null",
+            "top_level_keys": [
+              "chart"
+            ]
+          },
+          "period1": 1823558400,
+          "period2": 1823644799,
+          "period_bounds_utc": [
+            "2027-10-15T00:00:00+00:00",
+            "2027-10-15T23:59:59+00:00"
+          ],
+          "question": "Q4",
+          "range_param": null,
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?period1=1823558400&period2=1823644799&interval=1d"
+        },
+        {
+          "asks": "period2 BEFORE period1: a malformed window's failure shape, measured rather than guessed, because a caller that computes bounds wrong must fail loudly",
+          "bounds_derivation": "23:59:59Z of 2015-06-08 as period1, five days EARLIER as period2",
+          "case": "q5_window_reversed",
+          "content_type": "application/json;charset=utf-8",
+          "http_error": true,
+          "http_status": 400,
+          "observed": {
+            "body_bytes": 170,
+            "body_verbatim": "{\"chart\":{\"result\":null,\"error\":{\"code\":\"Bad Request\",\"description\":\"Invalid input - start date cannot be after end date. startDate = 1433807999, endDate = 1433289600\"}}}",
+            "chart_error": {
+              "code": "Bad Request",
+              "description": "Invalid input - start date cannot be after end date. startDate = 1433807999, endDate = 1433289600"
+            },
+            "chart_keys": [
+              "error",
+              "result"
+            ],
+            "json": true,
+            "result_is": "null",
+            "top_level_keys": [
+              "chart"
+            ]
+          },
+          "period1": 1433807999,
+          "period2": 1433289600,
+          "period_bounds_utc": [
+            "2015-06-08T23:59:59+00:00",
+            "2015-06-03T00:00:00+00:00"
+          ],
+          "question": "Q5",
+          "range_param": null,
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?period1=1433807999&period2=1433289600&interval=1d"
+        },
+        {
+          "asks": "range=2y AND a one-day period window in the same URL. Which wins? The adapter emits range today, so an implementation that APPENDS a window rather than replacing range depends entirely on this answer",
+          "bounds_derivation": "range=2y plus 00:00:00Z .. 23:59:59Z of 2015-06-08",
+          "case": "q6_range_and_period_together",
+          "content_type": "application/json;charset=utf-8",
+          "http_status": 200,
+          "observed": {
+            "bar_count": 502,
+            "bars_head": [
+              [
+                1728999000,
+                "2024-10-15",
+                "2024-10-15",
+                579.780029296875
+              ],
+              [
+                1729085400,
+                "2024-10-16",
+                "2024-10-16",
+                582.2999877929688
+              ],
+              [
+                1729171800,
+                "2024-10-17",
+                "2024-10-17",
+                582.3499755859375
+              ],
+              [
+                1729258200,
+                "2024-10-18",
+                "2024-10-18",
+                584.5900268554688
+              ]
+            ],
+            "bars_tail": [
+              [
+                1791811800,
+                "2026-10-12",
+                "2026-10-12",
+                778.0999755859375
+              ],
+              [
+                1791898200,
+                "2026-10-13",
+                "2026-10-13",
+                778.010009765625
+              ],
+              [
+                1791984600,
+                "2026-10-14",
+                "2026-10-14",
+                769.5999755859375
+              ],
+              [
+                1792071000,
+                "2026-10-15",
+                "2026-10-15",
+                770.010009765625
+              ]
+            ],
+            "body_bytes": 54662,
+            "chart_error": null,
+            "chart_keys": [
+              "error",
+              "result"
+            ],
+            "close_count": 502,
+            "has_quote_close_key": true,
+            "has_timestamp_key": true,
+            "indicator_keys": [
+              "adjclose",
+              "quote"
+            ],
+            "json": true,
+            "last_bar_is": [
+              1792071000,
+              "2026-10-15",
+              "2026-10-15",
+              770.010009765625
+            ],
+            "meta": {
+              "chartPreviousClose": 209.77,
+              "currency": "USD",
+              "currentTradingPeriod": {
+                "post": {
+                  "end": 1792108800,
+                  "gmtoffset": -14400,
+                  "start": 1792094400,
+                  "timezone": "EDT"
+                },
+                "pre": {
+                  "end": 1792071000,
+                  "gmtoffset": -14400,
+                  "start": 1792051200,
+                  "timezone": "EDT"
+                },
+                "regular": {
+                  "end": 1792094400,
+                  "gmtoffset": -14400,
+                  "start": 1792071000,
+                  "timezone": "EDT"
+                }
+              },
+              "dataGranularity": "1d",
+              "exchangeName": "PCX",
+              "exchangeTimezoneName": "America/New_York",
+              "fiftyTwoWeekHigh": 781.62,
+              "fiftyTwoWeekLow": 629.28,
+              "firstTradeDate": 728317800,
+              "fullExchangeName": "NYSEArca",
+              "fulldayChange": 0.41,
+              "fulldayChangePercent": 0.053,
+              "fulldayPrice": 770.01,
+              "gmtoffset": -14400,
+              "hasPrePostMarketData": true,
+              "instrumentType": "ETF",
+              "longName": "State Street SPDR S&P 500 ETF Trust",
+              "priceHint": 2,
+              "range": "2y",
+              "regularMarketChangePercent": 0.053,
+              "regularMarketDayHigh": 771.91,
+              "regularMarketDayLow": 764.44,
+              "regularMarketPrice": 770.01,
+              "regularMarketTime": 1792089992,
+              "regularMarketVolume": 26575119,
+              "shortName": "State Street SPDR S&P 500 ETF T",
+              "symbol": "SPY",
+              "timezone": "EDT",
+              "validRanges": [
+                "1d",
+                "5d",
+                "1mo",
+                "3mo",
+                "6mo",
+                "1y",
+                "2y",
+                "5y",
+                "10y",
+                "ytd",
+                "max"
+              ]
+            },
+            "parse_yahoo_chart_says": {
+              "observation_date": "2026-10-15",
+              "unit": "usd",
+              "value": 770.010009765625
+            },
+            "quote_keys": [
+              "close",
+              "high",
+              "low",
+              "open",
+              "volume"
+            ],
+            "result_keys": [
+              "indicators",
+              "meta",
+              "timestamp"
+            ],
+            "timestamp_count": 502,
+            "top_level_keys": [
+              "chart"
+            ],
+            "truncated": true,
+            "utc_dates_head": [
+              "2024-10-15",
+              "2024-10-16",
+              "2024-10-17",
+              "2024-10-18"
+            ],
+            "utc_dates_span": [
+              "2024-10-15",
+              "2026-10-15"
+            ],
+            "utc_dates_tail": [
+              "2026-10-12",
+              "2026-10-13",
+              "2026-10-14",
+              "2026-10-15"
+            ]
+          },
+          "period1": 1433721600,
+          "period2": 1433807999,
+          "period_bounds_utc": [
+            "2015-06-08T00:00:00+00:00",
+            "2015-06-08T23:59:59+00:00"
+          ],
+          "question": "Q6",
+          "range_param": "2y",
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?range=2y&period1=1433721600&period2=1433807999&interval=1d"
+        }
+      ],
+      "catalog_history": 0,
+      "first_trade_per_server": {
+        "epoch": 728317800,
+        "utc_date": "1993-01-29"
+      },
+      "holiday_derivation": "weekday dates in 2015-07-01..2015-07-07 the server returned no bar for: ['2015-07-03'] \u2014 a weekday the market did not trade is a holiday by observation, not by consulting a calendar this file does not have",
+      "impossible_window_derivation": "meta.firstTradeDate 1993-01-29 per the baseline response, minus 10 years = 1983-01-30",
+      "one_day_derivation": "2015-06-08 is the first date in 2015-06-08..2015-06-19 the server itself returned a bar for; it is not asserted to be a trading day, it is observed to be one",
+      "symbol": "SPY",
+      "unit": "usd",
+      "weekend_derivation": "2015-06-13..2015-06-14 lies inside the window above but the server returned no bar for it"
+    },
+    {
+      "adapter_url_today": "https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?range=2y&interval=1d",
+      "cases": [
+        {
+          "asks": "the URL YahooChartAdapter._url builds TODAY, unchanged; establishes the response shape and meta.firstTradeDate so the impossible window below is derived rather than typed from memory",
+          "case": "baseline_range_as_adapter_builds_it",
+          "content_type": "application/json;charset=utf-8",
+          "http_status": 200,
+          "observed": {
+            "bar_count": 502,
+            "bars_head": [
+              [
+                1728999000,
+                "2024-10-15",
+                "2024-10-15",
+                5815.259765625
+              ],
+              [
+                1729085400,
+                "2024-10-16",
+                "2024-10-16",
+                5842.47021484375
+              ],
+              [
+                1729171800,
+                "2024-10-17",
+                "2024-10-17",
+                5841.47021484375
+              ],
+              [
+                1729258200,
+                "2024-10-18",
+                "2024-10-18",
+                5864.669921875
+              ]
+            ],
+            "bars_tail": [
+              [
+                1791811800,
+                "2026-10-12",
+                "2026-10-12",
+                7807.240234375
+              ],
+              [
+                1791898200,
+                "2026-10-13",
+                "2026-10-13",
+                7805.4501953125
+              ],
+              [
+                1791984600,
+                "2026-10-14",
+                "2026-10-14",
+                7718.93994140625
+              ],
+              [
+                1792071000,
+                "2026-10-15",
+                "2026-10-15",
+                7726.3798828125
+              ]
+            ],
+            "body_bytes": 51761,
+            "chart_error": null,
+            "chart_keys": [
+              "error",
+              "result"
+            ],
+            "close_count": 502,
+            "has_quote_close_key": true,
+            "has_timestamp_key": true,
+            "indicator_keys": [
+              "adjclose",
+              "quote"
+            ],
+            "json": true,
+            "last_bar_is": [
+              1792071000,
+              "2026-10-15",
+              "2026-10-15",
+              7726.3798828125
+            ],
+            "meta": {
+              "chartPreviousClose": 5815.26,
+              "currency": "USD",
+              "currentTradingPeriod": {
+                "post": {
+                  "end": 1792108800,
+                  "gmtoffset": -14400,
+                  "start": 1792094400,
+                  "timezone": "EDT"
+                },
+                "pre": {
+                  "end": 1792071000,
+                  "gmtoffset": -14400,
+                  "start": 1792051200,
+                  "timezone": "EDT"
+                },
+                "regular": {
+                  "end": 1792094400,
+                  "gmtoffset": -14400,
+                  "start": 1792071000,
+                  "timezone": "EDT"
+                }
+              },
+              "dataGranularity": "1d",
+              "exchangeName": "SNP",
+              "exchangeTimezoneName": "America/New_York",
+              "fiftyTwoWeekHigh": 7844.52,
+              "fiftyTwoWeekLow": 6316.91,
+              "firstTradeDate": -1325583000,
+              "fullExchangeName": "SNP",
+              "fulldayChange": 7.44,
+              "fulldayChangePercent": 0.096,
+              "fulldayPrice": 7726.38,
+              "gmtoffset": -14400,
+              "hasPrePostMarketData": false,
+              "instrumentType": "INDEX",
+              "longName": "S&P 500",
+              "priceHint": 2,
+              "range": "2y",
+              "regularMarketChangePercent": 0.096,
+              "regularMarketDayHigh": 7745.15,
+              "regularMarketDayLow": 7669.66,
+              "regularMarketPrice": 7726.38,
+              "regularMarketTime": 1792089992,
+              "regularMarketVolume": 2043016000,
+              "shortName": "S&P 500",
+              "symbol": "^GSPC",
+              "timezone": "EDT",
+              "validRanges": [
+                "1d",
+                "5d",
+                "1mo",
+                "3mo",
+                "6mo",
+                "1y",
+                "2y",
+                "5y",
+                "10y",
+                "ytd",
+                "max"
+              ]
+            },
+            "parse_yahoo_chart_says": {
+              "observation_date": "2026-10-15",
+              "unit": "index",
+              "value": 7726.3798828125
+            },
+            "quote_keys": [
+              "close",
+              "high",
+              "low",
+              "open",
+              "volume"
+            ],
+            "result_keys": [
+              "indicators",
+              "meta",
+              "timestamp"
+            ],
+            "timestamp_count": 502,
+            "top_level_keys": [
+              "chart"
+            ],
+            "truncated": true,
+            "utc_dates_head": [
+              "2024-10-15",
+              "2024-10-16",
+              "2024-10-17",
+              "2024-10-18"
+            ],
+            "utc_dates_span": [
+              "2024-10-15",
+              "2026-10-15"
+            ],
+            "utc_dates_tail": [
+              "2026-10-12",
+              "2026-10-13",
+              "2026-10-14",
+              "2026-10-15"
+            ]
+          },
+          "period1": null,
+          "period2": null,
+          "question": "baseline",
+          "range_param": "2y",
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?range=2y&interval=1d"
+        },
+        {
+          "asks": "period1/period2 over 2015-06-08..2015-06-19: does an absolute window work at all, is the shape the one parse_yahoo_chart already requires, and does a WIDER window return wider (which is the only thing that proves the window is applied rather than ignored)",
+          "bounds_derivation": "00:00:00Z of 2015-06-08 .. 23:59:59Z of 2015-06-19",
+          "case": "q1_window_multi_day",
+          "content_type": "application/json;charset=utf-8",
+          "http_status": 200,
+          "observed": {
+            "bar_count": 10,
+            "bars": [
+              [
+                1433770200,
+                "2015-06-08",
+                "2015-06-08",
+                2079.280029296875
+              ],
+              [
+                1433856600,
+                "2015-06-09",
+                "2015-06-09",
+                2080.14990234375
+              ],
+              [
+                1433943000,
+                "2015-06-10",
+                "2015-06-10",
+                2105.199951171875
+              ],
+              [
+                1434029400,
+                "2015-06-11",
+                "2015-06-11",
+                2108.860107421875
+              ],
+              [
+                1434115800,
+                "2015-06-12",
+                "2015-06-12",
+                2094.110107421875
+              ],
+              [
+                1434375000,
+                "2015-06-15",
+                "2015-06-15",
+                2084.429931640625
+              ],
+              [
+                1434461400,
+                "2015-06-16",
+                "2015-06-16",
+                2096.2900390625
+              ],
+              [
+                1434547800,
+                "2015-06-17",
+                "2015-06-17",
+                2100.43994140625
+              ],
+              [
+                1434634200,
+                "2015-06-18",
+                "2015-06-18",
+                2121.239990234375
+              ],
+              [
+                1434720600,
+                "2015-06-19",
+                "2015-06-19",
+                2109.989990234375
+              ]
+            ],
+            "body_bytes": 2263,
+            "body_verbatim": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"^GSPC\",\"exchangeName\":\"SNP\",\"fullExchangeName\":\"SNP\",\"instrumentType\":\"INDEX\",\"firstTradeDate\":-1325583000,\"regularMarketTime\":1792089994,\"hasPrePostMarketData\":false,\"gmtoffset\":-14400,\"timezone\":\"EDT\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":7726.49,\"regularMarketChangePercent\":0.098,\"fulldayPrice\":7726.49,\"fulldayChange\":7.55,\"fulldayChangePercent\":0.098,\"fiftyTwoWeekHigh\":7844.52,\"fiftyTwoWeekLow\":6316.91,\"regularMarketDayHigh\":7745.15,\"regularMarketDayLow\":7669.66,\"regularMarketVolume\":2043131000,\"longName\":\"S&P 500\",\"shortName\":\"S&P 500\",\"chartPreviousClose\":2092.83,\"priceHint\":2,\"currentTradingPeriod\":{\"pre\":{\"timezone\":\"EDT\",\"end\":1792071000,\"start\":1792051200,\"gmtoffset\":-14400},\"regular\":{\"timezone\":\"EDT\",\"end\":1792094400,\"start\":1792071000,\"gmtoffset\":-14400},\"post\":{\"timezone\":\"EDT\",\"end\":1792108800,\"start\":1792094400,\"gmtoffset\":-14400}},\"dataGranularity\":\"1d\",\"range\":\"\",\"validRanges\":[\"1d\",\"5d\",\"1mo\",\"3mo\",\"6mo\",\"1y\",\"2y\",\"5y\",\"10y\",\"ytd\",\"max\"]},\"timestamp\":[1433770200,1433856600,1433943000,1434029400,1434115800,1434375000,1434461400,1434547800,1434634200,1434720600],\"indicators\":{\"quote\":[{\"volume\":[2917150000,3034580000,3414320000,3128600000,2719400000,3061570000,2919900000,3222240000,3520360000,4449810000],\"close\":[2079.280029296875,2080.14990234375,2105.199951171875,2108.860107421875,2094.110107421875,2084.429931640625,2096.2900390625,2100.43994140625,2121.239990234375,2109.989990234375],\"high\":[2093.010009765625,2085.6201171875,2108.5,2115.02001953125,2107.429931640625,2091.340087890625,2097.39990234375,2106.7900390625,2126.64990234375,2121.639892578125],\"open\":[2092.340087890625,2079.070068359375,2081.1201171875,2106.239990234375,2107.429931640625,2091.340087890625,2084.260009765625,2097.39990234375,2101.580078125,2121.06005859375],\"low\":[2079.110107421875,2072.139892578125,2081.1201171875,2106.239990234375,2091.330078125,2072.489990234375,2082.10009765625,2088.860107421875,2101.580078125,2109.449951171875]}],\"adjclose\":[{\"adjclose\":[2079.280029296875,2080.14990234375,2105.199951171875,2108.860107421875,2094.110107421875,2084.429931640625,2096.2900390625,2100.43994140625,2121.239990234375,2109.989990234375]}]}}],\"error\":null}}",
+            "chart_error": null,
+            "chart_keys": [
+              "error",
+              "result"
+            ],
+            "close_count": 10,
+            "has_quote_close_key": true,
+            "has_timestamp_key": true,
+            "indicator_keys": [
+              "adjclose",
+              "quote"
+            ],
+            "json": true,
+            "last_bar_is": [
+              1434720600,
+              "2015-06-19",
+              "2015-06-19",
+              2109.989990234375
+            ],
+            "meta": {
+              "chartPreviousClose": 2092.83,
+              "currency": "USD",
+              "currentTradingPeriod": {
+                "post": {
+                  "end": 1792108800,
+                  "gmtoffset": -14400,
+                  "start": 1792094400,
+                  "timezone": "EDT"
+                },
+                "pre": {
+                  "end": 1792071000,
+                  "gmtoffset": -14400,
+                  "start": 1792051200,
+                  "timezone": "EDT"
+                },
+                "regular": {
+                  "end": 1792094400,
+                  "gmtoffset": -14400,
+                  "start": 1792071000,
+                  "timezone": "EDT"
+                }
+              },
+              "dataGranularity": "1d",
+              "exchangeName": "SNP",
+              "exchangeTimezoneName": "America/New_York",
+              "fiftyTwoWeekHigh": 7844.52,
+              "fiftyTwoWeekLow": 6316.91,
+              "firstTradeDate": -1325583000,
+              "fullExchangeName": "SNP",
+              "fulldayChange": 7.55,
+              "fulldayChangePercent": 0.098,
+              "fulldayPrice": 7726.49,
+              "gmtoffset": -14400,
+              "hasPrePostMarketData": false,
+              "instrumentType": "INDEX",
+              "longName": "S&P 500",
+              "priceHint": 2,
+              "range": "",
+              "regularMarketChangePercent": 0.098,
+              "regularMarketDayHigh": 7745.15,
+              "regularMarketDayLow": 7669.66,
+              "regularMarketPrice": 7726.49,
+              "regularMarketTime": 1792089994,
+              "regularMarketVolume": 2043131000,
+              "shortName": "S&P 500",
+              "symbol": "^GSPC",
+              "timezone": "EDT",
+              "validRanges": [
+                "1d",
+                "5d",
+                "1mo",
+                "3mo",
+                "6mo",
+                "1y",
+                "2y",
+                "5y",
+                "10y",
+                "ytd",
+                "max"
+              ]
+            },
+            "parse_yahoo_chart_says": {
+              "observation_date": "2015-06-19",
+              "unit": "index",
+              "value": 2109.989990234375
+            },
+            "quote_keys": [
+              "close",
+              "high",
+              "low",
+              "open",
+              "volume"
+            ],
+            "result_keys": [
+              "indicators",
+              "meta",
+              "timestamp"
+            ],
+            "timestamp_count": 10,
+            "top_level_keys": [
+              "chart"
+            ],
+            "truncated": false,
+            "utc_dates": [
+              "2015-06-08",
+              "2015-06-09",
+              "2015-06-10",
+              "2015-06-11",
+              "2015-06-12",
+              "2015-06-15",
+              "2015-06-16",
+              "2015-06-17",
+              "2015-06-18",
+              "2015-06-19"
+            ],
+            "utc_dates_span": [
+              "2015-06-08",
+              "2015-06-19"
+            ]
+          },
+          "period1": 1433721600,
+          "period2": 1434758399,
+          "period_bounds_utc": [
+            "2015-06-08T00:00:00+00:00",
+            "2015-06-19T23:59:59+00:00"
+          ],
+          "question": "Q1",
+          "range_param": null,
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?period1=1433721600&period2=1434758399&interval=1d"
+        },
+        {
+          "asks": "a ONE-DAY window as the whole UTC day: exactly one bar, more, or none?",
+          "bounds_derivation": "00:00:00Z .. 23:59:59Z of 2015-06-08 (a 1d bar is stamped at the exchange session OPEN, 13:30Z/14:30Z for a US listing, which this span contains under either DST offset)",
+          "case": "q2_window_one_day_utc_day",
+          "content_type": "application/json;charset=utf-8",
+          "http_status": 200,
+          "observed": {
+            "bar_count": 1,
+            "bars": [
+              [
+                1433770200,
+                "2015-06-08",
+                "2015-06-08",
+                2079.280029296875
+              ]
+            ],
+            "body_bytes": 1297,
+            "body_verbatim": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"^GSPC\",\"exchangeName\":\"SNP\",\"fullExchangeName\":\"SNP\",\"instrumentType\":\"INDEX\",\"firstTradeDate\":-1325583000,\"regularMarketTime\":1792089995,\"hasPrePostMarketData\":false,\"gmtoffset\":-14400,\"timezone\":\"EDT\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":7726.41,\"regularMarketChangePercent\":0.097,\"fulldayPrice\":7726.41,\"fulldayChange\":7.47,\"fulldayChangePercent\":0.097,\"fiftyTwoWeekHigh\":7844.52,\"fiftyTwoWeekLow\":6316.91,\"regularMarketDayHigh\":7745.15,\"regularMarketDayLow\":7669.66,\"regularMarketVolume\":2043232000,\"longName\":\"S&P 500\",\"shortName\":\"S&P 500\",\"chartPreviousClose\":2092.83,\"priceHint\":2,\"currentTradingPeriod\":{\"pre\":{\"timezone\":\"EDT\",\"start\":1792051200,\"end\":1792071000,\"gmtoffset\":-14400},\"regular\":{\"timezone\":\"EDT\",\"start\":1792071000,\"end\":1792094400,\"gmtoffset\":-14400},\"post\":{\"timezone\":\"EDT\",\"start\":1792094400,\"end\":1792108800,\"gmtoffset\":-14400}},\"dataGranularity\":\"1d\",\"range\":\"\",\"validRanges\":[\"1d\",\"5d\",\"1mo\",\"3mo\",\"6mo\",\"1y\",\"2y\",\"5y\",\"10y\",\"ytd\",\"max\"]},\"timestamp\":[1433770200],\"indicators\":{\"quote\":[{\"volume\":[2917150000],\"high\":[2093.010009765625],\"open\":[2092.340087890625],\"low\":[2079.110107421875],\"close\":[2079.280029296875]}],\"adjclose\":[{\"adjclose\":[2079.280029296875]}]}}],\"error\":null}}",
+            "chart_error": null,
+            "chart_keys": [
+              "error",
+              "result"
+            ],
+            "close_count": 1,
+            "has_quote_close_key": true,
+            "has_timestamp_key": true,
+            "indicator_keys": [
+              "adjclose",
+              "quote"
+            ],
+            "json": true,
+            "last_bar_is": [
+              1433770200,
+              "2015-06-08",
+              "2015-06-08",
+              2079.280029296875
+            ],
+            "meta": {
+              "chartPreviousClose": 2092.83,
+              "currency": "USD",
+              "currentTradingPeriod": {
+                "post": {
+                  "end": 1792108800,
+                  "gmtoffset": -14400,
+                  "start": 1792094400,
+                  "timezone": "EDT"
+                },
+                "pre": {
+                  "end": 1792071000,
+                  "gmtoffset": -14400,
+                  "start": 1792051200,
+                  "timezone": "EDT"
+                },
+                "regular": {
+                  "end": 1792094400,
+                  "gmtoffset": -14400,
+                  "start": 1792071000,
+                  "timezone": "EDT"
+                }
+              },
+              "dataGranularity": "1d",
+              "exchangeName": "SNP",
+              "exchangeTimezoneName": "America/New_York",
+              "fiftyTwoWeekHigh": 7844.52,
+              "fiftyTwoWeekLow": 6316.91,
+              "firstTradeDate": -1325583000,
+              "fullExchangeName": "SNP",
+              "fulldayChange": 7.47,
+              "fulldayChangePercent": 0.097,
+              "fulldayPrice": 7726.41,
+              "gmtoffset": -14400,
+              "hasPrePostMarketData": false,
+              "instrumentType": "INDEX",
+              "longName": "S&P 500",
+              "priceHint": 2,
+              "range": "",
+              "regularMarketChangePercent": 0.097,
+              "regularMarketDayHigh": 7745.15,
+              "regularMarketDayLow": 7669.66,
+              "regularMarketPrice": 7726.41,
+              "regularMarketTime": 1792089995,
+              "regularMarketVolume": 2043232000,
+              "shortName": "S&P 500",
+              "symbol": "^GSPC",
+              "timezone": "EDT",
+              "validRanges": [
+                "1d",
+                "5d",
+                "1mo",
+                "3mo",
+                "6mo",
+                "1y",
+                "2y",
+                "5y",
+                "10y",
+                "ytd",
+                "max"
+              ]
+            },
+            "parse_yahoo_chart_says": {
+              "observation_date": "2015-06-08",
+              "unit": "index",
+              "value": 2079.280029296875
+            },
+            "quote_keys": [
+              "close",
+              "high",
+              "low",
+              "open",
+              "volume"
+            ],
+            "result_keys": [
+              "indicators",
+              "meta",
+              "timestamp"
+            ],
+            "timestamp_count": 1,
+            "top_level_keys": [
+              "chart"
+            ],
+            "truncated": false,
+            "utc_dates": [
+              "2015-06-08"
+            ],
+            "utc_dates_span": [
+              "2015-06-08",
+              "2015-06-08"
+            ]
+          },
+          "period1": 1433721600,
+          "period2": 1433807999,
+          "period_bounds_utc": [
+            "2015-06-08T00:00:00+00:00",
+            "2015-06-08T23:59:59+00:00"
+          ],
+          "question": "Q2",
+          "range_param": null,
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?period1=1433721600&period2=1433807999&interval=1d"
+        },
+        {
+          "asks": "period1 == period2 == midnight UTC: the bound a caller derives when they forget the bar is stamped at the session open. Does it answer with the day's bar anyway, or with nothing? Only one of the two encodings can be the recommendation",
+          "bounds_derivation": "00:00:00Z of 2015-06-08, twice \u2014 a zero-width window",
+          "case": "q2_window_one_day_zero_width",
+          "content_type": "application/json;charset=utf-8",
+          "http_status": 200,
+          "observed": {
+            "bar_count": 0,
+            "bars": [],
+            "body_bytes": 1113,
+            "body_verbatim": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"^GSPC\",\"exchangeName\":\"SNP\",\"fullExchangeName\":\"SNP\",\"instrumentType\":\"INDEX\",\"firstTradeDate\":-1325583000,\"regularMarketTime\":1792089997,\"hasPrePostMarketData\":false,\"gmtoffset\":-14400,\"timezone\":\"EDT\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":7726.49,\"regularMarketChangePercent\":0.098,\"fulldayPrice\":7726.49,\"fulldayChange\":7.55,\"fulldayChangePercent\":0.098,\"fiftyTwoWeekHigh\":7844.52,\"fiftyTwoWeekLow\":6316.91,\"regularMarketDayHigh\":7745.15,\"regularMarketDayLow\":7669.66,\"regularMarketVolume\":2043356000,\"longName\":\"S&P 500\",\"shortName\":\"S&P 500\",\"chartPreviousClose\":7718.94,\"priceHint\":2,\"currentTradingPeriod\":{\"pre\":{\"timezone\":\"EDT\",\"end\":1792071000,\"start\":1792051200,\"gmtoffset\":-14400},\"regular\":{\"timezone\":\"EDT\",\"end\":1792094400,\"start\":1792071000,\"gmtoffset\":-14400},\"post\":{\"timezone\":\"EDT\",\"end\":1792108800,\"start\":1792094400,\"gmtoffset\":-14400}},\"dataGranularity\":\"1d\",\"range\":\"\",\"validRanges\":[\"1d\",\"5d\",\"1mo\",\"3mo\",\"6mo\",\"1y\",\"2y\",\"5y\",\"10y\",\"ytd\",\"max\"]},\"indicators\":{\"quote\":[{}],\"adjclose\":[{}]}}],\"error\":null}}",
+            "chart_error": null,
+            "chart_keys": [
+              "error",
+              "result"
+            ],
+            "close_count": 0,
+            "has_quote_close_key": false,
+            "has_timestamp_key": false,
+            "indicator_keys": [
+              "adjclose",
+              "quote"
+            ],
+            "json": true,
+            "last_bar_is": null,
+            "meta": {
+              "chartPreviousClose": 7718.94,
+              "currency": "USD",
+              "currentTradingPeriod": {
+                "post": {
+                  "end": 1792108800,
+                  "gmtoffset": -14400,
+                  "start": 1792094400,
+                  "timezone": "EDT"
+                },
+                "pre": {
+                  "end": 1792071000,
+                  "gmtoffset": -14400,
+                  "start": 1792051200,
+                  "timezone": "EDT"
+                },
+                "regular": {
+                  "end": 1792094400,
+                  "gmtoffset": -14400,
+                  "start": 1792071000,
+                  "timezone": "EDT"
+                }
+              },
+              "dataGranularity": "1d",
+              "exchangeName": "SNP",
+              "exchangeTimezoneName": "America/New_York",
+              "fiftyTwoWeekHigh": 7844.52,
+              "fiftyTwoWeekLow": 6316.91,
+              "firstTradeDate": -1325583000,
+              "fullExchangeName": "SNP",
+              "fulldayChange": 7.55,
+              "fulldayChangePercent": 0.098,
+              "fulldayPrice": 7726.49,
+              "gmtoffset": -14400,
+              "hasPrePostMarketData": false,
+              "instrumentType": "INDEX",
+              "longName": "S&P 500",
+              "priceHint": 2,
+              "range": "",
+              "regularMarketChangePercent": 0.098,
+              "regularMarketDayHigh": 7745.15,
+              "regularMarketDayLow": 7669.66,
+              "regularMarketPrice": 7726.49,
+              "regularMarketTime": 1792089997,
+              "regularMarketVolume": 2043356000,
+              "shortName": "S&P 500",
+              "symbol": "^GSPC",
+              "timezone": "EDT",
+              "validRanges": [
+                "1d",
+                "5d",
+                "1mo",
+                "3mo",
+                "6mo",
+                "1y",
+                "2y",
+                "5y",
+                "10y",
+                "ytd",
+                "max"
+              ]
+            },
+            "parse_yahoo_chart_says": {
+              "malformed": "shape"
+            },
+            "quote_keys": [],
+            "result_keys": [
+              "indicators",
+              "meta"
+            ],
+            "timestamp_count": 0,
+            "top_level_keys": [
+              "chart"
+            ],
+            "truncated": false,
+            "utc_dates": [],
+            "utc_dates_span": null
+          },
+          "period1": 1433721600,
+          "period2": 1433721600,
+          "period_bounds_utc": [
+            "2015-06-08T00:00:00+00:00",
+            "2015-06-08T00:00:00+00:00"
+          ],
+          "question": "Q2",
+          "range_param": null,
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?period1=1433721600&period2=1433721600&interval=1d"
+        }
+      ],
+      "catalog_history": 260,
+      "first_trade_per_server": {
+        "epoch": -1325583000,
+        "utc_date": "1927-12-30"
+      },
+      "one_day_derivation": "2015-06-08 is the first date in 2015-06-08..2015-06-19 the server itself returned a bar for; it is not asserted to be a trading day, it is observed to be one",
+      "symbol": "^GSPC",
+      "unit": "index"
+    },
+    {
+      "adapter_url_today": "https://query1.finance.yahoo.com/v8/finance/chart/HG%3DF?range=10d&interval=1d",
+      "cases": [
+        {
+          "asks": "the URL YahooChartAdapter._url builds TODAY, unchanged; establishes the response shape and meta.firstTradeDate so the impossible window below is derived rather than typed from memory",
+          "case": "baseline_range_as_adapter_builds_it",
+          "content_type": "application/json;charset=utf-8",
+          "http_status": 200,
+          "observed": {
+            "bar_count": 9,
+            "bars": [
+              [
+                1791172800,
+                "2026-10-05",
+                "2026-10-05",
+                6.5854997634887695
+              ],
+              [
+                1791259200,
+                "2026-10-06",
+                "2026-10-06",
+                6.5945000648498535
+              ],
+              [
+                1791345600,
+                "2026-10-07",
+                "2026-10-07",
+                6.596499919891357
+              ],
+              [
+                1791432000,
+                "2026-10-08",
+                "2026-10-08",
+                6.519000053405762
+              ],
+              [
+                1791518400,
+                "2026-10-09",
+                "2026-10-09",
+                6.642499923706055
+              ],
+              [
+                1791777600,
+                "2026-10-12",
+                "2026-10-12",
+                6.698500156402588
+              ],
+              [
+                1791864000,
+                "2026-10-13",
+                "2026-10-13",
+                6.677999973297119
+              ],
+              [
+                1791950400,
+                "2026-10-14",
+                "2026-10-14",
+                6.611499786376953
+              ],
+              [
+                1792036800,
+                "2026-10-15",
+                "2026-10-15",
+                6.558000087738037
+              ]
+            ],
+            "body_bytes": 2107,
+            "body_verbatim": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"HG=F\",\"exchangeName\":\"CMX\",\"fullExchangeName\":\"COMEX\",\"instrumentType\":\"FUTURE\",\"firstTradeDate\":967608000,\"regularMarketTime\":1792089382,\"hasPrePostMarketData\":false,\"gmtoffset\":-14400,\"timezone\":\"EDT\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":6.558,\"regularMarketChangePercent\":-1.5389,\"fulldayPrice\":6.558,\"fulldayChange\":-0.1025,\"fulldayChangePercent\":-1.5389,\"fiftyTwoWeekHigh\":6.83,\"fiftyTwoWeekLow\":4.9045,\"regularMarketDayHigh\":6.638,\"regularMarketDayLow\":6.5245,\"regularMarketVolume\":56356,\"shortName\":\"Copper Dec 26\",\"chartPreviousClose\":6.5855,\"priceHint\":3,\"currentTradingPeriod\":{\"pre\":{\"timezone\":\"EDT\",\"end\":1792036800,\"start\":1792036800,\"gmtoffset\":-14400},\"regular\":{\"timezone\":\"EDT\",\"end\":1792123140,\"start\":1792036800,\"gmtoffset\":-14400},\"post\":{\"timezone\":\"EDT\",\"end\":1792123140,\"start\":1792123140,\"gmtoffset\":-14400}},\"dataGranularity\":\"1d\",\"range\":\"10d\",\"validRanges\":[\"1d\",\"5d\",\"1mo\",\"3mo\",\"6mo\",\"1y\",\"2y\",\"5y\",\"10y\",\"ytd\",\"max\"]},\"timestamp\":[1791172800,1791259200,1791345600,1791432000,1791518400,1791777600,1791864000,1791950400,1792036800],\"indicators\":{\"quote\":[{\"close\":[6.5854997634887695,6.5945000648498535,6.596499919891357,6.519000053405762,6.642499923706055,6.698500156402588,6.677999973297119,6.611499786376953,6.558000087738037],\"open\":[6.539999961853027,6.577499866485596,6.579999923706055,6.53000020980835,6.5345001220703125,6.689499855041504,6.677499771118164,6.675000190734863,6.632999897003174],\"high\":[6.5904998779296875,6.613500118255615,6.613500118255615,6.53000020980835,6.6529998779296875,6.725500106811523,6.711999893188477,6.675000190734863,6.638000011444092],\"volume\":[864,464,1157,1137,820,910,707,707,56356],\"low\":[6.539999961853027,6.577499866485596,6.579999923706055,6.519000053405762,6.533999919891357,6.6875,6.6595001220703125,6.598999977111816,6.524499893188477]}],\"adjclose\":[{\"adjclose\":[6.5854997634887695,6.5945000648498535,6.596499919891357,6.519000053405762,6.642499923706055,6.698500156402588,6.677999973297119,6.611499786376953,6.558000087738037]}]}}],\"error\":null}}",
+            "chart_error": null,
+            "chart_keys": [
+              "error",
+              "result"
+            ],
+            "close_count": 9,
+            "has_quote_close_key": true,
+            "has_timestamp_key": true,
+            "indicator_keys": [
+              "adjclose",
+              "quote"
+            ],
+            "json": true,
+            "last_bar_is": [
+              1792036800,
+              "2026-10-15",
+              "2026-10-15",
+              6.558000087738037
+            ],
+            "meta": {
+              "chartPreviousClose": 6.5855,
+              "currency": "USD",
+              "currentTradingPeriod": {
+                "post": {
+                  "end": 1792123140,
+                  "gmtoffset": -14400,
+                  "start": 1792123140,
+                  "timezone": "EDT"
+                },
+                "pre": {
+                  "end": 1792036800,
+                  "gmtoffset": -14400,
+                  "start": 1792036800,
+                  "timezone": "EDT"
+                },
+                "regular": {
+                  "end": 1792123140,
+                  "gmtoffset": -14400,
+                  "start": 1792036800,
+                  "timezone": "EDT"
+                }
+              },
+              "dataGranularity": "1d",
+              "exchangeName": "CMX",
+              "exchangeTimezoneName": "America/New_York",
+              "fiftyTwoWeekHigh": 6.83,
+              "fiftyTwoWeekLow": 4.9045,
+              "firstTradeDate": 967608000,
+              "fullExchangeName": "COMEX",
+              "fulldayChange": -0.1025,
+              "fulldayChangePercent": -1.5389,
+              "fulldayPrice": 6.558,
+              "gmtoffset": -14400,
+              "hasPrePostMarketData": false,
+              "instrumentType": "FUTURE",
+              "priceHint": 3,
+              "range": "10d",
+              "regularMarketChangePercent": -1.5389,
+              "regularMarketDayHigh": 6.638,
+              "regularMarketDayLow": 6.5245,
+              "regularMarketPrice": 6.558,
+              "regularMarketTime": 1792089382,
+              "regularMarketVolume": 56356,
+              "shortName": "Copper Dec 26",
+              "symbol": "HG=F",
+              "timezone": "EDT",
+              "validRanges": [
+                "1d",
+                "5d",
+                "1mo",
+                "3mo",
+                "6mo",
+                "1y",
+                "2y",
+                "5y",
+                "10y",
+                "ytd",
+                "max"
+              ]
+            },
+            "parse_yahoo_chart_says": {
+              "observation_date": "2026-10-15",
+              "unit": "usd_per_lb",
+              "value": 6.558000087738037
+            },
+            "quote_keys": [
+              "close",
+              "high",
+              "low",
+              "open",
+              "volume"
+            ],
+            "result_keys": [
+              "indicators",
+              "meta",
+              "timestamp"
+            ],
+            "timestamp_count": 9,
+            "top_level_keys": [
+              "chart"
+            ],
+            "truncated": false,
+            "utc_dates": [
+              "2026-10-05",
+              "2026-10-06",
+              "2026-10-07",
+              "2026-10-08",
+              "2026-10-09",
+              "2026-10-12",
+              "2026-10-13",
+              "2026-10-14",
+              "2026-10-15"
+            ],
+            "utc_dates_span": [
+              "2026-10-05",
+              "2026-10-15"
+            ]
+          },
+          "period1": null,
+          "period2": null,
+          "question": "baseline",
+          "range_param": "10d",
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/HG%3DF?range=10d&interval=1d"
+        },
+        {
+          "asks": "period1/period2 over 2015-06-08..2015-06-19: does an absolute window work at all, is the shape the one parse_yahoo_chart already requires, and does a WIDER window return wider (which is the only thing that proves the window is applied rather than ignored)",
+          "bounds_derivation": "00:00:00Z of 2015-06-08 .. 23:59:59Z of 2015-06-19",
+          "case": "q1_window_multi_day",
+          "content_type": "application/json;charset=utf-8",
+          "http_status": 200,
+          "observed": {
+            "bar_count": 10,
+            "bars": [
+              [
+                1433736000,
+                "2015-06-08",
+                "2015-06-08",
+                2.7160000801086426
+              ],
+              [
+                1433822400,
+                "2015-06-09",
+                "2015-06-09",
+                2.740499973297119
+              ],
+              [
+                1433908800,
+                "2015-06-10",
+                "2015-06-10",
+                2.7715001106262207
+              ],
+              [
+                1433995200,
+                "2015-06-11",
+                "2015-06-11",
+                2.693000078201294
+              ],
+              [
+                1434081600,
+                "2015-06-12",
+                "2015-06-12",
+                2.69950008392334
+              ],
+              [
+                1434340800,
+                "2015-06-15",
+                "2015-06-15",
+                2.6589999198913574
+              ],
+              [
+                1434427200,
+                "2015-06-16",
+                "2015-06-16",
+                2.626499891281128
+              ],
+              [
+                1434513600,
+                "2015-06-17",
+                "2015-06-17",
+                2.622999906539917
+              ],
+              [
+                1434600000,
+                "2015-06-18",
+                "2015-06-18",
+                2.628499984741211
+              ],
+              [
+                1434686400,
+                "2015-06-19",
+                "2015-06-19",
+                2.5920000076293945
+              ]
+            ],
+            "body_bytes": 2183,
+            "body_verbatim": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"HG=F\",\"exchangeName\":\"CMX\",\"fullExchangeName\":\"COMEX\",\"instrumentType\":\"FUTURE\",\"firstTradeDate\":967608000,\"regularMarketTime\":1792089382,\"hasPrePostMarketData\":false,\"gmtoffset\":-14400,\"timezone\":\"EDT\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":6.558,\"regularMarketChangePercent\":-1.5389,\"fulldayPrice\":6.558,\"fulldayChange\":-0.1025,\"fulldayChangePercent\":-1.5389,\"fiftyTwoWeekHigh\":6.83,\"fiftyTwoWeekLow\":4.9045,\"regularMarketDayHigh\":6.638,\"regularMarketDayLow\":6.5245,\"regularMarketVolume\":56356,\"shortName\":\"Copper Dec 26\",\"chartPreviousClose\":2.716,\"priceHint\":3,\"currentTradingPeriod\":{\"pre\":{\"timezone\":\"EDT\",\"start\":1792036800,\"end\":1792036800,\"gmtoffset\":-14400},\"regular\":{\"timezone\":\"EDT\",\"start\":1792036800,\"end\":1792123140,\"gmtoffset\":-14400},\"post\":{\"timezone\":\"EDT\",\"start\":1792123140,\"end\":1792123140,\"gmtoffset\":-14400}},\"dataGranularity\":\"1d\",\"range\":\"\",\"validRanges\":[\"1d\",\"5d\",\"1mo\",\"3mo\",\"6mo\",\"1y\",\"2y\",\"5y\",\"10y\",\"ytd\",\"max\"]},\"timestamp\":[1433736000,1433822400,1433908800,1433995200,1434081600,1434340800,1434427200,1434513600,1434600000,1434686400],\"indicators\":{\"quote\":[{\"close\":[2.7160000801086426,2.740499973297119,2.7715001106262207,2.693000078201294,2.69950008392334,2.6589999198913574,2.626499891281128,2.622999906539917,2.628499984741211,2.5920000076293945],\"high\":[2.7295000553131104,2.752000093460083,2.7734999656677246,2.7225000858306885,2.7009999752044678,2.680000066757202,2.6410000324249268,2.6435000896453857,2.6589999198913574,2.625],\"low\":[2.7160000801086426,2.7330000400543213,2.746999979019165,2.6875,2.685499906539917,2.6530001163482666,2.624000072479248,2.618000030517578,2.619499921798706,2.5875000953674316],\"volume\":[352,351,231,319,329,622,313,265,258,271],\"open\":[2.7265000343322754,2.7355000972747803,2.746999979019165,2.7160000801086426,2.686000108718872,2.680000066757202,2.632499933242798,2.625,2.6524999141693115,2.625]}],\"adjclose\":[{\"adjclose\":[2.7160000801086426,2.740499973297119,2.7715001106262207,2.693000078201294,2.69950008392334,2.6589999198913574,2.626499891281128,2.622999906539917,2.628499984741211,2.5920000076293945]}]}}],\"error\":null}}",
+            "chart_error": null,
+            "chart_keys": [
+              "error",
+              "result"
+            ],
+            "close_count": 10,
+            "has_quote_close_key": true,
+            "has_timestamp_key": true,
+            "indicator_keys": [
+              "adjclose",
+              "quote"
+            ],
+            "json": true,
+            "last_bar_is": [
+              1434686400,
+              "2015-06-19",
+              "2015-06-19",
+              2.5920000076293945
+            ],
+            "meta": {
+              "chartPreviousClose": 2.716,
+              "currency": "USD",
+              "currentTradingPeriod": {
+                "post": {
+                  "end": 1792123140,
+                  "gmtoffset": -14400,
+                  "start": 1792123140,
+                  "timezone": "EDT"
+                },
+                "pre": {
+                  "end": 1792036800,
+                  "gmtoffset": -14400,
+                  "start": 1792036800,
+                  "timezone": "EDT"
+                },
+                "regular": {
+                  "end": 1792123140,
+                  "gmtoffset": -14400,
+                  "start": 1792036800,
+                  "timezone": "EDT"
+                }
+              },
+              "dataGranularity": "1d",
+              "exchangeName": "CMX",
+              "exchangeTimezoneName": "America/New_York",
+              "fiftyTwoWeekHigh": 6.83,
+              "fiftyTwoWeekLow": 4.9045,
+              "firstTradeDate": 967608000,
+              "fullExchangeName": "COMEX",
+              "fulldayChange": -0.1025,
+              "fulldayChangePercent": -1.5389,
+              "fulldayPrice": 6.558,
+              "gmtoffset": -14400,
+              "hasPrePostMarketData": false,
+              "instrumentType": "FUTURE",
+              "priceHint": 3,
+              "range": "",
+              "regularMarketChangePercent": -1.5389,
+              "regularMarketDayHigh": 6.638,
+              "regularMarketDayLow": 6.5245,
+              "regularMarketPrice": 6.558,
+              "regularMarketTime": 1792089382,
+              "regularMarketVolume": 56356,
+              "shortName": "Copper Dec 26",
+              "symbol": "HG=F",
+              "timezone": "EDT",
+              "validRanges": [
+                "1d",
+                "5d",
+                "1mo",
+                "3mo",
+                "6mo",
+                "1y",
+                "2y",
+                "5y",
+                "10y",
+                "ytd",
+                "max"
+              ]
+            },
+            "parse_yahoo_chart_says": {
+              "observation_date": "2015-06-19",
+              "unit": "usd_per_lb",
+              "value": 2.5920000076293945
+            },
+            "quote_keys": [
+              "close",
+              "high",
+              "low",
+              "open",
+              "volume"
+            ],
+            "result_keys": [
+              "indicators",
+              "meta",
+              "timestamp"
+            ],
+            "timestamp_count": 10,
+            "top_level_keys": [
+              "chart"
+            ],
+            "truncated": false,
+            "utc_dates": [
+              "2015-06-08",
+              "2015-06-09",
+              "2015-06-10",
+              "2015-06-11",
+              "2015-06-12",
+              "2015-06-15",
+              "2015-06-16",
+              "2015-06-17",
+              "2015-06-18",
+              "2015-06-19"
+            ],
+            "utc_dates_span": [
+              "2015-06-08",
+              "2015-06-19"
+            ]
+          },
+          "period1": 1433721600,
+          "period2": 1434758399,
+          "period_bounds_utc": [
+            "2015-06-08T00:00:00+00:00",
+            "2015-06-19T23:59:59+00:00"
+          ],
+          "question": "Q1",
+          "range_param": null,
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/HG%3DF?period1=1433721600&period2=1434758399&interval=1d"
+        },
+        {
+          "asks": "a ONE-DAY window as the whole UTC day: exactly one bar, more, or none?",
+          "bounds_derivation": "00:00:00Z .. 23:59:59Z of 2015-06-08 (a 1d bar is stamped at the exchange session OPEN, 13:30Z/14:30Z for a US listing, which this span contains under either DST offset)",
+          "case": "q2_window_one_day_utc_day",
+          "content_type": "application/json;charset=utf-8",
+          "http_status": 200,
+          "observed": {
+            "bar_count": 1,
+            "bars": [
+              [
+                1433736000,
+                "2015-06-08",
+                "2015-06-08",
+                2.7160000801086426
+              ]
+            ],
+            "body_bytes": 1270,
+            "body_verbatim": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"HG=F\",\"exchangeName\":\"CMX\",\"fullExchangeName\":\"COMEX\",\"instrumentType\":\"FUTURE\",\"firstTradeDate\":967608000,\"regularMarketTime\":1792089382,\"hasPrePostMarketData\":false,\"gmtoffset\":-14400,\"timezone\":\"EDT\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":6.558,\"regularMarketChangePercent\":-1.5389,\"fulldayPrice\":6.558,\"fulldayChange\":-0.1025,\"fulldayChangePercent\":-1.5389,\"fiftyTwoWeekHigh\":6.83,\"fiftyTwoWeekLow\":4.9045,\"regularMarketDayHigh\":6.638,\"regularMarketDayLow\":6.5245,\"regularMarketVolume\":56356,\"shortName\":\"Copper Dec 26\",\"chartPreviousClose\":6.6605,\"priceHint\":3,\"currentTradingPeriod\":{\"pre\":{\"timezone\":\"EDT\",\"start\":1792036800,\"end\":1792036800,\"gmtoffset\":-14400},\"regular\":{\"timezone\":\"EDT\",\"start\":1792036800,\"end\":1792123140,\"gmtoffset\":-14400},\"post\":{\"timezone\":\"EDT\",\"start\":1792123140,\"end\":1792123140,\"gmtoffset\":-14400}},\"dataGranularity\":\"1d\",\"range\":\"\",\"validRanges\":[\"1d\",\"5d\",\"1mo\",\"3mo\",\"6mo\",\"1y\",\"2y\",\"5y\",\"10y\",\"ytd\",\"max\"]},\"timestamp\":[1433736000],\"indicators\":{\"quote\":[{\"open\":[2.7265000343322754],\"close\":[2.7160000801086426],\"volume\":[352],\"high\":[2.7295000553131104],\"low\":[2.7160000801086426]}],\"adjclose\":[{\"adjclose\":[2.7160000801086426]}]}}],\"error\":null}}",
+            "chart_error": null,
+            "chart_keys": [
+              "error",
+              "result"
+            ],
+            "close_count": 1,
+            "has_quote_close_key": true,
+            "has_timestamp_key": true,
+            "indicator_keys": [
+              "adjclose",
+              "quote"
+            ],
+            "json": true,
+            "last_bar_is": [
+              1433736000,
+              "2015-06-08",
+              "2015-06-08",
+              2.7160000801086426
+            ],
+            "meta": {
+              "chartPreviousClose": 6.6605,
+              "currency": "USD",
+              "currentTradingPeriod": {
+                "post": {
+                  "end": 1792123140,
+                  "gmtoffset": -14400,
+                  "start": 1792123140,
+                  "timezone": "EDT"
+                },
+                "pre": {
+                  "end": 1792036800,
+                  "gmtoffset": -14400,
+                  "start": 1792036800,
+                  "timezone": "EDT"
+                },
+                "regular": {
+                  "end": 1792123140,
+                  "gmtoffset": -14400,
+                  "start": 1792036800,
+                  "timezone": "EDT"
+                }
+              },
+              "dataGranularity": "1d",
+              "exchangeName": "CMX",
+              "exchangeTimezoneName": "America/New_York",
+              "fiftyTwoWeekHigh": 6.83,
+              "fiftyTwoWeekLow": 4.9045,
+              "firstTradeDate": 967608000,
+              "fullExchangeName": "COMEX",
+              "fulldayChange": -0.1025,
+              "fulldayChangePercent": -1.5389,
+              "fulldayPrice": 6.558,
+              "gmtoffset": -14400,
+              "hasPrePostMarketData": false,
+              "instrumentType": "FUTURE",
+              "priceHint": 3,
+              "range": "",
+              "regularMarketChangePercent": -1.5389,
+              "regularMarketDayHigh": 6.638,
+              "regularMarketDayLow": 6.5245,
+              "regularMarketPrice": 6.558,
+              "regularMarketTime": 1792089382,
+              "regularMarketVolume": 56356,
+              "shortName": "Copper Dec 26",
+              "symbol": "HG=F",
+              "timezone": "EDT",
+              "validRanges": [
+                "1d",
+                "5d",
+                "1mo",
+                "3mo",
+                "6mo",
+                "1y",
+                "2y",
+                "5y",
+                "10y",
+                "ytd",
+                "max"
+              ]
+            },
+            "parse_yahoo_chart_says": {
+              "observation_date": "2015-06-08",
+              "unit": "usd_per_lb",
+              "value": 2.7160000801086426
+            },
+            "quote_keys": [
+              "close",
+              "high",
+              "low",
+              "open",
+              "volume"
+            ],
+            "result_keys": [
+              "indicators",
+              "meta",
+              "timestamp"
+            ],
+            "timestamp_count": 1,
+            "top_level_keys": [
+              "chart"
+            ],
+            "truncated": false,
+            "utc_dates": [
+              "2015-06-08"
+            ],
+            "utc_dates_span": [
+              "2015-06-08",
+              "2015-06-08"
+            ]
+          },
+          "period1": 1433721600,
+          "period2": 1433807999,
+          "period_bounds_utc": [
+            "2015-06-08T00:00:00+00:00",
+            "2015-06-08T23:59:59+00:00"
+          ],
+          "question": "Q2",
+          "range_param": null,
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/HG%3DF?period1=1433721600&period2=1433807999&interval=1d"
+        },
+        {
+          "asks": "period1 == period2 == midnight UTC: the bound a caller derives when they forget the bar is stamped at the session open. Does it answer with the day's bar anyway, or with nothing? Only one of the two encodings can be the recommendation",
+          "bounds_derivation": "00:00:00Z of 2015-06-08, twice \u2014 a zero-width window",
+          "case": "q2_window_one_day_zero_width",
+          "content_type": "application/json;charset=utf-8",
+          "http_status": 200,
+          "observed": {
+            "bar_count": 0,
+            "bars": [],
+            "body_bytes": 1088,
+            "body_verbatim": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"HG=F\",\"exchangeName\":\"CMX\",\"fullExchangeName\":\"COMEX\",\"instrumentType\":\"FUTURE\",\"firstTradeDate\":967608000,\"regularMarketTime\":1792089382,\"hasPrePostMarketData\":false,\"gmtoffset\":-14400,\"timezone\":\"EDT\",\"exchangeTimezoneName\":\"America/New_York\",\"regularMarketPrice\":6.558,\"regularMarketChangePercent\":-1.5389,\"fulldayPrice\":6.558,\"fulldayChange\":-0.1025,\"fulldayChangePercent\":-1.5389,\"fiftyTwoWeekHigh\":6.83,\"fiftyTwoWeekLow\":4.9045,\"regularMarketDayHigh\":6.638,\"regularMarketDayLow\":6.5245,\"regularMarketVolume\":56356,\"shortName\":\"Copper Dec 26\",\"chartPreviousClose\":6.6605,\"priceHint\":3,\"currentTradingPeriod\":{\"pre\":{\"timezone\":\"EDT\",\"end\":1792036800,\"start\":1792036800,\"gmtoffset\":-14400},\"regular\":{\"timezone\":\"EDT\",\"end\":1792123140,\"start\":1792036800,\"gmtoffset\":-14400},\"post\":{\"timezone\":\"EDT\",\"end\":1792123140,\"start\":1792123140,\"gmtoffset\":-14400}},\"dataGranularity\":\"1d\",\"range\":\"\",\"validRanges\":[\"1d\",\"5d\",\"1mo\",\"3mo\",\"6mo\",\"1y\",\"2y\",\"5y\",\"10y\",\"ytd\",\"max\"]},\"indicators\":{\"quote\":[{}],\"adjclose\":[{}]}}],\"error\":null}}",
+            "chart_error": null,
+            "chart_keys": [
+              "error",
+              "result"
+            ],
+            "close_count": 0,
+            "has_quote_close_key": false,
+            "has_timestamp_key": false,
+            "indicator_keys": [
+              "adjclose",
+              "quote"
+            ],
+            "json": true,
+            "last_bar_is": null,
+            "meta": {
+              "chartPreviousClose": 6.6605,
+              "currency": "USD",
+              "currentTradingPeriod": {
+                "post": {
+                  "end": 1792123140,
+                  "gmtoffset": -14400,
+                  "start": 1792123140,
+                  "timezone": "EDT"
+                },
+                "pre": {
+                  "end": 1792036800,
+                  "gmtoffset": -14400,
+                  "start": 1792036800,
+                  "timezone": "EDT"
+                },
+                "regular": {
+                  "end": 1792123140,
+                  "gmtoffset": -14400,
+                  "start": 1792036800,
+                  "timezone": "EDT"
+                }
+              },
+              "dataGranularity": "1d",
+              "exchangeName": "CMX",
+              "exchangeTimezoneName": "America/New_York",
+              "fiftyTwoWeekHigh": 6.83,
+              "fiftyTwoWeekLow": 4.9045,
+              "firstTradeDate": 967608000,
+              "fullExchangeName": "COMEX",
+              "fulldayChange": -0.1025,
+              "fulldayChangePercent": -1.5389,
+              "fulldayPrice": 6.558,
+              "gmtoffset": -14400,
+              "hasPrePostMarketData": false,
+              "instrumentType": "FUTURE",
+              "priceHint": 3,
+              "range": "",
+              "regularMarketChangePercent": -1.5389,
+              "regularMarketDayHigh": 6.638,
+              "regularMarketDayLow": 6.5245,
+              "regularMarketPrice": 6.558,
+              "regularMarketTime": 1792089382,
+              "regularMarketVolume": 56356,
+              "shortName": "Copper Dec 26",
+              "symbol": "HG=F",
+              "timezone": "EDT",
+              "validRanges": [
+                "1d",
+                "5d",
+                "1mo",
+                "3mo",
+                "6mo",
+                "1y",
+                "2y",
+                "5y",
+                "10y",
+                "ytd",
+                "max"
+              ]
+            },
+            "parse_yahoo_chart_says": {
+              "malformed": "shape"
+            },
+            "quote_keys": [],
+            "result_keys": [
+              "indicators",
+              "meta"
+            ],
+            "timestamp_count": 0,
+            "top_level_keys": [
+              "chart"
+            ],
+            "truncated": false,
+            "utc_dates": [],
+            "utc_dates_span": null
+          },
+          "period1": 1433721600,
+          "period2": 1433721600,
+          "period_bounds_utc": [
+            "2015-06-08T00:00:00+00:00",
+            "2015-06-08T00:00:00+00:00"
+          ],
+          "question": "Q2",
+          "range_param": null,
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/HG%3DF?period1=1433721600&period2=1433721600&interval=1d"
+        }
+      ],
+      "catalog_history": 0,
+      "first_trade_per_server": {
+        "epoch": 967608000,
+        "utc_date": "2000-08-30"
+      },
+      "one_day_derivation": "2015-06-08 is the first date in 2015-06-08..2015-06-19 the server itself returned a bar for; it is not asserted to be a trading day, it is observed to be one",
+      "symbol": "HG=F",
+      "unit": "usd_per_lb"
+    }
+  ],
+  "user_agent": "Mozilla/5.0 (compatible; cerberus-ingest/1.0)",
+  "why": "WO-1.16: whether query1.finance.yahoo.com's v8 chart endpoint accepts an ABSOLUTE period1/period2 window in place of the relative range= the adapter builds today, and what it does on a one-day window, a non-trading day, and a window before the symbol existed \u2014 the last being the case where a CLAMP (claimed by public write-ups, measured of ALFRED in evidence/wo114_alfred_probe.json) would let a backfill forge a historical print out of the first real bar"
+}
