@@ -1,0 +1,210 @@
+{
+  "adapter_class": "FredAdapter",
+  "adapter_id": "cd.ingest.fred_csv.v1",
+  "agreed": 3,
+  "as_of_rule": "obs_date",
+  "backfill": {
+    "admitted": [
+      "1999-01-01",
+      "2005-06-15",
+      "2026-09-15"
+    ],
+    "counts": {
+      "admitted": 3,
+      "failed": 0,
+      "fetches": 3,
+      "refused": 1,
+      "skipped": 0
+    },
+    "failed": [],
+    "fetches": 3,
+    "refused": [
+      [
+        "1985-01-02",
+        "STABILITY_UNMEASURED_BEFORE_WINDOW"
+      ]
+    ],
+    "skipped": [],
+    "vintage": "current_only"
+  },
+  "comparison": [
+    {
+      "agree": null,
+      "agree_note": "refused UNFETCHED: before 1999-01-01, where the stability measurement says nothing. Nothing was stored. The full body does carry '9.37' for this date \u2014 storing THAT under this date is exactly the forgery the floor refuses, so the absence above is the proof",
+      "bucket": "refused",
+      "class": "STABILITY_UNMEASURED_BEFORE_WINDOW",
+      "independent_raw_cell": "9.37",
+      "independent_source": "unwindowed full body, read by hand in this file",
+      "independent_value": 9.37,
+      "observation_date": "1985-01-02",
+      "stored_source_as_of_utc": null,
+      "stored_value": null,
+      "vintage_label": null,
+      "windowed_http_status": null,
+      "windowed_request_sent": false,
+      "windowed_request_url": null,
+      "windowed_response_content_length": null
+    },
+    {
+      "agree": true,
+      "bucket": "admitted",
+      "class": null,
+      "differs_from_series_latest_value": true,
+      "independent_raw_cell": "4.07",
+      "independent_source": "unwindowed full body, read by hand in this file",
+      "independent_value": 4.07,
+      "observation_date": "1999-01-01",
+      "stored_source_as_of_utc": "1999-01-01T00:00:00Z",
+      "stored_value": 4.07,
+      "vintage_label": "current_only",
+      "windowed_http_status": 200,
+      "windowed_request_sent": true,
+      "windowed_request_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFF&cosd=1999-01-01&coed=1999-01-01",
+      "windowed_response_content_length": "37"
+    },
+    {
+      "agree": true,
+      "bucket": "admitted",
+      "class": null,
+      "differs_from_series_latest_value": true,
+      "independent_raw_cell": "3.05",
+      "independent_source": "unwindowed full body, read by hand in this file",
+      "independent_value": 3.05,
+      "observation_date": "2005-06-15",
+      "stored_source_as_of_utc": "2005-06-15T00:00:00Z",
+      "stored_value": 3.05,
+      "vintage_label": "current_only",
+      "windowed_http_status": 200,
+      "windowed_request_sent": true,
+      "windowed_request_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFF&cosd=2005-06-15&coed=2005-06-15",
+      "windowed_response_content_length": "37"
+    },
+    {
+      "agree": true,
+      "bucket": "admitted",
+      "class": null,
+      "differs_from_series_latest_value": true,
+      "independent_raw_cell": "3.63",
+      "independent_source": "unwindowed full body, read by hand in this file",
+      "independent_value": 3.63,
+      "observation_date": "2026-09-15",
+      "stored_source_as_of_utc": "2026-09-15T00:00:00Z",
+      "stored_value": 3.63,
+      "vintage_label": "current_only",
+      "windowed_http_status": 200,
+      "windowed_request_sent": true,
+      "windowed_request_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFF&cosd=2026-09-15&coed=2026-09-15",
+      "windowed_response_content_length": "37"
+    }
+  ],
+  "cross_check": {
+    "header_is_expected": true,
+    "header_line": "observation_date,DFF",
+    "how": "one extra GET of the UNWINDOWED body, read off by hand in this file, outside the adapter and outside parse_fred_csv_for_date",
+    "last_row": "2026-10-13,3.88",
+    "row_count": 26403,
+    "series_latest_value": 3.88,
+    "span": [
+      "1954-07-01",
+      "2026-10-13"
+    ],
+    "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFF",
+    "values_for_requested_dates": {
+      "1985-01-02": "9.37",
+      "1999-01-01": "4.07",
+      "2005-06-15": "3.05",
+      "2026-09-15": "3.63"
+    }
+  },
+  "database": "/tmp/wo115_backfill_proof.sqlite",
+  "disagreed": 0,
+  "finished_utc": "2026-10-15T18:31:42.266871Z",
+  "proves": "that the cosd/coed WINDOW mechanism recovers the correct historical value for a named past date against the live endpoint \u2014 the right period, matched by exact date. NOT that the value is point-in-time-original: DFF is measured stable, so a stable pair is current-value-by-design and its reading is labelled current_only (ingestion.vintage)",
+  "ran_utc": "2026-10-15T18:31:40.444951Z",
+  "requested_dates": [
+    "1985-01-02",
+    "1999-01-01",
+    "2005-06-15",
+    "2026-09-15"
+  ],
+  "requires_original_vintage": false,
+  "series": "DFF",
+  "source_id": "fred.DFF",
+  "stability_measured_from": "1999-01-01",
+  "stored": [
+    {
+      "admitted_utc": "2026-10-15T18:31:40.637719Z",
+      "payload": {
+        "observation_date": "1999-01-01",
+        "unit": "percent",
+        "value": 4.07
+      },
+      "source_as_of_utc": "1999-01-01T00:00:00Z",
+      "vintage": "current_only"
+    },
+    {
+      "admitted_utc": "2026-10-15T18:31:41.437334Z",
+      "payload": {
+        "observation_date": "2005-06-15",
+        "unit": "percent",
+        "value": 3.05
+      },
+      "source_as_of_utc": "2005-06-15T00:00:00Z",
+      "vintage": "current_only"
+    },
+    {
+      "admitted_utc": "2026-10-15T18:31:42.260803Z",
+      "payload": {
+        "observation_date": "2026-09-15",
+        "unit": "percent",
+        "value": 3.63
+      },
+      "source_as_of_utc": "2026-09-15T00:00:00Z",
+      "vintage": "current_only"
+    }
+  ],
+  "transformation": null,
+  "value_column_expected": "DFF",
+  "verdict": "PROVEN",
+  "wire": [
+    {
+      "answered_utc": "2026-10-15T18:31:40.572004Z",
+      "content_length": "37",
+      "content_type": "application/csv",
+      "host": "fred.stlouisfed.org",
+      "http_status": 200,
+      "method": "GET",
+      "port": 443,
+      "request_target": "/graph/fredgraph.csv?id=DFF&cosd=1999-01-01&coed=1999-01-01",
+      "requested_utc": "2026-10-15T18:31:40.506173Z",
+      "scheme": "https",
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFF&cosd=1999-01-01&coed=1999-01-01"
+    },
+    {
+      "answered_utc": "2026-10-15T18:31:41.427410Z",
+      "content_length": "37",
+      "content_type": "application/csv",
+      "host": "fred.stlouisfed.org",
+      "http_status": 200,
+      "method": "GET",
+      "port": 443,
+      "request_target": "/graph/fredgraph.csv?id=DFF&cosd=2005-06-15&coed=2005-06-15",
+      "requested_utc": "2026-10-15T18:31:41.380685Z",
+      "scheme": "https",
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFF&cosd=2005-06-15&coed=2005-06-15"
+    },
+    {
+      "answered_utc": "2026-10-15T18:31:42.250420Z",
+      "content_length": "37",
+      "content_type": "application/csv",
+      "host": "fred.stlouisfed.org",
+      "http_status": 200,
+      "method": "GET",
+      "port": 443,
+      "request_target": "/graph/fredgraph.csv?id=DFF&cosd=2026-09-15&coed=2026-09-15",
+      "requested_utc": "2026-10-15T18:31:42.201951Z",
+      "scheme": "https",
+      "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFF&cosd=2026-09-15&coed=2026-09-15"
+    }
+  ]
+}
