@@ -33,7 +33,7 @@ Therefore: **the halt/exit threshold is hair-trigger; the re-entry threshold is 
 
 The dials are **regime instruments at a 3–12 month horizon**. Readings are computed daily but the *decision* is weekly. A state transition requires **3 consecutive daily readings** beyond the threshold (*provisional*; chosen to kill single-day noise without missing a fast week such as September 2022 — revise after replay). A single day's spike never changes state.
 
-Inputs with weekly/monthly cadence count once per new observation; persistence is counted in readings, so a monthly series cannot by itself satisfy a 3-reading rule and will only ever confirm a transition the daily inputs already made.
+Inputs with weekly/monthly cadence count once per new observation; persistence is counted in readings, so a monthly series cannot by itself satisfy a 5-reading rule and will only ever confirm a transition the daily inputs already made.
 
 ## 5. Base currency and calibration targets
 
@@ -138,7 +138,7 @@ Semantics the consumer may rely on:
 
 | Symbol | Meaning | Value today | Set by |
 |---|---|---|---|
-| persistence | consecutive readings for a transition | 3 | Trinity, provisional |
+| persistence | consecutive readings for a transition | 5 | R2D2, WO-1.3b ruling 2026-10-15 (was 3, Trinity provisional) — still provisional |
 | N | time floor in CALM | 6 months | provisional |
 | X | averaging-down guard (Epic 2) | 10% | provisional |
 | B_mid, B_high | breadth thresholds | **unset** | calibration |
@@ -161,3 +161,4 @@ Nothing in the "unset" rows may be filled from today's vintages. Calibration req
 *Change log*
 - v1 2026-10-13: initial, Owner-confirmed (base currency, event definitions, RECOVERY-both). Provisional numerics per Trinity.
 - v1.0.1 2026-10-13: Trinity — renamed `coverage_bracket.breadth_min/breadth_max` → `dial_value_min/dial_value_max` (naming-collision fix, see §7 note); added §6 naming note on "breadth" overload; no Owner-level content changed.
+- v1.0.2 2026-10-15: persistence changed 3 → 5 (R2D2's WO-1.3b audit ruling, replacing Trinity's original provisional guess with an evidence-backed one — ~3.6 transitions/year at 5 vs ~5.9 at 3, over a daily-reading cadence). Still marked provisional; R2D2's own finding B1 is that the deployed evaluator had been running every 300 seconds instead of daily, so the original "3" was never actually being measured in the unit this document states — fixed in the deployment (WO-1.3e), not in this document.
