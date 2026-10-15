@@ -1,8 +1,31 @@
 """THE OTHER HALF OF SPEC §3's STATE MACHINE: what the dial OFFICIALLY says, over time.
 
 WO-1.3a round 5, built to ``governance/WO-1.3a-engine-spec.md`` §3 (the second-leg rule,
-rule 5's previous-state condition, ``persistence = 3``) and §7 (how persistence is counted,
-and the 20-row breadth lookback).
+rule 5's previous-state condition, ``persistence``) and §7 (how persistence is counted, and
+the 20-row breadth lookback).
+
+AMENDED BY WO-1.3e ROUND 1 for R2D2's WO-1.3b finding B2: ``ALARM`` may no longer exit
+directly to ``CALM``. One candidate correction, its own section below.
+
+AMENDED AGAIN BY WO-1.3e ROUND 2 for R2D2's finding B1, the cadence/unit mismatch:
+:data:`PROVISIONAL_PERSISTENCE` reads 5 rather than 3, and the constant's own comment carries
+both the reason and the transition rates behind the number. The mismatch itself was never
+this module's — persistence here has always been counted in READINGS and still is; what
+WO-1.3e changes outside this file is what a reading IS (one pass a day, not one every 300
+seconds), which is what makes "5 readings" mean the 5 trading days DECISION-RULE.md §4
+describes. :data:`BREADTH_LOOKBACK_ROWS` is unchanged for the same reason, written out on it.
+
+AMENDED A THIRD TIME BY WO-1.3e ROUND 3 for R2D2's UNKNOWN-exit floor, the last of the five
+recommendations: a dial LEAVING ``UNKNOWN`` reports at least ``WATCH``. Leaving immediately
+STANDS and the schema is untouched (item 1 below is unchanged); what is new is that a
+``CALM`` candidate on that reading is corrected to ``WATCH`` first, so one reading after an
+outage can no longer say deploy. A second candidate correction, in the same place and style
+as round 1's and chained off the same previous state — its own section below.
+
+Nothing else in R2D2's RED verdict is addressed in THIS module. Rule 3's breadth-only fix
+(B3) and the ``curve_master``/``fiscal_master`` demotion were round 2's and belong to
+``engine/statistics.py``, where rule 2's eligibility and rule 3's conjunct are read; nothing
+here was changed for them.
 
 ====================================================================================
 WHY THIS IS HERE AND NOT IN ``engine/statistics.py`` BESIDE THE CANDIDATE FUNCTION
@@ -34,21 +57,181 @@ WHAT THIS FUNCTION DECIDES, IN THE ORDER SPEC §3 DECIDES IT
    UNREPRESENTABLE (CD-RT-001), so a reading that HAS a breadth, an acute and a count
    cannot be written as ``UNKNOWN`` — the only way to hold the old state for two more
    readings would be to drop the numbers this evaluation really did observe. The schema
-   settles the question the spec is silent on, and this is **ROGUE'S CALL, FLAGGED**: spec
-   §3 says nothing about leaving ``UNKNOWN`` and R2D2 may rule otherwise in WO-1.3b.
+   settles the question the spec is silent on, and it WAS **ROGUE'S CALL, FLAGGED** — R2D2's
+   WO-1.3b audit has since ruled on it, and the ruling is that the immediate exit is ACCEPTED
+   and the schema stays as it is, with a floor on what the exiting reading may REPORT (item
+   4). So the immediacy here is no longer an open call; the state it may resolve to is now
+   bounded, and spec §3 is still silent on both.
 2. **Rule 5's previous-state condition**, which the candidate function documents that it
    cannot apply: a ``RECOVERY`` candidate whose dial was NOT in ``ALARM`` on its last row
    is not a recovery at all. Spec §3's own "Else" chain falls through past rule 5 to rule
    6, so the candidate becomes ``CALM`` — and it is the CANDIDATE that is corrected here,
    before persistence, not the official state after it.
-3. **The second-leg rule** (spec §3, DECISION-RULE.md §6): previous official state
+3. **``ALARM``'s exit is corrected to ``WATCH``** (R2D2's WO-1.3b finding B2, remediated
+   in WO-1.3e): the dial's last official state ``ALARM`` and this reading's candidate
+   ``CALM`` → the candidate is corrected to ``WATCH``. ``ALARM`` leaves only toward
+   ``WATCH`` or toward ``RECOVERY``, never to ``CALM`` in one step. The same shape, the
+   same place and the same reason as item 2 — a previous-state condition the memoryless
+   candidate function cannot apply, applied to the CANDIDATE before any clock runs. It has
+   its own section below, because whether it fires once or on every reading is a judgement
+   call and the reasoning is load-bearing.
+4. **``UNKNOWN``'s exit is floored at ``WATCH``** (R2D2's WO-1.3b UNKNOWN-exit floor,
+   remediated in WO-1.3e round 3): the dial's last official state ``UNKNOWN`` and this
+   reading's candidate ``CALM`` → the candidate is corrected to ``WATCH``. A dial coming
+   back from an outage may report ``WATCH`` or ``ALARM`` on its first resolvable reading —
+   neither is too permissive, so neither is touched — but never ``CALM`` on the strength of
+   that one reading. (A ``RECOVERY`` candidate is item 2's business before it is this
+   floor's, and the two COMPOSE rather than collide: the section below works it through.)
+   Item 3's shape exactly, and the two are written as one ``if``/``elif``
+   off ``previous.machine_state`` because a row has only one of them and both floor at
+   ``WATCH``. They extinguish themselves on DIFFERENT timescales though, which is why this
+   has a section of its own rather than a line in item 3's.
+5. **The second-leg rule** (spec §3, DECISION-RULE.md §6): previous official state
    ``RECOVERY`` and this reading's candidate ``ALARM`` (rule 2 or rule 3 fired again) →
    ``ALARM`` NOW, no persistence, counter cleared. A relapse out of recovery is the one
-   transition this product will not make the market wait three readings for.
-4. **Normal persistence** (spec §3, §7's reading of it): the official state changes to a new
-   candidate only once THIS reading and the 2 immediately preceding rows have all produced
-   that same candidate — 3 rows total, Trinity's provisional reading of "3 consecutive
-   readings", flagged as such in the spec and not settled doctrine.
+   transition this product will not make the market wait :data:`PROVISIONAL_PERSISTENCE`
+   readings for.
+6. **Normal persistence** (spec §3, §7's reading of it): the official state changes to a new
+   candidate only once THIS reading and the immediately preceding rows have all produced
+   that same candidate — :data:`PROVISIONAL_PERSISTENCE` rows in total, Trinity's provisional
+   reading of WHICH rows count and WO-1.3e's of how many, neither settled doctrine.
+
+====================================================================================
+``ALARM`` NEVER EXITS DIRECTLY TO ``CALM`` — AND WHY THE CORRECTION NEEDS NO CLOCK
+====================================================================================
+
+**THE DEFECT THIS CORRECTS WAS LIVE.** R2D2's WO-1.3b audit (verdict RED, finding B2) found
+this state machine stepping a dial from ``ALARM`` to ``CALM`` with no intermediate ``WATCH``.
+The route is item 2's mirror image and round 5 closed only item 2's direction: with
+``trend_confirmed`` hard-wired ``False`` (spec §7's disclosed scope cut) rule 5 cannot fire,
+so a dial sitting in ``ALARM`` whose masters and breadth have genuinely quietened falls
+through spec §3's "Else" chain past rules 2, 3, 4 and 5 to rule 6 — ``CALM``.
+:data:`PROVISIONAL_PERSISTENCE` such readings and the dial officially says deploy. DECISION-RULE.md §3 asks for exactly the
+opposite ("the halt/exit threshold is hair-trigger; the re-entry threshold is demanding")
+and §6's hysteresis is the mechanism it names for it; a one-step ``ALARM`` → ``CALM`` is not
+hysteresis, it is the absence of it.
+
+So: **previous official state ``ALARM`` and a ``CALM`` candidate → the candidate is
+``WATCH``.** ``ALARM`` may exit toward ``WATCH`` or toward ``RECOVERY``, and nowhere else.
+``WATCH`` is the right floor rather than some new state because DECISION-RULE.md §6 already
+assigns it exactly the permission this case needs — "halt new tranches; hold existing" — and
+already uses it as the conservative read of a state that must not be mistaken for ``CALM``
+(``UNKNOWN`` is "treated as WATCH for permission purposes, never as CALM").
+
+**EVERY READING, OR ONLY THE FIRST ONE? EVERY READING — AND THE CORRECTION THEREFORE NEEDS
+NO PERSISTENCE-LIKE GATE OF ITS OWN. ROGUE'S CALL, AND THE REASONING IS THE POINT.** The
+condition is read fresh off the preceding row on every reading (``previous.machine_state is
+ALARM`` and ``candidate is CALM``); there is no "have I corrected already" memory, no new
+column and no second clock. The reason that is sufficient rather than lazy is that **the
+correction's own trigger is extinguished by the transition it causes**:
+
+* Reading 1 out of ``ALARM``: candidate ``CALM`` → corrected ``WATCH``. Normal persistence
+  starts a fresh count toward ``WATCH`` — the preceding row's candidate was not ``WATCH``,
+  so there is no streak to extend — and the official state stays ``ALARM``.
+* Readings 2 .. :data:`PROVISIONAL_PERSISTENCE`: the same correction fires again on the same
+  condition, the count reaches :data:`PROVISIONAL_PERSISTENCE`, and the official state
+  becomes ``WATCH``.
+* The reading after that: the preceding row now says ``WATCH``, not ``ALARM``. **The correction's
+  condition is false and it stops applying by itself** — the candidate stays ``CALM`` and
+  ordinary persistence counts toward ``CALM`` from a dial that is genuinely in ``WATCH``.
+
+``CALM`` is still reachable from ``ALARM``; it now costs two transitions instead of one,
+which is what "the re-entry threshold is demanding" means. Nothing is suppressed, and no
+state is made unreachable.
+
+**THE FIRST-READING-ONLY ALTERNATIVE IS NOT MERELY MORE MACHINERY — IT REINSTATES THE
+DEFECT**, and that is what settles the question rather than a preference for less code.
+Correct only the first reading and the candidate stream out of ``ALARM`` reads ``WATCH``,
+``CALM``, ``CALM``, ...: reading 2's switch to a different pending candidate destroys the
+``WATCH`` streak (this module's own rule, above — the new candidate writes 1), the ``CALM``
+streak then completes one reading later than it otherwise would, and the official state steps
+``ALARM`` → ``CALM`` with no ``WATCH`` ever having become official. The illegal jump returns
+one reading late, now wearing a correction that fired once. A gate that holds for one reading
+in :data:`PROVISIONAL_PERSISTENCE` is not a gate.
+
+**IT CANNOT COLLIDE WITH ITEM 2, AND THE CONDITIONS PROVE THAT RATHER THAN THE ORDERING.**
+Item 2 corrects a ``RECOVERY`` candidate to ``CALM`` only when the dial was NOT in ``ALARM``;
+this correction requires that it WAS. The two previous-state conditions are mutually
+exclusive, so item 2 can never hand this one the ``CALM`` it would act on, and writing the
+two in the opposite order would compute the same candidate. Nor can it disturb the second-leg
+rule or rule 1: each of those needs a candidate this correction does not produce (``ALARM``
+out of ``RECOVERY``, and ``UNKNOWN`` respectively). A dial with no history at all has no
+previous ``ALARM`` to leave, so its first reading is untouched.
+
+====================================================================================
+``UNKNOWN`` RESOLVES TO AT LEAST ``WATCH`` — AND THIS FLOOR EXTINGUISHES IN ONE READING
+====================================================================================
+
+R2D2's last WO-1.3b recommendation: a dial leaving ``UNKNOWN`` reports at least ``WATCH``
+until persistence is satisfied, and never jumps to ``CALM`` on one reading after an outage.
+Item 1's immediacy is ACCEPTED and neither it nor the schema changes — the exit still
+happens on the reading it happens, because a row carrying numbers still cannot say
+``UNKNOWN``. What is bounded is WHAT that reading may report: **previous official state
+``UNKNOWN`` and a ``CALM`` candidate → the candidate is ``WATCH``.**
+
+``ALARM``, ``WATCH`` and ``RECOVERY`` candidates pass through untouched, because none of
+them is the case this floor exists for. ``CALM`` is: it is the only candidate MORE PERMISSIVE
+than the ``UNKNOWN`` it replaces. DECISION-RULE.md §6 reads ``UNKNOWN`` itself as "treated as
+WATCH for permission purposes, never as CALM", so a dial whose first reading back says
+``CALM`` has stepped from no permission to full permission on a single unverified number —
+the one move this product's whole design exists to distrust. ``WATCH`` is the floor rather
+than some new state for item 3's reason, which is the same reason: §6 already assigns
+``WATCH`` the permission this case needs, and already uses it as the conservative read of
+``UNKNOWN``. The floor simply makes the EXIT agree with how the state itself is read.
+
+**THE CORRECTION IS SELF-EXTINGUISHING, BUT NOT BY ITEM 3's MECHANISM — IT IS STRONGER, AND
+THE DIFFERENCE MATTERS ENOUGH TO STATE RATHER THAN INHERIT.** Item 3's correction has to fire
+on :data:`PROVISIONAL_PERSISTENCE` consecutive readings: its corrected ``WATCH`` is COUNTED,
+the dial stays ``ALARM`` while the clock runs, so its trigger survives until the transition
+completes. This one fires EXACTLY ONCE, because the branch it feeds is the immediate one:
+
+* Reading 1 out of ``UNKNOWN``: candidate ``CALM`` → corrected ``WATCH``. The UNKNOWN-exit
+  branch applies the candidate with NO clock, so ``WATCH`` is OFFICIAL on this very reading,
+  ``persistence_counter`` is 0, and the row records candidate ``WATCH`` as well.
+* Reading 2: the preceding row says ``WATCH``, not ``UNKNOWN``. **The condition is already
+  false** — after one reading, not after five — so a ``CALM`` candidate is left alone and
+  ordinary persistence starts a fresh count toward ``CALM`` (the preceding row's recorded
+  candidate is ``WATCH``, so there is no streak to extend) from a dial genuinely in ``WATCH``.
+* ``CALM`` is therefore reached :data:`PROVISIONAL_PERSISTENCE` readings after the data comes
+  back rather than on the first one, and by way of a ``WATCH`` that was really official.
+
+Item 3's "every reading, and the first-reading-only alternative reinstates the defect"
+argument is consequently NOT what licences this one — the question cannot even be asked here,
+since there is no second reading on which this correction COULD fire. What the two genuinely
+share is that neither needs a memory, a column or a clock of its own: both conditions are
+read fresh off the preceding row, and both are removed by the transition they cause.
+
+**THE PERSISTENCE INVARIANT BELOW IS NOT DISTURBED.** This reading's row carries
+``machine_state`` ``WATCH``, ``candidate_state`` ``WATCH`` and counter 0, so
+``persistence_counter > 0 ⟺ candidate_state is not machine_state`` still reads true. That is
+a consequence of correcting the CANDIDATE: a row saying ``WATCH`` while recording the raw
+``CALM`` would have broken the invariant AND would have let the next reading extend a
+``CALM`` streak that no official reading ever agreed with.
+
+**IT CANNOT COLLIDE WITH ITEM 3, AND THE CODE SAYS SO STRUCTURALLY RATHER THAN BY LUCK.** A
+row carries exactly ONE ``machine_state``, so ``previous.machine_state`` cannot be both
+``ALARM`` and ``UNKNOWN`` and the two corrections are mutually exclusive on every reading
+that could ever exist. That is not left to be inferred from two adjacent ``if`` statements:
+they are written as ONE ``if previous is not None and candidate is State.CALM`` with the two
+previous states as ``if``/``elif`` arms off it, so the exclusion is syntax and a later edit
+cannot reorder them into overlapping. Nor can this one disturb anything else:
+
+* **Item 2's gate** needs a ``RECOVERY`` candidate and produces its ``CALM`` only when the
+  dial was NOT in ``ALARM`` — which includes a dial that was ``UNKNOWN``, and that is the
+  correct composition rather than a collision: a ``RECOVERY`` candidate after an ``UNKNOWN``
+  row is not a recovery (rule 5 needs the dial to have been in ``ALARM``), the gate makes it
+  ``CALM``, and this floor then makes it ``WATCH``. Not ``CALM`` immediately, which is
+  exactly R2D2's point, and the order of the two is therefore load-bearing: the gate runs
+  FIRST, above, so its output is floored rather than escaping unfloored.
+* **The second-leg rule** needs an ``ALARM`` candidate out of ``RECOVERY`` — neither a
+  ``CALM`` candidate nor an ``UNKNOWN`` previous state.
+* **Rule 1** reads the CANDIDATE, not the previous state: an unresolvable reading after an
+  ``UNKNOWN`` row has an ``UNKNOWN`` candidate, which this correction does not act on, and
+  it stays ``UNKNOWN`` immediately and unfloored. ``UNKNOWN`` → ``UNKNOWN`` is not an exit.
+* **A dial with no history at all** has no previous ``UNKNOWN`` to leave, so its first ever
+  reading may still become ``CALM`` immediately (item 1's first consequence, unchanged). That
+  is deliberate and is not the hole this floor closes: a dial being born is not a dial coming
+  back from an outage, and there is no stale official state for a single reading to overturn.
 
 ====================================================================================
 ``persistence_counter`` IS A TRANSITION CLOCK, NOT AN AGE — THE INVARIANT, STATED
@@ -60,7 +243,8 @@ ACCUMULATING.** Equivalently, on every row this function returns::
     persistence_counter > 0  ⟺  candidate_state is not machine_state
 
 Readings counted are "this one and the ones before it that agreed", so the first reading at
-a new candidate writes 1, the second 2, and the third TRANSITIONS — at which point the
+a new candidate writes 1, the second 2, and the :data:`PROVISIONAL_PERSISTENCE`-th
+TRANSITIONS — at which point the
 clock has been spent and the row's own ``machine_state`` is the record that it fired, so the
 counter reads 0 again. ``0`` therefore means "nothing pending", never "the dial is new".
 
@@ -105,6 +289,16 @@ passed straight through to the candidate function, and this round does not compu
 ``RECOVERY`` candidate's second condition is not recoverable from the history a year later
 — named here as an OWED COLUMN for the round that computes it, not as a gap nobody noticed.
 
+**THE 0.5 EXIT THRESHOLD IS STILL NOT AN INDEPENDENT GATE, AND THIS ROUND DOES NOT MAKE IT
+ONE.** R2D2's recommended fix (1) has two halves; WO-1.3e round 1 delivers the first —
+``ALARM`` exits only toward ``WATCH`` — and leaves the second standing.
+``PROVISIONAL_EXIT`` is read in exactly one place, rule 5 inside the candidate function,
+which ``trend_confirmed=False`` still makes unreachable; so leaving ``ALARM`` for ``WATCH``
+is NOT today conditioned on every master having fallen back under its exit threshold, and a
+dial can reach ``WATCH`` out of ``ALARM`` on rule 6's calm reading alone. Named here as the
+remainder of finding B2, owed by the round that computes ``trend_confirmed`` or lifts the
+exit check out of rule 5 — not as a gap nobody noticed.
+
 **NOTHING HERE WRITES.** The row comes back ready to append; the append, its ``written_utc``
 and the store handle belong to the evaluator pass (spec §9 item 2), which is the next step
 and is not this function.
@@ -129,20 +323,45 @@ __all__ = ["PROVISIONAL_PERSISTENCE", "BREADTH_LOOKBACK_ROWS", "official_state_f
 
 #: PROVISIONAL (spec §3, ``persistence``, itself reading DECISION-RULE.md §10's "unset —
 #: calibration" row). How many consecutive readings must produce the same candidate before
-#: the official state changes to it: THIS reading plus the 2 immediately preceding rows
-#: (spec §7's disambiguation, Trinity's provisional reading, flagged there as such).
+#: the official state changes to it: THIS reading plus the 4 immediately preceding rows
+#: (spec §7's disambiguation of WHICH rows count — Trinity's provisional reading, flagged
+#: there as such — with this constant setting HOW MANY).
+#:
+#: **5 SINCE WO-1.3e, WAS 3 (R2D2's WO-1.3b finding B1), AND THE UNIT IS WHY.** Spec §3 and
+#: DECISION-RULE.md §4 both say "3", and §4 says it as "3 consecutive DAILY readings" — but
+#: the deployed evaluator was passing every 300 seconds, so 3 readings was ~15 minutes and
+#: the number was never the one the doctrine had chosen. WO-1.3e sets the cadence to one
+#: pass a day (``CD_EVALUATE_INTERVAL_SECONDS`` 86400, ``deploy/live-dev/compose.yaml``), so
+#: a reading is a day again, and at that cadence R2D2 measured the transition rates this
+#: product would actually run at: **~5.9 transitions/year at 3 readings, ~3.6 at 5, ~1.4 at
+#: 10.** 5 is R2D2's recommendation and the number is quoted here because it is the ONLY
+#: evidence behind the choice — this is a judgement about how often a regime instrument at a
+#: 3-12 month horizon should be allowed to change its mind, not a calibration.
+#:
+#: **THE PO'S DOCUMENTS STILL READ 3 AND THIS IS A DISCLOSED DIVERGENCE, NOT AN AMENDMENT.**
+#: DECISION-RULE.md §4 and ``governance/WO-1.3a-engine-spec.md`` §3 are the Product Owner's
+#: and Trinity's to change; both mark the number *provisional*, which is the licence this
+#: round acts on, but neither has been rewritten here. A reader who needs doctrine should
+#: read them and treat the gap as open until the PO closes it.
 #:
 #: Declared HERE rather than beside the engine's other provisional numbers because this is
 #: the only module that reads it — ``engine/statistics.py`` holds the thresholds its own
 #: rules compare against and says in its docstring that it does no persistence counting, so
 #: a persistence constant sitting there would be a number nothing in that module uses.
 #: Not calibrated, not backtested, and nothing here may be read as a tuned value.
-PROVISIONAL_PERSISTENCE = 3
+PROVISIONAL_PERSISTENCE = 5
 
 #: PROVISIONAL (spec §3 rule 4 / §7). How far back "breadth rising over the last 20
 #: readings" looks. Spec §7's provisional reading is a LOOKBACK COMPARISON and not a
 #: monotonicity requirement, so one earlier number is the whole of it: the row 20 back,
 #: which in a most-recent-first history is index 19.
+#:
+#: **UNCHANGED BY WO-1.3e, AND DELIBERATELY SO.** The number is "20 READINGS" under any
+#: cadence and that is what spec §3 rule 4 asks for; what R2D2's finding B1 broke was the
+#: UNIT, not the count — at the deployed 300-second pass this lookback reached back about
+#: 100 minutes while rule 4's own sentence says 20 readings of a daily instrument. With the
+#: cadence now one pass a day, 20 rows is genuinely ~20 readings ≈ ~4 calendar weeks of
+#: them, so the row count needed no compensating change and did not get one.
 BREADTH_LOOKBACK_ROWS = 20
 
 
@@ -251,6 +470,50 @@ def official_state_for_dial(
     ):
         candidate = State.CALM
 
+    # A CALM CANDIDATE IS FLOORED AT WATCH FROM TWO PREVIOUS STATES (module docstring items
+    # 3 and 4, each with its own section). Neither is something the candidate function could
+    # have applied — both are previous-state conditions and that function has no memory — so
+    # both are corrected HERE, in the same place and the same style as rule 5's gate above:
+    # to the CANDIDATE, before any clock runs, and recorded on the row as the corrected
+    # candidate so the persistence invariant below still reads true.
+    #
+    # THE TWO ARMS ARE CHAINED OFF `previous.machine_state` ON PURPOSE. A row carries exactly
+    # one machine_state, so written this way "these two can never fire on the same reading"
+    # is SYNTAX rather than a coincidence of two adjacent conditions that a later edit could
+    # quietly break. They are NOT one rule, which is why they keep separate arms: their
+    # triggers differ, their reasons differ, and they extinguish themselves on different
+    # timescales (five readings and one — the docstring sets out both).
+    #
+    # The gate above cannot collide with the ALARM arm (that arm needs a dial that WAS in
+    # ALARM; the gate fires only when it was not), but it CAN feed the UNKNOWN arm, and that
+    # composition is the intended one rather than an accident: a RECOVERY candidate after an
+    # UNKNOWN row is not a recovery, the gate makes it CALM, and this floor then makes it
+    # WATCH instead of letting it be CALM on one reading. Hence the gate runs FIRST.
+    if previous is not None and candidate is State.CALM:
+        if previous.machine_state is State.ALARM:
+            # ALARM MAY NOT EXIT STRAIGHT TO CALM (R2D2's WO-1.3b finding B2). ON EVERY
+            # READING WHILE THE DIAL IS STILL IN ALARM, not only the first: the condition is
+            # read off the preceding row each time and is extinguished by the transition it
+            # causes (once WATCH is official, `previous.machine_state` is no longer ALARM and
+            # this stops firing by itself), so the normal persistence below is the only clock
+            # needed. Correcting only the first reading would let the CALM streak complete
+            # one reading later and would put the illegal jump straight back.
+            candidate = State.WATCH
+        elif previous.machine_state is State.UNKNOWN:
+            # LEAVING UNKNOWN REPORTS AT LEAST WATCH (R2D2's WO-1.3b UNKNOWN-exit floor).
+            # Leaving is still IMMEDIATE and the schema is untouched; what this bounds is
+            # WHAT the first resolvable reading after an outage may report. ALARM and WATCH
+            # candidates pass through untouched (a RECOVERY one never reaches here as a
+            # RECOVERY — the gate above has already made it CALM, per the note on it): CALM
+            # alone is more permissive than the UNKNOWN it replaces, which DECISION-RULE.md
+            # §6 itself reads as "WATCH for permission purposes, never CALM".
+            #
+            # FIRES EXACTLY ONCE, unlike the arm above: the UNKNOWN-exit branch below applies
+            # the candidate with no clock, so this corrected WATCH is OFFICIAL on this very
+            # reading and the next reading's preceding row no longer says UNKNOWN. Ordinary
+            # persistence then counts a CALM candidate from a dial genuinely in WATCH.
+            candidate = State.WATCH
+
     if candidate is State.UNKNOWN:
         # RULE 1, UNCONDITIONAL AND IMMEDIATE: "Stop; no other rule overrides this". No
         # clock, no previous state consulted, and the row carries no numbers because there
@@ -272,6 +535,10 @@ def official_state_for_dial(
         # LEAVING UNKNOWN IS IMMEDIATE TOO, and the schema is why (module docstring item 1):
         # this reading HAS a breadth, an acute and a count, and a row carrying numbers
         # cannot say UNKNOWN. Holding the old state would mean discarding the reading.
+        #
+        # THE CANDIDATE REACHING HERE CAN NO LONGER BE CALM (the floor above corrected it to
+        # WATCH), so "immediate" no longer means a dial can say deploy on one reading after
+        # an outage. The immediacy is R2D2's accepted call; the floor is what bounds it.
         official, counter = candidate, 0
     elif candidate is previous.machine_state:
         # THE DIAL IS WHERE IT SAYS IT IS. Nothing is accumulating, so the clock reads 0 —
@@ -292,8 +559,9 @@ def official_state_for_dial(
         )
         counter = accumulated + 1
         if counter >= PROVISIONAL_PERSISTENCE:
-            # THE TRANSITION. This reading plus the 2 before it all called for the same
-            # state (spec §7's 3 rows), so the dial now says it. The clock is spent and
+            # THE TRANSITION. This reading plus the ones before it all called for the same
+            # state — PROVISIONAL_PERSISTENCE rows, spec §7's rule for which ones they are —
+            # so the dial now says it. The clock is spent and
             # reads 0; the row's own machine_state is the record that it fired.
             official, counter = candidate, 0
         else:

@@ -73,8 +73,9 @@ reading, it is a row that disagrees with the engine that wrote it.
 
 Added by WO-1.3a's next round (the persistence resolver,
 :func:`evaluator.resolve.official_state_for_dial`) and found to be NECESSARY by it rather
-than wanted: spec §3's ``persistence = 3`` means the official state does NOT change until
-the SAME candidate has been computed three readings running, so during a pending
+than wanted: spec §3's ``persistence`` (:data:`evaluator.resolve.PROVISIONAL_PERSISTENCE`)
+means the official state does NOT change until the SAME candidate has been computed that many
+readings running, so during a pending
 transition ``machine_state`` is deliberately the OLD state and ``persistence_counter``
 counts readings toward a new one. **A counter whose row does not say WHAT it is counting
 cannot be continued by the next reading** — "does this reading's candidate match the one
@@ -402,8 +403,10 @@ class MachineStateHistoryStore:
         Ordered by the row id — the order the evaluations were appended in — and not by
         ``as_of``: the id is assigned by the file and cannot be reordered by a clock that
         moved, which is what the persistence count and the breadth lookback (spec §7) are
-        counting over. ``limit`` is the caller's window: 3 rows for a persistence check,
-        20 for the breadth lookback, and asking for them is the caller's business.
+        counting over. ``limit`` is the caller's window:
+        :data:`evaluator.resolve.PROVISIONAL_PERSISTENCE` rows for a persistence check,
+        :data:`evaluator.resolve.BREADTH_LOOKBACK_ROWS` for the breadth lookback, and asking
+        for them is the caller's business.
         """
         rows = self._db.execute(
             f"SELECT {', '.join(_COLUMNS)} FROM {TABLE} WHERE dial_id = ?"
