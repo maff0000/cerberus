@@ -68,7 +68,10 @@ THE VOCABULARY IS NOW WIDER THAN THIS MODULE'S MEASUREMENTS, AND THAT IS DELIBER
       for a stability measurement to be measured against.
 
     The third is weaker than the first and is NOT the second: see its own comment for why
-    neither existing label could carry a Cboe reading honestly.
+    neither existing label could carry a Cboe reading honestly. Who may CLAIM it is
+    :func:`has_no_revision_mechanism`, answered from a (kind, column) pair and not from a
+    kind, because ``yahoo``'s printed ``close`` and its retroactively-restated ``adjclose``
+    come out of one endpoint under one kind and belong on opposite sides of that answer.
 """
 
 from __future__ import annotations
@@ -86,6 +89,7 @@ __all__ = [
     "EVIDENCE_FILE",
     "EVIDENCE_PROBED_UTC",
     "NO_REVISION_MECHANISM_KINDS",
+    "NO_REVISION_MECHANISM_COLUMNS",
     "NO_REVISION_MECHANISM_EVIDENCE",
     "REVISION_PRONE",
     "REVISION_STABLE",
@@ -231,22 +235,96 @@ REVISION_UNDETERMINED = frozenset({
 })
 
 
-#: Ingredient KINDS whose source was PROBED and found to expose no revision mechanism — the
-#: only kinds :data:`VINTAGE_NO_REVISION_MECHANISM` may be written for. Stated positively and
-#: answered fail-safe by :func:`has_no_revision_mechanism`, for the same reason
-#: :func:`requires_original_vintage` answers from :data:`REVISION_STABLE`: "nobody has
-#: probed this source" must never read as "this source has no revisions".
+#: Ingredient KINDS whose source was probed and found to expose no revision mechanism FOR
+#: ITS WHOLE BODY — every column of it, because the probe fetched the body and not a column.
+#: Stated positively and answered fail-safe by :func:`has_no_revision_mechanism`, for the
+#: same reason :func:`requires_original_vintage` answers from :data:`REVISION_STABLE`:
+#: "nobody has probed this source" must never read as "this source has no revisions".
 #:
-#: ``cboe`` only, and only because ``cdn-api.cboe.com``'s ``{index}_History.csv`` was asked.
-#: ``yahoo`` is deliberately absent even though it has no vintage endpoint either: its
-#: ``adjclose`` DRIFTS retroactively with every dividend and split (PID.md, WO-1.16 scope
-#: correction), which is a revision mechanism in everything but name, and the honest label
-#: for it is a question this declaration does not get to pre-answer.
+#: ``cboe`` only, and the WHOLE-BODY scope is the probe's own: ``evidence/wo116_cboe_probe.json``
+#: asked ``cdn-api.cboe.com``'s ``{index}_History.csv`` under every plausible windowing and
+#: as-of parameter and got back a body BYTE-IDENTICAL to the bare URL's, same SHA-256, every
+#: time. A claim established on the bytes of one file is established for every column in it,
+#: so this tier is answered WITHOUT consulting ``column`` — see
+#: :func:`has_no_revision_mechanism` on why that is a statement and not a shrug.
 NO_REVISION_MECHANISM_KINDS = frozenset({"cboe"})
 
-#: Where the claim above was measured, per kind. Named here so the declaration is readable
+#: The SECOND tier, and the reason this gate is no longer answered from ``kind`` alone
+#: (WO-1.16). ``kind`` → the exact ``ingestion.catalog.Ingredient.column`` values the claim
+#: was established for, and ONLY those. A kind here is a source where the honest answer
+#: DIFFERS BY COLUMN, so declaring it at kind granularity would have to pick one of two
+#: wrong answers for it.
+#:
+#: WHY ``yahoo`` IS THAT SOURCE, AND WHY THE SPLIT IS THE SOURCE'S AND NOT AN ARTEFACT OF
+#: THIS FILE (and, as with the label itself, the argument is the deliverable here, not the
+#: constant). ``kind == "yahoo"`` is NINE catalog rows reading TWO different quantities out
+#: of one endpoint:
+#:
+#: * ``close``, the price Yahoo printed — the seven plain rows (``yahoo.HYG``, ``yahoo.LQD``,
+#:   ``yahoo.RSP``, ``yahoo.SPY``, ``yahoo.^GSPC``, ``yahoo.HG=F``, ``yahoo.GC=F``), which
+#:   leave ``column`` at its default ``""``. Nothing restates a printed close after the fact.
+#: * ``adjclose``, which is ``close`` divided through a dividend and split schedule that
+#:   KEEPS GROWING. Two live ingredients ask for it deliberately and with measured cause
+#:   (``private_credit_stress``'s ``yahoo.BIZD.adj``: 19.7% printed vs 9.5% adjusted below
+#:   the 252-day high, 2026-10-12; and every row of the ``constituent_breadth_200dma``
+#:   sample, dividend-adjusted like the legacy tell). Every such row's value FOR EVERY PAST
+#:   DATE moves the next time the name pays a dividend or splits — forever, per PID.md's
+#:   WO-1.16 scope correction. That is not the absence of a revision mechanism; it is the
+#:   presence of one with no recoverable past, which is strictly WORSE than FRED's, and
+#:   :data:`VINTAGE_NO_REVISION_MECHANISM` would be a plain false statement on such a row.
+#:
+#: So the two Yahoo quantities sit on OPPOSITE sides of this module's only question, and the
+#: declaration has to be able to say so. ``""`` and ``close`` are BOTH admitted because they
+#: are two spellings of one field: the catalog leaves ``column`` empty for the default and
+#: ``ingestion.catalog.build_adapter`` resolves it with ``field=ing.column or "close"``, so a
+#: declaration that admitted only ``"close"`` would refuse all seven rows that exist.
+#:
+#: TWO SHAPES THIS IS NOT, AND WHY.
+#:
+#: * NOT one flat set of ``(kind, column)`` PAIRS covering both sources. It reads tidier and
+#:   it is the version that quietly overclaims: Cboe would have to be enumerated as
+#:   ``("cboe", "CLOSE")`` and ``("cboe", "SKEW")``, which states that the Cboe probe was
+#:   per-column when it fetched one file and compared its BYTES. A fourth Cboe column — the
+#:   same file, the same probe, already covered — would then be refused by a declaration
+#:   claiming to be evidence-derived, and the enumeration would have to be maintained against
+#:   Cboe's CSV headers in exchange for nothing. It also invents a cross-kind key that does
+#:   not exist: ``column`` is kind-LOCAL vocabulary (Cboe's are CSV headers, Yahoo's are
+#:   chart-JSON fields, FRED's rows carry none), so a flat pair set reads as one namespace
+#:   when it is three. Two tiers are one more name to read and they say which scope each
+#:   claim actually has.
+#: * NOT an EXCLUSION list (``{"yahoo": {"adjclose"}}``) under a kind-level default. It fails
+#:   in the dangerous direction, which is the whole argument of this module restated: the next
+#:   retroactively-restated field Yahoo serves — any total-return or further-adjusted close —
+#:   would inherit ``True`` by not having been thought of, exactly as an unprobed FRED series
+#:   would inherit stability if :func:`requires_original_vintage` answered from
+#:   :data:`REVISION_PRONE`. It answers from :data:`REVISION_STABLE` instead, and this
+#:   declaration is positive for the same reason.
+#:
+#: WHAT IS OWED, SO IT IS NOT INVISIBLE. ``evidence/wo116_yahoo_window_probe.json``
+#: (2026-10-15) is what has been MEASURED of this endpoint, and it measured WINDOWING —
+#: ``period1``/``period2`` against ``range``, a one-day window, a non-trading day, a window
+#: before ``firstTradeDate`` (HTTP 400, no clamp) — and its own ``scope_note`` records that it
+#: never asks for ``adjclose``. It did NOT sweep the chart endpoint for an as-of parameter the
+#: way the Cboe probe swept that CSV, and for Cboe the sweep is the whole warrant. So for
+#: ``yahoo`` the no-revision-axis claim on ``close`` rests on the field's nature rather than on
+#: a parameter sweep, and the backfill-wiring round owes that sweep before a Yahoo reading is
+#: STORED under this label — ``yahoo`` is still absent from
+#: ``ingestion.backfill_adapters.VINTAGE_BACKFILLABLE_KINDS``, so nothing can be stored under
+#: it today, which is what makes declaring the shape now and the wiring later safe rather than
+#: premature.
+NO_REVISION_MECHANISM_COLUMNS: Mapping[str, frozenset] = {
+    "yahoo": frozenset({"", "close"}),
+}
+
+#: Where the claims above were measured, per kind. Named here so the declaration is readable
 #: as a probe result rather than as a belief, exactly as :data:`EVIDENCE_FILE` is for FRED.
-NO_REVISION_MECHANISM_EVIDENCE = {"cboe": "evidence/wo116_cboe_probe.json"}
+#: Both tiers appear, and ``tests/test_vintage_declaration.py`` asserts every declared kind
+#: names a file that is actually on disk — the ``yahoo`` entry's SCOPE is argued at
+#: :data:`NO_REVISION_MECHANISM_COLUMNS` and is narrower than the ``cboe`` entry's.
+NO_REVISION_MECHANISM_EVIDENCE = {
+    "cboe": "evidence/wo116_cboe_probe.json",
+    "yahoo": "evidence/wo116_yahoo_window_probe.json",
+}
 
 
 def classify(probe: Mapping) -> dict:
@@ -289,12 +367,42 @@ def requires_original_vintage(series: str, transformation: Union[str, None] = No
     return (series, transformation) not in REVISION_STABLE
 
 
-def has_no_revision_mechanism(kind: str) -> bool:
-    """Was this ingredient KIND probed and found to expose no revision mechanism at all?
+def has_no_revision_mechanism(kind: str, column: str) -> bool:
+    """Was THIS (kind, column) probed and found to expose no revision mechanism at all?
 
-    The gate on :data:`VINTAGE_NO_REVISION_MECHANISM`. Fail-safe in the direction that costs
-    nothing: an unknown kind answers ``False``, so it cannot acquire the label by being
-    forgotten — it is refused by ``ingestion.backfill_adapters.VINTAGE_BACKFILLABLE_KINDS``
-    instead, which is where a kind nobody has reasoned about belongs.
+    The gate on :data:`VINTAGE_NO_REVISION_MECHANISM`, and the one place the two tiers above
+    are read. Fail-safe in the direction that costs nothing: anything not declared answers
+    ``False``, so neither a kind nor a column can acquire the label by being forgotten.
+
+    TWO SCALARS, AND ``column`` IS REQUIRED (WO-1.16). It mirrors
+    :func:`requires_original_vintage`, which takes the two halves of a FRED pair rather than
+    an ``Ingredient``, and for the same reason: this module declares what the catalog is
+    CHECKED AGAINST and must not import it. Callers pass ``ing.kind, ing.column``. There is
+    deliberately NO default for ``column``, because a default is exactly how the defect this
+    signature exists to prevent would arrive — a caller who meant "is yahoo unrevised?",
+    wrote ``has_no_revision_mechanism("yahoo")`` and got the plain-close answer applied to an
+    ``adjclose`` ingredient. With no default that call is a ``TypeError`` at the call site
+    instead of a wrong ``True`` in the store.
+
+    ``False`` IS NOT A SILENT DEFAULT HERE, which is why this stays a predicate rather than
+    raising on a refused column: a predicate whose name is a question should answer it, and
+    the loudness belongs at the dispatch that acts on the answer. ``ingestion.backfill``'s
+    three-way label selection is that dispatch — ``False`` falls past it to the ``fred``
+    branch, misses that too, and RAISES "declared backfillable but no vintage label is
+    derived". So a ``yahoo``/``adjclose`` ingredient that somehow reached a backfill would
+    stop the whole range rather than inherit a label, and that is the SECOND defence: the
+    first is ``ingestion.adapters.YahooChartAdapter`` refusing a dated ``adjclose`` fetch at
+    construction. Two independent refusals, neither relying on the other holding, in the
+    discipline this module's ALFRED host already follows (kept out of
+    ``ingestion.catalog.EGRESS_HOSTS`` AND out of the live ``build_adapter`` path).
+
+    ``column`` IS NOT VALIDATED, and on the whole-body tier it is not even read. Column
+    vocabularies are kind-local and belong to the adapters that parse them — Cboe's are CSV
+    headers (``CLOSE``, ``SKEW``), Yahoo's are chart-JSON fields (``close``, ``adjclose``),
+    FRED's rows carry none at all — so this module answering "is that a real column for that
+    source" would make it the arbiter of three vocabularies it does not own. What it answers
+    is narrower and true: whether the no-revision-axis claim on record COVERS what was asked.
     """
-    return kind in NO_REVISION_MECHANISM_KINDS
+    if kind in NO_REVISION_MECHANISM_KINDS:
+        return True
+    return column in NO_REVISION_MECHANISM_COLUMNS.get(kind, frozenset())

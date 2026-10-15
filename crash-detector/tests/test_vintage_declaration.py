@@ -21,15 +21,21 @@ from __future__ import annotations
 
 import json
 import pathlib
+from datetime import datetime
 
 import pytest
 
+from ingestion import backfill as B
+from ingestion.backfill import backfill_range
 from ingestion.catalog import INGREDIENTS
 from ingestion.vintage import (
     EVIDENCE_FILE,
     EVIDENCE_PROBED_UTC,
     MATERIAL_THRESHOLD,
     MIN_SHARED_OBSERVATIONS,
+    NO_REVISION_MECHANISM_COLUMNS,
+    NO_REVISION_MECHANISM_EVIDENCE,
+    NO_REVISION_MECHANISM_KINDS,
     REVISION_PRONE,
     REVISION_STABLE,
     REVISION_UNDETERMINED,
@@ -39,6 +45,7 @@ from ingestion.vintage import (
     VINTAGE_NO_REVISION_MECHANISM,
     VINTAGE_ORIGINAL,
     classify,
+    has_no_revision_mechanism,
     requires_original_vintage,
 )
 
@@ -178,3 +185,164 @@ def test_the_vintage_vocabulary_is_closed_and_the_three_labels_are_distinct():
     assert VINTAGE_LABELS == (VINTAGE_ORIGINAL, VINTAGE_CURRENT_ONLY,
                               VINTAGE_NO_REVISION_MECHANISM)
     assert len(set(VINTAGE_LABELS)) == 3
+
+
+# ---------------------------------------------------------------------------------------
+# WO-1.16: the gate on VINTAGE_NO_REVISION_MECHANISM is a (kind, column) question
+#
+# ``kind == "yahoo"`` is NINE catalog rows reading TWO quantities out of one endpoint: the
+# printed ``close``, which nothing restates, and ``adjclose``, which is restated for every
+# past date by every future dividend and split. The label is true of the first and FALSE of
+# the second, so the tests below are not one happy path and one edge case — they are the two
+# halves of the only reason this gate takes a column at all.
+# ---------------------------------------------------------------------------------------
+
+#: The two indicators whose Yahoo rows are wired ``column="adjclose"`` deliberately (PID.md,
+#: WO-1.16 scope correction). Named by INDICATOR and not by source id so the guard below
+#: covers the ``constituent_breadth_200dma`` sample as it is, however many names it holds.
+_ADJCLOSE_INDICATORS = ("private_credit_stress", "constituent_breadth_200dma")
+
+
+def _yahoo_rows(*, column_in):
+    return [i for i in INGREDIENTS if i.kind == "yahoo" and i.column in column_in]
+
+
+def _adjclose_rows():
+    return [i for i in INGREDIENTS
+            if any(ind in i.serves for ind in _ADJCLOSE_INDICATORS)]
+
+
+def test_the_two_tiers_are_disjoint_and_each_names_evidence_that_is_on_disk():
+    """A kind declares its no-revision claim at ONE granularity, and names where it came from.
+
+    A kind in both tiers would be a contradiction with a silent winner: the whole-body tier
+    is answered first, so it would override its own column list. And either tier without an
+    entry in :data:`~ingestion.vintage.NO_REVISION_MECHANISM_EVIDENCE` is the thing this
+    module's first docstring line refuses — a declaration held as a belief.
+    """
+    assert not (NO_REVISION_MECHANISM_KINDS & set(NO_REVISION_MECHANISM_COLUMNS)), (
+        "a kind cannot claim both whole-body and per-column scope"
+    )
+    declared = NO_REVISION_MECHANISM_KINDS | set(NO_REVISION_MECHANISM_COLUMNS)
+    assert declared == set(NO_REVISION_MECHANISM_EVIDENCE), (
+        f"declared without evidence, or evidence without a declaration: "
+        f"{sorted(declared ^ set(NO_REVISION_MECHANISM_EVIDENCE))}"
+    )
+    for kind, named in NO_REVISION_MECHANISM_EVIDENCE.items():
+        assert (_REPO_ROOT / named).is_file(), f"{kind} names a probe that is not there: {named}"
+
+
+def test_cboe_is_the_whole_body_tier_and_answers_true_whatever_column_is_passed():
+    """The Cboe claim is about the BYTES OF ONE FILE, so it holds for every column in it.
+
+    Asserted on columns Cboe does not even have, because the point is not that the gate
+    tolerates junk — it is that this tier deliberately does not consult the argument, and a
+    future refactor that started filtering Cboe by column would be narrowing a claim the
+    probe made at file scope. ``"adjclose"`` is in the list as the sharpest version of that:
+    it is a Yahoo field, it means nothing to Cboe, and it must not drag Cboe's answer down
+    with it.
+    """
+    assert NO_REVISION_MECHANISM_KINDS == frozenset({"cboe"})
+    cboe = [i for i in INGREDIENTS if i.kind == "cboe"]
+    assert len(cboe) == 3, "the Cboe rows this was reasoned about have changed"
+    for ing in cboe:
+        assert has_no_revision_mechanism(ing.kind, ing.column) is True
+    for column in ("CLOSE", "SKEW", "close", "adjclose", "", "not-a-column"):
+        assert has_no_revision_mechanism("cboe", column) is True
+
+
+def test_every_plain_close_yahoo_row_the_catalog_collects_answers_true():
+    """The seven rows WO-1.16 made backfillable, derived from the catalog and not retyped."""
+    plain = _yahoo_rows(column_in=("", "close"))
+    assert {i.source_id for i in plain} == {
+        "yahoo.HYG", "yahoo.LQD", "yahoo.RSP", "yahoo.SPY",
+        "yahoo.^GSPC", "yahoo.HG=F", "yahoo.GC=F",
+    }
+    for ing in plain:
+        assert has_no_revision_mechanism(ing.kind, ing.column) is True, ing.source_id
+    # Both spellings of the one field, because the catalog uses "" and build_adapter
+    # resolves it with ``ing.column or "close"``. Admitting only one would refuse all seven.
+    assert has_no_revision_mechanism("yahoo", "") is True
+    assert has_no_revision_mechanism("yahoo", "close") is True
+
+
+def test_no_adjclose_ingredient_can_be_labelled_no_revision_mechanism(monkeypatch):
+    """THE LOAD-BEARING GUARD. ``private_credit_stress`` and ``constituent_breadth_200dma``
+    must have NO path to :data:`~ingestion.vintage.VINTAGE_NO_REVISION_MECHANISM`.
+
+    Their value for a past date is today's retroactive restatement of it, so that label on
+    such a row would be a plain false statement with nothing able to detect it — the exact
+    failure the label's own comment forbids, by field instead of by date.
+
+    FOUR DOORS, CLOSED SEPARATELY, because it is not enough that the current answer is
+    ``False``:
+
+    1. the live rows answer ``False`` through the real gate, derived from the catalog;
+    2. ``yahoo`` is not in the WHOLE-BODY tier — which is answered FIRST and would make the
+       column list dead code, so this is the door that a one-word edit opens;
+    3. ``adjclose`` is in no kind's column list, now or for any kind added later;
+    4. and with the kind-level refusal that currently blocks Yahoo FORCED OPEN, the label
+       dispatch in ``ingestion.backfill`` still refuses the range rather than falling through
+       to a label. That is the second independent defence (the first being
+       ``YahooChartAdapter`` refusing a dated ``adjclose`` fetch at construction) and it is
+       asserted with the first one removed, which is the only way to learn it works.
+    """
+    rows = _adjclose_rows()
+    assert rows, "the two adjclose indicators are no longer in the catalog — this guard is dead"
+    assert {i.column for i in rows} == {"adjclose"}, (
+        "an adjclose indicator is now wired to another column; re-reason this guard"
+    )
+    assert {i.kind for i in rows} == {"yahoo"}
+
+    # 1. the real rows, through the real gate.
+    for ing in rows:
+        assert has_no_revision_mechanism(ing.kind, ing.column) is False, ing.source_id
+
+    # 2. the whole-body tier would override the column list; yahoo must never be in it.
+    assert "yahoo" not in NO_REVISION_MECHANISM_KINDS
+
+    # 3. no kind, present or future, may admit adjclose by column.
+    for kind, columns in NO_REVISION_MECHANISM_COLUMNS.items():
+        assert "adjclose" not in columns, f"{kind} admits adjclose by column"
+
+    # 4. force the kind-level refusal open and watch the label dispatch refuse anyway.
+    monkeypatch.setattr(B, "VINTAGE_BACKFILLABLE_KINDS",
+                        tuple(B.VINTAGE_BACKFILLABLE_KINDS) + ("yahoo",))
+    ing = rows[0]
+    with pytest.raises(ValueError) as caught:
+        backfill_range(ing, ["2015-06-08"], None, lambda: datetime(2026, 10, 15))
+    assert "no vintage label is derived" in str(caught.value), (
+        f"a forced-open yahoo backfill got past the label dispatch: {caught.value}"
+    )
+
+
+def test_the_gate_refuses_an_unprobed_kind_and_a_kind_asked_without_a_column():
+    """Fail-safe both ways: nothing undeclared answers True, and nothing answers on one arg.
+
+    The missing-argument half is the defect this signature exists to prevent, in its most
+    likely form — a caller who means "is yahoo unrevised?", writes the kind alone and gets
+    the plain-close answer applied to an ``adjclose`` row. With no default for ``column``
+    that is a ``TypeError`` where it is written, not a wrong row in the store.
+    """
+    for kind in ("multpl", "lbma", "hermes", "manual", "fred", "never-heard-of-it"):
+        for column in ("", "close", "adjclose", "CLOSE"):
+            assert has_no_revision_mechanism(kind, column) is False, (kind, column)
+    with pytest.raises(TypeError):
+        has_no_revision_mechanism("yahoo")
+    with pytest.raises(TypeError):
+        has_no_revision_mechanism("cboe")
+
+
+def test_the_yahoo_probe_still_records_that_it_never_asked_for_adjclose():
+    """The column split is argued FROM that probe's scope, so pin the prose to the file.
+
+    ``NO_REVISION_MECHANISM_COLUMNS`` says the Yahoo measurement on record covers plain
+    close and deliberately not ``adjclose``. If the probe is ever re-run wider, or its scope
+    note rewritten, this goes red and the argument gets re-read — the same reason
+    ``MATERIAL_THRESHOLD`` is checked against the probe's own header above.
+    """
+    named = _REPO_ROOT / NO_REVISION_MECHANISM_EVIDENCE["yahoo"]
+    probe = json.loads(named.read_text())
+    assert probe["probed_utc"] == "2026-10-15"
+    assert "adjclose" in probe["scope_note"], "the probe no longer states its field scope"
+    assert "never asks for adjclose" in probe["scope_note"]

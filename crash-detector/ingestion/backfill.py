@@ -278,7 +278,7 @@ def backfill_range(ing: Ingredient, dates: Sequence[str], sink: SqliteStore,
     # cases, dispatched on the KIND first, because the FRED question is only askable of a
     # FRED pair — see this module's docstring and ingestion.backfill_adapters, which
     # branches the same way for the same reason.
-    if has_no_revision_mechanism(ing.kind):
+    if has_no_revision_mechanism(ing.kind, ing.column):
         vintage = VINTAGE_NO_REVISION_MECHANISM
     elif ing.kind == "fred":
         # Unchanged: the measured-stability of a pair decides both which adapter every date
@@ -291,7 +291,8 @@ def backfill_range(ing: Ingredient, dates: Sequence[str], sink: SqliteStore,
         # the range, not quietly inherit FRED's.
         raise ValueError(
             f"{ing.source_id} is kind {ing.kind!r}: declared backfillable but no vintage "
-            f"label is derived for it (see ingestion.vintage.NO_REVISION_MECHANISM_KINDS)"
+            f"label is derived for it (see ingestion.vintage.NO_REVISION_MECHANISM_KINDS "
+            f"and NO_REVISION_MECHANISM_COLUMNS)"
         )
 
     admitted: list = []
