@@ -32,15 +32,23 @@ else — measured revision-prone, AND anything never probed — is backfilled vi
 vintage. That default is the fail-safe direction and it belongs to ``ingestion.vintage``,
 not here; this module only obeys it.
 
-A DECLARED LIMIT OF THE STABLE BRANCH, STATED RATHER THAN DISCOVERED LATER.
-:class:`~ingestion.adapters.FredAdapter` asks for the whole current series and reads its
-LATEST observation, plus ``ing.history`` rows before it. That is the right ANSWER for a
-measured-stable pair — stability measured over the replay window is exactly the claim that
-today's body carries the figure a collector would have seen — but it is not yet a per-date
-fetch: selecting the observation for a given date out of that body, and deciding whether
-``history`` must be deepened to reach back far enough, is the BACKFILL DRIVER's work and is
-not settled here. ``observation_date`` is therefore consumed by the vintage branch only, and
-is accepted on both so that one call site routes without knowing which branch it will get.
+BOTH BRANCHES NOW CONSUME ``observation_date`` (WO-1.15). They ask different sources, but
+they ask the same question — "what does this pair say for the observation dated D?" — and
+the stable branch asks it of FRED's CURRENT body by windowing the request on D
+(``cosd``/``coed``) and matching the row by exact date
+(``ingestion.adapters.parse_fred_csv_for_date``). That is the right ANSWER for a
+measured-stable pair, and only for one: stability measured over the replay window is exactly
+the claim that today's body carries the figure a collector would have seen, which is why
+``ingestion.vintage`` — not this module — decides which pairs may be read that way, and why
+``ingestion.backfill``'s date floor still refuses a date the measurement does not cover.
+
+    THIS CLOSES THE LIMIT WO-1.14 DECLARED HERE and names what replaced it. The old text
+    said the stable branch asked for the whole body and read its LATEST row, so a date years
+    back came back as a perfectly good reading of the WRONG period, and that per-date
+    selection was OWED. It is now done. What is NOT done and is not pretended to be:
+    ``ing.history`` is not carried by a dated fetch — a one-day window has no history in it —
+    so a backfilled reading for ``fred.DFII10.history`` carries the value and no history
+    array. ``ingestion.adapters.parse_fred_csv_for_date`` records why.
 
 NOTHING HERE FETCHES, PACES, STORES OR LABELS. It constructs an adapter and returns it, the
 same as ``build_adapter``. The ``vintage=`` label a backfilled reading carries
@@ -107,6 +115,11 @@ def build_backfill_adapter(ing: Ingredient, observation_date: str, clock: Callab
     ``ingestion.vintage.requires_original_vintage`` says this pair needs the figure as first
     published; :class:`~ingestion.adapters.FredAdapter` when stability was POSITIVELY
     measured. A kind outside :data:`VINTAGE_BACKFILLABLE_KINDS` is refused.
+
+    ``observation_date`` reaches BOTH adapters, and on the stable branch it is what makes the
+    request a dated one rather than a request for the latest value (WO-1.15). It is passed by
+    KEYWORD there: ``history`` is ``FredAdapter``'s third positional parameter and the two
+    must never be able to trade places.
     """
     if ing.kind not in VINTAGE_BACKFILLABLE_KINDS:
         raise ValueError(
@@ -116,4 +129,5 @@ def build_backfill_adapter(ing: Ingredient, observation_date: str, clock: Callab
     common = dict(source_id=ing.source_id, as_of_rule=ing.as_of_rule, unit=ing.unit, clock=clock)
     if requires_original_vintage(ing.ref, ing.transformation):
         return AlfredVintageAdapter(ing.ref, ing.transformation, observation_date, **common)
-    return FredAdapter(ing.ref, ing.transformation, ing.history, **common)
+    return FredAdapter(ing.ref, ing.transformation, ing.history,
+                      observation_date=observation_date, **common)

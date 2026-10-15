@@ -1,0 +1,546 @@
+{
+  "credential": "none (keyless)",
+  "endpoint": "https://fred.stlouisfed.org/graph/fredgraph.csv",
+  "probed_utc": "2026-10-15",
+  "range_days": 9,
+  "series": [
+    {
+      "cases": [
+        {
+          "asks": "the URL FredAdapter builds today; establishes the series' REAL span so the impossible dates below are derived rather than typed",
+          "case": "baseline_no_window",
+          "coed": null,
+          "content_type": "application/csv",
+          "cosd": null,
+          "http_status": 200,
+          "observed": {
+            "body_bytes": 424283,
+            "body_head_lines": [
+              "observation_date,DFF",
+              "1954-07-01,1.13",
+              "1954-07-02,1.25",
+              "1954-07-03,1.25",
+              "1954-07-04,1.25"
+            ],
+            "body_tail_lines": [
+              "2026-10-10,3.88",
+              "2026-10-11,3.88",
+              "2026-10-12,3.88",
+              "2026-10-13,3.88"
+            ],
+            "first_row": "1954-07-01,1.13",
+            "header_cells": [
+              "observation_date",
+              "DFF"
+            ],
+            "header_line": "observation_date,DFF",
+            "last_row": "2026-10-13,3.88",
+            "row_count": 26403,
+            "span": [
+              "1954-07-01",
+              "2026-10-13"
+            ],
+            "truncated": true
+          },
+          "question": "baseline",
+          "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFF"
+        },
+        {
+          "asks": "a one-day window 5+ years back: only that date's row, more rows, the whole series, or an error?",
+          "case": "q1_window_one_day",
+          "coed": "2015-06-15",
+          "content_type": "application/csv",
+          "cosd": "2015-06-15",
+          "http_status": 200,
+          "observed": {
+            "body_bytes": 37,
+            "body_verbatim": "observation_date,DFF\n2015-06-15,0.13\n",
+            "first_row": "2015-06-15,0.13",
+            "header_cells": [
+              "observation_date",
+              "DFF"
+            ],
+            "header_line": "observation_date,DFF",
+            "last_row": "2015-06-15,0.13",
+            "observation_dates": [
+              "2015-06-15"
+            ],
+            "row_count": 1,
+            "span": [
+              "2015-06-15",
+              "2015-06-15"
+            ],
+            "truncated": false
+          },
+          "question": "Q1",
+          "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFF&cosd=2015-06-15&coed=2015-06-15"
+        },
+        {
+          "asks": "the same window widened to 9 days: proves the window is APPLIED rather than a series that returns one row whatever you ask",
+          "case": "q1_window_multi_day",
+          "coed": "2015-06-23",
+          "content_type": "application/csv",
+          "cosd": "2015-06-15",
+          "http_status": 200,
+          "observed": {
+            "body_bytes": 165,
+            "body_verbatim": "observation_date,DFF\n2015-06-15,0.13\n2015-06-16,0.14\n2015-06-17,0.14\n2015-06-18,0.14\n2015-06-19,0.13\n2015-06-20,0.13\n2015-06-21,0.13\n2015-06-22,0.13\n2015-06-23,0.13\n",
+            "first_row": "2015-06-15,0.13",
+            "header_cells": [
+              "observation_date",
+              "DFF"
+            ],
+            "header_line": "observation_date,DFF",
+            "last_row": "2015-06-23,0.13",
+            "observation_dates": [
+              "2015-06-15",
+              "2015-06-16",
+              "2015-06-17",
+              "2015-06-18",
+              "2015-06-19",
+              "2015-06-20",
+              "2015-06-21",
+              "2015-06-22",
+              "2015-06-23"
+            ],
+            "row_count": 9,
+            "span": [
+              "2015-06-15",
+              "2015-06-23"
+            ],
+            "truncated": false
+          },
+          "question": "Q1",
+          "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFF&cosd=2015-06-15&coed=2015-06-23"
+        },
+        {
+          "asks": "a window WHOLLY before the series' first observation: clamp, empty, error, or the whole series?",
+          "case": "q2_window_before_series_start",
+          "coed": "1944-07-01",
+          "content_type": "application/csv",
+          "cosd": "1944-07-01",
+          "http_status": 200,
+          "observed": {
+            "body_bytes": 424283,
+            "body_head_lines": [
+              "observation_date,DFF",
+              "1954-07-01,1.13",
+              "1954-07-02,1.25",
+              "1954-07-03,1.25",
+              "1954-07-04,1.25"
+            ],
+            "body_tail_lines": [
+              "2026-10-10,3.88",
+              "2026-10-11,3.88",
+              "2026-10-12,3.88",
+              "2026-10-13,3.88"
+            ],
+            "first_row": "1954-07-01,1.13",
+            "header_cells": [
+              "observation_date",
+              "DFF"
+            ],
+            "header_line": "observation_date,DFF",
+            "last_row": "2026-10-13,3.88",
+            "row_count": 26403,
+            "span": [
+              "1954-07-01",
+              "2026-10-13"
+            ],
+            "truncated": true
+          },
+          "question": "Q2",
+          "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFF&cosd=1944-07-01&coed=1944-07-01"
+        },
+        {
+          "asks": "a window opening 10 years before the first observation and closing just after it: clamp-to-start answers with the real start, empty answers with no rows, a refusal answers with neither \u2014 the three cannot be told apart from the case above alone",
+          "case": "q2_window_spanning_series_start",
+          "coed": "1954-07-06",
+          "content_type": "application/csv",
+          "cosd": "1944-07-01",
+          "http_status": 200,
+          "observed": {
+            "body_bytes": 117,
+            "body_verbatim": "observation_date,DFF\n1954-07-01,1.13\n1954-07-02,1.25\n1954-07-03,1.25\n1954-07-04,1.25\n1954-07-05,0.88\n1954-07-06,0.25\n",
+            "first_row": "1954-07-01,1.13",
+            "header_cells": [
+              "observation_date",
+              "DFF"
+            ],
+            "header_line": "observation_date,DFF",
+            "last_row": "1954-07-06,0.25",
+            "observation_dates": [
+              "1954-07-01",
+              "1954-07-02",
+              "1954-07-03",
+              "1954-07-04",
+              "1954-07-05",
+              "1954-07-06"
+            ],
+            "row_count": 6,
+            "span": [
+              "1954-07-01",
+              "1954-07-06"
+            ],
+            "truncated": false
+          },
+          "question": "Q2",
+          "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFF&cosd=1944-07-01&coed=1954-07-06"
+        },
+        {
+          "asks": "coed BEFORE cosd: the failure/clamp shape of a malformed window, measured rather than guessed",
+          "case": "q3_window_reversed",
+          "coed": "2015-06-10",
+          "content_type": "application/csv",
+          "cosd": "2015-06-15",
+          "http_status": 200,
+          "observed": {
+            "body_bytes": 117,
+            "body_verbatim": "observation_date,DFF\n2015-06-10,0.13\n2015-06-11,0.13\n2015-06-12,0.13\n2015-06-13,0.13\n2015-06-14,0.13\n2015-06-15,0.13\n",
+            "first_row": "2015-06-10,0.13",
+            "header_cells": [
+              "observation_date",
+              "DFF"
+            ],
+            "header_line": "observation_date,DFF",
+            "last_row": "2015-06-15,0.13",
+            "observation_dates": [
+              "2015-06-10",
+              "2015-06-11",
+              "2015-06-12",
+              "2015-06-13",
+              "2015-06-14",
+              "2015-06-15"
+            ],
+            "row_count": 6,
+            "span": [
+              "2015-06-10",
+              "2015-06-15"
+            ],
+            "truncated": false
+          },
+          "question": "Q3",
+          "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFF&cosd=2015-06-15&coed=2015-06-10"
+        }
+      ],
+      "column_parse_fred_csv_expects": "DFF",
+      "gap_date_note": "every calendar day in 2015-06-15..2015-06-23 came back with a row, so this series has no gap to probe in that span",
+      "impossible_window_derivation": "series_start 1954-07-01 per the baseline body, minus 10 years = 1944-07-01",
+      "series": "DFF",
+      "series_span_per_server": [
+        "1954-07-01",
+        "2026-10-13"
+      ],
+      "transformation": null
+    },
+    {
+      "cases": [
+        {
+          "asks": "the URL FredAdapter builds today; establishes the series' REAL span so the impossible dates below are derived rather than typed",
+          "case": "baseline_no_window",
+          "coed": null,
+          "content_type": "application/csv",
+          "cosd": null,
+          "http_status": 200,
+          "observed": {
+            "body_bytes": 98340,
+            "body_head_lines": [
+              "observation_date,T5YIE",
+              "2003-01-02,1.30",
+              "2003-01-03,1.28",
+              "2003-01-06,1.31",
+              "2003-01-07,1.28"
+            ],
+            "body_tail_lines": [
+              "2026-10-09,2.34",
+              "2026-10-12,",
+              "2026-10-13,2.33",
+              "2026-10-14,2.36"
+            ],
+            "first_row": "2003-01-02,1.30",
+            "header_cells": [
+              "observation_date",
+              "T5YIE"
+            ],
+            "header_line": "observation_date,T5YIE",
+            "last_row": "2026-10-14,2.36",
+            "row_count": 6205,
+            "span": [
+              "2003-01-02",
+              "2026-10-14"
+            ],
+            "truncated": true
+          },
+          "question": "baseline",
+          "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T5YIE"
+        },
+        {
+          "asks": "a one-day window 5+ years back: only that date's row, more rows, the whole series, or an error?",
+          "case": "q1_window_one_day",
+          "coed": "2015-06-15",
+          "content_type": "application/csv",
+          "cosd": "2015-06-15",
+          "http_status": 200,
+          "observed": {
+            "body_bytes": 39,
+            "body_verbatim": "observation_date,T5YIE\n2015-06-15,1.64\n",
+            "first_row": "2015-06-15,1.64",
+            "header_cells": [
+              "observation_date",
+              "T5YIE"
+            ],
+            "header_line": "observation_date,T5YIE",
+            "last_row": "2015-06-15,1.64",
+            "observation_dates": [
+              "2015-06-15"
+            ],
+            "row_count": 1,
+            "span": [
+              "2015-06-15",
+              "2015-06-15"
+            ],
+            "truncated": false
+          },
+          "question": "Q1",
+          "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T5YIE&cosd=2015-06-15&coed=2015-06-15"
+        },
+        {
+          "asks": "the same window widened to 9 days: proves the window is APPLIED rather than a series that returns one row whatever you ask",
+          "case": "q1_window_multi_day",
+          "coed": "2015-06-23",
+          "content_type": "application/csv",
+          "cosd": "2015-06-15",
+          "http_status": 200,
+          "observed": {
+            "body_bytes": 135,
+            "body_verbatim": "observation_date,T5YIE\n2015-06-15,1.64\n2015-06-16,1.67\n2015-06-17,1.69\n2015-06-18,1.67\n2015-06-19,1.63\n2015-06-22,1.65\n2015-06-23,1.67\n",
+            "first_row": "2015-06-15,1.64",
+            "header_cells": [
+              "observation_date",
+              "T5YIE"
+            ],
+            "header_line": "observation_date,T5YIE",
+            "last_row": "2015-06-23,1.67",
+            "observation_dates": [
+              "2015-06-15",
+              "2015-06-16",
+              "2015-06-17",
+              "2015-06-18",
+              "2015-06-19",
+              "2015-06-22",
+              "2015-06-23"
+            ],
+            "row_count": 7,
+            "span": [
+              "2015-06-15",
+              "2015-06-23"
+            ],
+            "truncated": false
+          },
+          "question": "Q1",
+          "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T5YIE&cosd=2015-06-15&coed=2015-06-23"
+        },
+        {
+          "asks": "a window WHOLLY before the series' first observation: clamp, empty, error, or the whole series?",
+          "case": "q2_window_before_series_start",
+          "coed": "1993-01-02",
+          "content_type": "application/csv",
+          "cosd": "1993-01-02",
+          "http_status": 200,
+          "observed": {
+            "body_bytes": 98340,
+            "body_head_lines": [
+              "observation_date,T5YIE",
+              "2003-01-02,1.30",
+              "2003-01-03,1.28",
+              "2003-01-06,1.31",
+              "2003-01-07,1.28"
+            ],
+            "body_tail_lines": [
+              "2026-10-09,2.34",
+              "2026-10-12,",
+              "2026-10-13,2.33",
+              "2026-10-14,2.36"
+            ],
+            "first_row": "2003-01-02,1.30",
+            "header_cells": [
+              "observation_date",
+              "T5YIE"
+            ],
+            "header_line": "observation_date,T5YIE",
+            "last_row": "2026-10-14,2.36",
+            "row_count": 6205,
+            "span": [
+              "2003-01-02",
+              "2026-10-14"
+            ],
+            "truncated": true
+          },
+          "question": "Q2",
+          "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T5YIE&cosd=1993-01-02&coed=1993-01-02"
+        },
+        {
+          "asks": "a window opening 10 years before the first observation and closing just after it: clamp-to-start answers with the real start, empty answers with no rows, a refusal answers with neither \u2014 the three cannot be told apart from the case above alone",
+          "case": "q2_window_spanning_series_start",
+          "coed": "2003-01-07",
+          "content_type": "application/csv",
+          "cosd": "1993-01-02",
+          "http_status": 200,
+          "observed": {
+            "body_bytes": 87,
+            "body_verbatim": "observation_date,T5YIE\n2003-01-02,1.30\n2003-01-03,1.28\n2003-01-06,1.31\n2003-01-07,1.28\n",
+            "first_row": "2003-01-02,1.30",
+            "header_cells": [
+              "observation_date",
+              "T5YIE"
+            ],
+            "header_line": "observation_date,T5YIE",
+            "last_row": "2003-01-07,1.28",
+            "observation_dates": [
+              "2003-01-02",
+              "2003-01-03",
+              "2003-01-06",
+              "2003-01-07"
+            ],
+            "row_count": 4,
+            "span": [
+              "2003-01-02",
+              "2003-01-07"
+            ],
+            "truncated": false
+          },
+          "question": "Q2",
+          "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T5YIE&cosd=1993-01-02&coed=2003-01-07"
+        },
+        {
+          "asks": "coed BEFORE cosd: the failure/clamp shape of a malformed window, measured rather than guessed",
+          "case": "q3_window_reversed",
+          "coed": "2015-06-10",
+          "content_type": "application/csv",
+          "cosd": "2015-06-15",
+          "http_status": 200,
+          "observed": {
+            "body_bytes": 87,
+            "body_verbatim": "observation_date,T5YIE\n2015-06-10,1.66\n2015-06-11,1.63\n2015-06-12,1.64\n2015-06-15,1.64\n",
+            "first_row": "2015-06-10,1.66",
+            "header_cells": [
+              "observation_date",
+              "T5YIE"
+            ],
+            "header_line": "observation_date,T5YIE",
+            "last_row": "2015-06-15,1.64",
+            "observation_dates": [
+              "2015-06-10",
+              "2015-06-11",
+              "2015-06-12",
+              "2015-06-15"
+            ],
+            "row_count": 4,
+            "span": [
+              "2015-06-10",
+              "2015-06-15"
+            ],
+            "truncated": false
+          },
+          "question": "Q3",
+          "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T5YIE&cosd=2015-06-15&coed=2015-06-10"
+        },
+        {
+          "asks": "a one-day window on a date the series does NOT have: nothing, or a NEIGHBOURING row? This is what decides whether 'the only row in the window' is safe to trust or whether exact-date matching is mandatory",
+          "case": "extra_window_on_gap_date",
+          "coed": "2015-06-20",
+          "content_type": "text/html; charset=UTF-8",
+          "cosd": "2015-06-20",
+          "http_error": true,
+          "http_status": 404,
+          "observed": {
+            "body_bytes": 28935,
+            "body_head_lines": [
+              "<!DOCTYPE html>",
+              "<html lang=\"en\">",
+              "<head>",
+              "    <meta charset=\"utf-8\">",
+              "    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">"
+            ],
+            "body_tail_lines": [
+              "    $('.filter-button-inner .badge').text($('.tags-number').text());",
+              "</script>",
+              "<script type=\"text/javascript\"  src=\"/dKbxxCqsJy7MOz9JRNeXgguk/wuucLQbpbmQ8Jz/bB8MYypVAQ/X2Z-W/T99LgQB\"></script></body>",
+              "</html>"
+            ],
+            "first_row": "<html lang=\"en\">",
+            "header_cells": [
+              "<!DOCTYPE html>"
+            ],
+            "header_line": "<!DOCTYPE html>",
+            "html_title_lines": [
+              "<title>Error - St. Louis Fed</title>"
+            ],
+            "last_row": "</html>",
+            "row_count": 523,
+            "span": [
+              "<html lang=\"en\">",
+              "</html>"
+            ],
+            "truncated": true
+          },
+          "question": "EXTRA",
+          "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T5YIE&cosd=2015-06-20&coed=2015-06-20"
+        },
+        {
+          "asks": "the same question generalised: a MULTI-day window that matches no observation at all. Confirms whether the single-day answer above is the endpoint's shape for an empty window or a one-off",
+          "case": "extra_window_wholly_inside_gap",
+          "coed": "2015-06-21",
+          "content_type": "text/html; charset=UTF-8",
+          "cosd": "2015-06-20",
+          "http_error": true,
+          "http_status": 404,
+          "observed": {
+            "body_bytes": 28935,
+            "body_head_lines": [
+              "<!DOCTYPE html>",
+              "<html lang=\"en\">",
+              "<head>",
+              "    <meta charset=\"utf-8\">",
+              "    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">"
+            ],
+            "body_tail_lines": [
+              "    $('.filter-button-inner .badge').text($('.tags-number').text());",
+              "</script>",
+              "<script type=\"text/javascript\"  src=\"/dKbxxCqsJy7MOz9JRNeXgguk/wuucLQbpbmQ8Jz/bB8MYypVAQ/X2Z-W/T99LgQB\"></script></body>",
+              "</html>"
+            ],
+            "first_row": "<html lang=\"en\">",
+            "header_cells": [
+              "<!DOCTYPE html>"
+            ],
+            "header_line": "<!DOCTYPE html>",
+            "html_title_lines": [
+              "<title>Error - St. Louis Fed</title>"
+            ],
+            "last_row": "</html>",
+            "row_count": 523,
+            "span": [
+              "<html lang=\"en\">",
+              "</html>"
+            ],
+            "truncated": true
+          },
+          "question": "EXTRA",
+          "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T5YIE&cosd=2015-06-20&coed=2015-06-21"
+        }
+      ],
+      "column_parse_fred_csv_expects": "T5YIE",
+      "gap_date_derivation": "2015-06-20..2015-06-21 is inside the series' span but absent from the 9-day body above",
+      "impossible_window_derivation": "series_start 2003-01-02 per the baseline body, minus 10 years = 1993-01-02",
+      "series": "T5YIE",
+      "series_span_per_server": [
+        "2003-01-02",
+        "2026-10-14"
+      ],
+      "transformation": null
+    }
+  ],
+  "target_date": "2015-06-15",
+  "why": "WO-1.15: whether plain fredgraph.csv CLAMPS an out-of-range cosd/coed window the way alfredgraph.csv was measured to (evidence/wo114_alfred_probe.json, 2026-10-13), refuses it, ignores it, or answers empty"
+}

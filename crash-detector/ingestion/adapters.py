@@ -14,6 +14,12 @@ WO-1.14 adds ONE adapter that asks a different question of the same kind of sour
 ALFRED's vintages for the earliest one that served it. It still only fetches and reports;
 the ``vintage`` label on the stored reading is the caller's to write.
 
+WO-1.15 teaches :class:`FredAdapter` the other half of that question — ONE observation at a
+NAMED date out of FRED's CURRENT body, for the pairs ``ingestion.vintage`` measured stable —
+behind an opt-in ``observation_date`` that no live call site has an argument to set. Left at
+its default ``None`` it is byte-for-byte the adapter the live loop has always had: same URL,
+same parser, same failure handling.
+
 Failure discipline: a transport failure raises :class:`AdapterFetchError` with a stable
 class and NO message, URL or exception text (PBG-SEC-002). A response that arrives but is
 unparseable is NOT converted into a fetch failure and is NOT defaulted: the raw token is
@@ -60,6 +66,7 @@ __all__ = [
     "parse_hermes_candle",
     "parse_lbma_gold",
     "parse_fred_csv",
+    "parse_fred_csv_for_date",
     "parse_alfred_csv",
     "parse_cboe_csv",
     "parse_yahoo_chart",
@@ -290,6 +297,64 @@ def parse_alfred_csv(text: str, column: str, unit: str, observation_date: str,
             break  # served, and this vintage had nothing to say about this date
         return {"unit": unit, "observation_date": observation_date,
                 "value": _number_or_token(cells[1]), "vintage_date": vintage_date}
+    return {"unit": unit}
+
+
+def parse_fred_csv_for_date(text: str, column: str, unit: str, observation_date: str) -> dict:
+    """ONE named observation read out of a ``fredgraph.csv`` body, matched by EXACT DATE.
+
+    WO-1.15, and it exists because :func:`parse_fred_csv`'s discipline — the LATEST
+    non-missing row — is the right answer to a different question. "What is this series'
+    current value?" is answered by the last row; "what was the value for 2005-06-15?" is
+    not, and cannot be, by ANY row read by position.
+
+    THE WINDOWED REQUEST IS NOT A GUARANTEE ABOUT THE BODY, AND THIS IS MEASURED, NOT
+    ASSUMED. ``cosd``/``coed`` narrow the body when the window overlaps the series' real
+    span, but a window lying ENTIRELY BEFORE the series' first observation is neither
+    clamped nor refused nor answered empty: the server IGNORES it and returns the WHOLE
+    unfiltered series, oldest row first and TODAY's row last (probed 2026-10-15 against
+    ``fred.stlouisfed.org``: ``tools/probe/fred_graph_window_probe.py``,
+    ``evidence/wo115_fred_window_probe.json``, case ``q2_window_before_series_start`` — DFF
+    asked for 1944-07-01 answered with all 26,403 rows). "The last row" against that body
+    would answer a 1944 backfill with this morning's rate, under a 1944 key. "The only row"
+    would be no safer: it is only ever the only row when the server chose to honour the
+    window, which is precisely the case this function does not get to assume it is in.
+
+    So the match is on the KEY and never on the position, the same discipline
+    :func:`parse_alfred_csv` already follows against ALFRED's clamping for the same reason.
+    A body nobody asked for cannot fool an exact-key match: it either carries a row dated
+    ``observation_date`` or it does not.
+
+    Three outcomes, kept apart:
+
+    * **a value** — a row dated exactly ``observation_date`` carrying a figure;
+    * **``{"unit": ...}``** — no such row, or the row is present with FRED's ``.`` (or an
+      empty cell) for no data. EMPTY, not zero, and not someone else's number;
+    * **``{"malformed": ...}``** — a header that is not ``observation_date,<column>``. The
+      check is :func:`parse_fred_csv`'s, character for character, because it is the same
+      endpoint answering the same series; plain FRED's header carries no vintage to verify,
+      which is the one check :func:`parse_alfred_csv` has and this does not.
+
+    NO ``history``. A windowed request asks for one day, so there is no history in the body
+    to carry, and a payload that mixed one day's window with a history read out of some
+    other body would be two different questions under one key. A backfilled reading for an
+    ingredient whose LIVE row carries ``history`` (``fred.DFII10.history``) therefore
+    carries none: the history exists for a derivation the live loop runs, and recovering it
+    per past date is not what this answers.
+    """
+    lines = text.strip().splitlines()
+    if not lines or lines[0].split(",")[0] != "observation_date" or len(lines[0].split(",")) != 2:
+        return {"malformed": "header"}  # no "unit": fails the closed schema -> MALFORMED
+    if lines[0].split(",")[1] != column:
+        return {"malformed": "series"}
+    for line in lines[1:]:
+        cells = line.split(",")
+        if len(cells) != 2 or cells[0] != observation_date:
+            continue
+        if cells[1] in ("", "."):
+            break  # the series has this date and published no figure for it
+        return {"unit": unit, "observation_date": observation_date,
+                "value": _number_or_token(cells[1])}
     return {"unit": unit}
 
 
@@ -676,24 +741,78 @@ class FredAdapter(_BaseAdapter):
     ``transformation`` is FRED's OWN server-side unit transform (``pc1`` = percent change
     from a year ago), so a YoY indicator is still a number the source computed and we
     merely recorded.
+
+    TWO QUESTIONS, ONE ENDPOINT, AND THE SECOND ONE IS OPT-IN (WO-1.15). With
+    ``observation_date`` left at ``None`` — which is every live call, since
+    ``ingestion.catalog.build_adapter`` has no argument that could set it — this asks
+    "what is this series' latest value?" and behaves EXACTLY as it always has: the same
+    URL, :func:`parse_fred_csv`, and a 404 is a fetch FAILURE. With ``observation_date``
+    set, which only ``ingestion.backfill_adapters.build_backfill_adapter`` does, it asks
+    "what does this series say for the observation dated D?", and all three of those change
+    together:
+
+    * the request carries ``cosd=D&coed=D``, the same windowing
+      :meth:`AlfredVintageAdapter._url_for` uses against ALFRED;
+    * the body is read by :func:`parse_fred_csv_for_date`, which matches D EXACTLY and never
+      by position — see that function on WHY the window is a courtesy and not a promise;
+    * an ``HTTP_ERROR``/404 becomes EMPTY rather than a failure (:meth:`_acquire`).
+
+    WHY THE 404 IS AN ANSWER HERE AND A FAILURE THERE. A window landing on a date inside the
+    series' span that the series does not have — a Saturday for a business-daily series — is
+    answered ``404`` with an HTML error page, not ``200`` with a header and no rows (probed
+    2026-10-15: ``evidence/wo115_fred_window_probe.json``, case ``extra_window_on_gap_date``,
+    T5YIE on 2015-06-20). That 404 is FRED saying "no observation on this date", which is
+    the EMPTY this adapter must report, and it is the same carve-out
+    :meth:`AlfredVintageAdapter.probe` makes with ``absent_on_404`` for "no such vintage".
+    Unwindowed, nothing is being asked about a particular date and a 404 means the SERIES
+    could not be fetched — a real failure, and the live loop's handling of it is untouched
+    because the translation is gated on ``observation_date`` being set.
+
+    ``observation_date`` is KEYWORD-ONLY. ``history`` is the third positional parameter at
+    every existing call site, and a date arriving where a row count belongs — or a count
+    where a date belongs — would be a silent change of question. The date is also parsed at
+    construction: a string we cannot read as a date is not one we may interpolate into a URL.
     """
 
-    __slots__ = ("_series", "_transformation", "_history")
+    __slots__ = ("_series", "_transformation", "_history", "_observation_date")
     adapter_id = "cd.ingest.fred_csv.v1"
 
-    def __init__(self, series: str, transformation: Union[str, None], history: int = 0, **kw: Any) -> None:
+    def __init__(self, series: str, transformation: Union[str, None], history: int = 0, *,
+                 observation_date: Union[str, None] = None, **kw: Any) -> None:
         super().__init__(**kw)
+        if observation_date is not None:
+            date.fromisoformat(observation_date)
         self._series = series
         self._transformation = transformation
         self._history = history
+        self._observation_date = observation_date
 
     def _url(self) -> str:
         suffix = f"&transformation={self._transformation}" if self._transformation else ""
-        return f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={self._series}{suffix}"
+        window = ("" if self._observation_date is None else
+                  f"&cosd={self._observation_date}&coed={self._observation_date}")
+        return f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={self._series}{suffix}{window}"
 
     def _parse(self, body: str) -> dict:
         column = self._series + (f"_{self._transformation.upper()}" if self._transformation else "")
-        return parse_fred_csv(body, column, self._unit, self._history)
+        if self._observation_date is None:
+            return parse_fred_csv(body, column, self._unit, self._history)
+        return parse_fred_csv_for_date(body, column, self._unit, self._observation_date)
+
+    def _acquire(self, timeout_seconds: float) -> dict:
+        """The shared one GET, plus the 404-as-EMPTY translation a DATED request needs.
+
+        Unwindowed, this is the base method and nothing else: one call, one ``except``-free
+        path, identical to the live loop's today.
+        """
+        if self._observation_date is None:
+            return super()._acquire(timeout_seconds)
+        try:
+            return super()._acquire(timeout_seconds)
+        except AdapterFetchError as failure:
+            if failure.error_class == "HTTP_ERROR" and failure.http_status == 404:
+                return {"unit": self._unit}  # FRED has no observation on this date: an ANSWER
+            raise
 
 
 class AlfredVintageAdapter(_BaseAdapter):

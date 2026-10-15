@@ -123,6 +123,71 @@ def test_fred_nan_is_not_a_number():
     assert A.parse_fred_csv("observation_date,DFF\n2026-10-06,nan\n", "DFF", "p")["value"] == "nan"
 
 
+# WO-1.15. ``parse_fred_csv_for_date`` asks a different question of the SAME body than the
+# five tests above: not "what is this series' current value" — the LATEST row — but "what was
+# the value for date D", which is the row dated D or nothing at all. The two parsers must not
+# be able to stand in for each other, so the first test below pins both against one body.
+
+
+def test_fred_for_date_reads_the_row_dated_exactly_that_date_and_not_the_latest_one():
+    """The whole point: the LATEST row is present, carries a different figure, and is not it."""
+    body = "observation_date,DFF\n1999-01-01,4.63\n2005-06-15,3.04\n2026-10-13,3.88\n"
+    assert A.parse_fred_csv_for_date(body, "DFF", "percent", "2005-06-15") == {
+        "unit": "percent", "observation_date": "2005-06-15", "value": 3.04}
+    # parse_fred_csv, asked of the same body, answers for the last row instead. Both are
+    # right about their own question, which is why there are two functions.
+    assert A.parse_fred_csv(body, "DFF", "percent")["observation_date"] == "2026-10-13"
+
+
+def test_fred_for_date_matches_the_key_even_when_the_body_was_never_filtered():
+    """A window wholly before a series' first observation is IGNORED by plain FRED and the
+    WHOLE series comes back (``evidence/wo115_fred_window_probe.json``, case
+    ``q2_window_before_series_start``). Reading such a body by POSITION — the last row, or
+    "the only row" — answers a 1944 backfill with this morning's rate. Exact-key matching is
+    what makes that body harmless: it carries the date or it does not."""
+    whole_series = "observation_date,DFF\n1954-07-01,1.13\n1954-07-02,1.25\n2026-10-13,3.88\n"
+    assert A.parse_fred_csv_for_date(whole_series, "DFF", "percent", "1944-07-01") == {
+        "unit": "percent"}
+    assert A.parse_fred_csv_for_date(whole_series, "DFF", "percent", "1954-07-02") == {
+        "unit": "percent", "observation_date": "1954-07-02", "value": 1.25}
+
+
+def test_fred_for_date_has_no_row_for_the_date_is_empty_not_a_neighbouring_row():
+    body = "observation_date,T5YIE\n2015-06-19,1.63\n2015-06-22,1.65\n"
+    assert A.parse_fred_csv_for_date(body, "T5YIE", "percent", "2015-06-20") == {"unit": "percent"}
+
+
+def test_fred_for_date_dot_for_no_data_on_the_matched_row_is_empty_not_zero():
+    """FRED writes ``.`` for no data, and so the series HAS this date and published nothing
+    for it. EMPTY — and emphatically not the next row down, which does carry a figure."""
+    body = "observation_date,T5YIE\n2026-10-12,.\n2026-10-13,2.33\n"
+    assert A.parse_fred_csv_for_date(body, "T5YIE", "percent", "2026-10-12") == {"unit": "percent"}
+    assert A.parse_fred_csv_for_date("observation_date,T5YIE\n2026-10-12,\n", "T5YIE", "percent",
+                                     "2026-10-12") == {"unit": "percent"}
+
+
+@pytest.mark.parametrize("body,expected", [
+    ("", "header"),
+    ("nonsense", "header"),
+    ("observation_date,DFF,extra\n2005-06-15,3.04\n", "header"),
+    ("DATE,DFF\n2005-06-15,3.04\n", "header"),
+    ("observation_date,OTHER\n2005-06-15,3.04\n", "series"),
+])
+def test_fred_for_date_an_unreadable_body_is_malformed_never_an_absent_observation(body, expected):
+    """MALFORMED and EMPTY are different answers: the first says we cannot read what arrived,
+    the second says the source has no figure. No ``unit`` key, so the closed response schema
+    rejects it rather than a reading being admitted with no value."""
+    out = A.parse_fred_csv_for_date(body, "DFF", "percent", "2005-06-15")
+    assert out == {"malformed": expected} and "unit" not in out
+
+
+def test_fred_for_date_a_garbage_value_is_passed_through_for_the_schema_to_reject():
+    """Exactly as ``parse_fred_csv`` does: the raw token is carried, never defaulted."""
+    out = A.parse_fred_csv_for_date("observation_date,DFF\n2005-06-15,abc\n", "DFF", "percent",
+                                    "2005-06-15")
+    assert out["value"] == "abc"
+
+
 def test_cboe_date_and_column():
     body = "DATE,OPEN,CLOSE\n10/08/2026,1,2\n10/09/2026,3,14.84\n"
     assert A.parse_cboe_csv(body, "CLOSE", "index") == {"unit": "index", "observation_date": "2026-10-09", "value": 14.84}
