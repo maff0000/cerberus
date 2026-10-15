@@ -45,6 +45,30 @@ DFF IS THE ONE JUDGEMENT CALL, AND IT IS MADE BY THE RULE
     rule above says so without DFF being named. If ``compare_from`` is ever moved back
     before 1999, re-probe: the test will then fail here, which is the point of deriving the
     sets instead of typing them.
+
+THE VOCABULARY IS NOW WIDER THAN THIS MODULE'S MEASUREMENTS, AND THAT IS DELIBERATE (WO-1.16)
+    Everything above is about FRED, because a revision axis is what everything above
+    measures. :data:`VINTAGE_NO_REVISION_MECHANISM` is the label for a source that HAS NO
+    SUCH AXIS — Cboe's static index history is the first one backfilled — and it is in this
+    module rather than next to the adapter for one reason: the vocabulary of
+    ``raw_reading.vintage`` is closed and is declared in exactly one place
+    (:data:`VINTAGE_LABELS`, from which ``ingestion.store`` builds its CHECK), so a third
+    label declared anywhere else would be a second vocabulary.
+
+    Read the three labels as three different WARRANTS for one stored number, not as three
+    degrees of the same one:
+
+    * :data:`VINTAGE_ORIGINAL` — a vintage was READ. The warrant is the server's own
+      vintage-dated answer, carried on the row.
+    * :data:`VINTAGE_CURRENT_ONLY` — today's body, on the authority of a MEASUREMENT
+      (:data:`REVISION_STABLE` plus :data:`STABILITY_MEASURED_FROM`) that revision does not
+      matter over the window asked for.
+    * :data:`VINTAGE_NO_REVISION_MECHANISM` — today's body, because the source publishes no
+      other body and exposes no way to ask for one. There is no vintage to read and nothing
+      for a stability measurement to be measured against.
+
+    The third is weaker than the first and is NOT the second: see its own comment for why
+    neither existing label could carry a Cboe reading honestly.
 """
 
 from __future__ import annotations
@@ -54,17 +78,21 @@ from typing import Mapping, Union
 __all__ = [
     "VINTAGE_ORIGINAL",
     "VINTAGE_CURRENT_ONLY",
+    "VINTAGE_NO_REVISION_MECHANISM",
     "VINTAGE_LABELS",
     "MATERIAL_THRESHOLD",
     "MIN_SHARED_OBSERVATIONS",
     "STABILITY_MEASURED_FROM",
     "EVIDENCE_FILE",
     "EVIDENCE_PROBED_UTC",
+    "NO_REVISION_MECHANISM_KINDS",
+    "NO_REVISION_MECHANISM_EVIDENCE",
     "REVISION_PRONE",
     "REVISION_STABLE",
     "REVISION_UNDETERMINED",
     "classify",
     "requires_original_vintage",
+    "has_no_revision_mechanism",
 ]
 
 #: A reading whose value is the one the source FIRST published for that period — what was
@@ -89,9 +117,52 @@ VINTAGE_ORIGINAL = "original"
 #: :data:`STABILITY_MEASURED_FROM`, the date the measurement itself begins at. Both halves,
 #: because "measured not to matter" is a claim about a window and not about a series.
 VINTAGE_CURRENT_ONLY = "current_only"
+#: A reading taken from today's body of a source that HAS NO REVISION MECHANISM AT ALL: it
+#: publishes one body, serves no vintages of it, and accepts no parameter that would ask for
+#: a different one. So there is nothing for a vintage search to recover, and nothing for a
+#: stability measurement to be measured against.
+#:
+#: READ WHAT IT CLAIMS, AND WHAT IT POINTEDLY DOES NOT. It claims the source exposes no
+#: revision axis — a property of the ENDPOINT, established by probing it. It does NOT claim
+#: the number equals what printed on the day: that would need a contemporaneous record this
+#: label's own premise says does not exist. A consumer that needs "the figure as first
+#: published, verified" must read :data:`VINTAGE_ORIGINAL` and nothing else.
+#:
+#: WHY NEITHER EXISTING LABEL COULD CARRY A CBOE READING (WO-1.16, and the argument is the
+#: deliverable here, not the constant). The probe is
+#: ``evidence/wo116_cboe_probe.json``, 2026-10-15: every plausible windowing parameter —
+#: ``dt``, ``date``, ``startDate``/``endDate``, ``start``/``end``, ``from``/``to``,
+#: ``start_date``/``end_date``, plus two negative controls (FRED's own ``cosd``/``coed``
+#: names and a nonsense parameter) — returned a body BYTE-IDENTICAL to the bare URL's, same
+#: SHA-256, all 9,294 rows, 1990-01-02 to 2026-10-14. There is no vintage endpoint, no
+#: window, no ``as of``; there is one file.
+#:
+#: * NOT :data:`VINTAGE_ORIGINAL`. That label is MECHANISM-EARNED and says so: "earned by
+#:   READING A VINTAGE... only ``AlfredVintageAdapter`` produces one, and the reading carries
+#:   the vintage date the server itself named". A Cboe reading carries no vintage date,
+#:   because no server named one. The tempting argument — a daily index close is final the
+#:   moment it prints, so the figure in today's body IS the figure first published — is an
+#:   argument from REPUTATION about a publisher's process, and the first line of this
+#:   module's docstring is that this declaration is "derived from measurement rather than
+#:   from reputation". Worse, it is unfalsifiable here: if Cboe ever did silently restate a
+#:   close, a row labelled ``original`` would be a false claim with nothing in the system
+#:   able to detect it, whereas THIS label stays exactly true either way. And the precedent
+#:   is already recorded above: a sentence about ``original`` was found false by measurement
+#:   and was superseded rather than edited away. Quietly widening the same label by
+#:   reinterpretation, a round later, is the drift that correction exists to warn against.
+#: * NOT :data:`VINTAGE_CURRENT_ONLY`. Its stated admissibility is :data:`REVISION_STABLE`
+#:   membership AND an observation date at or after :data:`STABILITY_MEASURED_FROM` — two
+#:   halves of one FRED measurement, neither of which exists for Cboe. Using it would smuggle
+#:   in a claim that stability was MEASURED when nothing was measured, which is the same
+#:   species of overclaim as the first option, pointing the other way.
+#:
+#: So: a third label, because this is a third epistemic situation and the honest thing to do
+#: with one is name it. The cost is a widened CHECK constraint, paid once; the alternative
+#: cost is a vocabulary whose words no longer mean what they say.
+VINTAGE_NO_REVISION_MECHANISM = "no_revision_mechanism"
 #: The closed vocabulary of the ``raw_reading.vintage`` column. ``ingestion.store`` builds
 #: its CHECK constraint from this tuple so the SQL and the Python cannot drift apart.
-VINTAGE_LABELS = (VINTAGE_ORIGINAL, VINTAGE_CURRENT_ONLY)
+VINTAGE_LABELS = (VINTAGE_ORIGINAL, VINTAGE_CURRENT_ONLY, VINTAGE_NO_REVISION_MECHANISM)
 
 #: The relative difference the probe counted as material. Recorded here so the declaration
 #: below is readable as a claim about a measurement and not a bare list.
@@ -160,6 +231,24 @@ REVISION_UNDETERMINED = frozenset({
 })
 
 
+#: Ingredient KINDS whose source was PROBED and found to expose no revision mechanism — the
+#: only kinds :data:`VINTAGE_NO_REVISION_MECHANISM` may be written for. Stated positively and
+#: answered fail-safe by :func:`has_no_revision_mechanism`, for the same reason
+#: :func:`requires_original_vintage` answers from :data:`REVISION_STABLE`: "nobody has
+#: probed this source" must never read as "this source has no revisions".
+#:
+#: ``cboe`` only, and only because ``cdn-api.cboe.com``'s ``{index}_History.csv`` was asked.
+#: ``yahoo`` is deliberately absent even though it has no vintage endpoint either: its
+#: ``adjclose`` DRIFTS retroactively with every dividend and split (PID.md, WO-1.16 scope
+#: correction), which is a revision mechanism in everything but name, and the honest label
+#: for it is a question this declaration does not get to pre-answer.
+NO_REVISION_MECHANISM_KINDS = frozenset({"cboe"})
+
+#: Where the claim above was measured, per kind. Named here so the declaration is readable
+#: as a probe result rather than as a belief, exactly as :data:`EVIDENCE_FILE` is for FRED.
+NO_REVISION_MECHANISM_EVIDENCE = {"cboe": "evidence/wo116_cboe_probe.json"}
+
+
 def classify(probe: Mapping) -> dict:
     """The derivation. ``probe`` is the parsed probe JSON; returns the three sets.
 
@@ -191,5 +280,21 @@ def requires_original_vintage(series: str, transformation: Union[str, None] = No
 
     Answered from :data:`REVISION_STABLE` rather than :data:`REVISION_PRONE` so that an
     unprobed series is fetched point-in-time instead of being quietly assumed unrevised.
+
+    IT IS A QUESTION ABOUT A FRED PAIR AND ONLY ABOUT ONE. For a kind with no revision axis
+    (:func:`has_no_revision_mechanism`) there is no vintage adapter to route to and no
+    stability measurement to appeal to, so the question does not arise rather than defaulting
+    to ``True`` — ``ingestion.backfill_adapters`` asks it only on the FRED branch.
     """
     return (series, transformation) not in REVISION_STABLE
+
+
+def has_no_revision_mechanism(kind: str) -> bool:
+    """Was this ingredient KIND probed and found to expose no revision mechanism at all?
+
+    The gate on :data:`VINTAGE_NO_REVISION_MECHANISM`. Fail-safe in the direction that costs
+    nothing: an unknown kind answers ``False``, so it cannot acquire the label by being
+    forgotten — it is refused by ``ingestion.backfill_adapters.VINTAGE_BACKFILLABLE_KINDS``
+    instead, which is where a kind nobody has reasoned about belongs.
+    """
+    return kind in NO_REVISION_MECHANISM_KINDS

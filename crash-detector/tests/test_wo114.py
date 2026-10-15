@@ -135,15 +135,50 @@ def test_every_fred_ingredient_routes_exactly_as_the_vintage_declaration_says():
     )
 
 
-def test_a_kind_with_no_vintage_endpoint_behind_it_is_refused_rather_than_backfilled():
-    """Yahoo, Cboe, multpl, LBMA and the HERMES peer serve no vintages. Today's value wearing a
-    past date is the forgery this WO exists to prevent, so the answer is a refusal."""
-    assert VINTAGE_BACKFILLABLE_KINDS == ("fred",)
-    others = [i for i in INGREDIENTS if i.kind != "fred"]
-    assert {i.kind for i in others} == {"cboe", "yahoo", "multpl", "lbma", "hermes", "manual"}
+def test_a_kind_nobody_has_reasoned_about_is_refused_rather_than_backfilled():
+    """Yahoo, multpl, LBMA, the HERMES peer and manual entry: today's value wearing a past date
+    is the forgery this WO exists to prevent, so the answer is a refusal.
+
+    WO-1.16 MOVED ``cboe`` OUT OF THIS SET and the test says so by deriving the set from
+    :data:`VINTAGE_BACKFILLABLE_KINDS` rather than by listing non-FRED kinds. Cboe is not an
+    exception carved into a refusal — it is a kind with its own probed warrant
+    (:data:`~ingestion.vintage.VINTAGE_NO_REVISION_MECHANISM`), so it routes. ``yahoo`` is the
+    one that stayed, and it is the interesting one: it has no vintage endpoint either, but its
+    ``adjclose`` is retroactively restated by every dividend and split.
+    """
+    assert VINTAGE_BACKFILLABLE_KINDS == ("fred", "cboe")
+    others = [i for i in INGREDIENTS if i.kind not in VINTAGE_BACKFILLABLE_KINDS]
+    assert {i.kind for i in others} == {"yahoo", "multpl", "lbma", "hermes", "manual"}
     for ing in others:
         with pytest.raises(ValueError):
             build_backfill_adapter(ing, OBS, CLOCK)
+
+
+def test_a_cboe_ingredient_routes_to_a_dated_cboe_adapter_and_is_asked_no_vintage_question(
+        monkeypatch):
+    """The other half of the boundary above: the kind that was added actually goes somewhere.
+
+    ``requires_original_vintage`` must not be CONSULTED — it answers about a FRED pair, and
+    its fail-safe ``True`` would point a Cboe index id at the ALFRED adapter. Asserting the
+    returned type alone would not catch that: a dispatch that asked the question and then
+    ignored the answer would still hand back a ``CboeAdapter``. So the function is replaced
+    with one that fails the test by name if it is reached at all.
+    """
+    def explode(*args, **kwargs):
+        raise AssertionError("a FRED vintage question was asked about a non-FRED ingredient")
+
+    monkeypatch.setattr("ingestion.backfill_adapters.requires_original_vintage", explode)
+    cboe = [i for i in INGREDIENTS if i.kind == "cboe"]
+    assert {i.source_id for i in cboe} == {"cboe.VIX", "cboe.VIX3M", "cboe.SKEW"}
+    for ing in cboe:
+        adapter = build_backfill_adapter(ing, OBS, CLOCK)
+        assert type(adapter) is A.CboeAdapter, ing.source_id
+        # The date reached it, and reaching it is the whole difference between a backfill
+        # and a re-read of this week's close.
+        assert adapter._observation_date == OBS
+        assert adapter._url() == build_adapter(ing, CLOCK)._url(), (
+            "the URL is static: a dated Cboe request asks for the same body the live one does"
+        )
 
 
 # --- TWO: the live loop cannot reach the vintage adapter ------------------------------- #

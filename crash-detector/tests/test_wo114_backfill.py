@@ -60,6 +60,7 @@ from crash_detector.collectors.adapter import AdapterFetchError
 from ingestion import backfill as B
 from ingestion.backfill import (BACKFILL_PACING_SECONDS, BACKFILL_POLICY,
                                 REFUSED_STABILITY_UNMEASURED, backfill_range)
+from ingestion.backfill_adapters import VINTAGE_BACKFILLABLE_KINDS
 from ingestion.backfill_adapters import build_backfill_adapter as _real_build_backfill_adapter
 from ingestion.catalog import INGREDIENTS
 from ingestion.store import SqliteStore
@@ -578,13 +579,18 @@ def test_the_shipped_policy_and_pacing_are_the_declared_ones(store):
 # --- SEVEN: a kind that cannot be backfilled is refused before any date ------------------- #
 
 
-def test_a_non_fred_kind_raises_before_a_single_date_is_touched(store, monkeypatch):
+def test_an_undeclared_kind_raises_before_a_single_date_is_touched(store, monkeypatch):
     """One defect about the whole range, reported once — not buried under a thousand identical
     per-date failures. Measured by an adapter builder that fails the test if it is reached at
-    all, so the refusal is proved to come BEFORE the loop and not from inside it."""
+    all, so the refusal is proved to come BEFORE the loop and not from inside it.
+
+    The set is DERIVED from ``VINTAGE_BACKFILLABLE_KINDS``, not typed: WO-1.16 declared
+    ``cboe`` backfillable, and a test that listed "every kind except fred" would have had to
+    be edited to keep asserting a boundary that had moved underneath it.
+    """
     _no_adapter_may_be_built(monkeypatch)
-    others = [ing for ing in INGREDIENTS if ing.kind != "fred"]
-    assert {ing.kind for ing in others} == {"cboe", "yahoo", "multpl", "lbma", "hermes", "manual"}
+    others = [ing for ing in INGREDIENTS if ing.kind not in VINTAGE_BACKFILLABLE_KINDS]
+    assert {ing.kind for ing in others} == {"yahoo", "multpl", "lbma", "hermes", "manual"}
 
     for ing in others:
         with pytest.raises(ValueError, match="point-in-time backfill is declared only for"):

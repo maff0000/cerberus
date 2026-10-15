@@ -1051,19 +1051,70 @@ class AlfredVintageAdapter(_BaseAdapter):
 
 
 class CboeAdapter(_BaseAdapter):
-    __slots__ = ("_index", "_column")
+    """``cdn-api.cboe.com`` ``{index}_History.csv`` — one static file, read two ways.
+
+    TWO QUESTIONS, ONE URL, AND THE SECOND ONE IS OPT-IN (WO-1.16). With
+    ``observation_date`` left at ``None`` — which is every live call, since
+    ``ingestion.catalog.build_adapter`` has no argument that could set it — this asks "what
+    is this index at now?" and behaves EXACTLY as it always has: :func:`parse_cboe_csv`, the
+    last row. With ``observation_date`` set, which only
+    ``ingestion.backfill_adapters.build_backfill_adapter`` does, it asks "what did this index
+    close at on D?" and the body is read by :func:`parse_cboe_csv_for_date`, which matches D
+    exactly and never by position.
+
+    ONLY THE PARSE CHANGES, AND THAT IS THE WHOLE POINT OF THE SHAPE. :class:`FredAdapter`'s
+    dated mode changes three things together — the URL gains ``cosd``/``coed``, the parser
+    changes, and a 404 becomes EMPTY. Here exactly one of those three is available:
+
+    * **the URL cannot change.** ``cdn-api.cboe.com`` honours NO date-windowing parameter:
+      eight spellings plus two negative controls each returned a body BYTE-IDENTICAL to the
+      bare URL's, same SHA-256 (probed 2026-10-15, ``evidence/wo116_cboe_probe.json``). So
+      :meth:`_url` is untouched and there is nothing for a dated request to ask for;
+    * **a 404 stays a FAILURE in both modes,** where ``FredAdapter`` translates it for a
+      dated request. That carve-out exists because FRED answers "no observation on this date"
+      with a 404 — a real answer to a windowed question. Nothing here is windowed: the only
+      404 this URL can give is "no history file for this index", which is a fetch failure
+      whichever question was asked. A date the index has no session for is an ABSENT ROW in a
+      body that arrived fine, which :func:`parse_cboe_csv_for_date` returns as EMPTY;
+    * **the parse must change,** and it is the one thing that can. Every dated request gets a
+      body whose LAST row is this week's close, so reading by position would answer a 2015
+      backfill with today's number under a 2015 key, every time.
+
+    WHY THE KWARG EXISTS AT ALL, GIVEN THAT IT CANNOT REACH THE URL. The alternative
+    considered was to leave this class alone and have the backfill driver call
+    :func:`parse_cboe_csv_for_date` on the side — and it is the wrong shape, not merely the
+    less tidy one: :meth:`_BaseAdapter.fetch` is the contract (``_acquire`` -> ``_parse`` ->
+    ``as_of_for`` -> the closed schema), ``crash_detector.collectors.collect`` drives it, and
+    a driver that parsed a body itself would be holding a payload that never passed the
+    adapter's own ``response_schema``. It would also need the body, which only ``_acquire``
+    has. So the kwarg: the question an adapter answers is the adapter's own state, and here
+    it happens to be answerable without touching the request.
+
+    ``observation_date`` is KEYWORD-ONLY, matching :class:`FredAdapter`, and is parsed at
+    construction — not because it is interpolated anywhere, but because an unreadable date
+    would match no row and report EMPTY, which would be this adapter saying "Cboe has no
+    session on that date" about a string that was never a date.
+    """
+
+    __slots__ = ("_index", "_column", "_observation_date")
     adapter_id = "cd.ingest.cboe_history_csv.v1"
 
-    def __init__(self, index: str, column: str, **kw: Any) -> None:
+    def __init__(self, index: str, column: str, *,
+                 observation_date: Union[str, None] = None, **kw: Any) -> None:
         super().__init__(**kw)
+        if observation_date is not None:
+            date.fromisoformat(observation_date)
         self._index = index
         self._column = column
+        self._observation_date = observation_date
 
     def _url(self) -> str:
         return f"https://cdn-api.cboe.com/api/global/us_indices/daily_prices/{self._index}_History.csv"
 
     def _parse(self, body: str) -> dict:
-        return parse_cboe_csv(body, self._column, self._unit)
+        if self._observation_date is None:
+            return parse_cboe_csv(body, self._column, self._unit)
+        return parse_cboe_csv_for_date(body, self._column, self._unit, self._observation_date)
 
 
 class YahooChartAdapter(_BaseAdapter):

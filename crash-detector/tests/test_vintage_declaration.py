@@ -36,6 +36,7 @@ from ingestion.vintage import (
     STABILITY_MEASURED_FROM,
     VINTAGE_CURRENT_ONLY,
     VINTAGE_LABELS,
+    VINTAGE_NO_REVISION_MECHANISM,
     VINTAGE_ORIGINAL,
     classify,
     requires_original_vintage,
@@ -167,6 +168,13 @@ def test_a_stable_verdict_is_never_returned_on_a_window_below_the_floor():
     }
 
 
-def test_the_vintage_vocabulary_is_closed_and_the_two_labels_are_distinct():
-    assert VINTAGE_LABELS == (VINTAGE_ORIGINAL, VINTAGE_CURRENT_ONLY)
-    assert len(set(VINTAGE_LABELS)) == 2
+def test_the_vintage_vocabulary_is_closed_and_the_three_labels_are_distinct():
+    """WO-1.16 widened this from two to three, which is the only way it may ever change.
+
+    The assertion is on the EXACT tuple rather than on membership, so a label added anywhere
+    in the tree lands here first: the vocabulary is the ``raw_reading.vintage`` CHECK
+    (``ingestion.store``) and widening it is a schema change, not an import.
+    """
+    assert VINTAGE_LABELS == (VINTAGE_ORIGINAL, VINTAGE_CURRENT_ONLY,
+                              VINTAGE_NO_REVISION_MECHANISM)
+    assert len(set(VINTAGE_LABELS)) == 3
