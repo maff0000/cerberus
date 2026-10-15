@@ -27,6 +27,39 @@ writes it (spec §11). It is opened per pass and closed per pass, mirroring the 
 takes, so a wedged pass cannot sit on the WAL between ticks, and the store's
 idempotent schema-on-write-open is re-asserted every pass rather than once at boot.
 
+ONE PASS A DAY, BECAUSE A READING IS A DAY — AND WHAT THAT STILL DOES NOT GUARANTEE.
+
+``CD_EVALUATE_INTERVAL_SECONDS`` defaults to **86400** and the deployed service sets 86400.
+It read 300 until WO-1.3e, and R2D2's WO-1.3b finding B1 is what that cost: DECISION-RULE.md
+§4 designs this instrument around readings "computed daily" and counts persistence in
+READINGS, so at a 300-second pass ``PROVISIONAL_PERSISTENCE`` was ~15 minutes rather than
+3 days and ``BREADTH_LOOKBACK_ROWS`` reached back ~100 minutes rather than ~20 days. R2D2
+observed the dials flapping live for exactly that reason. The fix is HERE, at the cadence,
+and not in the state machine: ``MachineStateHistoryStore``'s invariant that one row is one
+reading stays simple and TRUE, and no reading has to be classified as one that "does not
+count".
+
+**A PLAIN INTERVAL FROM PROCESS START, NOT AN ALIGNMENT TO A UTC HOUR. ROGUE'S CALL, AND
+THE LIMIT IS DISCLOSED RATHER THAN ARGUED AWAY.** ``stop.wait(86400)`` means the daily pass
+happens at whatever time of day this container last started, plus the few seconds each pass
+takes. Three things decided it:
+
+* **Drift from the interval itself is immaterial.** The slip is one pass's duration per day —
+  seconds — against a 3-12 month-horizon instrument whose inputs are daily closes.
+* **Alignment does not fix the thing that actually perturbs this cadence.** The loop's first
+  act is a PASS, so every restart — redeploy, host reboot — writes a reading immediately,
+  whatever grid the waits are on. Pinning the hour would make the steady-state readings land
+  at the same moment each day; it would not stop a container restarted three times in an
+  afternoon from writing three "daily" readings. **THAT RESIDUAL IS REAL AND IS THIS FILE'S
+  KNOWN LIMIT**: curing it needs either a store-side "one row per UTC day" guard or a
+  suppressed pass at startup, both of which are the day-bucketing this round deliberately
+  did NOT retrofit. Recorded for Trinity and the PO, not quietly absorbed.
+* **WHICH hour is doctrine, and doctrine is not mine to place.** An aligned pass would have
+  to be aligned to something — after the US close, after FRED's publish lag — and picking
+  that is a Product Owner decision about when a day's inputs are in. An arbitrary hour
+  chosen here would read as a calibrated one later, which is the mistake this product keeps
+  writing ``PROVISIONAL`` on numbers to avoid.
+
 Import route: ``PYTHONPATH=/app/src:/app`` — the image's own (see the Dockerfile's ENV).
 """
 
@@ -56,7 +89,10 @@ def main() -> int:
     state_store_path = os.environ.get("CD_STATE_PATH")
     if not state_store_path:
         raise SystemExit("REFUSED: CD_STATE_PATH is unset.")
-    interval = float(os.environ.get("CD_EVALUATE_INTERVAL_SECONDS", "300"))
+    # 86400 — ONE PASS A DAY, AND IT IS A UNIT FIX RATHER THAN A TUNING CHANGE (R2D2's
+    # WO-1.3b finding B1, remediated in WO-1.3e; the module docstring's own section has the
+    # reasoning and the limit this default does NOT cure).
+    interval = float(os.environ.get("CD_EVALUATE_INTERVAL_SECONDS", "86400"))
     signal.signal(signal.SIGTERM, lambda *_: stop.set())
     signal.signal(signal.SIGINT, lambda *_: stop.set())
     print(

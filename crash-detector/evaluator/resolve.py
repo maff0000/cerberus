@@ -1,14 +1,23 @@
 """THE OTHER HALF OF SPEC §3's STATE MACHINE: what the dial OFFICIALLY says, over time.
 
 WO-1.3a round 5, built to ``governance/WO-1.3a-engine-spec.md`` §3 (the second-leg rule,
-rule 5's previous-state condition, ``persistence = 3``) and §7 (how persistence is counted,
-and the 20-row breadth lookback).
+rule 5's previous-state condition, ``persistence``) and §7 (how persistence is counted, and
+the 20-row breadth lookback).
 
 AMENDED BY WO-1.3e ROUND 1 for R2D2's WO-1.3b finding B2: ``ALARM`` may no longer exit
-directly to ``CALM``. One candidate correction, its own section below. Nothing else in
-R2D2's RED verdict is addressed here — the cadence/persistence-unit mismatch (B1), rule 3's
-breadth-only fix (B3), the ``curve_master``/``fiscal_master`` demotion and the UNKNOWN-exit
-floor are later rounds of the same WO and this module is deliberately unchanged for them.
+directly to ``CALM``. One candidate correction, its own section below.
+
+AMENDED AGAIN BY WO-1.3e ROUND 2 for R2D2's finding B1, the cadence/unit mismatch:
+:data:`PROVISIONAL_PERSISTENCE` reads 5 rather than 3, and the constant's own comment carries
+both the reason and the transition rates behind the number. The mismatch itself was never
+this module's — persistence here has always been counted in READINGS and still is; what
+WO-1.3e changes outside this file is what a reading IS (one pass a day, not one every 300
+seconds), which is what makes "5 readings" mean the 5 trading days DECISION-RULE.md §4
+describes. :data:`BREADTH_LOOKBACK_ROWS` is unchanged for the same reason, written out on it.
+
+Nothing else in R2D2's RED verdict is addressed here — rule 3's breadth-only fix (B3), the
+``curve_master``/``fiscal_master`` demotion and the UNKNOWN-exit floor are later rounds of
+the same WO and this module is deliberately unchanged for them.
 
 ====================================================================================
 WHY THIS IS HERE AND NOT IN ``engine/statistics.py`` BESIDE THE CANDIDATE FUNCTION
@@ -58,11 +67,12 @@ WHAT THIS FUNCTION DECIDES, IN THE ORDER SPEC §3 DECIDES IT
 4. **The second-leg rule** (spec §3, DECISION-RULE.md §6): previous official state
    ``RECOVERY`` and this reading's candidate ``ALARM`` (rule 2 or rule 3 fired again) →
    ``ALARM`` NOW, no persistence, counter cleared. A relapse out of recovery is the one
-   transition this product will not make the market wait three readings for.
+   transition this product will not make the market wait :data:`PROVISIONAL_PERSISTENCE`
+   readings for.
 5. **Normal persistence** (spec §3, §7's reading of it): the official state changes to a new
-   candidate only once THIS reading and the 2 immediately preceding rows have all produced
-   that same candidate — 3 rows total, Trinity's provisional reading of "3 consecutive
-   readings", flagged as such in the spec and not settled doctrine.
+   candidate only once THIS reading and the immediately preceding rows have all produced
+   that same candidate — :data:`PROVISIONAL_PERSISTENCE` rows in total, Trinity's provisional
+   reading of WHICH rows count and WO-1.3e's of how many, neither settled doctrine.
 
 ====================================================================================
 ``ALARM`` NEVER EXITS DIRECTLY TO ``CALM`` — AND WHY THE CORRECTION NEEDS NO CLOCK
@@ -73,8 +83,8 @@ this state machine stepping a dial from ``ALARM`` to ``CALM`` with no intermedia
 The route is item 2's mirror image and round 5 closed only item 2's direction: with
 ``trend_confirmed`` hard-wired ``False`` (spec §7's disclosed scope cut) rule 5 cannot fire,
 so a dial sitting in ``ALARM`` whose masters and breadth have genuinely quietened falls
-through spec §3's "Else" chain past rules 2, 3, 4 and 5 to rule 6 — ``CALM``. Three such
-readings and the dial officially says deploy. DECISION-RULE.md §3 asks for exactly the
+through spec §3's "Else" chain past rules 2, 3, 4 and 5 to rule 6 — ``CALM``.
+:data:`PROVISIONAL_PERSISTENCE` such readings and the dial officially says deploy. DECISION-RULE.md §3 asks for exactly the
 opposite ("the halt/exit threshold is hair-trigger; the re-entry threshold is demanding")
 and §6's hysteresis is the mechanism it names for it; a one-step ``ALARM`` → ``CALM`` is not
 hysteresis, it is the absence of it.
@@ -96,9 +106,10 @@ correction's own trigger is extinguished by the transition it causes**:
 * Reading 1 out of ``ALARM``: candidate ``CALM`` → corrected ``WATCH``. Normal persistence
   starts a fresh count toward ``WATCH`` — the preceding row's candidate was not ``WATCH``,
   so there is no streak to extend — and the official state stays ``ALARM``.
-* Readings 2 and 3: the same correction fires again on the same condition, the count reaches
-  :data:`PROVISIONAL_PERSISTENCE`, and the official state becomes ``WATCH``.
-* Reading 4: the preceding row now says ``WATCH``, not ``ALARM``. **The correction's
+* Readings 2 .. :data:`PROVISIONAL_PERSISTENCE`: the same correction fires again on the same
+  condition, the count reaches :data:`PROVISIONAL_PERSISTENCE`, and the official state
+  becomes ``WATCH``.
+* The reading after that: the preceding row now says ``WATCH``, not ``ALARM``. **The correction's
   condition is false and it stops applying by itself** — the candidate stays ``CALM`` and
   ordinary persistence counts toward ``CALM`` from a dial that is genuinely in ``WATCH``.
 
@@ -109,12 +120,12 @@ state is made unreachable.
 **THE FIRST-READING-ONLY ALTERNATIVE IS NOT MERELY MORE MACHINERY — IT REINSTATES THE
 DEFECT**, and that is what settles the question rather than a preference for less code.
 Correct only the first reading and the candidate stream out of ``ALARM`` reads ``WATCH``,
-``CALM``, ``CALM``: reading 2's switch to a different pending candidate destroys the
+``CALM``, ``CALM``, ...: reading 2's switch to a different pending candidate destroys the
 ``WATCH`` streak (this module's own rule, above — the new candidate writes 1), the ``CALM``
-streak then completes on reading 4, and the official state steps ``ALARM`` → ``CALM`` with
-no ``WATCH`` ever having become official. The illegal jump returns one reading later than
-before, now wearing a correction that fired once. A gate that holds for one reading in three
-is not a gate.
+streak then completes one reading later than it otherwise would, and the official state steps
+``ALARM`` → ``CALM`` with no ``WATCH`` ever having become official. The illegal jump returns
+one reading late, now wearing a correction that fired once. A gate that holds for one reading
+in :data:`PROVISIONAL_PERSISTENCE` is not a gate.
 
 **IT CANNOT COLLIDE WITH ITEM 2, AND THE CONDITIONS PROVE THAT RATHER THAN THE ORDERING.**
 Item 2 corrects a ``RECOVERY`` candidate to ``CALM`` only when the dial was NOT in ``ALARM``;
@@ -135,7 +146,8 @@ ACCUMULATING.** Equivalently, on every row this function returns::
     persistence_counter > 0  ⟺  candidate_state is not machine_state
 
 Readings counted are "this one and the ones before it that agreed", so the first reading at
-a new candidate writes 1, the second 2, and the third TRANSITIONS — at which point the
+a new candidate writes 1, the second 2, and the :data:`PROVISIONAL_PERSISTENCE`-th
+TRANSITIONS — at which point the
 clock has been spent and the row's own ``machine_state`` is the record that it fired, so the
 counter reads 0 again. ``0`` therefore means "nothing pending", never "the dial is new".
 
@@ -214,20 +226,45 @@ __all__ = ["PROVISIONAL_PERSISTENCE", "BREADTH_LOOKBACK_ROWS", "official_state_f
 
 #: PROVISIONAL (spec §3, ``persistence``, itself reading DECISION-RULE.md §10's "unset —
 #: calibration" row). How many consecutive readings must produce the same candidate before
-#: the official state changes to it: THIS reading plus the 2 immediately preceding rows
-#: (spec §7's disambiguation, Trinity's provisional reading, flagged there as such).
+#: the official state changes to it: THIS reading plus the 4 immediately preceding rows
+#: (spec §7's disambiguation of WHICH rows count — Trinity's provisional reading, flagged
+#: there as such — with this constant setting HOW MANY).
+#:
+#: **5 SINCE WO-1.3e, WAS 3 (R2D2's WO-1.3b finding B1), AND THE UNIT IS WHY.** Spec §3 and
+#: DECISION-RULE.md §4 both say "3", and §4 says it as "3 consecutive DAILY readings" — but
+#: the deployed evaluator was passing every 300 seconds, so 3 readings was ~15 minutes and
+#: the number was never the one the doctrine had chosen. WO-1.3e sets the cadence to one
+#: pass a day (``CD_EVALUATE_INTERVAL_SECONDS`` 86400, ``deploy/live-dev/compose.yaml``), so
+#: a reading is a day again, and at that cadence R2D2 measured the transition rates this
+#: product would actually run at: **~5.9 transitions/year at 3 readings, ~3.6 at 5, ~1.4 at
+#: 10.** 5 is R2D2's recommendation and the number is quoted here because it is the ONLY
+#: evidence behind the choice — this is a judgement about how often a regime instrument at a
+#: 3-12 month horizon should be allowed to change its mind, not a calibration.
+#:
+#: **THE PO'S DOCUMENTS STILL READ 3 AND THIS IS A DISCLOSED DIVERGENCE, NOT AN AMENDMENT.**
+#: DECISION-RULE.md §4 and ``governance/WO-1.3a-engine-spec.md`` §3 are the Product Owner's
+#: and Trinity's to change; both mark the number *provisional*, which is the licence this
+#: round acts on, but neither has been rewritten here. A reader who needs doctrine should
+#: read them and treat the gap as open until the PO closes it.
 #:
 #: Declared HERE rather than beside the engine's other provisional numbers because this is
 #: the only module that reads it — ``engine/statistics.py`` holds the thresholds its own
 #: rules compare against and says in its docstring that it does no persistence counting, so
 #: a persistence constant sitting there would be a number nothing in that module uses.
 #: Not calibrated, not backtested, and nothing here may be read as a tuned value.
-PROVISIONAL_PERSISTENCE = 3
+PROVISIONAL_PERSISTENCE = 5
 
 #: PROVISIONAL (spec §3 rule 4 / §7). How far back "breadth rising over the last 20
 #: readings" looks. Spec §7's provisional reading is a LOOKBACK COMPARISON and not a
 #: monotonicity requirement, so one earlier number is the whole of it: the row 20 back,
 #: which in a most-recent-first history is index 19.
+#:
+#: **UNCHANGED BY WO-1.3e, AND DELIBERATELY SO.** The number is "20 READINGS" under any
+#: cadence and that is what spec §3 rule 4 asks for; what R2D2's finding B1 broke was the
+#: UNIT, not the count — at the deployed 300-second pass this lookback reached back about
+#: 100 minutes while rule 4's own sentence says 20 readings of a daily instrument. With the
+#: cadence now one pass a day, 20 rows is genuinely ~20 readings ≈ ~4 calendar weeks of
+#: them, so the row count needed no compensating change and did not get one.
 BREADTH_LOOKBACK_ROWS = 20
 
 
@@ -396,8 +433,9 @@ def official_state_for_dial(
         )
         counter = accumulated + 1
         if counter >= PROVISIONAL_PERSISTENCE:
-            # THE TRANSITION. This reading plus the 2 before it all called for the same
-            # state (spec §7's 3 rows), so the dial now says it. The clock is spent and
+            # THE TRANSITION. This reading plus the ones before it all called for the same
+            # state — PROVISIONAL_PERSISTENCE rows, spec §7's rule for which ones they are —
+            # so the dial now says it. The clock is spent and
             # reads 0; the row's own machine_state is the record that it fired.
             official, counter = candidate, 0
         else:

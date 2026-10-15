@@ -96,8 +96,10 @@ data call for?"* — rules 1-6 read as a precedence over one reading's numbers. 
 memory by construction. It never reads ``MachineStateHistoryStore``, it does not know what
 the dial's previous official state was, and it does not count consecutive readings.
 
-The OTHER half — spec §3's ``persistence = 3`` counting (spec §7: the current evaluation plus
-the 2 immediately preceding rows), the second-leg rule, and rule 5's "the PREVIOUS state was
+The OTHER half — spec §3's ``persistence`` counting (spec §7: the current evaluation plus the
+immediately preceding rows, however many ``evaluator.resolve.PROVISIONAL_PERSISTENCE`` asks
+for; it reads 5 since WO-1.3e and is PROVISIONAL there, so no number is quoted here where
+nothing could enforce it), the second-leg rule, and rule 5's "the PREVIOUS state was
 ``ALARM``" condition — is the next round's wrapper around this function, and rule 5's
 declared limit on that boundary is written out on the function itself. Read it before reading
 a ``RECOVERY`` out of this module as a verdict; it is a candidate.
@@ -137,6 +139,7 @@ __all__ = [
     "COUNT_THRESHOLD",
     "PROVISIONAL_BREADTH_MID",
     "PROVISIONAL_BREADTH_HIGH",
+    "PROVISIONAL_BREADTH_RISE_DEADBAND",
     "PROVISIONAL_COUNT_K",
     "EQUITY_CRASH_MASTERS",
     "MONETARY_DEBASEMENT_MASTERS",
@@ -272,7 +275,8 @@ PROVISIONAL_EXIT = 0.5
 COUNT_THRESHOLD = 0.9
 
 #: PROVISIONAL (spec §3, ``B_mid``). The breadth at or beyond which breadth ALONE — when it
-#: is ALSO rising over the 20-reading lookback — is enough for ``WATCH`` under rule 4. Not
+#: is ALSO rising over the 20-reading lookback, by more than
+#: :data:`PROVISIONAL_BREADTH_RISE_DEADBAND` — is enough for ``WATCH`` under rule 4. Not
 #: calibrated, not backtested; one of spec §10's own "unset — calibration" rows.
 PROVISIONAL_BREADTH_MID = 0.35
 
@@ -284,6 +288,24 @@ PROVISIONAL_BREADTH_MID = 0.35
 #: under the mid band would have rules 3 and 4 disagree about which reading is the more
 #: serious, and the numbers being provisional is no licence for them to be incoherent.
 PROVISIONAL_BREADTH_HIGH = 0.55
+
+#: PROVISIONAL (R2D2's WO-1.3b finding B1, remediated in WO-1.3e). HOW MUCH BREADTH MUST
+#: ACTUALLY HAVE RISEN over the lookback before rule 4's breadth limb will call it "rising".
+#:
+#: **THE DEFECT THIS CLOSES WAS LIVE.** Rule 4's limb compared ``here > earlier`` — a bare
+#: ``>`` — so with breadth sitting at or just past :data:`PROVISIONAL_BREADTH_MID` an uptick
+#: of 0.0001 between one reading and the reading 20 back was enough to turn ``CALM`` into a
+#: ``WATCH`` candidate, and the next 0.0001 downtick enough to turn it back. R2D2 observed
+#: exactly that flapping on the live dials. Breadth is a BANDED WEIGHTED MEAN of scaled
+#: scores, so its last decimals are the scaling bands' arithmetic and not a market signal;
+#: a rule that reads them is reading noise. The deadband says how big a move has to be
+#: before the number is allowed to mean something.
+#:
+#: Not calibrated, not backtested: 0.02 is R2D2's suggested placeholder, two breadth points
+#: on a 0-1 scale, and it is a placeholder in exactly the sense every other number here is.
+#: It is a ONE-SIDED band and deliberately so — it raises the bar for claiming a rise, and
+#: nothing anywhere reads "breadth fell", so there is no falling limb to widen symmetrically.
+PROVISIONAL_BREADTH_RISE_DEADBAND = 0.02
 
 #: PROVISIONAL (spec §3, ``k``). How many of a dial's contributing indicators must be at or
 #: beyond :data:`COUNT_THRESHOLD` for rule 3's breadth-and-count ``ALARM``. An ``int``,
@@ -301,6 +323,20 @@ if not PROVISIONAL_BREADTH_MID < PROVISIONAL_BREADTH_HIGH:
         f"high={PROVISIONAL_BREADTH_HIGH}. The two must read mid < high: spec §3 rule 3 "
         "treats the high band as MORE serious than rule 4's mid band, and bands that "
         "invert or coincide make the two rules describe the same reading differently."
+    )
+
+if not 0.0 < PROVISIONAL_BREADTH_RISE_DEADBAND < (
+    PROVISIONAL_BREADTH_HIGH - PROVISIONAL_BREADTH_MID
+):
+    raise AssertionError(
+        f"the breadth rise deadband reads {PROVISIONAL_BREADTH_RISE_DEADBAND} against a "
+        f"mid-to-high band of {PROVISIONAL_BREADTH_HIGH - PROVISIONAL_BREADTH_MID}. It must "
+        "be strictly positive, because a deadband of 0 IS the bare `>` comparison this "
+        "constant exists to replace and a negative one would let a FALL read as a rise; and "
+        "it must be strictly narrower than the gap between rule 4's mid band and rule 3's "
+        "high band, because a deadband at least that wide would make a rise harder to "
+        "evidence than the whole distance from WATCH's threshold to ALARM's — rule 4's limb "
+        "would then be unreachable for any reading rule 3 does not already answer."
     )
 
 
@@ -1018,8 +1054,9 @@ def candidate_state_for_one_reading(
       memory. It does not know the dial's previous official state, it does not count
       consecutive readings, and it never reads ``MachineStateHistoryStore``.
     * **The next round's wrapper** decides whether that answer BECOMES the dial's state:
-      spec §3's ``persistence = 3`` counting (spec §7's reading of it — the current
-      evaluation plus the 2 immediately preceding rows for this dial), the second-leg rule,
+      spec §3's ``persistence`` counting (spec §7's reading of it — the current evaluation
+      plus the immediately preceding rows for this dial, ``PROVISIONAL_PERSISTENCE`` of them
+      in total, 5 since WO-1.3e), the second-leg rule,
       and the previous-state condition rule 5 carries.
 
     Persistence is a property of a SEQUENCE of readings; rules 1-6 are properties of ONE. A
@@ -1058,7 +1095,10 @@ def candidate_state_for_one_reading(
     THIS reading, unchanged. ``breadth_20_rows_ago`` is the ONE earlier number rule 4's
     lookback needs — spec §7's provisional reading of "breadth rising over the last 20
     readings" is a simple lookback comparison and not a monotonicity requirement, so one
-    number is the whole of it. **``None`` MEANS "FEWER THAN 20 ROWS OF HISTORY EXIST", WHICH
+    number is the whole of it, and it is read through
+    :data:`PROVISIONAL_BREADTH_RISE_DEADBAND`: breadth must be above it by MORE than the
+    deadband for the limb to call that a rise (WO-1.3e, R2D2's finding B1). **``None`` MEANS
+    "FEWER THAN 20 ROWS OF HISTORY EXIST", WHICH
     IS "CANNOT CONFIRM RISING" AND NEVER "DID NOT RISE"** — and the consequence is that
     rule 4's breadth limb cannot fire, while its per-master limb is unaffected. A young
     history therefore cannot be read as a calm one, which is the same sentence
@@ -1117,8 +1157,17 @@ def candidate_state_for_one_reading(
     # WATCH with breadth flat or falling, and breadth rising past the mid band fires WATCH
     # with every master quiet. `earlier is not None` is the first term because an absent
     # lookback means the comparison cannot be made at all.
+    #
+    # `> earlier + PROVISIONAL_BREADTH_RISE_DEADBAND` AND NOT `> earlier` (R2D2's WO-1.3b
+    # finding B1, remediated in WO-1.3e; the constant carries the reasoning). A rise has to
+    # be bigger than the deadband to count as one: with the bare `>`, breadth parked at the
+    # mid band flapped WATCH/CALM on the last decimals of a weighted mean. "Rising" stays a
+    # STRICT claim — a move of exactly the deadband is not a rise either, for the same
+    # reason an unchanged number never was.
     rising_into_the_mid_band = (
-        earlier is not None and here > earlier and here >= PROVISIONAL_BREADTH_MID
+        earlier is not None
+        and here > earlier + PROVISIONAL_BREADTH_RISE_DEADBAND
+        and here >= PROVISIONAL_BREADTH_MID
     )
     if (
         any(master.score >= PROVISIONAL_WARNING for master in acute.masters)

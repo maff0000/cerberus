@@ -52,7 +52,13 @@ services:
     environment:
       CD_COLLECT_INTERVAL_SECONDS: "300"
 
-  # THE EVALUATOR: the WO-1.3a state machine, one pass every CD_EVALUATE_INTERVAL_SECONDS.
+  # THE EVALUATOR: the WO-1.3a state machine, one pass every CD_EVALUATE_INTERVAL_SECONDS —
+  # 86400, ONE PASS A DAY since WO-1.3e. It was 300 and that was R2D2's WO-1.3b finding B1:
+  # DECISION-RULE.md §4 counts persistence in READINGS and designs them as daily, so at a
+  # 5-minute pass a 3-reading transition was 15 minutes and the 20-reading breadth lookback
+  # was 100 minutes. The collector above stays at 300 — it FETCHES, and fetching often is how
+  # the daily reading finds fresh inputs; the two intervals answer different questions and
+  # their now being different is the point, not a drift between them.
   #
   # network_mode: none — spec §10 item 1. Kernel-enforced and measured, not a declared policy
   # nothing in this stack reads: this process reaches SQLite files and nothing else, so it is given
@@ -86,7 +92,7 @@ services:
       - cd-live-data:/data
       - cd-live-state:/state
     environment:
-      CD_EVALUATE_INTERVAL_SECONDS: "300"
+      CD_EVALUATE_INTERVAL_SECONDS: "86400"
 
   cd-live-gui:
     <<: *live

@@ -141,13 +141,21 @@ def test_an_empty_store_path_is_refused_too(loop, paths, monkeypatch, blank):
 # --- the timer --------------------------------------------------------------------------- #
 
 
-def test_the_interval_defaults_to_three_hundred_seconds(loop, paths, monkeypatch):
-    """The default the spec names (§11), read off what the loop actually waited for."""
+def test_the_interval_defaults_to_one_day(loop, paths, monkeypatch):
+    """86400 seconds, read off what the loop actually waited for — and WHY 86400.
+
+    It was 300 until WO-1.3e, which is R2D2's WO-1.3b finding B1: DECISION-RULE.md §4 counts
+    persistence in READINGS and designs a reading as DAILY, so a 5-minute pass made
+    ``PROVISIONAL_PERSISTENCE`` readings ~15 minutes and ``BREADTH_LOOKBACK_ROWS`` ~100
+    minutes. The assertion is spelled as a day in seconds rather than as the literal 86400 so
+    that what is under test reads as the UNIT it is: one reading, one day.
+    """
+    one_day_in_seconds = 24 * 60 * 60
     ticker = _Ticker(passes=1)
     monkeypatch.setattr(loop, "stop", ticker)
     monkeypatch.setattr(loop, "one_pass_for_both_dials", lambda **_: {})
     assert loop.main() == 0
-    assert ticker.waits == [300.0]
+    assert ticker.waits == [float(one_day_in_seconds)]
 
 
 def test_the_interval_env_var_is_what_the_loop_waits_for(loop, paths, monkeypatch):
@@ -211,13 +219,21 @@ def test_a_failed_pass_is_logged_to_stderr_and_the_next_pass_still_runs(
 
 def test_a_failed_pass_still_waits_the_interval_rather_than_spinning(loop, paths, monkeypatch):
     """``stop.wait`` is after the ``except``, not inside the ``try``: a feed outage that fails
-    every pass must not become a hot loop hammering the store."""
+    every pass must not become a hot loop hammering the store.
+
+    The interval is set EXPLICITLY rather than left to the module default, because what is
+    under test here is that a failed pass waits *the configured interval* — not what that
+    interval happens to be. The default is pinned by
+    ``test_the_interval_defaults_to_one_day`` alone, so a future change to it moves one
+    assertion rather than every test that merely needs *some* interval.
+    """
     ticker = _Ticker(passes=2)
+    monkeypatch.setenv("CD_EVALUATE_INTERVAL_SECONDS", "11.25")
     monkeypatch.setattr(loop, "stop", ticker)
     monkeypatch.setattr(loop, "one_pass_for_both_dials",
                         lambda **_: (_ for _ in ()).throw(RuntimeError("down")))
     loop.main()
-    assert ticker.waits == [300.0, 300.0]
+    assert ticker.waits == [11.25, 11.25]
 
 
 # --- signals ----------------------------------------------------------------------------- #

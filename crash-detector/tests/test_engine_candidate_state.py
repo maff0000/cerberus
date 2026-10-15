@@ -32,7 +32,8 @@ removing the ability to place a master's score exactly where a threshold boundar
 EVERY NUMBER IN THIS FILE IS A TEST FIXTURE CHOSEN AGAINST A PROVISIONAL THRESHOLD. The
 thresholds themselves (``PROVISIONAL_WARNING`` 0.6, ``PROVISIONAL_STRESS`` 0.85,
 ``PROVISIONAL_EXIT`` 0.5, ``COUNT_THRESHOLD`` 0.9, ``PROVISIONAL_BREADTH_MID`` 0.35,
-``PROVISIONAL_BREADTH_HIGH`` 0.55, ``PROVISIONAL_COUNT_K`` 3) are the Product Owner's
+``PROVISIONAL_BREADTH_HIGH`` 0.55, ``PROVISIONAL_BREADTH_RISE_DEADBAND`` 0.02,
+``PROVISIONAL_COUNT_K`` 3) are the Product Owner's
 uncalibrated placeholders per PO-DECISIONS-0025 r3, so no score, breadth or count below
 claims anything about any indicator's real distribution. They are compared against the
 CONSTANTS rather than against literals wherever the comparison is the point, so a
@@ -46,6 +47,7 @@ from crash_detector.dials.scores import EQUITY_DIAL_ID
 from crash_detector.engine.statistics import (
     PROVISIONAL_BREADTH_HIGH,
     PROVISIONAL_BREADTH_MID,
+    PROVISIONAL_BREADTH_RISE_DEADBAND,
     PROVISIONAL_COUNT_K,
     PROVISIONAL_EXIT,
     PROVISIONAL_STRESS,
@@ -222,8 +224,9 @@ def test_rule_3_breadth_and_count_together_alarm_with_every_master_quiet():
 def test_rule_4_breadth_rising_past_the_mid_band_watches_with_every_master_quiet():
     """Rule 4, BREADTH LIMB ALONE: no master is at warning, and breadth genuinely rose.
 
-    0.30 twenty rows ago, 0.40 now: strictly higher, and at or past the mid band (0.35).
-    Held false elsewhere:
+    0.30 twenty rows ago, 0.40 now: higher by 0.10, which clears
+    ``PROVISIONAL_BREADTH_RISE_DEADBAND`` (0.02) as well as being strictly higher, and at or
+    past the mid band (0.35). Held false elsewhere:
 
     * Rule 2 and rule 4's master limb — both masters at 0.55, under WARNING.
     * Rule 3 — breadth 0.40 is under the high band (0.55) AND nothing is counted, so
@@ -234,7 +237,7 @@ def test_rule_4_breadth_rising_past_the_mid_band_watches_with_every_master_quiet
     """
     earlier, here = 0.30, 0.40
     quiet = 0.55
-    assert here > earlier
+    assert here > earlier + PROVISIONAL_BREADTH_RISE_DEADBAND
     assert PROVISIONAL_BREADTH_MID <= here < PROVISIONAL_BREADTH_HIGH
     assert quiet < PROVISIONAL_WARNING
 
@@ -307,6 +310,72 @@ def test_rule_4_cannot_confirm_rising_when_there_are_fewer_than_20_rows_of_histo
     )
 
     assert state is State.CALM
+
+
+def test_rule_4_a_rise_smaller_than_the_deadband_is_not_a_rise_and_does_not_watch():
+    """THE DEADBAND, AND THE DEFECT IT CLOSES WAS LIVE (R2D2's finding B1, WO-1.3e).
+
+    Breadth sits AT the mid band and ticks up by half the deadband. Before WO-1.3e rule 4's
+    limb read a bare ``here > earlier``, so this reading — and an uptick of 0.0001, which is
+    what R2D2 actually watched happen on the live dials — turned CALM into a WATCH candidate,
+    and the next equally tiny downtick turned it back. Breadth is a banded weighted mean of
+    scaled scores; its last decimals are the bands' arithmetic, not the market. The answer
+    is CALM: nothing in this reading is evidence of a rise.
+
+    THE SECOND READING IS THE BOUNDARY AND IT IS THE SAME CLAIM. A move of EXACTLY the
+    deadband is not a rise either, because "rising" stayed a strict ``>`` — the same reason
+    an unchanged number never counted. One tick past the deadband is the next test, and the
+    three together say where the edge is rather than that there is one somewhere.
+
+    Held false elsewhere, as every test in this file must: both masters at 0.55 (under
+    WARNING, so rule 2 and rule 4's master limb are out, and above EXIT so rule 5 is too,
+    ``trend_confirmed`` being ``False`` besides), breadth under the high band with nothing
+    counted (rule 3).
+    """
+    earlier = PROVISIONAL_BREADTH_MID
+    quiet = 0.55
+    assert quiet < PROVISIONAL_WARNING
+
+    for here in (earlier + PROVISIONAL_BREADTH_RISE_DEADBAND / 2,
+                 earlier + PROVISIONAL_BREADTH_RISE_DEADBAND):
+        assert here > earlier
+        assert PROVISIONAL_BREADTH_MID <= here < PROVISIONAL_BREADTH_HIGH
+
+        state = candidate_state_for_one_reading(
+            breadth=here,
+            acute=acute_of(quiet, quiet),
+            count=count_of(0),
+            breadth_20_rows_ago=earlier,
+            trend_confirmed=False,
+        )
+
+        assert state is State.CALM
+
+
+def test_rule_4_a_rise_bigger_than_the_deadband_is_still_a_rise_and_still_watches():
+    """THE COMPANION, AND THE PAIR IS THE POINT: the deadband narrows the limb, not closes it.
+
+    The identical reading as the test above with ONE number changed — breadth rises by twice
+    the deadband instead of by half of it — and the answer moves from CALM back to WATCH. A
+    deadband that suppressed rule 4's breadth limb outright would pass that test and fail
+    this one, and suppressing the limb is not what finding B1 asked for: a genuine move in
+    breadth must still be able to say WATCH on its own.
+    """
+    earlier = PROVISIONAL_BREADTH_MID
+    here = earlier + PROVISIONAL_BREADTH_RISE_DEADBAND * 2
+    quiet = 0.55
+    assert PROVISIONAL_BREADTH_MID <= here < PROVISIONAL_BREADTH_HIGH
+    assert quiet < PROVISIONAL_WARNING
+
+    state = candidate_state_for_one_reading(
+        breadth=here,
+        acute=acute_of(quiet, quiet),
+        count=count_of(0),
+        breadth_20_rows_ago=earlier,
+        trend_confirmed=False,
+    )
+
+    assert state is State.WATCH
 
 
 def test_rule_5_every_master_under_exit_and_the_trend_confirmed_is_recovery():
