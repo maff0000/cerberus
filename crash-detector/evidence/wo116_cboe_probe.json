@@ -1,0 +1,764 @@
+{
+  "bodies_note": "each body is ~470 KB; recorded as header line, exact row count, span, first/last rows verbatim, byte count and SHA-256, plus the target month's rows verbatim out of the baseline",
+  "credential": "none (this endpoint takes none)",
+  "endpoint": "https://cdn-api.cboe.com/api/global/us_indices/daily_prices/",
+  "indices": [
+    {
+      "adapter_url_today": "https://cdn-api.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv",
+      "cases": [
+        {
+          "asks": "the URL CboeAdapter._url builds TODAY, unchanged: how big is the whole history, how far back does it go, and is it ordered oldest-first the way parse_cboe_csv's read-the-last-row assumes",
+          "case": "baseline_bare_url_as_adapter_builds_it",
+          "http_status": 200,
+          "observed": {
+            "body_bytes": 473737,
+            "column_catalog_names": "CLOSE",
+            "column_catalog_names_present": true,
+            "date_format_parse_cboe_csv_can_read": true,
+            "header_cells": [
+              "DATE",
+              "OPEN",
+              "HIGH",
+              "LOW",
+              "CLOSE"
+            ],
+            "header_line": "DATE,OPEN,HIGH,LOW,CLOSE",
+            "row_count": 9294,
+            "rows_for_month_verbatim": {
+              "month": "2015-06",
+              "rows": [
+                "06/01/2015,13.920000,14.860000,13.470000,13.970000",
+                "06/02/2015,14.720000,15.050000,13.590000,14.240000",
+                "06/03/2015,13.730000,14.200000,13.400000,13.660000",
+                "06/04/2015,14.570000,15.490000,13.990000,14.710000",
+                "06/05/2015,15.010000,15.650000,14.210000,14.210000",
+                "06/08/2015,14.840000,15.500000,14.670000,15.290000",
+                "06/09/2015,15.180000,15.740000,14.470000,14.470000",
+                "06/10/2015,14.240000,14.370000,12.960000,13.220000",
+                "06/11/2015,13.040000,13.220000,12.560000,12.850000",
+                "06/12/2015,13.310000,14.020000,13.300000,13.780000",
+                "06/15/2015,15.480000,15.570000,14.910000,15.390000",
+                "06/16/2015,15.620000,15.620000,14.810000,14.810000",
+                "06/17/2015,14.660000,15.490000,14.070000,14.500000",
+                "06/18/2015,14.030000,14.030000,12.540000,13.190000",
+                "06/19/2015,13.350000,14.000000,12.960000,13.960000",
+                "06/22/2015,13.420000,13.460000,12.430000,12.740000",
+                "06/23/2015,12.500000,12.680000,11.930000,12.110000",
+                "06/24/2015,12.570000,13.330000,12.010000,13.260000",
+                "06/25/2015,12.960000,14.160000,12.920000,14.010000",
+                "06/26/2015,14.130000,14.910000,13.640000,14.020000",
+                "06/29/2015,16.700000,19.500000,15.820000,18.850000",
+                "06/30/2015,17.600000,19.800000,17.490000,18.230000"
+              ]
+            },
+            "rows_head": [
+              "01/02/1990,17.240000,17.240000,17.240000,17.240000",
+              "01/03/1990,18.190000,18.190000,18.190000,18.190000",
+              "01/04/1990,19.220000,19.220000,19.220000,19.220000",
+              "01/05/1990,20.110000,20.110000,20.110000,20.110000"
+            ],
+            "rows_tail": [
+              "10/09/2026,15.340000,15.340000,14.770000,14.840000",
+              "10/12/2026,15.390000,15.530000,15.110000,15.210000",
+              "10/13/2026,15.610000,15.610000,15.170000,15.270000",
+              "10/14/2026,15.170000,17.450000,14.980000,16.870000"
+            ],
+            "sha256": "be4c798459037cbb71c8840f8729f545c32525e1c772bb019930c238d2198d42",
+            "span": [
+              "1990-01-02",
+              "2026-10-14"
+            ],
+            "strictly_ascending_by_date": true,
+            "unreadable_date_cells": 0
+          },
+          "query_appended": null,
+          "question": "Q1",
+          "response_headers": {
+            "Cache-Control": "max-age=60, s-maxage=900, stale-while-revalidate=900",
+            "Content-Type": "text/csv",
+            "ETag": "W/\"462e1de36b112c9e66458297d1432807\"",
+            "Last-Modified": "Thu, 15 Oct 2026 01:21:02 GMT",
+            "Server": "cloudflare",
+            "Vary": "Accept-Encoding",
+            "X-Cache": "Hit from cloudfront"
+          },
+          "url": "https://cdn-api.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv"
+        },
+        {
+          "asks": "a single-date parameter, the shape a CDN file server is likeliest to accept",
+          "case": "q1_param_dt",
+          "http_status": 200,
+          "identical_to_baseline_body": true,
+          "is_control": false,
+          "observed": {
+            "body_bytes": 473737,
+            "column_catalog_names": "CLOSE",
+            "column_catalog_names_present": true,
+            "date_format_parse_cboe_csv_can_read": true,
+            "header_cells": [
+              "DATE",
+              "OPEN",
+              "HIGH",
+              "LOW",
+              "CLOSE"
+            ],
+            "header_line": "DATE,OPEN,HIGH,LOW,CLOSE",
+            "row_count": 9294,
+            "rows_head": [
+              "01/02/1990,17.240000,17.240000,17.240000,17.240000",
+              "01/03/1990,18.190000,18.190000,18.190000,18.190000",
+              "01/04/1990,19.220000,19.220000,19.220000,19.220000",
+              "01/05/1990,20.110000,20.110000,20.110000,20.110000"
+            ],
+            "rows_tail": [
+              "10/09/2026,15.340000,15.340000,14.770000,14.840000",
+              "10/12/2026,15.390000,15.530000,15.110000,15.210000",
+              "10/13/2026,15.610000,15.610000,15.170000,15.270000",
+              "10/14/2026,15.170000,17.450000,14.980000,16.870000"
+            ],
+            "sha256": "be4c798459037cbb71c8840f8729f545c32525e1c772bb019930c238d2198d42",
+            "span": [
+              "1990-01-02",
+              "2026-10-14"
+            ],
+            "strictly_ascending_by_date": true,
+            "unreadable_date_cells": 0
+          },
+          "query_appended": "dt=2015-06-15",
+          "question": "Q1",
+          "response_headers": {
+            "Age": "111",
+            "Cache-Control": "max-age=60, s-maxage=900, stale-while-revalidate=900",
+            "Content-Type": "text/csv",
+            "ETag": "W/\"462e1de36b112c9e66458297d1432807\"",
+            "Last-Modified": "Thu, 15 Oct 2026 01:21:02 GMT",
+            "Server": "cloudflare",
+            "Vary": "Accept-Encoding",
+            "X-Cache": "Hit from cloudfront"
+          },
+          "row_count_delta_vs_baseline": 0,
+          "url": "https://cdn-api.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv?dt=2015-06-15"
+        },
+        {
+          "asks": "the same idea under the most obvious spelling",
+          "case": "q1_param_date",
+          "http_status": 200,
+          "identical_to_baseline_body": true,
+          "is_control": false,
+          "observed": {
+            "body_bytes": 473737,
+            "column_catalog_names": "CLOSE",
+            "column_catalog_names_present": true,
+            "date_format_parse_cboe_csv_can_read": true,
+            "header_cells": [
+              "DATE",
+              "OPEN",
+              "HIGH",
+              "LOW",
+              "CLOSE"
+            ],
+            "header_line": "DATE,OPEN,HIGH,LOW,CLOSE",
+            "row_count": 9294,
+            "rows_head": [
+              "01/02/1990,17.240000,17.240000,17.240000,17.240000",
+              "01/03/1990,18.190000,18.190000,18.190000,18.190000",
+              "01/04/1990,19.220000,19.220000,19.220000,19.220000",
+              "01/05/1990,20.110000,20.110000,20.110000,20.110000"
+            ],
+            "rows_tail": [
+              "10/09/2026,15.340000,15.340000,14.770000,14.840000",
+              "10/12/2026,15.390000,15.530000,15.110000,15.210000",
+              "10/13/2026,15.610000,15.610000,15.170000,15.270000",
+              "10/14/2026,15.170000,17.450000,14.980000,16.870000"
+            ],
+            "sha256": "be4c798459037cbb71c8840f8729f545c32525e1c772bb019930c238d2198d42",
+            "span": [
+              "1990-01-02",
+              "2026-10-14"
+            ],
+            "strictly_ascending_by_date": true,
+            "unreadable_date_cells": 0
+          },
+          "query_appended": "date=2015-06-15",
+          "question": "Q1",
+          "response_headers": {
+            "Age": "113",
+            "Cache-Control": "max-age=60, s-maxage=900, stale-while-revalidate=900",
+            "Content-Type": "text/csv",
+            "ETag": "W/\"462e1de36b112c9e66458297d1432807\"",
+            "Last-Modified": "Thu, 15 Oct 2026 01:21:02 GMT",
+            "Server": "cloudflare",
+            "Vary": "Accept-Encoding",
+            "X-Cache": "Hit from cloudfront"
+          },
+          "row_count_delta_vs_baseline": 0,
+          "url": "https://cdn-api.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv?date=2015-06-15"
+        },
+        {
+          "asks": "Cboe's own web tooling uses camelCase date bounds elsewhere on the site",
+          "case": "q1_param_startDate_endDate",
+          "http_status": 200,
+          "identical_to_baseline_body": true,
+          "is_control": false,
+          "observed": {
+            "body_bytes": 473737,
+            "column_catalog_names": "CLOSE",
+            "column_catalog_names_present": true,
+            "date_format_parse_cboe_csv_can_read": true,
+            "header_cells": [
+              "DATE",
+              "OPEN",
+              "HIGH",
+              "LOW",
+              "CLOSE"
+            ],
+            "header_line": "DATE,OPEN,HIGH,LOW,CLOSE",
+            "row_count": 9294,
+            "rows_head": [
+              "01/02/1990,17.240000,17.240000,17.240000,17.240000",
+              "01/03/1990,18.190000,18.190000,18.190000,18.190000",
+              "01/04/1990,19.220000,19.220000,19.220000,19.220000",
+              "01/05/1990,20.110000,20.110000,20.110000,20.110000"
+            ],
+            "rows_tail": [
+              "10/09/2026,15.340000,15.340000,14.770000,14.840000",
+              "10/12/2026,15.390000,15.530000,15.110000,15.210000",
+              "10/13/2026,15.610000,15.610000,15.170000,15.270000",
+              "10/14/2026,15.170000,17.450000,14.980000,16.870000"
+            ],
+            "sha256": "be4c798459037cbb71c8840f8729f545c32525e1c772bb019930c238d2198d42",
+            "span": [
+              "1990-01-02",
+              "2026-10-14"
+            ],
+            "strictly_ascending_by_date": true,
+            "unreadable_date_cells": 0
+          },
+          "query_appended": "startDate=2015-06-15&endDate=2015-06-15",
+          "question": "Q1",
+          "response_headers": {
+            "Age": "115",
+            "Cache-Control": "max-age=60, s-maxage=900, stale-while-revalidate=900",
+            "Content-Type": "text/csv",
+            "ETag": "W/\"462e1de36b112c9e66458297d1432807\"",
+            "Last-Modified": "Thu, 15 Oct 2026 01:21:02 GMT",
+            "Server": "cloudflare",
+            "Vary": "Accept-Encoding",
+            "X-Cache": "Hit from cloudfront"
+          },
+          "row_count_delta_vs_baseline": 0,
+          "url": "https://cdn-api.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv?startDate=2015-06-15&endDate=2015-06-15"
+        },
+        {
+          "asks": "the terse spelling of the same bounds",
+          "case": "q1_param_start_end",
+          "http_status": 200,
+          "identical_to_baseline_body": true,
+          "is_control": false,
+          "observed": {
+            "body_bytes": 473737,
+            "column_catalog_names": "CLOSE",
+            "column_catalog_names_present": true,
+            "date_format_parse_cboe_csv_can_read": true,
+            "header_cells": [
+              "DATE",
+              "OPEN",
+              "HIGH",
+              "LOW",
+              "CLOSE"
+            ],
+            "header_line": "DATE,OPEN,HIGH,LOW,CLOSE",
+            "row_count": 9294,
+            "rows_head": [
+              "01/02/1990,17.240000,17.240000,17.240000,17.240000",
+              "01/03/1990,18.190000,18.190000,18.190000,18.190000",
+              "01/04/1990,19.220000,19.220000,19.220000,19.220000",
+              "01/05/1990,20.110000,20.110000,20.110000,20.110000"
+            ],
+            "rows_tail": [
+              "10/09/2026,15.340000,15.340000,14.770000,14.840000",
+              "10/12/2026,15.390000,15.530000,15.110000,15.210000",
+              "10/13/2026,15.610000,15.610000,15.170000,15.270000",
+              "10/14/2026,15.170000,17.450000,14.980000,16.870000"
+            ],
+            "sha256": "be4c798459037cbb71c8840f8729f545c32525e1c772bb019930c238d2198d42",
+            "span": [
+              "1990-01-02",
+              "2026-10-14"
+            ],
+            "strictly_ascending_by_date": true,
+            "unreadable_date_cells": 0
+          },
+          "query_appended": "start=2015-06-15&end=2015-06-15",
+          "question": "Q1",
+          "response_headers": {
+            "Age": "116",
+            "Cache-Control": "max-age=60, s-maxage=900, stale-while-revalidate=900",
+            "Content-Type": "text/csv",
+            "ETag": "W/\"462e1de36b112c9e66458297d1432807\"",
+            "Last-Modified": "Thu, 15 Oct 2026 01:21:02 GMT",
+            "Server": "cloudflare",
+            "Vary": "Accept-Encoding",
+            "X-Cache": "Hit from cloudfront"
+          },
+          "row_count_delta_vs_baseline": 0,
+          "url": "https://cdn-api.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv?start=2015-06-15&end=2015-06-15"
+        },
+        {
+          "asks": "the third common spelling of the same bounds",
+          "case": "q1_param_from_to",
+          "http_status": 200,
+          "identical_to_baseline_body": true,
+          "is_control": false,
+          "observed": {
+            "body_bytes": 473737,
+            "column_catalog_names": "CLOSE",
+            "column_catalog_names_present": true,
+            "date_format_parse_cboe_csv_can_read": true,
+            "header_cells": [
+              "DATE",
+              "OPEN",
+              "HIGH",
+              "LOW",
+              "CLOSE"
+            ],
+            "header_line": "DATE,OPEN,HIGH,LOW,CLOSE",
+            "row_count": 9294,
+            "rows_head": [
+              "01/02/1990,17.240000,17.240000,17.240000,17.240000",
+              "01/03/1990,18.190000,18.190000,18.190000,18.190000",
+              "01/04/1990,19.220000,19.220000,19.220000,19.220000",
+              "01/05/1990,20.110000,20.110000,20.110000,20.110000"
+            ],
+            "rows_tail": [
+              "10/09/2026,15.340000,15.340000,14.770000,14.840000",
+              "10/12/2026,15.390000,15.530000,15.110000,15.210000",
+              "10/13/2026,15.610000,15.610000,15.170000,15.270000",
+              "10/14/2026,15.170000,17.450000,14.980000,16.870000"
+            ],
+            "sha256": "be4c798459037cbb71c8840f8729f545c32525e1c772bb019930c238d2198d42",
+            "span": [
+              "1990-01-02",
+              "2026-10-14"
+            ],
+            "strictly_ascending_by_date": true,
+            "unreadable_date_cells": 0
+          },
+          "query_appended": "from=2015-06-15&to=2015-06-15",
+          "question": "Q1",
+          "response_headers": {
+            "Age": "118",
+            "Cache-Control": "max-age=60, s-maxage=900, stale-while-revalidate=900",
+            "Content-Type": "text/csv",
+            "ETag": "W/\"462e1de36b112c9e66458297d1432807\"",
+            "Last-Modified": "Thu, 15 Oct 2026 01:21:02 GMT",
+            "Server": "cloudflare",
+            "Vary": "Accept-Encoding",
+            "X-Cache": "Hit from cloudfront"
+          },
+          "row_count_delta_vs_baseline": 0,
+          "url": "https://cdn-api.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv?from=2015-06-15&to=2015-06-15"
+        },
+        {
+          "asks": "the snake_case spelling of the same bounds",
+          "case": "q1_param_start_date_end_date",
+          "http_status": 200,
+          "identical_to_baseline_body": true,
+          "is_control": false,
+          "observed": {
+            "body_bytes": 473737,
+            "column_catalog_names": "CLOSE",
+            "column_catalog_names_present": true,
+            "date_format_parse_cboe_csv_can_read": true,
+            "header_cells": [
+              "DATE",
+              "OPEN",
+              "HIGH",
+              "LOW",
+              "CLOSE"
+            ],
+            "header_line": "DATE,OPEN,HIGH,LOW,CLOSE",
+            "row_count": 9294,
+            "rows_head": [
+              "01/02/1990,17.240000,17.240000,17.240000,17.240000",
+              "01/03/1990,18.190000,18.190000,18.190000,18.190000",
+              "01/04/1990,19.220000,19.220000,19.220000,19.220000",
+              "01/05/1990,20.110000,20.110000,20.110000,20.110000"
+            ],
+            "rows_tail": [
+              "10/09/2026,15.340000,15.340000,14.770000,14.840000",
+              "10/12/2026,15.390000,15.530000,15.110000,15.210000",
+              "10/13/2026,15.610000,15.610000,15.170000,15.270000",
+              "10/14/2026,15.170000,17.450000,14.980000,16.870000"
+            ],
+            "sha256": "be4c798459037cbb71c8840f8729f545c32525e1c772bb019930c238d2198d42",
+            "span": [
+              "1990-01-02",
+              "2026-10-14"
+            ],
+            "strictly_ascending_by_date": true,
+            "unreadable_date_cells": 0
+          },
+          "query_appended": "start_date=2015-06-15&end_date=2015-06-15",
+          "question": "Q1",
+          "response_headers": {
+            "Age": "120",
+            "Cache-Control": "max-age=60, s-maxage=900, stale-while-revalidate=900",
+            "Content-Type": "text/csv",
+            "ETag": "W/\"462e1de36b112c9e66458297d1432807\"",
+            "Last-Modified": "Thu, 15 Oct 2026 01:21:02 GMT",
+            "Server": "cloudflare",
+            "Vary": "Accept-Encoding",
+            "X-Cache": "Hit from cloudfront"
+          },
+          "row_count_delta_vs_baseline": 0,
+          "url": "https://cdn-api.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv?start_date=2015-06-15&end_date=2015-06-15"
+        },
+        {
+          "asks": "CONTROL: FRED's parameter names, which this endpoint has no reason to know. An identical body here is what makes 'identical body' mean IGNORED above",
+          "case": "q1_param_control_fred_param_names",
+          "http_status": 200,
+          "identical_to_baseline_body": true,
+          "is_control": true,
+          "observed": {
+            "body_bytes": 473737,
+            "column_catalog_names": "CLOSE",
+            "column_catalog_names_present": true,
+            "date_format_parse_cboe_csv_can_read": true,
+            "header_cells": [
+              "DATE",
+              "OPEN",
+              "HIGH",
+              "LOW",
+              "CLOSE"
+            ],
+            "header_line": "DATE,OPEN,HIGH,LOW,CLOSE",
+            "row_count": 9294,
+            "rows_head": [
+              "01/02/1990,17.240000,17.240000,17.240000,17.240000",
+              "01/03/1990,18.190000,18.190000,18.190000,18.190000",
+              "01/04/1990,19.220000,19.220000,19.220000,19.220000",
+              "01/05/1990,20.110000,20.110000,20.110000,20.110000"
+            ],
+            "rows_tail": [
+              "10/09/2026,15.340000,15.340000,14.770000,14.840000",
+              "10/12/2026,15.390000,15.530000,15.110000,15.210000",
+              "10/13/2026,15.610000,15.610000,15.170000,15.270000",
+              "10/14/2026,15.170000,17.450000,14.980000,16.870000"
+            ],
+            "sha256": "be4c798459037cbb71c8840f8729f545c32525e1c772bb019930c238d2198d42",
+            "span": [
+              "1990-01-02",
+              "2026-10-14"
+            ],
+            "strictly_ascending_by_date": true,
+            "unreadable_date_cells": 0
+          },
+          "query_appended": "cosd=2015-06-15&coed=2015-06-15",
+          "question": "Q1",
+          "response_headers": {
+            "Age": "121",
+            "Cache-Control": "max-age=60, s-maxage=900, stale-while-revalidate=900",
+            "Content-Type": "text/csv",
+            "ETag": "W/\"462e1de36b112c9e66458297d1432807\"",
+            "Last-Modified": "Thu, 15 Oct 2026 01:21:02 GMT",
+            "Server": "cloudflare",
+            "Vary": "Accept-Encoding",
+            "X-Cache": "Hit from cloudfront"
+          },
+          "row_count_delta_vs_baseline": 0,
+          "url": "https://cdn-api.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv?cosd=2015-06-15&coed=2015-06-15"
+        },
+        {
+          "asks": "CONTROL: a parameter that certainly does not exist. Separates 'unknown parameters are ignored' from 'unknown parameters are refused'",
+          "case": "q1_param_control_nonsense_param",
+          "http_status": 200,
+          "identical_to_baseline_body": true,
+          "is_control": true,
+          "observed": {
+            "body_bytes": 473737,
+            "column_catalog_names": "CLOSE",
+            "column_catalog_names_present": true,
+            "date_format_parse_cboe_csv_can_read": true,
+            "header_cells": [
+              "DATE",
+              "OPEN",
+              "HIGH",
+              "LOW",
+              "CLOSE"
+            ],
+            "header_line": "DATE,OPEN,HIGH,LOW,CLOSE",
+            "row_count": 9294,
+            "rows_head": [
+              "01/02/1990,17.240000,17.240000,17.240000,17.240000",
+              "01/03/1990,18.190000,18.190000,18.190000,18.190000",
+              "01/04/1990,19.220000,19.220000,19.220000,19.220000",
+              "01/05/1990,20.110000,20.110000,20.110000,20.110000"
+            ],
+            "rows_tail": [
+              "10/09/2026,15.340000,15.340000,14.770000,14.840000",
+              "10/12/2026,15.390000,15.530000,15.110000,15.210000",
+              "10/13/2026,15.610000,15.610000,15.170000,15.270000",
+              "10/14/2026,15.170000,17.450000,14.980000,16.870000"
+            ],
+            "sha256": "be4c798459037cbb71c8840f8729f545c32525e1c772bb019930c238d2198d42",
+            "span": [
+              "1990-01-02",
+              "2026-10-14"
+            ],
+            "strictly_ascending_by_date": true,
+            "unreadable_date_cells": 0
+          },
+          "query_appended": "cerberus_probe_not_a_real_param=1",
+          "question": "Q1",
+          "response_headers": {
+            "Age": "123",
+            "Cache-Control": "max-age=60, s-maxage=900, stale-while-revalidate=900",
+            "Content-Type": "text/csv",
+            "ETag": "W/\"462e1de36b112c9e66458297d1432807\"",
+            "Last-Modified": "Thu, 15 Oct 2026 01:21:02 GMT",
+            "Server": "cloudflare",
+            "Vary": "Accept-Encoding",
+            "X-Cache": "Hit from cloudfront"
+          },
+          "row_count_delta_vs_baseline": 0,
+          "url": "https://cdn-api.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv?cerberus_probe_not_a_real_param=1"
+        }
+      ],
+      "catalog_column": "CLOSE",
+      "index": "VIX",
+      "q2_last_row_safety": {
+        "asks": "if the body is always the whole history and parse_cboe_csv reads its LAST row, what would a per-date backfill of 2015-06-15 get? The hand read finds that date's real row by exact match; the parser is handed the same body. If the two disagree, 'last row' is unsafe for a historical read in exactly the way parse_fred_csv's was (WO-1.15)",
+        "body_span": [
+          "1990-01-02",
+          "2026-10-14"
+        ],
+        "hand_read_by_exact_date_match": {
+          "found": true,
+          "row_verbatim": "06/15/2015,15.480000,15.570000,14.910000,15.390000",
+          "value_in_catalog_column": "15.390000"
+        },
+        "parse_cboe_csv_on_the_same_body": {
+          "observation_date": "2026-10-14",
+          "unit": "index",
+          "value": 16.87
+        },
+        "parser_answers_the_target_date": false,
+        "parser_observation_date": "2026-10-14",
+        "target_date": "2015-06-15"
+      }
+    },
+    {
+      "adapter_url_today": "https://cdn-api.cboe.com/api/global/us_indices/daily_prices/VIX3M_History.csv",
+      "cases": [
+        {
+          "asks": "the URL CboeAdapter._url builds TODAY, unchanged: how big is the whole history, how far back does it go, and is it ordered oldest-first the way parse_cboe_csv's read-the-last-row assumes",
+          "case": "baseline_bare_url_as_adapter_builds_it",
+          "http_status": 200,
+          "observed": {
+            "body_bytes": 219019,
+            "column_catalog_names": "CLOSE",
+            "column_catalog_names_present": true,
+            "date_format_parse_cboe_csv_can_read": true,
+            "header_cells": [
+              "DATE",
+              "OPEN",
+              "HIGH",
+              "LOW",
+              "CLOSE"
+            ],
+            "header_line": "DATE,OPEN,HIGH,LOW,CLOSE",
+            "row_count": 4294,
+            "rows_for_month_verbatim": {
+              "month": "2015-06",
+              "rows": [
+                "06/01/2015,15.480000,15.860000,15.190000,15.410000",
+                "06/02/2015,15.920000,16.000000,15.310000,15.710000",
+                "06/03/2015,15.560000,15.720000,15.240000,15.360000",
+                "06/04/2015,16.010000,16.510000,15.650000,16.280000",
+                "06/05/2015,16.450000,16.660000,15.930000,15.960000",
+                "06/08/2015,16.450000,16.650000,16.220000,16.600000",
+                "06/09/2015,16.820000,16.900000,16.240000,16.250000",
+                "06/10/2015,16.190000,16.190000,15.260000,15.330000",
+                "06/11/2015,15.370000,15.380000,14.990000,15.100000",
+                "06/12/2015,15.510000,15.850000,15.460000,15.610000",
+                "06/15/2015,16.660000,16.680000,16.170000,16.620000",
+                "06/16/2015,16.850000,16.850000,16.200000,16.200000",
+                "06/17/2015,16.120000,16.650000,15.630000,16.220000",
+                "06/18/2015,15.880000,15.880000,14.920000,15.440000",
+                "06/19/2015,15.550000,15.920000,15.400000,15.910000",
+                "06/22/2015,15.450000,15.460000,14.910000,14.990000",
+                "06/23/2015,14.890000,14.890000,14.540000,14.540000",
+                "06/24/2015,14.850000,15.200000,14.490000,15.180000",
+                "06/25/2015,14.960000,15.540000,14.900000,15.520000",
+                "06/26/2015,15.460000,15.950000,15.230000,15.460000",
+                "06/29/2015,16.920000,18.940000,16.430000,18.720000",
+                "06/30/2015,17.830000,19.270000,17.700000,18.470000"
+              ]
+            },
+            "rows_head": [
+              "09/18/2009,25.910000,26.660000,25.910000,26.540000",
+              "09/21/2009,26.960000,27.240000,26.170000,26.230000",
+              "09/22/2009,25.970000,26.210000,25.650000,25.690000",
+              "09/23/2009,25.700000,26.200000,25.010000,26.090000"
+            ],
+            "rows_tail": [
+              "10/09/2026,17.900000,18.010000,17.720000,17.770000",
+              "10/12/2026,17.970000,18.020000,17.850000,17.930000",
+              "10/13/2026,17.970000,18.110000,17.880000,17.960000",
+              "10/14/2026,18.250000,19.120000,17.840000,18.790000"
+            ],
+            "sha256": "5c7101d720f016b2b0725cb2c2ab3df552bc11886e54eccd2c2cb699ef2f7cc8",
+            "span": [
+              "2009-09-18",
+              "2026-10-14"
+            ],
+            "strictly_ascending_by_date": true,
+            "unreadable_date_cells": 0
+          },
+          "query_appended": null,
+          "question": "Q1",
+          "response_headers": {
+            "Cache-Control": "max-age=60, s-maxage=900, stale-while-revalidate=900",
+            "Content-Type": "text/csv",
+            "ETag": "W/\"c52aa3df8cb77b5548b2ceb830682aa9\"",
+            "Last-Modified": "Wed, 14 Oct 2026 22:31:08 GMT",
+            "Server": "cloudflare",
+            "Vary": "Accept-Encoding",
+            "X-Cache": "Hit from cloudfront"
+          },
+          "url": "https://cdn-api.cboe.com/api/global/us_indices/daily_prices/VIX3M_History.csv"
+        }
+      ],
+      "catalog_column": "CLOSE",
+      "index": "VIX3M",
+      "q2_last_row_safety": {
+        "asks": "if the body is always the whole history and parse_cboe_csv reads its LAST row, what would a per-date backfill of 2015-06-15 get? The hand read finds that date's real row by exact match; the parser is handed the same body. If the two disagree, 'last row' is unsafe for a historical read in exactly the way parse_fred_csv's was (WO-1.15)",
+        "body_span": [
+          "2009-09-18",
+          "2026-10-14"
+        ],
+        "hand_read_by_exact_date_match": {
+          "found": true,
+          "row_verbatim": "06/15/2015,16.660000,16.680000,16.170000,16.620000",
+          "value_in_catalog_column": "16.620000"
+        },
+        "parse_cboe_csv_on_the_same_body": {
+          "observation_date": "2026-10-14",
+          "unit": "index",
+          "value": 18.79
+        },
+        "parser_answers_the_target_date": false,
+        "parser_observation_date": "2026-10-14",
+        "target_date": "2015-06-15"
+      }
+    },
+    {
+      "adapter_url_today": "https://cdn-api.cboe.com/api/global/us_indices/daily_prices/SKEW_History.csv",
+      "cases": [
+        {
+          "asks": "the URL CboeAdapter._url builds TODAY, unchanged: how big is the whole history, how far back does it go, and is it ordered oldest-first the way parse_cboe_csv's read-the-last-row assumes",
+          "case": "baseline_bare_url_as_adapter_builds_it",
+          "http_status": 200,
+          "observed": {
+            "body_bytes": 203466,
+            "column_catalog_names": "SKEW",
+            "column_catalog_names_present": true,
+            "date_format_parse_cboe_csv_can_read": true,
+            "header_cells": [
+              "DATE",
+              "SKEW"
+            ],
+            "header_line": "DATE,SKEW",
+            "row_count": 9248,
+            "rows_for_month_verbatim": {
+              "month": "2015-06",
+              "rows": [
+                "06/01/2015,122.430000",
+                "06/02/2015,121.170000",
+                "06/03/2015,124.590000",
+                "06/04/2015,121.980000",
+                "06/05/2015,119.620000",
+                "06/08/2015,118.330000",
+                "06/09/2015,119.400000",
+                "06/10/2015,120.830000",
+                "06/11/2015,125.320000",
+                "06/12/2015,119.260000",
+                "06/15/2015,119.250000",
+                "06/16/2015,120.230000",
+                "06/17/2015,119.090000",
+                "06/18/2015,120.170000",
+                "06/19/2015,119.500000",
+                "06/22/2015,120.520000",
+                "06/23/2015,122.780000",
+                "06/24/2015,119.520000",
+                "06/25/2015,122.680000",
+                "06/26/2015,123.070000",
+                "06/29/2015,124.540000",
+                "06/30/2015,123.880000"
+              ]
+            },
+            "rows_head": [
+              "01/02/1990,126.090000",
+              "01/03/1990,123.340000",
+              "01/04/1990,122.620000",
+              "01/05/1990,121.270000"
+            ],
+            "rows_tail": [
+              "10/09/2026,154.340000",
+              "10/12/2026,155.060000",
+              "10/13/2026,154.740000",
+              "10/14/2026,157.300000"
+            ],
+            "sha256": "c01d74be2b0939b57ab0f1e83a8fa73bb77209c056ad1f7ab928d88ca1c34789",
+            "span": [
+              "1990-01-02",
+              "2026-10-14"
+            ],
+            "strictly_ascending_by_date": true,
+            "unreadable_date_cells": 0
+          },
+          "query_appended": null,
+          "question": "Q1",
+          "response_headers": {
+            "Cache-Control": "max-age=60, s-maxage=900, stale-while-revalidate=900",
+            "Content-Type": "text/csv",
+            "ETag": "W/\"1523a31c64c8290f40f84b203f0fbd23\"",
+            "Last-Modified": "Thu, 15 Oct 2026 01:21:00 GMT",
+            "Server": "cloudflare",
+            "Vary": "Accept-Encoding",
+            "X-Cache": "Miss from cloudfront"
+          },
+          "url": "https://cdn-api.cboe.com/api/global/us_indices/daily_prices/SKEW_History.csv"
+        }
+      ],
+      "catalog_column": "SKEW",
+      "index": "SKEW",
+      "q2_last_row_safety": {
+        "asks": "if the body is always the whole history and parse_cboe_csv reads its LAST row, what would a per-date backfill of 2015-06-15 get? The hand read finds that date's real row by exact match; the parser is handed the same body. If the two disagree, 'last row' is unsafe for a historical read in exactly the way parse_fred_csv's was (WO-1.15)",
+        "body_span": [
+          "1990-01-02",
+          "2026-10-14"
+        ],
+        "hand_read_by_exact_date_match": {
+          "found": true,
+          "row_verbatim": "06/15/2015,119.250000",
+          "value_in_catalog_column": "119.250000"
+        },
+        "parse_cboe_csv_on_the_same_body": {
+          "observation_date": "2026-10-14",
+          "unit": "index",
+          "value": 157.3
+        },
+        "parser_answers_the_target_date": false,
+        "parser_observation_date": "2026-10-14",
+        "target_date": "2015-06-15"
+      }
+    }
+  ],
+  "parser_imported": true,
+  "probed_utc": "2026-10-15",
+  "target_date": "2015-06-15",
+  "user_agent": "python-urllib default (CboeAdapter sends no custom agent either)",
+  "why": "WO-1.16: whether cdn-api.cboe.com's *_History.csv supports ANY date-windowing parameter (Q1) and, independently of that, whether parse_cboe_csv's read-the-last-row already carries the same risk parse_fred_csv's did \u2014 a historical date answered with today's close (Q2)"
+}
