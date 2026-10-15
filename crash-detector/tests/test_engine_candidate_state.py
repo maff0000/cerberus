@@ -22,6 +22,13 @@ and it is why rule 2 comes FIRST; ``test_rule_2...`` is therefore built so that 
 plainly false, and what it establishes is that rule 2 beats rule 4 rather than that rule 2
 fires alone. Every other test holds its non-subject rules genuinely false.
 
+**TWO RULES CHANGED IN WO-1.3e AND THE TESTS BELOW ARE WRITTEN AGAINST THE NEW ONES**
+(R2D2's WO-1.3b finding B3). Rule 2 now fires only for an ``alarm_eligible`` master — a
+WATCH-only row at any score does not ALARM — and rule 3 now reads BREADTH ALONE, its
+``count`` conjunct dropped as an interim measure. ``count`` is still computed, still passed
+in and still published; ``PROVISIONAL_COUNT_K`` is no longer a gate. The tests that pin
+those two sentences name ``alarm_eligible`` and ``count`` in their own names.
+
 **CONSTRUCTED, NOT PIPED**, following ``test_engine_masters.py``'s own rule: these tests
 build :class:`~crash_detector.engine.statistics.Acute`, ``AcuteUnknown`` and ``Count``
 directly rather than running contributions through the masters tables. The unit under test
@@ -33,7 +40,7 @@ EVERY NUMBER IN THIS FILE IS A TEST FIXTURE CHOSEN AGAINST A PROVISIONAL THRESHO
 thresholds themselves (``PROVISIONAL_WARNING`` 0.6, ``PROVISIONAL_STRESS`` 0.85,
 ``PROVISIONAL_EXIT`` 0.5, ``COUNT_THRESHOLD`` 0.9, ``PROVISIONAL_BREADTH_MID`` 0.35,
 ``PROVISIONAL_BREADTH_HIGH`` 0.55, ``PROVISIONAL_BREADTH_RISE_DEADBAND`` 0.02,
-``PROVISIONAL_COUNT_K`` 3) are the Product Owner's
+``PROVISIONAL_COUNT_K`` 3, which no rule reads any more) are the Product Owner's
 uncalibrated placeholders per PO-DECISIONS-0025 r3, so no score, breadth or count below
 claims anything about any indicator's real distribution. They are compared against the
 CONSTANTS rather than against literals wherever the comparison is the point, so a
@@ -61,22 +68,31 @@ from crash_detector.engine.statistics import (
 )
 
 
-def acute_of(*scores: float) -> Acute:
-    """An :class:`Acute` whose masters carry exactly ``scores``, highest one named.
+def acute_of_rows(*rows: tuple) -> Acute:
+    """An :class:`Acute` whose masters carry exactly these ``(score, alarm_eligible)`` rows.
 
     The master ids are ``master_1``, ``master_2``, ... and they are FIXTURE NAMES: the unit
-    under test reads ``master.score`` and never a master id, because per-master thresholds
-    would be a dial-keyed table lookup this module does not have (see the import-time
-    uniformity assertion in ``statistics.py``). Naming them after real masters would suggest
-    these scores were real readings of them.
+    under test reads ``master.score`` and ``master.alarm_eligible`` and never a master id,
+    because per-master thresholds would be a dial-keyed table lookup this module does not
+    have (see the import-time uniformity assertion in ``statistics.py``) and the eligibility
+    is carried on the score for exactly that reason. Naming them after real masters would
+    suggest these scores were real readings of them — the REAL demoted rows are exercised
+    through the real tables in ``test_engine_masters.py``.
+
+    ``score`` IS ALWAYS THE MAX OVER EVERY ROW, ELIGIBLE OR NOT, and ``from_master_id``
+    names whichever row that was. That is not this helper being lax: it is what
+    :func:`~crash_detector.engine.statistics.equity_crash_acute` does, because a WATCH-only
+    master is excluded from rule 2 and from nothing else, and a fixture that hid an
+    ineligible master from the maximum would be testing a product that does not exist.
     """
     masters = tuple(
         MasterScore(
             master_id=f"master_{position}",
             dial_id=EQUITY_DIAL_ID,
             score=score,
+            alarm_eligible=alarm_eligible,
         )
-        for position, score in enumerate(scores, start=1)
+        for position, (score, alarm_eligible) in enumerate(rows, start=1)
     )
     highest = max(masters, key=lambda master: master.score)
     return Acute(
@@ -85,6 +101,19 @@ def acute_of(*scores: float) -> Acute:
         from_master_id=highest.master_id,
         masters=masters,
     )
+
+
+def acute_of(*scores: float) -> Acute:
+    """``acute_of_rows`` with every master ALARM-ELIGIBLE, which is the unremarkable case.
+
+    The shorthand exists so that the tests of rules 1 and 3-6 — none of which is about the
+    demotion — read as they did before WO-1.3e. **IT IS A FIXTURE DEFAULT AND NOT A
+    PRODUCTION ONE**: :class:`~crash_detector.engine.statistics.MasterScore` refuses to be
+    built without an explicit ``alarm_eligible`` precisely so that no construction site can
+    silently arm a demoted master, and this file does not hand that property back — every
+    test ABOUT eligibility calls ``acute_of_rows`` and states both values at the call site.
+    """
+    return acute_of_rows(*((score, True) for score in scores))
 
 
 def count_of(at_or_beyond: int, considered: int = 6) -> Count:
@@ -123,8 +152,10 @@ def test_rule_1_an_unknown_acute_is_unknown_and_nothing_else_is_consulted():
 def test_rule_1_beats_an_alarm_the_breadth_count_and_masters_would_otherwise_fire():
     """Rule 1's "Stop; no other rule overrides this", measured against rules 2 AND 3.
 
-    ONE reading, built to fire ``ALARM`` twice over — a master at 0.95 (rule 2) and breadth
-    0.90 with four indicators counted (rule 3) — is run TWICE with only the ``acute``
+    ONE reading, built to fire ``ALARM`` twice over — an eligible master at 0.95 (rule 2)
+    and breadth 0.90 (rule 3, which reads breadth alone since WO-1.3e; the four counted
+    indicators are left in the reading and no longer gate anything) — is run TWICE with
+    only the ``acute``
     argument swapped. With the masters resolvable it is ``ALARM``, which is what makes the
     second assertion mean something: the UNKNOWN answer is rule 1 winning, not a quiet
     reading failing to fire anything.
@@ -137,7 +168,6 @@ def test_rule_1_beats_an_alarm_the_breadth_count_and_masters_would_otherwise_fir
     breadth = 0.90
     count = count_of(4)
     assert breadth >= PROVISIONAL_BREADTH_HIGH
-    assert count.count >= PROVISIONAL_COUNT_K
 
     with_every_master_scored = candidate_state_for_one_reading(
         breadth=breadth,
@@ -162,8 +192,8 @@ def test_rule_1_beats_an_alarm_the_breadth_count_and_masters_would_otherwise_fir
     assert with_one_master_unscoreable is State.UNKNOWN
 
 
-def test_rule_2_one_master_at_stress_alarms_with_no_breadth_and_nothing_counted():
-    """Rule 2: a firing master is ``ALARM`` on its own.
+def test_rule_2_one_eligible_master_at_stress_alarms_with_no_breadth_and_nothing_counted():
+    """Rule 2: a firing ALARM-ELIGIBLE master is ``ALARM`` on its own.
 
     Rule 3 is held plainly false — breadth 0.0 is far under the high band and NOTHING is
     counted — so breadth and count cannot be what fired. Spec §3's parenthesis on this rule
@@ -181,7 +211,7 @@ def test_rule_2_one_master_at_stress_alarms_with_no_breadth_and_nothing_counted(
 
     state = candidate_state_for_one_reading(
         breadth=0.0,
-        acute=acute_of(scored_at, 0.10),
+        acute=acute_of_rows((scored_at, True), (0.10, True)),
         count=count_of(0),
         breadth_20_rows_ago=None,
         trend_confirmed=False,
@@ -190,12 +220,159 @@ def test_rule_2_one_master_at_stress_alarms_with_no_breadth_and_nothing_counted(
     assert state is State.ALARM
 
 
-def test_rule_3_breadth_and_count_together_alarm_with_every_master_quiet():
-    """Rule 3: the breadth-and-count ``ALARM``, with no master anywhere near its thresholds.
+def test_rule_2_a_watch_only_master_at_stress_does_not_alarm_and_its_eligible_twin_does():
+    """THE DEMOTION, AND THE PAIR IS THE WHOLE EVIDENCE (R2D2's finding B3, WO-1.3e).
+
+    ONE reading is run TWICE with ONE BIT CHANGED: a master at 0.95 — past STRESS (0.85) —
+    is ``alarm_eligible=False`` in the first call and ``True`` in the second. Nothing else
+    differs. The eligible run is ``ALARM``; the WATCH-only run is ``WATCH``.
+
+    **THE SECOND CALL IS WHAT MAKES THE FIRST ONE MEAN ANYTHING.** A ``WATCH`` out of a
+    reading that could not fire ALARM for some other reason would prove nothing, so the
+    twin establishes that this reading DOES fire rule 2 when the row is armed, and that the
+    field is therefore what suppressed it.
+
+    Everything other than the demoted master is as calm as the arguments allow, which is the
+    condition the remediation was written against: breadth 0.0 (rules 3 and 4's breadth limb
+    out), nothing counted, no lookback, ``trend_confirmed=False``, and the only other master
+    at 0.10. So the WATCH-only run has ONE extreme number in it and the answer is still not
+    ``ALARM`` — there is no combination of calm elsewhere that this test leaves available as
+    an alternative explanation.
+
+    ``WATCH`` and not ``CALM``, and that is rule 4 working as R2D2 asked: 0.95 is at or
+    beyond WARNING too, the master limb of rule 4 does not read ``alarm_eligible``, and a
+    demoted master is capped BELOW ALARM rather than silenced. ``test_a_watch_only_master_at
+    _its_warning_threshold_still_watches`` pins that at the warning boundary itself.
+    """
+    scored_at = 0.95
+    assert scored_at >= PROVISIONAL_STRESS
+
+    demoted = acute_of_rows((scored_at, False), (0.10, True))
+    armed = acute_of_rows((scored_at, True), (0.10, True))
+
+    # THE DEMOTED MASTER IS STILL THE DIAL'S ACUTE READING. Excluded from rule 2 and from
+    # nothing else: it sets the maximum and it is named as the master that set it, so the
+    # reading still SAYS this signal is extreme while declining to call it a crash. (Here
+    # that is the fixture's doing; the same claim against the REAL demoted rows and the real
+    # tables is ``test_engine_masters.py``'s ``test_the_two_watch_only_masters...``.)
+    assert demoted.score == scored_at
+    assert demoted.from_master_id == "master_1"
+    assert demoted.masters[0].alarm_eligible is False
+
+    watch_only = candidate_state_for_one_reading(
+        breadth=0.0,
+        acute=demoted,
+        count=count_of(0),
+        breadth_20_rows_ago=None,
+        trend_confirmed=False,
+    )
+    eligible = candidate_state_for_one_reading(
+        breadth=0.0,
+        acute=armed,
+        count=count_of(0),
+        breadth_20_rows_ago=None,
+        trend_confirmed=False,
+    )
+
+    assert watch_only is State.WATCH
+    assert watch_only is not State.ALARM
+    assert eligible is State.ALARM
+
+
+def test_a_watch_only_master_at_its_warning_threshold_still_watches():
+    """Rule 4's master limb does NOT read ``alarm_eligible``, measured at the boundary.
+
+    The demoted master sits at EXACTLY ``PROVISIONAL_WARNING`` — the first score the limb
+    admits, "at or beyond" — and under STRESS, so rule 2 would not fire for this score even
+    if the row were armed. What this test establishes is therefore not a precedence but a
+    REACH: the limb still sees a master the Owner demoted, and the demotion removed one
+    privilege rather than removing the master from the state machine.
+
+    Held false elsewhere: breadth 0.0 with nothing counted (rule 3), no lookback (rule 4's
+    breadth limb cannot be established), and 0.6 is above EXIT with ``trend_confirmed``
+    ``False`` besides (rule 5).
+
+    **WHY THIS MATTERS MORE THAN IT LOOKS.** If the eligibility term had been applied to the
+    masters tuple once — filtering ``acute.masters`` at the top of the function instead of
+    inside rule 2's generator — this reading would be ``CALM``, the dial would go quiet on a
+    master at its warning level, and the demotion would have become a deletion. The filter
+    belongs to one rule, and this is the test that says so.
+    """
+    at_warning = PROVISIONAL_WARNING
+    assert PROVISIONAL_WARNING <= at_warning < PROVISIONAL_STRESS
+
+    state = candidate_state_for_one_reading(
+        breadth=0.0,
+        acute=acute_of_rows((at_warning, False), (0.10, True)),
+        count=count_of(0),
+        breadth_20_rows_ago=None,
+        trend_confirmed=False,
+    )
+
+    assert state is State.WATCH
+
+
+def test_a_watch_only_master_is_still_required_back_under_exit_before_recovery():
+    """Rule 5 reads EVERY master, eligible or not — the exit limb is not filtered either.
+
+    Two readings, one bit of data apart. In both, the eligible master is at 0.20 (well under
+    EXIT) and ``trend_confirmed`` is ``True``, so rule 5's whole single-reading condition
+    rests on the DEMOTED master:
+
+    * parked at 0.55 — in the hysteresis gap, ABOVE exit — the answer is ``CALM``. "Every
+      master back under its exit threshold" is not satisfied, and a rule 5 that skipped
+      ineligible masters would wrongly read ``RECOVERY`` here.
+    * at 0.40, under exit, everything else identical — the answer is ``RECOVERY``.
+
+    The second reading is what proves the first: without it, ``CALM`` could be any other
+    unmet condition rather than the demoted master holding recovery back.
+
+    **AND THIS IS THE DIRECTION THE DEMOTION MUST NOT BE SYMMETRIC IN.** A master that may
+    not DECLARE a crash must still be able to DELAY the all-clear; R2D2 asked for the row to
+    be capped below ALARM, not for it to be ignored, and "ignored" here would mean the
+    product announcing a recovery while a demoted master was still elevated. Rule 5 is late
+    by design (DECISION-RULE.md §6) and an eligibility filter would have made it early.
+
+    ``RECOVERY`` here is a CANDIDATE and not a verdict, as everywhere in this file: the
+    previous-state and consecutive-readings halves of rule 5 are the wrapper's.
+    """
+    still_elevated = 0.55
+    back_under_exit = 0.40
+    assert PROVISIONAL_EXIT < still_elevated < PROVISIONAL_WARNING
+    assert back_under_exit <= PROVISIONAL_EXIT
+
+    held_back = candidate_state_for_one_reading(
+        breadth=0.0,
+        acute=acute_of_rows((still_elevated, False), (0.20, True)),
+        count=count_of(0),
+        breadth_20_rows_ago=None,
+        trend_confirmed=True,
+    )
+    recovering = candidate_state_for_one_reading(
+        breadth=0.0,
+        acute=acute_of_rows((back_under_exit, False), (0.20, True)),
+        count=count_of(0),
+        breadth_20_rows_ago=None,
+        trend_confirmed=True,
+    )
+
+    assert held_back is State.CALM
+    assert recovering is State.RECOVERY
+
+
+def test_rule_3_breadth_alone_alarms_with_nothing_counted_and_every_master_quiet():
+    """Rule 3 SINCE WO-1.3e: breadth at the high band is ``ALARM`` with NOTHING counted.
+
+    **THIS READING DID NOT FIRE BEFORE WO-1.3e AND THAT IS THE POINT.** The rule read
+    ``breadth >= B_high AND count >= k``; ``count_of(0)`` made the second term false, so the
+    answer was ``CALM``. R2D2's WO-1.3b finding B3 recommends dropping the count conjunct as
+    an interim measure, and the widening is deliberate: breadth is now the WHOLE of rule 3.
 
     Isolation, term by term:
 
-    * Rule 2 false — both masters sit at 0.55, under STRESS.
+    * Rule 2 false — both masters sit at 0.55, under STRESS (and both are eligible, so it
+      is the SCORE that fails the rule here and not the demotion; the demotion tests below
+      hold the score high instead).
     * Rule 4's master limb false — 0.55 is under WARNING (0.6) too.
     * Rule 4's breadth limb false — the lookback is ``None``, so "rising" cannot be
       established at all, which is what makes ``ALARM`` here unambiguously rule 3's.
@@ -204,10 +381,10 @@ def test_rule_3_breadth_and_count_together_alarm_with_every_master_quiet():
       hysteresis band :class:`Master` enforces and the one place where no rule fires.
     """
     breadth = 0.60
-    count = count_of(3)
+    count = count_of(0)
     quiet = 0.55
     assert breadth >= PROVISIONAL_BREADTH_HIGH
-    assert count.count >= PROVISIONAL_COUNT_K
+    assert count.count == 0
     assert PROVISIONAL_EXIT < quiet < PROVISIONAL_WARNING
 
     state = candidate_state_for_one_reading(
@@ -219,6 +396,45 @@ def test_rule_3_breadth_and_count_together_alarm_with_every_master_quiet():
     )
 
     assert state is State.ALARM
+
+
+def test_rule_3_a_high_count_without_the_breadth_does_not_alarm():
+    """THE OTHER HALF OF THE DROP: ``count`` is not a rule 3 term in EITHER direction.
+
+    Dropping a conjunct could be read two ways — "the count is no longer REQUIRED alongside
+    breadth", or "the count is no longer part of the condition at all" — and only the second
+    is what WO-1.3e did. This reading separates them: EVERY considered indicator is at or
+    beyond ``COUNT_THRESHOLD`` (6 of 6, twice ``PROVISIONAL_COUNT_K``) while breadth sits
+    well under the high band. If the count had become a sufficient term of rule 3 in its own
+    right, this would be ``ALARM``.
+
+    It is ``CALM``: the masters are in the 0.5-0.6 hysteresis gap (rules 2, 4's master limb
+    and 5 all false), the lookback is ``None`` (rule 4's breadth limb cannot fire), and
+    breadth 0.20 is under the mid band as well as the high one.
+
+    The reading is INTERNALLY ODD — six indicators at 0.9+ would not yield a breadth of 0.20
+    through the real banded mean — and it is constructed that way on purpose, which is this
+    file's "CONSTRUCTED, NOT PIPED" rule doing its job: the function admits breadth and count
+    as independent arguments and cannot check that they came from one reading (its own
+    DECLARED LIMIT says so), so the only way to show that it ignores one of them is to hand
+    it a pair no real reading would produce.
+    """
+    breadth = 0.20
+    count = count_of(6)
+    quiet = 0.55
+    assert count.count >= PROVISIONAL_COUNT_K
+    assert breadth < PROVISIONAL_BREADTH_MID < PROVISIONAL_BREADTH_HIGH
+    assert PROVISIONAL_EXIT < quiet < PROVISIONAL_WARNING
+
+    state = candidate_state_for_one_reading(
+        breadth=breadth,
+        acute=acute_of(quiet, quiet),
+        count=count,
+        breadth_20_rows_ago=None,
+        trend_confirmed=False,
+    )
+
+    assert state is State.CALM
 
 
 def test_rule_4_breadth_rising_past_the_mid_band_watches_with_every_master_quiet():

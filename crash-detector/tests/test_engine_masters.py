@@ -32,11 +32,14 @@ from crash_detector.dials.scores import (
     Contribution,
 )
 from crash_detector.engine.statistics import (
+    PROVISIONAL_STRESS,
     Acute,
     AcuteUnknown,
     Count,
     MasterScore,
     MasterUnknown,
+    State,
+    candidate_state_for_one_reading,
     count_for_one_dial,
     equity_crash_acute,
     equity_crash_masters,
@@ -150,6 +153,90 @@ def test_a_clean_monetary_reading_names_the_master_that_is_extreme():
         "fiscal_dominance",
         "real_rate_10y_tips",
     )
+
+
+def test_the_two_watch_only_masters_are_carried_as_demoted_and_still_set_the_acute():
+    """THE REAL DEMOTED ROWS, THROUGH THE REAL TABLES (WO-1.3e, R2D2's finding B3).
+
+    ``test_engine_candidate_state.py`` measures what rule 2 DOES with ``alarm_eligible``
+    using constructed masters. This test measures the other half, which only the real tables
+    can answer: that ``curve_master`` and ``fiscal_master`` are the rows carrying
+    ``alarm_eligible=False``, that every other master is still armed, and that the field
+    survives the one and only place a :class:`Master` becomes a
+    :class:`MasterScore` (``_master_result``). A demotion that were correct in the table and
+    lost in the copy would pass every test in the other file.
+
+    Both demoted rows are put at 0.95 — past ``PROVISIONAL_STRESS`` — with everything else
+    on their dial flat at 0.2, so each is unambiguously its dial's acute maximum. **IT IS
+    STILL THE ACUTE READING AND IT IS STILL NAMED.** Excluded from rule 2 and from nothing
+    else: ``score`` and ``from_master_id`` are the demoted master's, so the dial still
+    reports WHICH signal is extreme while declining to call it a crash.
+
+    The last pair of assertions runs the real acute through the real rule and is the end-to-
+    end sentence this WO exists for: a demoted master past its stress threshold is ``WATCH``
+    and not ``ALARM``. ``breadth`` is 0.0 rather than this reading's own banded mean — the
+    function's DECLARED LIMIT is that it cannot check the three statistics came from one
+    reading, and 0.0 is the strongest available form of "nothing but the master contributed",
+    which is what makes the ``WATCH`` attributable to rule 4's master limb alone.
+    """
+    equity = contributions_of(
+        {
+            "hy_oas": 0.2,
+            "yield_curve_10y3m": 0.95,
+            "yield_curve_10y2y": 0.2,
+            "vix_level": 0.2,
+            "vix_term_structure": 0.2,
+            "chicago_fed_nfci": 0.2,
+        }
+    )
+    monetary = contributions_of(
+        {
+            "fiscal_dominance": 0.95,
+            "real_rate_10y_tips": 0.2,
+            "broad_dollar": 0.2,
+        }
+    )
+    assert 0.95 >= PROVISIONAL_STRESS
+
+    equity_acute = equity_crash_acute(equity)
+    monetary_acute = monetary_debasement_acute(monetary)
+
+    # WHICH ROWS ARE DEMOTED, read off the tables rather than asserted as a count: the two
+    # ``False`` rows are named, and naming them is what makes a third demotion a test
+    # failure instead of an unnoticed policy change.
+    assert {
+        result.master_id: result.alarm_eligible for result in equity_acute.masters
+    } == {
+        "credit_master": True,
+        "curve_master": False,
+        "volatility_master": True,
+        "financial_conditions_master": True,
+    }
+    assert {
+        result.master_id: result.alarm_eligible for result in monetary_acute.masters
+    } == {
+        "fiscal_master": False,
+        "real_rate_master": True,
+        "currency_master": True,
+    }
+
+    # DEMOTED, NOT REMOVED: each one is still its dial's maximum and is still named for it.
+    assert equity_acute.score == 0.95
+    assert equity_acute.from_master_id == "curve_master"
+    assert monetary_acute.score == 0.95
+    assert monetary_acute.from_master_id == "fiscal_master"
+
+    for acute in (equity_acute, monetary_acute):
+        state = candidate_state_for_one_reading(
+            breadth=0.0,
+            acute=acute,
+            count=Count(at_or_beyond=(), considered=()),
+            breadth_20_rows_ago=None,
+            trend_confirmed=False,
+        )
+
+        assert state is State.WATCH
+        assert state is not State.ALARM
 
 
 def test_one_unscoreable_master_makes_the_whole_dial_unknown():

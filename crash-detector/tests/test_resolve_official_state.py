@@ -117,9 +117,22 @@ def _acute_of(*scores: float) -> Acute:
     ``master_1``, ``master_2``, ... are FIXTURE NAMES, for ``test_engine_masters.py``'s
     reason: no rule in spec §3 reads a master id, and naming these after real masters would
     suggest the scores were real readings of them.
+
+    **EVERY MASTER HERE IS ``alarm_eligible=True``, AND THAT IS A CHOICE THIS FILE MAKES ON
+    PURPOSE.** The subject of this file is the WRAPPER — persistence counting, the previous
+    state, the second-leg rule — and a WATCH-only master would change which CANDIDATE comes
+    out of :func:`candidate_state_for_one_reading` before the wrapper ever ran, so the
+    readings below would no longer be the candidates they are named for. Spec §3 rule 2's
+    eligibility restriction (WO-1.3e, R2D2's finding B3) is measured in
+    ``test_engine_candidate_state.py``, where the candidate is the subject.
     """
     masters = tuple(
-        MasterScore(master_id=f"master_{position}", dial_id=DIAL, score=score)
+        MasterScore(
+            master_id=f"master_{position}",
+            dial_id=DIAL,
+            score=score,
+            alarm_eligible=True,
+        )
         for position, score in enumerate(scores, start=1)
     )
     highest = max(masters, key=lambda master: master.score)
