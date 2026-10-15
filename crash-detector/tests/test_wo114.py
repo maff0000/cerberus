@@ -136,19 +136,24 @@ def test_every_fred_ingredient_routes_exactly_as_the_vintage_declaration_says():
 
 
 def test_a_kind_nobody_has_reasoned_about_is_refused_rather_than_backfilled():
-    """Yahoo, multpl, LBMA, the HERMES peer and manual entry: today's value wearing a past date
-    is the forgery this WO exists to prevent, so the answer is a refusal.
+    """multpl, LBMA, the HERMES peer and manual entry: today's value wearing a past date is
+    the forgery this WO exists to prevent, so the answer is a refusal.
 
-    WO-1.16 MOVED ``cboe`` OUT OF THIS SET and the test says so by deriving the set from
-    :data:`VINTAGE_BACKFILLABLE_KINDS` rather than by listing non-FRED kinds. Cboe is not an
-    exception carved into a refusal — it is a kind with its own probed warrant
-    (:data:`~ingestion.vintage.VINTAGE_NO_REVISION_MECHANISM`), so it routes. ``yahoo`` is the
-    one that stayed, and it is the interesting one: it has no vintage endpoint either, but its
-    ``adjclose`` is retroactively restated by every dividend and split.
+    WO-1.16 MOVED ``cboe`` AND THEN ``yahoo`` OUT OF THIS SET, and the test says so by
+    deriving the set from :data:`VINTAGE_BACKFILLABLE_KINDS` rather than by listing non-FRED
+    kinds — a listed set would have had to be rewritten twice to keep asserting a boundary
+    that had moved underneath it. Neither is an exception carved into a refusal; each has its
+    own probed warrant (:data:`~ingestion.vintage.VINTAGE_NO_REVISION_MECHANISM`), so each
+    routes.
+
+    ``yahoo`` LEAVING THIS SET IS NOT THE SAME AS EVERY YAHOO ROW ROUTING, and that is the
+    one thing a reader of this test must not conclude from it. The kind is admitted for the
+    PRINTED close; the 51 ``adjclose`` rows are still refused, by the adapter rather than by
+    the tuple, and the two tests below hold both halves.
     """
-    assert VINTAGE_BACKFILLABLE_KINDS == ("fred", "cboe")
+    assert VINTAGE_BACKFILLABLE_KINDS == ("fred", "cboe", "yahoo")
     others = [i for i in INGREDIENTS if i.kind not in VINTAGE_BACKFILLABLE_KINDS]
-    assert {i.kind for i in others} == {"yahoo", "multpl", "lbma", "hermes", "manual"}
+    assert {i.kind for i in others} == {"multpl", "lbma", "hermes", "manual"}
     for ing in others:
         with pytest.raises(ValueError):
             build_backfill_adapter(ing, OBS, CLOCK)
@@ -179,6 +184,112 @@ def test_a_cboe_ingredient_routes_to_a_dated_cboe_adapter_and_is_asked_no_vintag
         assert adapter._url() == build_adapter(ing, CLOCK)._url(), (
             "the URL is static: a dated Cboe request asks for the same body the live one does"
         )
+
+
+def test_a_plain_close_yahoo_ingredient_routes_to_a_dated_yahoo_adapter_and_is_asked_no_vintage_question(
+        monkeypatch):
+    """The Cboe test above, for the kind WO-1.16 wired second — and one assertion inverted.
+
+    ``requires_original_vintage`` must not be CONSULTED, for the reason it must not be for
+    Cboe: it answers about a FRED (series, transformation) pair, a Yahoo symbol is not in
+    :data:`~ingestion.vintage.REVISION_STABLE` and never could be, and its fail-safe ``True``
+    would point ``yahoo.SPY`` at the ALFRED adapter. Asserting the returned TYPE would not
+    catch a dispatch that asked the question and ignored the answer, so the function is
+    replaced with one that fails this test by name if it is reached at all.
+
+    WHERE THIS DIVERGES FROM THE CBOE TEST, AND WHY THE DIVERGENCE IS THE POINT. A dated Cboe
+    request addresses the SAME URL as the live one — the body is static and only the row read
+    changes — so that test asserts URL EQUALITY. Yahoo is the opposite: the dated request
+    REPLACES ``range`` with an absolute ``period1``/``period2`` window, because given both in
+    one URL ``range`` silently WINS and the whole relative body comes back
+    (``evidence/wo116_yahoo_window_probe.json``, ``q6_range_and_period_together``). So the
+    assertion here is URL INEQUALITY in a NAMED direction: no ``range=`` at all, and a window
+    whose bounds are the UTC day of the date asked for rather than merely some window.
+
+    THE FIELD IS ASSERTED AGAINST THE LIVE CONSTRUCTOR'S RESOLUTION, not against the literal
+    ``"close"``. The catalog leaves ``column`` empty for the default and
+    ``ingestion.catalog.build_adapter`` resolves it with ``field=ing.column or "close"``; a
+    backfill that resolved it any other way would store a different QUANTITY under the same
+    ingredient than the live collector does, which is the WO-1.14 defect class by field
+    instead of by date. Asserting equality with ``build_adapter``'s own choice is what keeps
+    the two from drifting apart.
+    """
+    def explode(*args, **kwargs):
+        raise AssertionError("a FRED vintage question was asked about a non-FRED ingredient")
+
+    monkeypatch.setattr("ingestion.backfill_adapters.requires_original_vintage", explode)
+    plain = [i for i in INGREDIENTS if i.kind == "yahoo" and i.column == ""]
+    assert {i.source_id for i in plain} == {"yahoo.HYG", "yahoo.LQD", "yahoo.RSP", "yahoo.SPY",
+                                            "yahoo.^GSPC", "yahoo.HG=F", "yahoo.GC=F"}
+    for ing in plain:
+        adapter = build_backfill_adapter(ing, OBS, CLOCK)
+        assert type(adapter) is A.YahooChartAdapter, ing.source_id
+        # The date reached it, and reaching it is the whole difference between a backfill and
+        # a re-read of this week's close.
+        assert adapter._observation_date == OBS
+        assert adapter._field == build_adapter(ing, CLOCK)._field == "close", ing.source_id
+        query = urlsplit(adapter._url()).query
+        assert "range=" not in query, (
+            f"{ing.source_id}: range= silently wins over a period window, so a dated request "
+            f"that kept it would be handed a relative body ending at this morning's bar"
+        )
+        assert "period1=" in query and "period2=" in query, ing.source_id
+        assert "range=" in urlsplit(build_adapter(ing, CLOCK)._url()).query, (
+            f"{ing.source_id}: the LIVE request is the relative one and must stay that way"
+        )
+    # The window is the UTC day of OBS and not merely a window: 2008-09-01T00:00:00Z and the
+    # last second of that day, which is the bound the probe measured (a zero-width window at
+    # midnight returns no bars for a real trading session).
+    spy = urlsplit(build_backfill_adapter(_ing("yahoo.SPY"), OBS, CLOCK)._url()).query
+    assert "period1=1220227200" in spy and "period2=1220313599" in spy, spy
+
+
+def test_an_adjclose_yahoo_ingredient_is_refused_rather_than_handed_a_working_adapter():
+    """THE ROW THE WIRING MUST NOT ADMIT, asked of the real catalog ingredients.
+
+    ``private_credit_stress``'s ``yahoo.BIZD.adj`` and all 50 rows of
+    ``constituent_breadth_200dma``'s sample ask for ``adjclose`` deliberately and with
+    measured cause, and a dated read of that field has no point-in-time meaning at all: it is
+    restated backwards by every dividend and split, forever (PID.md WO-1.16 scope
+    correction). ``yahoo`` being in :data:`VINTAGE_BACKFILLABLE_KINDS` is therefore NOT a
+    statement about these rows, and this test is what keeps the distance between those two
+    sentences from closing by accident.
+
+    THE REFUSAL IS THE ADAPTER'S AND THERE IS DELIBERATELY NO SECOND COPY OF IT HERE, which
+    is the other half of what is asserted. ``build_backfill_adapter`` has no ``adjclose``
+    check of its own; it resolves ``ing.column`` to ``field=`` and the constructor raises
+    before a URL is built or a byte is fetched, so the refusal propagates out of the
+    constructor this function is REQUIRED to call. That is asserted twice over: once by the
+    raise arriving at this call site with the adapter's own words, and once structurally —
+    the function's code contains no ``"adjclose"`` literal, read from its AST so the comment
+    that explains the absence does not read as the check itself. A third copy of the rule
+    would add no defence and one more place for it to drift; the genuinely independent second
+    door is a DIFFERENT question at a different dispatch
+    (``tests/test_vintage_declaration.py``: ``ingestion.backfill`` can derive no label for
+    these rows and stops the range).
+
+    THE LIVE PATH IS ASSERTED STILL TO WORK, because "refuse closed" must not quietly become
+    "refuse". These are live COMPONENTs polled every pass; the refusal is scoped to the DATED
+    question and the undated one is unaffected.
+    """
+    adj = [i for i in INGREDIENTS if i.kind == "yahoo" and i.column == "adjclose"]
+    assert len(adj) == 51 and "yahoo.BIZD.adj" in {i.source_id for i in adj}, (
+        "the adjclose ingredients have changed shape — re-reason this guard"
+    )
+    for ing in adj:
+        with pytest.raises(ValueError, match="adjclose has no"):
+            build_backfill_adapter(ing, OBS, CLOCK)
+        live = build_adapter(ing, CLOCK)
+        assert type(live) is A.YahooChartAdapter and live._field == "adjclose", ing.source_id
+        assert live._observation_date is None, ing.source_id
+
+    source = inspect.getsource(build_backfill_adapter)
+    literals = {node.value for node in ast.walk(ast.parse(source.strip()))
+                if isinstance(node, ast.Constant) and isinstance(node.value, str)}
+    assert "adjclose" not in literals, (
+        "build_backfill_adapter has acquired its own adjclose check; the rule lives in "
+        "YahooChartAdapter.__init__ and a second copy is a second thing to keep in step"
+    )
 
 
 # --- TWO: the live loop cannot reach the vintage adapter ------------------------------- #

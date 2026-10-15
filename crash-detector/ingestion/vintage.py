@@ -307,11 +307,18 @@ NO_REVISION_MECHANISM_KINDS = frozenset({"cboe"})
 #: never asks for ``adjclose``. It did NOT sweep the chart endpoint for an as-of parameter the
 #: way the Cboe probe swept that CSV, and for Cboe the sweep is the whole warrant. So for
 #: ``yahoo`` the no-revision-axis claim on ``close`` rests on the field's nature rather than on
-#: a parameter sweep, and the backfill-wiring round owes that sweep before a Yahoo reading is
-#: STORED under this label — ``yahoo`` is still absent from
+#: a parameter sweep.
+#:
+#: THE WIRING HAS NOW LANDED AND THAT SWEEP HAS NOT, so the sentence that used to stand here
+#: — "``yahoo`` is still absent from
 #: ``ingestion.backfill_adapters.VINTAGE_BACKFILLABLE_KINDS``, so nothing can be stored under
-#: it today, which is what makes declaring the shape now and the wiring later safe rather than
-#: premature.
+#: it today" — is no longer true and is not left standing as though it were. ``yahoo`` is in
+#: that tuple. What made this declaration safe by CONSTRUCTION is therefore gone, and what is
+#: left is this debt stated plainly: the sweep is owed by the round that first points this
+#: backfill at ``query1.finance.yahoo.com`` for real. Nothing has been stored from the live
+#: endpoint yet — the wiring round builds adapters and reads stubbed bodies — so the debt is
+#: still payable before the fact rather than after it. It is recorded here, in the
+#: declaration it would change, rather than in the module that merely obeys it.
 NO_REVISION_MECHANISM_COLUMNS: Mapping[str, frozenset] = {
     "yahoo": frozenset({"", "close"}),
 }

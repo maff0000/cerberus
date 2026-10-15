@@ -1283,8 +1283,12 @@ class YahooChartAdapter(_BaseAdapter):
     sample uses the adjusted close like the legacy tell), while
     :func:`parse_yahoo_chart_for_date` reads ``close`` only — because a backfilled ``adjclose``
     has no point-in-time meaning at all: it drifts retroactively with every dividend and split,
-    for every date before the event, forever (PID.md, WO-1.16 scope correction;
-    ``ingestion.backfill_adapters`` refuses the whole ``yahoo`` kind today for that reason).
+    for every date before the event, forever (PID.md, WO-1.16 scope correction, and the
+    reason ``ingestion.vintage.NO_REVISION_MECHANISM_COLUMNS`` admits ``close`` and ``""``
+    for this kind and NOT ``adjclose``). THIS RAISE IS WHY THAT IS A REFUSAL RATHER THAN A
+    PREFERENCE: ``ingestion.backfill_adapters.build_backfill_adapter`` routes the ``yahoo``
+    kind with no column check of its own — deliberately, so the rule has one home — so an
+    ``adjclose`` ingredient reaching it is refused HERE, before a URL exists.
     Answering such a request with the UNADJUSTED close would make this adapter report a
     different QUANTITY than the live collector stores under the same ingredient — the WO-1.14
     defect class, by field instead of by date. Whether ``adjclose`` may be backfilled at all is

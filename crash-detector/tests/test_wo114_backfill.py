@@ -659,12 +659,22 @@ def test_an_undeclared_kind_raises_before_a_single_date_is_touched(store, monkey
     all, so the refusal is proved to come BEFORE the loop and not from inside it.
 
     The set is DERIVED from ``VINTAGE_BACKFILLABLE_KINDS``, not typed: WO-1.16 declared
-    ``cboe`` backfillable, and a test that listed "every kind except fred" would have had to
-    be edited to keep asserting a boundary that had moved underneath it.
+    ``cboe`` and then ``yahoo`` backfillable, and a test that listed "every kind except fred"
+    would have had to be edited twice to keep asserting a boundary that had moved underneath
+    it.
+
+    WHAT THIS TEST NO LONGER COVERS, SO THE GAP IS NOT SILENT. ``yahoo`` has left this set,
+    and its 51 ``adjclose`` rows are refused by a DIFFERENT mechanism at a different place —
+    they are a backfillable KIND with an unbackfillable COLUMN, so they reach the label
+    dispatch and stop the range there rather than failing this kind check. That refusal is
+    held by ``tests/test_vintage_declaration.py``
+    (``test_no_adjclose_ingredient_can_be_labelled_no_revision_mechanism``, door 4) and by
+    ``tests/test_wo114.py`` at the adapter constructor. Widening this assertion to cover them
+    would be asserting the wrong boundary.
     """
     _no_adapter_may_be_built(monkeypatch)
     others = [ing for ing in INGREDIENTS if ing.kind not in VINTAGE_BACKFILLABLE_KINDS]
-    assert {ing.kind for ing in others} == {"yahoo", "multpl", "lbma", "hermes", "manual"}
+    assert {ing.kind for ing in others} == {"multpl", "lbma", "hermes", "manual"}
 
     for ing in others:
         with pytest.raises(ValueError, match="point-in-time backfill is declared only for"):

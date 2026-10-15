@@ -35,6 +35,15 @@ WHAT HAPPENS TO ONE DATE, IN ORDER, AND WHY THE FIRST TWO ANSWERS COST NO GET
         store's own discriminator. Before WO-1.16 the gate read ``not original``, which was
         the same thing while there were two labels and would have become a silent wrong
         refusal the moment there were three.
+
+        THE SAME LABEL, A DIFFERENT REPORT, AND THAT IS NOT AN INCONSISTENCY. Yahoo shares
+        ``VINTAGE_NO_REVISION_MECHANISM`` and so shares the absence of a floor, but it does
+        not answer an out-of-range date the way Cboe does: a window entirely before the
+        symbol's first trade is a clean HTTP 400, so it lands in ``failed`` as a fetch
+        FAILURE rather than as an EMPTY (``ingestion.adapters.YahooChartAdapter`` argues at
+        length why that is not translated here or there). Both are dates this backfill does
+        not have, neither stores anything, and the class each carries is what the source
+        actually said rather than a vocabulary this driver imposed on it.
     2.  **Skipped, unfetched** — the source period this date maps to is already admitted.
         Asked of the store BEFORE the fetch (``SqliteStore.is_admitted``) rather than
         discovered after it by ``admit_if_absent``, because the point of a re-runnable range
@@ -49,14 +58,24 @@ WHAT HAPPENS TO ONE DATE, IN ORDER, AND WHY THE FIRST TWO ANSWERS COST NO GET
 THE VINTAGE LABEL IS DERIVED, NOT CONSTANT — AND THIS IS THE ONE PLACE IT IS WRITTEN
     ``VINTAGE_ORIGINAL`` for the vintage branch, ``VINTAGE_CURRENT_ONLY`` for the
     measured-stable one, read off the same ``requires_original_vintage`` call that chose the
-    adapter — and, since WO-1.16, ``VINTAGE_NO_REVISION_MECHANISM`` for a kind whose source
-    was PROBED to have no revision axis at all (``cboe``), which is decided BEFORE and
-    INSTEAD OF that call rather than downstream of it. ``requires_original_vintage`` is a
-    question about a FRED pair; asking it of a Cboe index id would return its fail-safe
-    ``True`` and label a Cboe reading ``original``, which is the overclaim
+    adapter — and, since WO-1.16, ``VINTAGE_NO_REVISION_MECHANISM`` for a source with no
+    revision axis at all, which is decided BEFORE and INSTEAD OF that call rather than
+    downstream of it. ``requires_original_vintage`` is a question about a FRED pair; asking
+    it of a Cboe index id would return its fail-safe ``True`` and label a Cboe reading
+    ``original``, which is the overclaim
     :data:`~ingestion.vintage.VINTAGE_NO_REVISION_MECHANISM` was added to avoid. The
     three-way choice is therefore a three-way choice in the code too, not a third branch
     bolted onto an either/or.
+
+    THE THIRD CASE IS ASKED PER (KIND, COLUMN) AND THE SECOND ARGUMENT IS NOT DECORATION
+    (WO-1.16, and it is what wiring ``yahoo`` changed about this dispatch). ``cboe``
+    qualifies WHOLE — one static body, probed by its bytes, so every column in it is
+    covered. ``yahoo`` qualifies for its PRINTED close and emphatically not for
+    ``adjclose``, which every dividend and split restates backwards forever. So one
+    ``yahoo`` ingredient answers ``True`` here and the next answers ``False``, and the
+    ``False`` does NOT fall through to a FRED question it has no business being asked: it
+    misses the ``fred`` branch too and lands on the raise below, which stops the range. That
+    is the right answer for those rows and not merely a diagnostic — see the comment there.
 
     EACH LABEL IS ITS OWN STATED MEANING WORD FOR WORD, which is the test every one of them
     has to pass here. A reading out of ``AlfredVintageAdapter`` carries the figure the source
@@ -67,7 +86,9 @@ THE VINTAGE LABEL IS DERIVED, NOT CONSTANT — AND THIS IS THE ONE PLACE IT IS W
     :data:`~ingestion.vintage.REVISION_STABLE` plus the date test in step 1 above. A reading
     out of ``CboeAdapter`` carries the figure the one body Cboe publishes holds for that
     date, with no vintage read and no stability measured, which is exactly and only what
-    ``no_revision_mechanism`` says.
+    ``no_revision_mechanism`` says — and a reading out of ``YahooChartAdapter``'s dated mode
+    carries the close Yahoo prints today for the session asked for, on the same terms and
+    under the same label, for the one field that is not restated afterwards.
 
     Labelling the stable branch ``original`` would have a DFF reading from today's body
     claim to be the figure first published — the one claim ``ingestion.vintage`` exists to
@@ -286,9 +307,18 @@ def backfill_range(ing: Ingredient, dates: Sequence[str], sink: SqliteStore,
         vintage = (VINTAGE_ORIGINAL if requires_original_vintage(ing.ref, ing.transformation)
                    else VINTAGE_CURRENT_ONLY)
     else:
-        # Unreachable while VINTAGE_BACKFILLABLE_KINDS and these branches agree. Here
-        # because a kind added to that tuple with no warrant reasoned out for it must stop
-        # the range, not quietly inherit FRED's.
+        # REACHABLE SINCE WO-1.16 WIRED ``yahoo``, and it was not before — worth saying
+        # outright, because the words that stood here called it unreachable and that was
+        # true only while every backfillable kind was backfillable WHOLE. ``yahoo`` is not:
+        # its 51 ``adjclose`` rows are inside VINTAGE_BACKFILLABLE_KINDS and outside
+        # NO_REVISION_MECHANISM_COLUMNS, so they arrive here, and stopping the range is the
+        # RIGHT answer for them rather than a diagnostic for a defect. It remains the
+        # diagnostic too: a kind added to that tuple with no warrant reasoned out for it
+        # stops the range the same way instead of quietly inheriting FRED's. Either way this
+        # is the SECOND of two independent refusals an ``adjclose`` date meets — the first is
+        # ``YahooChartAdapter`` refusing a dated ``adjclose`` fetch at construction, which
+        # this one does not depend on and does not re-ask (``ingestion.vintage``'s
+        # ``has_no_revision_mechanism`` argues the pairing).
         raise ValueError(
             f"{ing.source_id} is kind {ing.kind!r}: declared backfillable but no vintage "
             f"label is derived for it (see ingestion.vintage.NO_REVISION_MECHANISM_KINDS "

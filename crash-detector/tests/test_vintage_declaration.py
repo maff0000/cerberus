@@ -266,7 +266,7 @@ def test_every_plain_close_yahoo_row_the_catalog_collects_answers_true():
     assert has_no_revision_mechanism("yahoo", "close") is True
 
 
-def test_no_adjclose_ingredient_can_be_labelled_no_revision_mechanism(monkeypatch):
+def test_no_adjclose_ingredient_can_be_labelled_no_revision_mechanism():
     """THE LOAD-BEARING GUARD. ``private_credit_stress`` and ``constituent_breadth_200dma``
     must have NO path to :data:`~ingestion.vintage.VINTAGE_NO_REVISION_MECHANISM`.
 
@@ -281,11 +281,17 @@ def test_no_adjclose_ingredient_can_be_labelled_no_revision_mechanism(monkeypatc
     2. ``yahoo`` is not in the WHOLE-BODY tier — which is answered FIRST and would make the
        column list dead code, so this is the door that a one-word edit opens;
     3. ``adjclose`` is in no kind's column list, now or for any kind added later;
-    4. and with the kind-level refusal that currently blocks Yahoo FORCED OPEN, the label
-       dispatch in ``ingestion.backfill`` still refuses the range rather than falling through
-       to a label. That is the second independent defence (the first being
-       ``YahooChartAdapter`` refusing a dated ``adjclose`` fetch at construction) and it is
-       asserted with the first one removed, which is the only way to learn it works.
+    4. and the label dispatch in ``ingestion.backfill`` refuses the range rather than
+       falling through to a label. That is the second independent defence, the first being
+       ``YahooChartAdapter`` refusing a dated ``adjclose`` fetch at construction.
+
+    DOOR 4 USED TO BE A HYPOTHETICAL AND IS NOW THE REAL PATH. It was asserted by
+    monkeypatching ``yahoo`` INTO ``VINTAGE_BACKFILLABLE_KINDS``, because the kind-level
+    refusal was what blocked Yahoo entirely and the only way to learn whether the label
+    dispatch worked was to force that door open. The wiring round put ``yahoo`` in that tuple
+    for real — for its plain closes — so these rows now reach the label dispatch on the
+    ORDINARY path, and the monkeypatch is gone rather than left in place simulating a state
+    that has arrived. The assertion is unchanged and it is strictly stronger for it.
     """
     rows = _adjclose_rows()
     assert rows, "the two adjclose indicators are no longer in the catalog — this guard is dead"
@@ -305,9 +311,11 @@ def test_no_adjclose_ingredient_can_be_labelled_no_revision_mechanism(monkeypatc
     for kind, columns in NO_REVISION_MECHANISM_COLUMNS.items():
         assert "adjclose" not in columns, f"{kind} admits adjclose by column"
 
-    # 4. force the kind-level refusal open and watch the label dispatch refuse anyway.
-    monkeypatch.setattr(B, "VINTAGE_BACKFILLABLE_KINDS",
-                        tuple(B.VINTAGE_BACKFILLABLE_KINDS) + ("yahoo",))
+    # 4. the kind check now PASSES for these rows, and the label dispatch refuses anyway.
+    assert "yahoo" in B.VINTAGE_BACKFILLABLE_KINDS, (
+        "yahoo has left VINTAGE_BACKFILLABLE_KINDS; this door is being asserted against a "
+        "kind-level refusal that already blocks it, which is not what door 4 is for"
+    )
     ing = rows[0]
     with pytest.raises(ValueError) as caught:
         backfill_range(ing, ["2015-06-08"], None, lambda: datetime(2026, 10, 15))

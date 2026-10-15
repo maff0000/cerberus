@@ -33,15 +33,34 @@ revision-prone, AND anything never probed — is backfilled vintage by vintage. 
 is the fail-safe direction and it belongs to ``ingestion.vintage``, not here; this module
 only obeys it.
 
-THE DISPATCH BRANCHES ON ``kind`` FIRST, AND THAT IS NOT TIDINESS (WO-1.16). ``cboe`` is now
-backfillable, and ``requires_original_vintage`` MUST NOT BE ASKED ABOUT IT. The function
-answers a question about a FRED (series, transformation) pair measured against ALFRED's
-vintage trail; a Cboe index id is not in :data:`~ingestion.vintage.REVISION_STABLE` and never
-could be, so asking would return its fail-safe ``True`` — "backfill this from original
-vintages" — about a source that HAS no vintages and for which there is no vintage adapter to
-route to. It would not crash; it would quietly give a confident wrong answer to a question
-that does not apply, which is worse. So the branch is on ``ing.kind``: FRED keeps exactly
-today's logic, Cboe asks nothing and constructs the per-date reader directly.
+THE DISPATCH BRANCHES ON ``kind`` FIRST, AND THAT IS NOT TIDINESS (WO-1.16). ``cboe`` and
+``yahoo`` are now backfillable, and ``requires_original_vintage`` MUST NOT BE ASKED ABOUT
+EITHER. The function answers a question about a FRED (series, transformation) pair measured
+against ALFRED's vintage trail; a Cboe index id and a Yahoo symbol are not in
+:data:`~ingestion.vintage.REVISION_STABLE` and never could be, so asking would return its
+fail-safe ``True`` — "backfill this from original vintages" — about a source that HAS no
+vintages and for which there is no vintage adapter to route to. It would not crash; it would
+quietly give a confident wrong answer to a question that does not apply, which is worse. So
+the branch is on ``ing.kind``: FRED keeps exactly today's logic, Cboe and Yahoo ask nothing
+and construct their per-date readers directly.
+
+WHAT THIS FUNCTION DOES NOT RE-CHECK, AND WHY THE ABSENCE IS THE DECISION (WO-1.16). ``yahoo``
+is backfillable per COLUMN and not per kind — a dated read of ``adjclose`` has no
+point-in-time meaning at all (:data:`~ingestion.vintage.NO_REVISION_MECHANISM_COLUMNS`), and
+two live indicators ask for exactly that column — so there IS a Yahoo ingredient this module
+must never hand back a working adapter for. It does not, and it does not take a line of its
+own to say so: ``ing.column`` is resolved to ``field=`` and handed to
+:class:`~ingestion.adapters.YahooChartAdapter`, whose ``__init__`` RAISES on
+``field="adjclose"`` with an ``observation_date`` set — before a URL is built, before a byte
+is fetched, before this function can return. That raise propagates out of the constructor
+this function is required to call, so it IS this function's refusal; a copy of the rule here
+would add no defence and one more place for it to drift out of step with the adapter that
+enforces it. ``tests/test_wo114.py`` asserts the raise at THIS function's call site with the
+real catalog rows, so what is held is the end-to-end refusal rather than one module's
+politeness. The genuinely independent second door is a DIFFERENT question at a different
+dispatch — ``ingestion.backfill``'s label selection, which can derive no label for
+``yahoo``/``adjclose`` and stops the whole range — and it is independent exactly because it
+does not re-ask this one.
 
 BOTH BRANCHES NOW CONSUME ``observation_date`` (WO-1.15). They ask different sources, but
 they ask the same question — "what does this pair say for the observation dated D?" — and
@@ -72,7 +91,8 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Callable
 
-from ingestion.adapters import ALFRED_HOST, AlfredVintageAdapter, CboeAdapter, FredAdapter
+from ingestion.adapters import (ALFRED_HOST, AlfredVintageAdapter, CboeAdapter, FredAdapter,
+                                YahooChartAdapter)
 from ingestion.catalog import Ingredient
 from ingestion.vintage import requires_original_vintage
 
@@ -103,25 +123,29 @@ __all__ = ["BACKFILL_EGRESS_HOSTS", "VINTAGE_BACKFILLABLE_KINDS", "build_backfil
 #: ALLOWLIST and a ``DEST-ALFRED-001`` entry registered to THAT service. Until then this
 #: declaration is where the host is written down, and no allowlist anywhere permits it —
 #: fail-closed, which is the accurate description of a backfill that does not run yet.
-#: ``cdn-api.cboe.com`` IS DELIBERATELY ABSENT, though WO-1.16 backfills it. This dict is
-#: hosts reached ONLY by the backfill path, and Cboe is not one: the live collector already
-#: reaches that exact host at that exact URL (``ingestion.catalog.EGRESS_HOSTS``), because
-#: the backfill changes only which ROW of the returned body is read. Listing it here would
-#: claim a backfill-only egress destination that does not exist and would owe a second
-#: allowlist entry for a host already allowlisted.
+#: ``cdn-api.cboe.com`` AND ``query1.finance.yahoo.com`` ARE DELIBERATELY ABSENT, though
+#: WO-1.16 backfills both. This dict is hosts reached ONLY by the backfill path, and neither
+#: of them is one: the live collector already reaches both
+#: (``ingestion.catalog.EGRESS_HOSTS``). Cboe is the same host at the same URL — the backfill
+#: changes only which ROW of the returned body is read. Yahoo is the same host at a DIFFERENT
+#: query string (``period1``/``period2`` in place of ``range``), which is not a different
+#: destination: an allowlist entry names a HOST, and that one is already allowlisted for the
+#: live collector that reads the same symbols every pass. Listing either here would claim a
+#: backfill-only egress destination that does not exist and would owe a second allowlist
+#: entry for a host already allowlisted.
 BACKFILL_EGRESS_HOSTS: dict[str, str] = {
     ALFRED_HOST: "Federal Reserve Bank of St. Louis (ALFRED vintage graph CSV; keyless, "
                  "the same public door as fred.stlouisfed.org with a vintage_date parameter)",
 }
 
 #: The ingredient kinds a POINT-IN-TIME backfill has been reasoned about for, stated
-#: positively so every other kind is refused rather than quietly handled. ``yahoo``,
-#: ``multpl``, ``lbma``, the HERMES peer and ``manual`` are absent: a backfill of one of them
-#: would be today's value wearing a past date, which is the forgery this whole WO exists to
-#: prevent — so it is a refusal here, and whether those kinds can be backfilled at all is an
-#: open question with an owner, not a default this module gets to pick.
+#: positively so every other kind is refused rather than quietly handled. ``multpl``,
+#: ``lbma``, the HERMES peer and ``manual`` are absent: a backfill of one of them would be
+#: today's value wearing a past date, which is the forgery this whole WO exists to prevent —
+#: so it is a refusal here, and whether those kinds can be backfilled at all is an open
+#: question with an owner, not a default this module gets to pick.
 #:
-#: TWO KINDS, FOR TWO DIFFERENT REASONS, AND THE REASONS DO NOT GENERALISE (WO-1.16):
+#: THREE KINDS, FOR THREE DIFFERENT REASONS, AND THE REASONS DO NOT GENERALISE (WO-1.16):
 #:
 #: * ``fred`` — ALFRED serves vintages of FRED series, and where it does not have to,
 #:   ``ingestion.vintage``'s evidence MEASURED that revision does not matter. Either way the
@@ -131,12 +155,25 @@ BACKFILL_EGRESS_HOSTS: dict[str, str] = {
 #:   (``evidence/wo116_cboe_probe.json``), out of which one dated row is read by key. What a
 #:   reading from it may claim is narrower than either FRED branch, and the narrower claim
 #:   has its own label: :data:`~ingestion.vintage.VINTAGE_NO_REVISION_MECHANISM`.
+#: * ``yahoo`` — the same label as Cboe and NOT the same scope, which is the one thing about
+#:   this tuple that a reader has to carry away. The chart endpoint has no vintage endpoint
+#:   either and it DOES take an absolute window, so one named session is asked for directly
+#:   (``evidence/wo116_yahoo_window_probe.json``) — but the claim holds for the PRINTED close
+#:   only. ``adjclose`` is restated retroactively by every dividend and split for every date
+#:   before the event, forever (PID.md WO-1.16 scope correction), which is a revision
+#:   mechanism in all but name and the one this label would lie about.
 #:
-#: ``yahoo`` is the one worth naming explicitly, because it looks like ``cboe`` and is not:
-#: it has no vintage endpoint either, but its ``adjclose`` DRIFTS retroactively with every
-#: dividend and split, which is a revision mechanism in all but name
-#: (``ingestion.vintage.NO_REVISION_MECHANISM_KINDS``, PID.md WO-1.16 scope correction).
-VINTAGE_BACKFILLABLE_KINDS = ("fred", "cboe")
+#: SO THIS TUPLE IS NOT THE WHOLE GATE FOR ``yahoo``, AND IT IS NOT MEANT TO BE. ``kind`` is
+#: the wrong granularity for that source;
+#: :data:`~ingestion.vintage.NO_REVISION_MECHANISM_COLUMNS` holds the column half, and both
+#: halves are enforced on the paths that act on them: the
+#: adapter refuses to be CONSTRUCTED for a dated ``adjclose`` read, and ``ingestion.backfill``
+#: refuses to derive a LABEL for one. Widening this tuple to ``yahoo`` therefore admits the
+#: seven plain-close rows and still refuses the 51 ``adjclose`` ones (the two indicators of
+#: PID.md's scope correction); this module's docstring traces that end to end, because "the
+#: kind is backfillable" and "every row of that kind is backfillable" are not the same
+#: sentence and only the first is true here.
+VINTAGE_BACKFILLABLE_KINDS = ("fred", "cboe", "yahoo")
 
 
 def build_backfill_adapter(ing: Ingredient, observation_date: str, clock: Callable[[], datetime]):
@@ -145,16 +182,19 @@ def build_backfill_adapter(ing: Ingredient, observation_date: str, clock: Callab
     ON THE FRED BRANCH: :class:`~ingestion.adapters.AlfredVintageAdapter` when
     ``ingestion.vintage.requires_original_vintage`` says this pair needs the figure as first
     published; :class:`~ingestion.adapters.FredAdapter` when stability was POSITIVELY
-    measured. ON THE CBOE BRANCH: :class:`~ingestion.adapters.CboeAdapter` in its dated mode,
-    with NO vintage question asked — see this module's docstring on why asking one there
-    would be a confident wrong answer rather than an error. A kind outside
-    :data:`VINTAGE_BACKFILLABLE_KINDS` is refused.
+    measured. ON THE CBOE AND YAHOO BRANCHES: :class:`~ingestion.adapters.CboeAdapter` and
+    :class:`~ingestion.adapters.YahooChartAdapter` in their dated modes, with NO vintage
+    question asked — see this module's docstring on why asking one there would be a confident
+    wrong answer rather than an error. A kind outside :data:`VINTAGE_BACKFILLABLE_KINDS` is
+    refused, and so is a ``yahoo`` ingredient asking for ``adjclose`` — by the adapter it
+    would have to be built from, which is the same docstring's second section.
 
-    ``observation_date`` reaches EVERY adapter, and on the two current-body branches it is
+    ``observation_date`` reaches EVERY adapter, and on the three current-body branches it is
     what makes the read a dated one rather than a read of the latest value (WO-1.15,
-    WO-1.16). It is passed by KEYWORD to both: ``history`` is ``FredAdapter``'s third
-    positional parameter and ``column`` is ``CboeAdapter``'s second, and a date must never be
-    able to trade places with either.
+    WO-1.16). It is passed by KEYWORD to all of them, because every one of them already has
+    something else in the positional slots a date could land in: ``history`` (``FredAdapter``
+    third, ``YahooChartAdapter`` second), ``column`` (``CboeAdapter`` second) and ``field``
+    (``YahooChartAdapter`` third). A date must never be able to trade places with any of them.
     """
     if ing.kind not in VINTAGE_BACKFILLABLE_KINDS:
         raise ValueError(
@@ -169,6 +209,18 @@ def build_backfill_adapter(ing: Ingredient, observation_date: str, clock: Callab
                           observation_date=observation_date, **common)
     if ing.kind == "cboe":
         return CboeAdapter(ing.ref, ing.column, observation_date=observation_date, **common)
+    if ing.kind == "yahoo":
+        # The field is resolved EXACTLY as ``ingestion.catalog.build_adapter`` resolves it —
+        # ``ing.column or "close"``, because the catalog leaves ``column`` empty for the
+        # default and the seven plain rows all do. Resolving it any other way here would
+        # backfill a different QUANTITY than the live collector stores under the same
+        # ingredient, which is the WO-1.14 defect class by field instead of by date. For
+        # ``adjclose`` the constructor itself raises, and this module's docstring says why no
+        # check of our own precedes it. ``ing.history`` is passed for the same reason the
+        # FRED branch passes it and with the same effect: a dated read is one bar, so there
+        # is no history in it to carry (``parse_yahoo_chart_for_date``).
+        return YahooChartAdapter(ing.ref, ing.history, field=ing.column or "close",
+                                 observation_date=observation_date, **common)
     # Unreachable while the tuple above and the branches here agree, which is exactly why it
     # is here: a kind ADDED to VINTAGE_BACKFILLABLE_KINDS without a branch must announce
     # itself, not inherit FRED's routing by falling off the end of this function.
