@@ -51,6 +51,15 @@ WHAT EACH SECTION MEASURES
     ``no_revision_mechanism``, and the driver derives that from the KIND without ever
     asking the FRED stability question. Its transport is a static body that ignores every
     parameter, so a date is answered by MATCHING A ROW and by nothing else.
+
+    NINE — the same third warrant reached through a WINDOWED request. ``yahoo`` is the
+    other no-revision-mechanism kind and the asymmetry is the point: its endpoint HONOURS an
+    absolute window, so the date goes out on the wire and the body is already narrowed on
+    arrival, where CBOE's date never leaves the parse. Its gap day is a successful
+    ``200`` with the bar arrays absent — not CBOE's missing row and not FRED's 404 — and that
+    is the mechanism this section exists to hold. It also holds the one Yahoo row the driver
+    must REFUSE: ``adjclose``, a backfillable kind with an unbackfillable column, stopped at
+    the label dispatch before a date is touched.
 """
 
 from __future__ import annotations
@@ -160,9 +169,10 @@ def _partitions(result, dates) -> None:
 
 # --- the transports, offline ------------------------------------------------------------ #
 #
-# THREE fakes, because the three branches ask three DIFFERENT questions of three different
-# endpoints, and the whole point of this file is that the driver treats the answers
-# differently. Each fake's behaviour is a PROBED one, named against the evidence file that
+# FOUR fakes, because the four endpoints ask four DIFFERENT questions, and the whole point of
+# this file is that the driver treats the answers differently. ``_Cboe`` and ``_Yahoo`` serve
+# the same BRANCH and are still two fakes: one cannot be windowed and the other can, which is
+# measured rather than chosen. Each fake's behaviour is a PROBED one, named against the evidence file that
 # recorded it, rather than a guess at how an HTTP API ought to behave.
 
 
@@ -316,6 +326,103 @@ class _Cboe:
         return self.body  # every parameter ignored, every time: the probed behaviour
 
 
+class _Yahoo:
+    """``query1.finance.yahoo.com``'s v8 chart endpoint, offline and WINDOW-AWARE — the one
+    way this branch differs from :class:`_Cboe`, and the reason the two WO-1.16 fakes do not
+    share a line.
+
+    CBOE CANNOT BE WINDOWED AND YAHOO CAN, both measured. ``_Cboe`` answers one fixed body to
+    every URL because the probe found every windowing spelling byte-identical to the bare
+    one; here ``period1``/``period2`` are HONOURED, so a one-day window on a real session is
+    answered with THAT session's bar and nothing else (``evidence/wo116_yahoo_window_probe
+    .json``, ``q1_window_multi_day`` and ``q2_window_one_day_utc_day``, probed 2026-10-15).
+    The date therefore reaches the WIRE on this branch and the body is already narrowed when
+    it arrives — the opposite of CBOE, where the date lives only in the parse.
+
+    THREE BEHAVIOURS, EACH A PROBED CASE:
+
+    * **a window containing bars** — ``200``, exactly the bars whose session-open stamps lie
+      inside it, in stamp order (``q1_window_multi_day``: a wider window really does answer
+      wider, which is what proves the window is applied rather than ignored).
+    * **a window containing no bar** — ``200`` and ``error: null``, ``meta`` complete, and the
+      bar arrays simply ABSENT: no ``timestamp`` key at all and ``"quote":[{}]``
+      (``q3_window_on_non_trading_day``, SPY on Saturday 2015-06-13). NOT a 404, NOT a 400,
+      and not a neighbouring bar. THIS IS THE SHAPE THE WEEKEND TEST BELOW TURNS ON, and it is
+      why :class:`~ingestion.adapters.YahooChartAdapter` needs none of ``FredAdapter``'s
+      404-to-EMPTY translation: Yahoo's gap day is representable as a successful answer.
+    * **an IMPOSSIBLE window** — ``400``. Reversed (``period2`` before ``period1``,
+      ``q5_window_reversed``) or closing entirely before the symbol's first trade
+      (``q4_window_before_first_trade_one_day``/``_one_year``). The bound is read out of the
+      template's own ``meta.firstTradeDate`` rather than typed. This fake IS capable of a 400
+      and the weekend case asserts it issued none — otherwise "a miss, not a transport
+      failure" would be a claim about a fake that could not fail in the first place.
+
+    THE BODY IS THE REAL ONE, REBUILT. ``template`` is a verbatim probed response (see
+    :data:`_YAHOO_SPY_ONE_UTC_DAY`); every answer is that body with ``timestamp`` and
+    ``indicators`` replaced for the window asked about, so ``meta`` — forty-odd keys, a
+    ``currentTradingPeriod`` tree, a ``regularMarketPrice`` that is TODAY's — is the real
+    thing the parser has to reach past on every single request.
+
+    ``indicators`` carries ``quote`` ONLY, where the served body carries an ``adjclose``
+    block beside it. Deliberate, and narrow: the probe records a CLOSE per bar and nothing
+    else, so filling an ``adjclose`` array for 2015-06-11 would be making data up, and no
+    dated Yahoo fetch may ask for that column anyway — the third test in this section is that
+    refusal. A real body's ``adjclose`` block sitting beside the ``quote`` one is exercised
+    verbatim by ``tests/test_ingestion.py``'s parser tests, which is where that belongs.
+
+    A request carrying NO window is answered with EVERY bar this fake holds, which is not a
+    convenience: it is the shape of the defect ``q6_range_and_period_together`` measured —
+    given ``range`` AND a window, range wins and the whole relative body comes back. The
+    first test below calls it directly to show the wrong answer was available.
+    """
+
+    def __init__(self, bars, template: str):
+        #: observation date -> ``(session_open_stamp, close)``, the probe's own figures
+        self.bars = dict(bars)
+        self.template = template
+        #: the symbol's first trade, READ OUT OF the template's meta rather than typed
+        self.first_trade = json.loads(template)["chart"]["result"][0]["meta"]["firstTradeDate"]
+        self.asked: list[str] = []
+        #: the URLs this fake answered 400 to. Asserted EMPTY by the weekend test.
+        self.refused: list[str] = []
+
+    def windows_asked(self) -> list:
+        """``(period1, period2)`` per request in order, as ints; ``(None, None)`` unwindowed."""
+        windows = []
+        for url in self.asked:
+            query = parse_qs(urlsplit(url).query)
+            windows.append(tuple(int(query[p][0]) if p in query else None
+                                 for p in ("period1", "period2")))
+        return windows
+
+    def carries(self, observation_date: str) -> bool:
+        return observation_date in self.bars
+
+    def _body(self, inside) -> str:
+        body = json.loads(self.template)
+        result = body["chart"]["result"][0]
+        result.pop("timestamp", None)
+        if not inside:
+            # The probed EMPTY shape: no timestamp key anywhere, an empty quote dict.
+            result["indicators"] = {"quote": [{}]}
+            return json.dumps(body)
+        result["timestamp"] = [stamp for stamp, _ in inside]
+        result["indicators"] = {"quote": [{"close": [close for _, close in inside]}]}
+        return json.dumps(body)
+
+    def __call__(self, url, timeout, headers=None):
+        self.asked.append(url)
+        query = parse_qs(urlsplit(url).query)
+        bars = sorted(self.bars.values())
+        if "period1" not in query:
+            return self._body(bars)  # the window was dropped: the whole body, q6's hazard
+        period1, period2 = int(query["period1"][0]), int(query["period2"][0])
+        if period2 < period1 or period2 < self.first_trade:
+            self.refused.append(url)
+            raise AdapterFetchError("HTTP_ERROR", 400)  # an impossible window, q4/q5
+        return self._body([bar for bar in bars if period1 <= bar[0] <= period2])
+
+
 #: A quarter of GDP, its first publication, and a later revision of the same quarter. The
 #: revisions are what make "first published" a claim with a wrong answer available.
 _GDP = {
@@ -355,6 +462,64 @@ _VIX_BODY = (
 #: The CLOSE on the body's LAST row — the figure a read-by-position would put under every
 #: backfilled date's key. The wrong answer, named, so it can be asserted absent.
 _VIX_LATEST_CLOSE = 16.87
+
+
+#: A Yahoo v8 chart response, REAL: copied verbatim out of ``evidence/wo116_yahoo_window_
+#: probe.json`` (``q2_window_one_day_utc_day``, SPY asked for the whole UTC day of
+#: 2015-06-08). :class:`_Yahoo` uses it as the TEMPLATE every answer is rebuilt from, so the
+#: ``meta`` block every request in this section is answered with is the served one, down to
+#: the ``regularMarketPrice`` of 770.01 that is this morning's figure sitting inside a 2015
+#: body. ``tests/test_ingestion.py`` holds the same body for the PARSER's unit tests; this
+#: copy is the driver's, kept local because every transport in this file is (see the module
+#: docstring), and both name the same evidence file as their source.
+_YAHOO_SPY_ONE_UTC_DAY = (
+    '{"chart":{"result":[{"meta":{"currency":"USD","symbol":"SPY","exchangeName":"PCX","fullExcha'
+    'ngeName":"NYSEArca","instrumentType":"ETF","firstTradeDate":728317800,"regularMarketTime":17'
+    '92089976,"hasPrePostMarketData":true,"gmtoffset":-14400,"timezone":"EDT","exchangeTimezoneNa'
+    'me":"America/New_York","regularMarketPrice":770.01,"regularMarketChangePercent":0.053,"fulld'
+    'ayPrice":770.01,"fulldayChange":0.41,"fulldayChangePercent":0.053,"fiftyTwoWeekHigh":781.62,'
+    '"fiftyTwoWeekLow":629.28,"regularMarketDayHigh":771.91,"regularMarketDayLow":764.44,"regular'
+    'MarketVolume":26568391,"longName":"State Street SPDR S&P 500 ETF Trust","shortName":"State S'
+    'treet SPDR S&P 500 ETF T","chartPreviousClose":209.77,"priceHint":2,"currentTradingPeriod":{'
+    '"pre":{"timezone":"EDT","start":1792051200,"end":1792071000,"gmtoffset":-14400},"regular":{"'
+    'timezone":"EDT","start":1792071000,"end":1792094400,"gmtoffset":-14400},"post":{"timezone":"'
+    'EDT","start":1792094400,"end":1792108800,"gmtoffset":-14400}},"dataGranularity":"1d","range"'
+    ':"","validRanges":["1d","5d","1mo","3mo","6mo","1y","2y","5y","10y","ytd","max"]},"timestamp'
+    '":[1433770200],"indicators":{"quote":[{"close":[208.47999572753906],"high":[209.820007324218'
+    '75],"low":[208.38999938964844],"volume":[89063300],"open":[209.63999938964844]}],"adjclose":'
+    '[{"adjclose":[172.54739379882812]}]}}],"error":null}}'
+)
+
+#: Ten real SPY sessions as ``date -> (session_open_stamp, close)``, lifted bar for bar out of
+#: the probe's ``q1_window_multi_day`` answer for 2015-06-08..2015-06-19. The stamps are the
+#: endpoint's own: 1433770200 is 2015-06-08T13:30Z, the session OPEN on summer time, which is
+#: the whole reason the adapter's window is the UTC DAY and not a zero-width point at
+#: midnight.
+#:
+#: 2015-06-13 and 06-14 were a WEEKEND and are ABSENT, exactly as they are absent from
+#: ``_VIX_BODY`` — the same two days, so the two WO-1.16 branches are measured against the
+#: same real gap arriving in their two different shapes: a missing ROW from CBOE, and from
+#: Yahoo a successful response with the bar arrays gone.
+_SPY_BARS = {
+    "2015-06-08": (1433770200, 208.47999572753906),
+    "2015-06-09": (1433856600, 208.4499969482422),
+    "2015-06-10": (1433943000, 210.9499969482422),
+    "2015-06-11": (1434029400, 211.6300048828125),
+    "2015-06-12": (1434115800, 210.00999450683594),
+    "2015-06-15": (1434375000, 209.11000061035156),
+    "2015-06-16": (1434461400, 210.25),
+    "2015-06-17": (1434547800, 210.58999633789062),
+    "2015-06-18": (1434634200, 212.77999877929688),
+    "2015-06-19": (1434720600, 210.80999755859375),
+}
+#: The close on the LAST bar the fake holds — the figure every date would be answered with if
+#: the window were dropped and the body read by position (``q6_range_and_period_together``:
+#: emit ``range`` beside a window and range wins). ``_VIX_LATEST_CLOSE``'s counterpart: the
+#: wrong answer, named, so it can be asserted absent.
+_SPY_CLOSE_IF_THE_WINDOW_WERE_DROPPED = 210.80999755859375
+#: The probed window for Saturday 2015-06-13, verbatim from ``q3_window_on_non_trading_day``'s
+#: URL. The weekend test asserts the adapter emitted exactly this.
+_SATURDAY_WINDOW = (1434153600, 1434239999)
 
 
 # --- ONE: the vintage branch, across several dates -------------------------------------- #
@@ -819,3 +984,209 @@ def test_the_driver_derives_the_label_from_the_kind_and_never_asks_the_fred_ques
          {"unit": "index", "observation_date": "2015-06-15", "value": 15.39},
          VINTAGE_NO_REVISION_MECHANISM)]
     _partitions(result, ("2015-06-15",))
+
+
+# --- NINE: the same warrant, reached through a WINDOWED request --------------------------- #
+
+
+def test_a_windowed_no_revision_mechanism_source_backfills_each_session_under_its_own_label(
+        store, monkeypatch):
+    """WO-1.16's OTHER branch, measured through the driver. The same four 2015 dates the CBOE
+    test asks for, asked of ``yahoo.SPY`` instead — each admitted under the period ITS date
+    claims, each carrying the close the probe recorded for THAT session, every stored row
+    labelled ``no_revision_mechanism``.
+
+    THE LABEL IS STILL THE ASSERTION THAT MATTERS and it is still read back OFF THE ROW, for
+    the reasons the CBOE test gives. Both of the other two warrants are available to a
+    careless branch and neither would be true: ``original`` is mechanism-earned and Yahoo
+    serves no vintage at all, ``current_only`` rests on a positive stability MEASUREMENT and
+    none was made for this symbol. Both are asserted against by name.
+
+    WHAT IS NEW HERE AND IS NOT A RESTATEMENT OF THE CBOE TEST: **the date reaches the wire.**
+    CBOE's four requests were one identical bare URL and the date lived only in the parse;
+    here each request carries its own absolute ``period1``/``period2`` window — four
+    DISTINCT URLs, no ``range`` parameter on any of them — so the body is already narrowed
+    when it arrives and the parse's exact-date match is the second line of defence rather
+    than the only one. ``range`` being absent is itself load-bearing and measured: given both,
+    range WINS and the window is silently ignored (``q6_range_and_period_together``).
+
+    THE FORGERY, AS ON BOTH OTHER BRANCHES. The fake holds ten sessions through 2015-06-19,
+    and a request that dropped the window is answered with all ten — which is exactly what a
+    body built with ``range`` beside the window looks like. The test CALLS the transport that
+    way to show the wrong answer was there to be taken: 210.80999755859375 under all four
+    2015 keys. It appears under none of them.
+    """
+    dates = ("2015-06-11", "2015-06-12", "2015-06-15", "2015-06-16")
+    yahoo = _offline(monkeypatch, _Yahoo(_SPY_BARS, _YAHOO_SPY_ONE_UTC_DAY))
+    result = backfill_range(_ing("yahoo.SPY"), dates, store, CLOCK, pace=0)
+
+    assert result.source_id == "yahoo.SPY"
+    assert result.vintage == VINTAGE_NO_REVISION_MECHANISM
+    assert result.vintage not in (VINTAGE_ORIGINAL, VINTAGE_CURRENT_ONLY)
+    assert result.admitted == dates
+    assert result.counts == {"admitted": 4, "skipped": 0, "refused": 0, "failed": 0, "fetches": 4}
+
+    # Four rows, one per date, each under its own period (``obs_date``), each with its own
+    # close — and THE LABEL ON THE ROW. ``history`` is not carried: a one-day window has one
+    # bar in it, which ingestion.backfill_adapters records as the declared limit.
+    assert _readings(store) == [
+        ("2015-06-11T00:00:00Z",
+         {"unit": "usd", "observation_date": "2015-06-11", "value": 211.6300048828125},
+         VINTAGE_NO_REVISION_MECHANISM),
+        ("2015-06-12T00:00:00Z",
+         {"unit": "usd", "observation_date": "2015-06-12", "value": 210.00999450683594},
+         VINTAGE_NO_REVISION_MECHANISM),
+        ("2015-06-15T00:00:00Z",
+         {"unit": "usd", "observation_date": "2015-06-15", "value": 209.11000061035156},
+         VINTAGE_NO_REVISION_MECHANISM),
+        ("2015-06-16T00:00:00Z",
+         {"unit": "usd", "observation_date": "2015-06-16", "value": 210.25},
+         VINTAGE_NO_REVISION_MECHANISM)]
+    assert {vintage for _, _, vintage in _readings(store)} == {VINTAGE_NO_REVISION_MECHANISM}
+
+    # THE DATE WENT OUT ON THE WIRE, one window per date, and no ``range`` beside it.
+    assert len(yahoo.asked) == 4 and len(set(yahoo.asked)) == 4
+    assert yahoo.windows_asked() == [(1433980800, 1434067199),   # 2015-06-11, whole UTC day
+                                     (1434067200, 1434153599),   # 2015-06-12
+                                     (1434326400, 1434412799),   # 2015-06-15
+                                     (1434412800, 1434499199)]   # 2015-06-16
+    for url in yahoo.asked:
+        assert "range=" not in url, url
+        assert "interval=1d" in url and "/chart/SPY?" in url
+
+    # THE WRONG ANSWER WAS AVAILABLE AND WAS TAKEN NONE OF THE FOUR TIMES. Asked WITHOUT a
+    # window — the q6 shape — this very transport answers with all ten bars, ending here.
+    unwindowed = json.loads(yahoo("https://query1.finance.yahoo.com/v8/finance/chart/SPY", 1.0))
+    bars = unwindowed["chart"]["result"][0]["indicators"]["quote"][0]["close"]
+    assert len(bars) == 10 and bars[-1] == _SPY_CLOSE_IF_THE_WINDOW_WERE_DROPPED
+    assert _SPY_CLOSE_IF_THE_WINDOW_WERE_DROPPED not in [
+        payload["value"] for _, payload, _ in _readings(store)]
+
+    assert _attempts(store) == [("OK", f"{date}T00:00:00Z", None) for date in dates]
+    _partitions(result, dates)
+
+
+def test_a_non_trading_day_is_a_clean_miss_through_the_two_hundred_and_empty_path(
+        store, monkeypatch):
+    """THE YAHOO SHAPE of "the source has no figure for this date", and it is the THIRD such
+    shape in this file — which is the reason this test is the one that matters most here.
+
+    THREE SOURCES, THREE MECHANISMS, ONE OUTCOME:
+
+    * FRED answers a one-day window on a gap date with ``404`` and an HTML error page, so
+      :class:`~ingestion.adapters.FredAdapter` TRANSLATES that 404 into EMPTY;
+    * CBOE serves a body with no ROW for the date and no missing-data marker, so
+      :class:`~ingestion.adapters.CboeAdapter` finds no key to match;
+    * Yahoo answers ``200``, ``error: null``, a complete ``meta`` — and the bar arrays simply
+      ABSENT: no ``timestamp`` key, ``"quote":[{}]``
+      (``evidence/wo116_yahoo_window_probe.json``, ``q3_window_on_non_trading_day``).
+
+    So this is a SUCCESSFUL FETCH that answered "nothing printed that day", and
+    :class:`~ingestion.adapters.YahooChartAdapter` translates nothing to reach that — it needs
+    no carve-out of FRED's kind because the shape is already a clean one.
+
+    THAT IT IS NOT A 400 IS ASSERTED, NOT ASSUMED, AND IT IS THE POINT OF THE TEST. A 400 on
+    this endpoint is reachable only by an IMPOSSIBLE window — reversed, or wholly before the
+    symbol's first trade — and translating one to EMPTY would make a date that HAS NOT
+    HAPPENED indistinguishable from a quiet Saturday, which is the asymmetry
+    ``YahooChartAdapter``'s docstring argues at length. The fake is capable of issuing that
+    400 (:class:`_Yahoo` raises it for both probed cases), so ``yahoo.refused == []`` is a
+    real measurement rather than a property of a transport that could not fail. The recorded
+    outcome is the store's own EMPTY discriminator, and no attempt carries ``HTTP_ERROR``.
+
+    2015-06-13 and 06-14 are the SAME weekend the CBOE test walks, deliberately: one real gap,
+    arriving at the driver in two different shapes, costing the range one request each and
+    nothing else.
+    """
+    dates = ("2015-06-12", "2015-06-13", "2015-06-14", "2015-06-15")
+    yahoo = _offline(monkeypatch, _Yahoo(_SPY_BARS, _YAHOO_SPY_ONE_UTC_DAY))
+    result = backfill_range(_ing("yahoo.SPY"), dates, store, CLOCK, pace=0)
+
+    assert result.vintage == VINTAGE_NO_REVISION_MECHANISM
+    assert result.admitted == ("2015-06-12", "2015-06-15")
+    assert result.failed == (("2015-06-13", "EMPTY"), ("2015-06-14", "EMPTY"))
+    assert result.refused == () and result.skipped == ()
+
+    # The gap dates were really ASKED FOR — fetched, answered, and found to hold no bar.
+    assert result.fetches == 4 and len(yahoo.asked) == 4
+    assert not yahoo.carries("2015-06-13") and not yahoo.carries("2015-06-14")
+    assert yahoo.windows_asked()[1] == _SATURDAY_WINDOW  # the probed window, to the second
+
+    # A SUCCESSFUL FETCH, NOT A TRANSPORT FAILURE. No 400 was issued, none of the four
+    # attempts carries a transport class, and the Saturday's body really is the probed EMPTY
+    # shape: 200-worth of JSON with error null, meta intact, and the bar arrays gone.
+    assert yahoo.refused == []
+    assert [outcome for outcome, _, _ in _attempts(store)] == ["OK", "EMPTY", "EMPTY", "OK"]
+    assert {error_class for _, _, error_class in _attempts(store)} == {None}
+    saturday = json.loads(yahoo(
+        f"https://query1.finance.yahoo.com/v8/finance/chart/SPY?period1={_SATURDAY_WINDOW[0]}"
+        f"&period2={_SATURDAY_WINDOW[1]}&interval=1d", 1.0))
+    result_block = saturday["chart"]["result"][0]
+    assert saturday["chart"]["error"] is None
+    assert "timestamp" not in result_block and result_block["indicators"] == {"quote": [{}]}
+    assert result_block["meta"]["symbol"] == "SPY"  # the body ARRIVED, whole
+
+    # NOTHING STORED FOR THE GAP, and the date after it is admitted under its own period with
+    # its own value — the range walked straight through two consecutive misses. Neither
+    # neighbour's close was borrowed for the Saturday, which a window read by position would
+    # have done.
+    assert _readings(store) == [
+        ("2015-06-12T00:00:00Z",
+         {"unit": "usd", "observation_date": "2015-06-12", "value": 210.00999450683594},
+         VINTAGE_NO_REVISION_MECHANISM),
+        ("2015-06-15T00:00:00Z",
+         {"unit": "usd", "observation_date": "2015-06-15", "value": 209.11000061035156},
+         VINTAGE_NO_REVISION_MECHANISM)]
+    _partitions(result, dates)
+
+
+def test_an_adjclose_ingredient_is_refused_by_the_driver_before_a_single_date_is_touched(
+        store, monkeypatch):
+    """THE ROW THIS BRANCH MUST NOT ADMIT, refused at ``backfill_range``'s OWN ENTRY POINT.
+
+    ``private_credit_stress``'s ``yahoo.BIZD.adj`` and all 50 rows of
+    ``constituent_breadth_200dma``'s sample ask for ``adjclose`` deliberately, and a dated
+    read of that field has no point-in-time meaning at all: it is restated backwards by every
+    dividend and split, forever (PID.md WO-1.16 scope correction). ``yahoo`` being in
+    :data:`~ingestion.backfill_adapters.VINTAGE_BACKFILLABLE_KINDS` is not a statement about
+    these rows, and the two tests above are what that tuple DOES say.
+
+    WHY THIS EXISTS WHEN TWO OTHER TESTS ALREADY HOLD THE SAME RULE — it is reached through a
+    different door, and WHICH door fires is the finding. ``tests/test_wo114.py``
+    (``test_an_adjclose_yahoo_ingredient_is_refused_rather_than_handed_a_working_adapter``)
+    calls ``build_backfill_adapter`` directly and measures the ADAPTER CONSTRUCTOR's raise.
+    ``tests/test_vintage_declaration.py`` (door 4) measures the LABEL DISPATCH with no store
+    at all. This one goes in the way a real caller does — the real driver function, a real
+    ``SqliteStore``, real catalog rows — and what it finds is that the label dispatch gets
+    there FIRST: the range stops before the loop, so no adapter is ever constructed and the
+    constructor's refusal is never reached. Hence the message asserted is the dispatch's
+    (``no vintage label is derived``) and the adapter's own words are asserted ABSENT. Two
+    independent doors, and from this entrance the outer one is the one that shuts.
+
+    MEASURED THE WAY SECTION SEVEN MEASURES ITS REFUSAL: an adapter builder that fails the
+    test by name if it is reached at all, which proves "before a single date is touched"
+    rather than describing it — and the store is then asserted untouched, which proves no row
+    was written on the way out.
+
+    AND IT IS NOT THE KIND CHECK. ``yahoo`` really is in that tuple, asserted here, so this
+    refusal cannot be section SEVEN's wearing a different name; if the kind ever leaves the
+    tuple this test is measuring the wrong door and says so.
+    """
+    _no_adapter_may_be_built(monkeypatch)
+    assert "yahoo" in VINTAGE_BACKFILLABLE_KINDS, (
+        "yahoo has left VINTAGE_BACKFILLABLE_KINDS: this test would now be measuring the "
+        "kind-level refusal of section SEVEN, not the label dispatch"
+    )
+    adj = [ing for ing in INGREDIENTS if ing.kind == "yahoo" and ing.column == "adjclose"]
+    assert len(adj) == 51 and "yahoo.BIZD.adj" in {ing.source_id for ing in adj}, (
+        "the adjclose ingredients have changed shape — re-reason this guard"
+    )
+
+    for ing in adj:
+        with pytest.raises(ValueError) as caught:
+            backfill_range(ing, ("2015-06-11", "2015-06-12", "2015-06-15"), store, CLOCK, pace=0)
+        assert "no vintage label is derived" in str(caught.value), ing.source_id
+        # NOT the adapter constructor's refusal: no adapter was built to raise it.
+        assert "adjclose has no" not in str(caught.value), ing.source_id
+
+    assert _attempts(store) == [] and _readings(store) == []
