@@ -19,14 +19,15 @@ WHAT EACH SECTION MEASURES
     dates: the figure stored is the one FIRST published (not a later revision), under the
     source period that date claims, labelled ``original``.
 
-    TWO — the STABLE branch's DECLARED LIMIT, tested as it ACTUALLY BEHAVES TODAY and not as
-    it is eventually intended to. ``FredAdapter`` asks for the whole current body and reads
-    its LATEST row; there is no date in its request at all. So for a historical date — even
-    one the body carries a row for, and ``_Fred`` below carries rows for every date asked —
-    the reading that comes back answers for TODAY's period, the driver's date gate catches
-    the mismatch, NOTHING IS STORED, and the date is reported ``FAILED_DATE_NOT_ANSWERED``.
-    The one date that admits is the one that is literally today in this module's clock. That
-    is the limit ``ingestion.backfill`` declares in its own docstring, measured.
+    TWO — the STABLE branch ANSWERS FOR THE DATE ASKED, which is what WO-1.15 changed.
+    ``FredAdapter`` now windows the request on that one date (``cosd=D&coed=D``) and matches
+    the row by EXACT date, so a historical date the body carries comes back under ITS OWN
+    source period carrying ITS OWN value — not today's. Four dates spanning 1999 to today
+    are all admitted, each under its own key. WO-1.14 measured the OPPOSITE here, because
+    the branch then asked for the whole body and read its LATEST row: every historical date
+    was reported ``FAILED_DATE_NOT_ANSWERED``, and the one date that admitted was the one
+    that is literally today. That limit is closed, so the test that measured it asserts the
+    new behaviour rather than being left standing against code that no longer behaves so.
 
     THREE — a date before ``STABILITY_MEASURED_FROM`` is refused UNFETCHED, the left edge
     itself is not refused, and the rest of the range proceeds.
@@ -58,8 +59,7 @@ from crash_detector.collectors import RetryPolicy
 from crash_detector.collectors.adapter import AdapterFetchError
 from ingestion import backfill as B
 from ingestion.backfill import (BACKFILL_PACING_SECONDS, BACKFILL_POLICY,
-                                FAILED_DATE_NOT_ANSWERED, REFUSED_STABILITY_UNMEASURED,
-                                backfill_range)
+                                REFUSED_STABILITY_UNMEASURED, backfill_range)
 from ingestion.backfill_adapters import build_backfill_adapter as _real_build_backfill_adapter
 from ingestion.catalog import INGREDIENTS
 from ingestion.store import SqliteStore
@@ -196,29 +196,74 @@ class _Alfred:
 
 
 class _Fred:
-    """``fredgraph.csv``'s CURRENT body, offline: the WHOLE series, latest row LAST.
+    """``fredgraph.csv``, offline and WINDOW-AWARE — because since WO-1.15 the stable branch's
+    request carries a one-day window (``cosd=D&coed=D``) and what the server does with it is
+    the whole question.
 
-    That shape is the declared limit itself rather than a convenience: the request carries no
-    date (``FredAdapter._url`` names the series and the transformation, nothing else), the
-    body carries every observation, and ``parse_fred_csv`` reads the LAST non-missing row. So
-    a body that answers perfectly for every date asked still answers with TODAY's period.
+    FOUR BEHAVIOURS, EVERY ONE OF THEM A PROBED CASE rather than a guess at an HTTP API. Each
+    names its case in ``evidence/wo115_fred_window_probe.json`` (``tools/probe/fred_graph_
+    window_probe.py``, run 2026-10-15 against the real endpoint):
+
+    * **no window at all** — the WHOLE series, oldest row first and the latest row LAST. The
+      live loop's request, unchanged by this work order (``baseline_no_window``).
+    * **a window overlapping the series' span** — only the rows inside it, which for a
+      one-day window on a date the series HAS is exactly one row (``q1_window_one_day``;
+      ``q1_window_multi_day`` is the same rule over nine days, which is what proves the
+      window is applied rather than the series answering one row whatever you ask).
+    * **a window closing BEFORE ``registered_from``** — the window is IGNORED and the WHOLE
+      UNFILTERED SERIES comes back, ``200 OK`` (``q2_window_before_series_start``: DFF asked
+      for 1944-07-01 answered with all 26,403 rows, 424 KB). THIS IS THE DANGEROUS CASE. A
+      parser reading such a body by POSITION — the last row, or "the only row in the window"
+      — answers a 1944 backfill with this morning's rate, under a 1944 key.
+    * **a window inside the span that matches no observation** — ``404`` with an HTML error
+      page (``extra_window_on_gap_date``: T5YIE on 2015-06-20, a date inside its span and
+      absent from its body). NOT ``200`` with a header and no rows, which is the shape a
+      convenient fake would have invented; ``FredAdapter`` translates the real 404 into EMPTY
+      for a dated request, and a fake sending the wrong shape would test nothing of that.
+
+    ``registered_from`` defaults to the first row's date, so a fake's span IS its rows unless
+    a test deliberately widens it to reach the third behaviour above.
     """
 
-    def __init__(self, rows, *, column: str = "DFF"):
+    def __init__(self, rows, *, column: str = "DFF", registered_from: str = None):
         self.rows, self.column = list(rows), column
+        #: The series' first observation AS THE SERVER KNOWS IT. A window closing before this
+        #: is the one the server ignores.
+        self.registered_from = registered_from or self.rows[0][0]
         self.asked: list[str] = []
+
+    def _csv(self, rows) -> str:
+        lines = [f"observation_date,{self.column}"] + [f"{d},{v}" for d, v in rows]
+        return "\n".join(lines) + "\n"
 
     @property
     def body(self) -> str:
-        lines = [f"observation_date,{self.column}"] + [f"{d},{v}" for d, v in self.rows]
-        return "\n".join(lines) + "\n"
+        """The whole unwindowed series, exactly as the live loop's request is answered."""
+        return self._csv(self.rows)
 
     def carries(self, observation_date: str) -> bool:
         return any(date == observation_date for date, _ in self.rows)
 
+    def windows_asked(self) -> list:
+        """``(cosd, coed)`` per request in order; ``(None, None)`` for an unwindowed one."""
+        windows = []
+        for url in self.asked:
+            query = parse_qs(urlsplit(url).query)
+            windows.append((query.get("cosd", [None])[0], query.get("coed", [None])[0]))
+        return windows
+
     def __call__(self, url, timeout, headers=None):
         self.asked.append(url)
-        return self.body
+        query = parse_qs(urlsplit(url).query)
+        if "cosd" not in query:
+            return self.body  # no date in the request: the whole current series
+        cosd, coed = query["cosd"][0], query["coed"][0]
+        if coed < self.registered_from:
+            return self.body  # the window is IGNORED, unfiltered and 200 OK: the dangerous case
+        inside = [(date, value) for date, value in self.rows if cosd <= date <= coed]
+        if not inside:
+            raise AdapterFetchError("HTTP_ERROR", 404)  # no observation in the window
+        return self._csv(inside)
 
 
 #: A quarter of GDP, its first publication, and a later revision of the same quarter. The
@@ -278,46 +323,64 @@ def test_the_later_revision_is_present_in_the_fake_and_is_the_answer_nobody_stor
     assert _readings(store)[0][1]["value"] == 14412.8  # what it said THEN
 
 
-# --- TWO: the stable branch, as it actually behaves today -------------------------------- #
+# --- TWO: the stable branch, answering for the date asked -------------------------------- #
 
 
-def test_a_stable_series_reports_not_answered_for_every_date_but_today_even_when_the_body_has_it(
+def test_a_stable_series_answers_each_historical_date_under_its_own_period(
         store, monkeypatch):
-    """THE DECLARED LIMIT, MEASURED. Dates all at or after ``STABILITY_MEASURED_FROM``, a body
-    that carries a row for every one of them — and only the date that is literally today in
-    this module's clock is admitted. The others are ``FAILED_DATE_NOT_ANSWERED``.
+    """WO-1.15, MEASURED. Dates all at or after ``STABILITY_MEASURED_FROM``, a body that
+    carries a row for every one of them — and EVERY ONE is admitted, each under the source
+    period ITS date claims, each carrying the figure the body holds for THAT date.
 
-    This is the current behaviour and not the intended one: closing it is a per-date FRED
-    request (``cosd``/``coed``) or a deepened ``history``, which ``ingestion.backfill`` says
-    it OWES and does not attempt. What is tested here is that until then the driver reports a
-    miss instead of admitting today's rate under a historical key.
+    This is the test WO-1.14's declared limit used to own, and the limit is gone. Then, the
+    stable branch asked for the whole current body and read its LATEST row, so all three
+    historical dates came back answering for TODAY's period and were reported
+    ``FAILED_DATE_NOT_ANSWERED``; only the date that is literally today admitted. Now the
+    request carries a one-day window and the row is matched by EXACT date, so the 1999 key
+    holds the 1999 rate.
+
+    THE VALUES ARE THE ASSERTION THAT MATTERS, not the bucket counts. 4.63 is what
+    ``_DFF_ROWS`` says for 1999-01-01 and 3.88 is what it says for today; a branch that
+    still read the body by position would put 3.88 under all four keys — the exact forgery
+    this work order closes — and it would sail through a test that only counted admissions.
     """
     dates = ("1999-01-01", "2005-06-15", "2020-03-16", TODAY)
     assert all(date >= STABILITY_MEASURED_FROM for date in dates)
     fred = _offline(monkeypatch, _Fred(_DFF_ROWS))
     result = backfill_range(_ing("fred.DFF"), dates, store, CLOCK, pace=0)
 
+    # ``current_only`` is still the right label: the RIGHT period, but today's revision of
+    # it. Windowing the request changed which period is answered, not which vintage.
     assert result.vintage == VINTAGE_CURRENT_ONLY
-    assert result.admitted == (TODAY,)
-    assert result.failed == (("1999-01-01", FAILED_DATE_NOT_ANSWERED),
-                             ("2005-06-15", FAILED_DATE_NOT_ANSWERED),
-                             ("2020-03-16", FAILED_DATE_NOT_ANSWERED))
-    assert result.fetches == 4  # each was really asked for; none was refused unfetched
-    # The transport answered for every date asked. The miss is the ADAPTER's reading of the
-    # body, which is why this is a declared limit of the stable branch and not a bad fake.
+    assert result.admitted == dates
+    assert result.failed == () and result.refused == () and result.skipped == ()
+    assert result.fetches == 4  # one windowed GET per date; none was refused or skipped
     assert all(fred.carries(date) for date in dates)
-    # ...and here is why it cannot do better yet: there is no date in the request at all.
-    assert {url for url in fred.asked} == {
-        "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFF"}
+    # EVERY REQUEST CARRIED ITS DATE, as a window on that single day. The old limit was that
+    # none of them did — the URL was bare, and a bare URL cannot ask about a particular day.
+    assert fred.windows_asked() == [(date, date) for date in dates]
 
-    # NOTHING SILENTLY WRONG WAS STORED: one reading, under TODAY's period, carrying today's
-    # value, labelled current_only. No 1999, 2005 or 2020 key exists in the store.
+    # FOUR readings, each under the period its date claims (``obs_date`` for DFF), each with
+    # its own value out of the body, all labelled current_only.
     assert _readings(store) == [
-        (f"{TODAY}T00:00:00Z", {"unit": "percent", "observation_date": TODAY, "value": 3.88},
+        ("1999-01-01T00:00:00Z",
+         {"unit": "percent", "observation_date": "1999-01-01", "value": 4.63},
+         VINTAGE_CURRENT_ONLY),
+        ("2005-06-15T00:00:00Z",
+         {"unit": "percent", "observation_date": "2005-06-15", "value": 3.04},
+         VINTAGE_CURRENT_ONLY),
+        ("2020-03-16T00:00:00Z",
+         {"unit": "percent", "observation_date": "2020-03-16", "value": 0.65},
+         VINTAGE_CURRENT_ONLY),
+        (f"{TODAY}T00:00:00Z",
+         {"unit": "percent", "observation_date": TODAY, "value": 3.88},
          VINTAGE_CURRENT_ONLY)]
-    # The three unadmitted fetches are still in the record as the OK attempts they were: the
-    # reading is absent, the attempt is not hidden.
-    assert _attempts(store) == [("OK", f"{TODAY}T00:00:00Z", None)] * 4
+    # The forgery, named and measured: today's rate appears under TODAY's key and nowhere
+    # else. This is the assertion that would have failed before WO-1.15, four times over.
+    assert [as_of for as_of, payload, _ in _readings(store)
+            if payload["value"] == 3.88] == [f"{TODAY}T00:00:00Z"]
+    # Four OK attempts, each recorded against the period it answered for.
+    assert _attempts(store) == [("OK", f"{date}T00:00:00Z", None) for date in dates]
     _partitions(result, dates)
 
 
@@ -328,7 +391,14 @@ def test_a_date_before_the_stability_measurement_is_refused_unfetched_and_the_ra
     ``STABILITY_MEASURED_FROM`` is where the measurement that authorises the stable branch
     begins; before it, today's body is not evidence about the date and there is no vintage to
     fall back on here. 1998-12-31 is therefore refused rather than failed — a date nobody
-    fetched is not a date that failed — and 1999-01-01, the edge itself, is fetched.
+    fetched is not a date that failed — and 1999-01-01, the edge itself, is fetched AND
+    ADMITTED, under its own period.
+
+    THE REFUSAL IS WHAT THIS TEST OWNS AND WO-1.15 DID NOT TOUCH IT. The floor is a property
+    of ``ingestion.vintage``'s measurement window, not of how the branch asks its question —
+    so closing ``FredAdapter``'s limit moved the edge date from ``failed`` to ``admitted``
+    and left the day before it refused, unfetched, exactly as it was. The body carries a row
+    for 1998-12-31 too, which is what makes the refusal the FLOOR's doing and not the fake's.
     """
     assert STABILITY_MEASURED_FROM == "1999-01-01"
     dates = ("1998-12-31", "1999-01-01", TODAY)
@@ -338,11 +408,16 @@ def test_a_date_before_the_stability_measurement_is_refused_unfetched_and_the_ra
     assert result.refused == (("1998-12-31", REFUSED_STABILITY_UNMEASURED),)
     assert result.fetches == 2 and len(fred.asked) == 2  # UNFETCHED, counted on the transport
     assert len(_attempts(store)) == 2  # and no attempt row names the refused date either
-    # The rest of the range proceeded: the edge itself was asked (and hit the limit above),
-    # and today was admitted.
-    assert result.failed == (("1999-01-01", FAILED_DATE_NOT_ANSWERED),)
-    assert result.admitted == (TODAY,)
-    assert [as_of for as_of, _, _ in _readings(store)] == [f"{TODAY}T00:00:00Z"]
+    # The refused date is in the body and was still never asked about: the two windows are
+    # the two dates that passed the floor, and neither of them is 1998-12-31.
+    assert fred.carries("1998-12-31")
+    assert fred.windows_asked() == [("1999-01-01", "1999-01-01"), (TODAY, TODAY)]
+    # The rest of the range proceeded, and since WO-1.15 the edge gets a real answer for its
+    # OWN period rather than a reported miss: nothing failed here at all.
+    assert result.failed == ()
+    assert result.admitted == ("1999-01-01", TODAY)
+    assert [as_of for as_of, _, _ in _readings(store)] == [
+        "1999-01-01T00:00:00Z", f"{TODAY}T00:00:00Z"]
     _partitions(result, dates)
 
 
@@ -422,32 +497,64 @@ def test_one_range_lands_in_all_four_buckets_and_they_partition_the_dates_given(
     range reach all four answers:
 
     * ``1998-01-01`` — before the measurement's left edge: REFUSED, unfetched;
-    * ``2005-06-01`` — fetched, and the body answers for today: FAILED, nothing stored;
-    * ``2026-10-01`` — the current month, whose period is today: ADMITTED;
+    * ``2005-06-01`` — windowed on itself and matched by exact date: ADMITTED, under the
+      JUNE period (``month_end``) rather than under the date asked;
+    * ``2005-07-01`` — a date INSIDE the series' span that the body has no row for. FRED
+      answers such a window with ``404`` and an HTML error page rather than ``200`` and an
+      empty body (probed: ``evidence/wo115_fred_window_probe.json``, case
+      ``extra_window_on_gap_date``), and ``FredAdapter`` translates that into EMPTY for a
+      dated request. A gap is a real ANSWER and it is still a date this backfill does not
+      have: FAILED, carrying the store's own ``EMPTY`` discriminator, nothing stored;
+    * ``2026-10-01`` — the current month, whose period is capped at today: ADMITTED;
     * ``2026-10-05`` — the SAME source period (``month_end``, capped at today), already
       admitted by the line above: SKIPPED, unfetched.
 
     The last pair is not a contrivance — two dates in one month ARE one source period, and
     that is exactly what ``skipped`` means.
+
+    WHY THE ``failed`` CASE IS A GAP DATE NOW AND NOT A PERIOD MISMATCH. WO-1.14 manufactured
+    this bucket out of its own limitation: ``2005-06-01`` was fetched, the body answered for
+    TODAY, and the driver's date gate reported ``FAILED_DATE_NOT_ANSWERED``. WO-1.15 closed
+    that, and closed it thoroughly enough that the gate can no longer be reached through the
+    stable branch BY ANY BODY THE SERVER MIGHT SEND — ``ingestion.backfill`` and
+    ``_BaseAdapter.fetch`` derive the key from the same ``as_of_for(D, rule, clock())``, and
+    ``parse_fred_csv_for_date`` guarantees the payload's date IS ``D``, so only a clock that
+    moved between those two calls could separate the two keys. The gate is still live code
+    and is still right to keep (``ingestion.backfill`` says why: it guards WHICHEVER adapter
+    answered, against a later parser or transformation that shifts a period), but exercising
+    it now needs a deliberately period-shifting ADAPTER, which this file does not build — see
+    its own docstring on why it substitutes only the transport. So the ``failed`` bucket here
+    is the gap date, which is the stable branch's REAL failure mode, and
+    ``FAILED_DATE_NOT_ANSWERED`` is left OWED a test rather than reached by a contrivance
+    that would prove nothing about anything production builds.
     """
-    dates = ("1998-01-01", "2005-06-01", "2026-10-01", "2026-10-05")
+    dates = ("1998-01-01", "2005-06-01", "2005-07-01", "2026-10-01", "2026-10-05")
     rows = (("1998-01-01", "0.03"), ("2005-06-01", "-0.13"), ("2026-10-01", "0.27"))
     sahm = _offline(monkeypatch, _Fred(rows, column="SAHMREALTIME"))
     result = backfill_range(_ing("fred.SAHMREALTIME"), dates, store, CLOCK, pace=0)
 
     assert result.refused == (("1998-01-01", REFUSED_STABILITY_UNMEASURED),)
-    assert result.failed == (("2005-06-01", FAILED_DATE_NOT_ANSWERED),)
-    assert result.admitted == ("2026-10-01",)
+    assert result.failed == (("2005-07-01", "EMPTY"),)
+    assert result.admitted == ("2005-06-01", "2026-10-01")
     assert result.skipped == ("2026-10-05",)
-    assert result.counts == {"admitted": 1, "skipped": 1, "refused": 1, "failed": 1, "fetches": 2}
-    assert len(sahm.asked) == 2  # the refusal and the skip each cost nothing
-    assert [as_of for as_of, _, _ in _readings(store)] == [f"{TODAY}T00:00:00Z"]
+    assert result.counts == {"admitted": 2, "skipped": 1, "refused": 1, "failed": 1, "fetches": 3}
+    assert len(sahm.asked) == 3  # the refusal and the skip each cost nothing
+    # The gap date really was asked for, and asked for as a window on itself: the EMPTY is
+    # the server's 404 translated, not this fake quietly declining to carry a row.
+    assert not sahm.carries("2005-07-01")
+    assert ("2005-07-01", "2005-07-01") in sahm.windows_asked()
+    # 2005-06-01's reading is under the JUNE period — the window is what makes a historical
+    # month answerable at all, and ``month_end`` is what decides the key it lands under.
+    assert [as_of for as_of, _, _ in _readings(store)] == [
+        "2005-06-30T00:00:00Z", f"{TODAY}T00:00:00Z"]
+    # The gap is in the record as the EMPTY attempt it was; only the reading is absent.
+    assert [outcome for outcome, _, _ in _attempts(store)] == ["OK", "EMPTY", "OK"]
     _partitions(result, dates)
 
 
 def test_the_pace_falls_between_fetches_only_and_never_around_a_refusal_or_a_skip(
         store, monkeypatch):
-    """The courtesy gap is a gap between REQUESTS. The range above issues two, so there is one
+    """The courtesy gap is a gap between REQUESTS. This range issues two, so there is one
     gap: not one before the first fetch, and none for the two dates that touched no network."""
     slept: list = []
     monkeypatch.setattr(B.time, "sleep", slept.append)

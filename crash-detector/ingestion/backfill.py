@@ -41,8 +41,9 @@ THE VINTAGE LABEL IS DERIVED, NOT CONSTANT — AND THIS IS THE ONE PLACE IT IS W
     measured-stable one, read off the same ``requires_original_vintage`` call that chose the
     adapter. Both labels are their own stated meanings word for word: a reading out of
     ``AlfredVintageAdapter`` carries the figure the source FIRST published and the vintage
-    date the server itself named; a reading out of ``FredAdapter`` carries today's value for
-    a past period, which is what ``current_only`` says, admitted on the authority of
+    date the server itself named; a reading out of ``FredAdapter`` carries the figure TODAY's
+    body holds for that past period — the right period, since WO-1.15, but today's revision
+    of it — which is exactly what ``current_only`` says, admitted on the authority of
     :data:`~ingestion.vintage.REVISION_STABLE` plus the date test in step 1 above.
 
     Labelling the stable branch ``original`` would have a DFF reading from today's body
@@ -51,20 +52,29 @@ THE VINTAGE LABEL IS DERIVED, NOT CONSTANT — AND THIS IS THE ONE PLACE IT IS W
     The label reaches the row at INSERT, through ``admit_if_absent(key, vintage=...)``,
     because ``raw_reading`` is append-only and no later UPDATE could add it.
 
-A DECLARED LIMIT, MEASURED AND REPORTED RATHER THAN LEFT TO BE DISCOVERED
-    **THE STABLE BRANCH DOES NOT YET ANSWER FOR AN ARBITRARY PAST DATE.**
-    ``ingestion.backfill_adapters`` says so in advance and names this round as the owner:
-    ``FredAdapter`` asks for the whole current body and reads its LATEST observation, so for
-    a date years back it returns a perfectly good reading of the WRONG period. This driver
-    does not paper over that. It computes the source period it ASKED for and gates admission
-    on it: a reading whose period is not the one asked for is NOT stored, and the date is
-    reported as :data:`FAILED_DATE_NOT_ANSWERED`. So the stable branch works today exactly
-    where today's body happens to answer for the date asked, and reports a miss everywhere
-    else — rather than quietly admitting today's number under a 2005 key.
+THE DATE GATE IS A CHECK ON THE ANSWER, NOT A DESCRIPTION OF ONE ADAPTER'S LIMIT
+    WO-1.14 declared a limit here: the stable branch asked FRED for the whole current body
+    and read its LATEST observation, so a date years back came back as a perfectly good
+    reading of the WRONG period, and per-date selection out of that body was OWED. WO-1.15
+    did it — the stable branch now windows the request on the date asked for and matches the
+    row by EXACT date (``ingestion.adapters.parse_fred_csv_for_date``) — so the stable branch
+    answers for an arbitrary past date within the measurement window, and the paragraph that
+    said otherwise is gone rather than quietly left standing.
 
-    What closes it is per-date selection out of that body (a ``cosd``/``coed`` window on the
-    FRED request, or reading the row out of a deepened ``history``), which is an adapter
-    change plus the cadence question above, and is OWED. It is not attempted here.
+    **THE GATE BELOW IS UNCHANGED, AND THAT IS THE POINT.** It computes the source period it
+    ASKED for and refuses to admit a reading that answered for a different one, reporting
+    :data:`FAILED_DATE_NOT_ANSWERED`, and it does that for WHICHEVER adapter answered — it was
+    never a statement about ``FredAdapter``, so closing ``FredAdapter``'s limit does not
+    retire it. What it guards now is that no later change on either branch — a source that
+    ignores a window (plain FRED demonstrably does, for a window before a series' first
+    observation: ``evidence/wo115_fred_window_probe.json``), a parser that read a row by
+    position, a transformation that shifts a period — can put a number under a key nobody
+    asked for without this driver catching it and storing nothing.
+
+    A date the source simply has no observation for is a different answer and is reported as
+    one: EMPTY, carried into ``failed`` with the store's own discriminator (FRED answers a
+    gap date with a 404, which ``FredAdapter`` translates for a dated request — see that
+    class). Nothing is stored in either case, which is what a gap IS.
 
     **NO EGRESS ALLOWLIST PERMITS ALFRED YET.** ``BACKFILL_EGRESS_HOSTS`` records the host
     and records what is owed — a compose service of its own with its own ``x-egress``
