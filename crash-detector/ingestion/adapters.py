@@ -71,6 +71,7 @@ __all__ = [
     "parse_cboe_csv",
     "parse_cboe_csv_for_date",
     "parse_yahoo_chart",
+    "parse_yahoo_chart_for_date",
     "parse_multpl_table",
     "as_of_for",
 ]
@@ -500,6 +501,90 @@ def parse_yahoo_chart(text: str, unit: str, history: int = 0, today: Union[date,
         out["history"] = [[d, c] for d, c in rows[-history:]]
     return out
 
+
+def parse_yahoo_chart_for_date(text: str, unit: str, observation_date: str) -> dict:
+    """ONE named daily close read out of a Yahoo v8 chart body, matched by EXACT DATE.
+
+    WO-1.16, and it sits beside :func:`parse_yahoo_chart` for the reason
+    :func:`parse_fred_csv_for_date` and :func:`parse_cboe_csv_for_date` sit beside their own
+    latest-row parsers: "what is this symbol at now?" is answered by the LAST bar, and that
+    cannot be the answer to "what did it close at on 2015-06-08?".
+
+    THE WINDOW IS HONEST HERE, AND THE EXACT MATCH IS STILL THE DISCIPLINE. Unlike plain FRED
+    — which IGNORES a window lying before a series' start and answers with the whole
+    unfiltered series — Yahoo's ``period1``/``period2`` is either applied or the request is
+    refused outright: a one-day window on a trading day returns exactly one correctly-dated
+    bar, and an impossible window is a clean ``400``, never someone else's bars (probed
+    2026-10-15, ``tools/probe/yahoo_period_window_probe.py``,
+    ``evidence/wo116_yahoo_window_probe.json``, cases ``q2_window_one_day_utc_day`` and
+    ``q4_*``). So there is no dangerous body to defend against the way there is for FRED.
+    The match is on the KEY anyway, and not only for consistency with the two parsers above:
+    a caller that windowed WRONGLY — or not at all, since ``range=`` silently WINS over a
+    period window in the same URL (``q6_range_and_period_together``: 502 bars, this morning's
+    last) — hands this function a body full of bars nobody asked about. A position read would
+    answer that with today's close under a historical key. An exact match cannot: the body
+    carries a bar dated ``observation_date`` or it does not.
+
+    AN EMPTY WINDOW IS NOT A BROKEN BODY, and this is the ONE check that could not be
+    :func:`parse_yahoo_chart`'s, reused though the rest of them are. A window matching no bar
+    — a weekend, a market holiday, a zero-width window — is answered ``200`` with the envelope
+    and ``meta`` intact and the bar arrays simply ABSENT: ``"indicators":{"quote":[{}]}`` and
+    NO ``timestamp`` key at all (``q3_window_on_non_trading_day``, SPY on 2015-06-13).
+    :func:`parse_yahoo_chart` reads that as ``{"malformed": "shape"}``, which is correct for
+    ITS question — the live loop asks for a ten-day range, and a ten-day range with no bars in
+    it is a body we cannot read — and wrong for this one, where it is the ordinary answer "the
+    symbol did not print on this date". So here a MISSING bar array means "no bars"; every
+    other shape check is :func:`parse_yahoo_chart`'s, unchanged.
+
+    Three outcomes, kept apart:
+
+    * **a value** — a bar whose UTC date is exactly ``observation_date``. The date is derived
+      from the bar's ``timestamp`` exactly as :func:`parse_yahoo_chart` derives it (a ``1d``
+      bar is stamped at the session OPEN, 1433770200 = 2015-06-08T13:30Z for a US listing, so
+      the UTC date of the stamp is the session's date). The raw token is passed through by
+      :func:`_number_or_token`, never defaulted;
+    * **``{"unit": ...}``** — no bar for that date (the absent-array case above, and equally a
+      body of bars for other dates), or a matched bar whose ``close`` is ``null``: Yahoo nulls
+      a session it has no print for, and that skip is :func:`parse_yahoo_chart`'s, kept here.
+      Under an exact-date match a skipped bar cannot be replaced by a neighbouring one, so a
+      nulled session falls out as EMPTY rather than as some other day's close;
+    * **``{"malformed": ...}``** — anything the shape checks reject: not JSON, no
+      ``chart.result[0]``, no ``indicators.quote[0]``, ``timestamp`` and ``close`` of
+      different lengths, or a ``timestamp`` that is not a readable epoch second.
+
+    CLOSE ONLY, no ``field``. :func:`parse_yahoo_chart` can read ``adjclose`` and two live
+    ingredients deliberately do, which is why :class:`YahooChartAdapter` REFUSES a dated
+    request for that field outright rather than letting it be answered with the unadjusted
+    close — argued there.
+
+    NO ``history`` and no ``today``. No history for :func:`parse_fred_csv_for_date`'s reason:
+    a one-day window has no history in it. No ``today`` because that guard exists for a range
+    that ENDS at the live session — a dated request for a past date cannot reach a partial bar
+    — and refusing a date that has not closed yet is the backfill driver's floor to hold, not
+    this function's (``ingestion.backfill_adapters``, a later round).
+    """
+    try:
+        result = json.loads(text)["chart"]["result"][0]
+        quote = result["indicators"]["quote"][0]
+        # ABSENT bar arrays are the probed shape of "no bar in this window", so they are read
+        # as no bars and not, as parse_yahoo_chart reads them, as an unreadable body.
+        stamps = result.get("timestamp") or []
+        closes = quote.get("close") or []
+        if len(stamps) != len(closes):
+            return {"malformed": "shape"}
+        for stamp, close in zip(stamps, closes):
+            if close is None:  # Yahoo nulls a session it has no print for; skip, never fill.
+                continue
+            if datetime.fromtimestamp(stamp, tz=timezone.utc).date().isoformat() != observation_date:
+                continue
+            return {"unit": unit, "observation_date": observation_date,
+                    "value": _number_or_token(str(close))}
+    except (AttributeError, IndexError, KeyError, OSError, OverflowError, TypeError, ValueError):
+        # The iteration is inside the guard, unlike parse_yahoo_chart's: a timestamp that is
+        # not a readable epoch second is a body we cannot read, which is MALFORMED and must
+        # not be an exception escaping into the collector.
+        return {"malformed": "shape"}
+    return {"unit": unit}
 
 _MULTPL_ROW = re.compile(
     r"<td>([A-Z][a-z]{2} \d{1,2}, \d{4})</td>\s*<td>\s*(?:&#x2002;|&\w+;)?\s*([^<\s]+)\s*</td>"
@@ -1122,16 +1207,112 @@ class YahooChartAdapter(_BaseAdapter):
 
     UNOFFICIAL: no SLA, no licence, rate-limited (HTTP 429 under bursts). Its failures are
     recorded like any other; none is defaulted.
+
+    TWO QUESTIONS, ONE ENDPOINT, AND THE SECOND ONE IS OPT-IN (WO-1.16). With
+    ``observation_date`` left at ``None`` — which is every live call, since
+    ``ingestion.catalog.build_adapter`` has no argument that could set it — this asks "what is
+    this symbol at now?" and is the adapter it has always been: ``range=10d`` (``2y`` for a
+    history read), :func:`parse_yahoo_chart`, the last bar, the same failure handling. With
+    ``observation_date`` set it asks "what did this symbol close at on D?", and exactly two
+    things change together:
+
+    * the request REPLACES ``range`` with an absolute ``period1``/``period2`` window;
+    * the body is read by :func:`parse_yahoo_chart_for_date`, which matches D exactly.
+
+    REPLACES, NOT APPENDS, AND THAT IS MEASURED RATHER THAN PREFERRED. Given both in one URL,
+    ``range`` WINS: the period window is silently ignored and the whole relative body comes
+    back (probed 2026-10-15, ``evidence/wo116_yahoo_window_probe.json``,
+    ``q6_range_and_period_together``: ``range=2y`` plus a one-day window for 2015-06-08
+    answered 502 bars ending at this morning's). An implementation that appended the window
+    would ask for a 2015 date and be handed two years of bars ending today — the body
+    :func:`parse_yahoo_chart_for_date`'s exact-key match exists to make harmless, which is no
+    reason to build the request that produces it.
+
+    THE WINDOW IS THE WHOLE UTC DAY, AND THE OBVIOUS ENCODING IS THE WRONG ONE.
+    ``period1``/``period2`` are Unix seconds bounding an absolute window, and a ``1d`` bar is
+    stamped not at midnight but at the exchange's session OPEN — 1433770200 is
+    2015-06-08T13:30Z, a US listing on summer time, 14:30Z the same session in winter. So the
+    window has to CONTAIN that instant, and the whole UTC day of D contains it under either
+    offset: ``period1`` = 00:00:00Z of D, ``period2`` = 00:00:00Z of D+1 LESS ONE SECOND =
+    23:59:59Z of D. It is derived as "the next midnight, minus a second" rather than written
+    as "plus 86399" because that is the bound being expressed — a UTC day is always 86400
+    POSIX seconds so the two agree, but the arithmetic should say what it means. The encoding
+    a caller reaches for first — ``period1 == period2 ==`` midnight of D, a zero-width point —
+    returns ZERO BARS for a real trading day (``q2_window_one_day_zero_width``, measured on
+    three symbols), which is an off-by-one that would look exactly like a market holiday. A
+    half-open ``[00:00:00Z of D, 00:00:00Z of D+1)`` would do as well on the evidence; the
+    inclusive 23:59:59Z bound is the one actually probed, so it is the one built.
+
+    A 400 IS A FAILURE, NOT AN EMPTY — THE OPPOSITE OF WHAT ``FredAdapter`` DOES, DELIBERATELY.
+    :class:`FredAdapter` translates an ``HTTP_ERROR``/404 into EMPTY for a dated request. This
+    adapter translates nothing, and the asymmetry is the decision rather than an omission:
+
+    * ``FredAdapter`` NEEDED that carve-out. FRED answers a one-day window on a real gap date
+      — a Saturday inside a business-daily series' span — with ``404`` and an HTML error page,
+      NOT with ``200`` and a header and no rows (``evidence/wo115_fred_window_probe.json``,
+      ``extra_window_on_gap_date``). There, the 404 IS "no observation on this date", and
+      without the translation every ordinary non-trading day would be a fetch failure.
+    * Yahoo has no such need, because its gap day is already representable: a weekend, a
+      holiday, or any date the symbol did not print on is ``200`` with the bar arrays absent,
+      which :func:`parse_yahoo_chart_for_date` reports as EMPTY with no special-casing
+      (``q3_window_on_non_trading_day``, ``q3_window_on_market_holiday``). Nothing about a real
+      gap date is bought by translating a 400.
+    * So a 400 here is reachable ONLY by an IMPOSSIBLE WINDOW — entirely before the symbol's
+      first trade, entirely in the future, or reversed. All three were probed, all three are a
+      clean 400 whose JSON body names the rejected bounds (``q4_*``, ``q5_window_reversed``).
+      None of them is the source saying anything about the date asked for; each is the REQUEST
+      being wrong, i.e. a caller defect. Translated to EMPTY it would be recorded as "the
+      symbol did not print that day", indistinguishable from a weekend, and a driver whose date
+      arithmetic ran ahead of the clock could walk a whole range logging quiet EMPTYs for dates
+      that have not happened. Left as a failure it is loud, counted, retried under the retry
+      policy and recorded as a fetch failure — which is also how a 404 behaves here in BOTH
+      modes, the way :class:`CboeAdapter` keeps its 404 a failure in both of its own.
+    * The before-first-trade case is the one arguable the other way: "the symbol did not exist,
+      so there was nothing to print" does sound like EMPTY. It stays a failure on WO-1.14's
+      reason — a date before an ingredient's history is a date a backfill must not be asking
+      for, and the place to stop is the driver's floor, REFUSED unfetched (WO-1.15 does exactly
+      that with ``STABILITY_MEASURED_FROM``), not a translation here that would make every
+      out-of-range date look like a quiet weekend.
+
+    Concretely that decision is the ABSENCE of an ``_acquire`` override: the base class's one
+    bounded GET raises :class:`AdapterFetchError` and nothing here catches it, in either mode.
+
+    A DATED REQUEST FOR ``adjclose`` IS REFUSED AT CONSTRUCTION, not answered with ``close``.
+    ``field="adjclose"`` is deliberate for two live ingredients (``ingestion/catalog.py``:
+    BIZD's printed-price drawdown counts every ex-dividend drop as stress, and the breadth
+    sample uses the adjusted close like the legacy tell), while
+    :func:`parse_yahoo_chart_for_date` reads ``close`` only — because a backfilled ``adjclose``
+    has no point-in-time meaning at all: it drifts retroactively with every dividend and split,
+    for every date before the event, forever (PID.md, WO-1.16 scope correction;
+    ``ingestion.backfill_adapters`` refuses the whole ``yahoo`` kind today for that reason).
+    Answering such a request with the UNADJUSTED close would make this adapter report a
+    different QUANTITY than the live collector stores under the same ingredient — the WO-1.14
+    defect class, by field instead of by date. Whether ``adjclose`` may be backfilled at all is
+    an open question with an owner; until it is settled, the combination raises rather than
+    being resolved quietly in the wrong direction.
+
+    ``observation_date`` is KEYWORD-ONLY, matching :class:`FredAdapter` and
+    :class:`CboeAdapter`: ``history`` and ``field`` are positional at existing call sites, and
+    a date arriving where a row count belongs would be a silent change of question. It is
+    parsed at construction — a string we cannot read as a date is not one we may convert into a
+    window.
     """
 
-    __slots__ = ("_symbol", "_history", "_field")
+    __slots__ = ("_symbol", "_history", "_field", "_observation_date")
     adapter_id = "cd.ingest.yahoo_chart.v1"
 
-    def __init__(self, symbol: str, history: int = 0, field: str = "close", **kw: Any) -> None:
+    def __init__(self, symbol: str, history: int = 0, field: str = "close", *,
+                 observation_date: Union[str, None] = None, **kw: Any) -> None:
         super().__init__(**kw)
+        if observation_date is not None:
+            date.fromisoformat(observation_date)
+            if field != "close":
+                raise ValueError("a dated Yahoo fetch reads close only; adjclose has no "
+                                 "point-in-time meaning (PID.md WO-1.16 scope correction)")
         self._symbol = symbol
         self._history = history
         self._field = field
+        self._observation_date = observation_date
 
     def _headers(self) -> Mapping[str, str]:
         # Yahoo answers 429 to urllib's default agent and 200 to an identified browser-style
@@ -1140,11 +1321,24 @@ class YahooChartAdapter(_BaseAdapter):
 
     def _url(self) -> str:
         quoted = self._symbol.replace("^", "%5E").replace("=", "%3D")
-        rng = "2y" if self._history else "10d"
-        return f"https://query1.finance.yahoo.com/v8/finance/chart/{quoted}?range={rng}&interval=1d"
+        chart = f"https://query1.finance.yahoo.com/v8/finance/chart/{quoted}"
+        if self._observation_date is None:
+            rng = "2y" if self._history else "10d"
+            return f"{chart}?range={rng}&interval=1d"
+        # The whole UTC day of the named date, inclusive, and NO range= at all: both and
+        # range wins. The session-open stamp a 1d bar carries lies inside this span under
+        # either DST offset, where a zero-width window at midnight carries nothing. Both
+        # findings are measured; the derivation is argued in the class docstring.
+        day = date.fromisoformat(self._observation_date)  # already validated at construction
+        midnight = datetime(day.year, day.month, day.day, tzinfo=timezone.utc)
+        last_second = midnight + timedelta(days=1) - timedelta(seconds=1)
+        return (f"{chart}?period1={int(midnight.timestamp())}"
+                f"&period2={int(last_second.timestamp())}&interval=1d")
 
     def _parse(self, body: str) -> dict:
-        return parse_yahoo_chart(body, self._unit, self._history, today=self._clock().date(), field=self._field)
+        if self._observation_date is None:
+            return parse_yahoo_chart(body, self._unit, self._history, today=self._clock().date(), field=self._field)
+        return parse_yahoo_chart_for_date(body, self._unit, self._observation_date)
 
 
 class MultplShillerAdapter(_BaseAdapter):

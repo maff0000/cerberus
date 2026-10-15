@@ -300,6 +300,308 @@ def test_yahoo_bad_shapes_are_malformed(body):
     assert "unit" not in A.parse_yahoo_chart(body, "usd")
 
 
+# WO-1.16. ``parse_yahoo_chart_for_date`` asks of a Yahoo v8 chart body the question the three
+# tests above do not: not "what is this symbol at NOW" — the LAST bar — but "what did it close
+# at on date D", which is the bar dated D or nothing at all. It sits beside ``parse_yahoo_chart``
+# for the reason ``parse_fred_csv_for_date`` and ``parse_cboe_csv_for_date`` sit beside their own
+# latest-row parsers, and the two bodies below are REAL: both are copied verbatim out of
+# ``evidence/wo116_yahoo_window_probe.json`` (probed 2026-10-15), so the shapes under test are the
+# shapes the endpoint actually serves for a one-day window — on a trading day, and on a day the
+# symbol did not print.
+#: SPY, ``period1=1433721600&period2=1433807999&interval=1d`` — the whole UTC day of
+#: 2015-06-08 — answered VERBATIM (``q2_window_one_day_utc_day``). ONE bar, stamped
+#: 1433770200 = 2015-06-08T13:30Z (the session OPEN, not midnight), close 208.47999572753906.
+#: ``meta`` and the ``adjclose`` block are kept exactly as served: the parser has to reach
+#: past both, and a hand-trimmed body would not prove that.
+_YAHOO_SPY_ONE_UTC_DAY = (
+    '{"chart":{"result":[{"meta":{"currency":"USD","symbol":"SPY","exchangeName":"PCX","fullExcha'
+    'ngeName":"NYSEArca","instrumentType":"ETF","firstTradeDate":728317800,"regularMarketTime":17'
+    '92089976,"hasPrePostMarketData":true,"gmtoffset":-14400,"timezone":"EDT","exchangeTimezoneNa'
+    'me":"America/New_York","regularMarketPrice":770.01,"regularMarketChangePercent":0.053,"fulld'
+    'ayPrice":770.01,"fulldayChange":0.41,"fulldayChangePercent":0.053,"fiftyTwoWeekHigh":781.62,'
+    '"fiftyTwoWeekLow":629.28,"regularMarketDayHigh":771.91,"regularMarketDayLow":764.44,"regular'
+    'MarketVolume":26568391,"longName":"State Street SPDR S&P 500 ETF Trust","shortName":"State S'
+    'treet SPDR S&P 500 ETF T","chartPreviousClose":209.77,"priceHint":2,"currentTradingPeriod":{'
+    '"pre":{"timezone":"EDT","start":1792051200,"end":1792071000,"gmtoffset":-14400},"regular":{"'
+    'timezone":"EDT","start":1792071000,"end":1792094400,"gmtoffset":-14400},"post":{"timezone":"'
+    'EDT","start":1792094400,"end":1792108800,"gmtoffset":-14400}},"dataGranularity":"1d","range"'
+    ':"","validRanges":["1d","5d","1mo","3mo","6mo","1y","2y","5y","10y","ytd","max"]},"timestamp'
+    '":[1433770200],"indicators":{"quote":[{"close":[208.47999572753906],"high":[209.820007324218'
+    '75],"low":[208.38999938964844],"volume":[89063300],"open":[209.63999938964844]}],"adjclose":'
+    '[{"adjclose":[172.54739379882812]}]}}],"error":null}}'
+)
+
+#: SPY, the same one-day window on 2015-06-13 — a SATURDAY — answered VERBATIM
+#: (``q3_window_on_non_trading_day``). HTTP 200, ``error: null``, ``meta`` complete, and the
+#: bar arrays simply ABSENT: ``"quote":[{}]`` with NO ``timestamp`` key anywhere. This is the
+#: shape of "the symbol did not print on this date", and it is the one shape the two Yahoo
+#: parsers must answer DIFFERENTLY.
+_YAHOO_SPY_NO_BAR_AT_ALL = (
+    '{"chart":{"result":[{"meta":{"currency":"USD","symbol":"SPY","exchangeName":"PCX","fullExcha'
+    'ngeName":"NYSEArca","instrumentType":"ETF","firstTradeDate":728317800,"regularMarketTime":17'
+    '92089978,"hasPrePostMarketData":true,"gmtoffset":-14400,"timezone":"EDT","exchangeTimezoneNa'
+    'me":"America/New_York","regularMarketPrice":770.01,"regularMarketChangePercent":0.053,"fulld'
+    'ayPrice":770.01,"fulldayChange":0.41,"fulldayChangePercent":0.053,"fiftyTwoWeekHigh":781.62,'
+    '"fiftyTwoWeekLow":629.28,"regularMarketDayHigh":771.91,"regularMarketDayLow":764.44,"regular'
+    'MarketVolume":26568561,"longName":"State Street SPDR S&P 500 ETF Trust","shortName":"State S'
+    'treet SPDR S&P 500 ETF T","chartPreviousClose":210.01,"priceHint":2,"currentTradingPeriod":{'
+    '"pre":{"timezone":"EDT","end":1792071000,"start":1792051200,"gmtoffset":-14400},"regular":{"'
+    'timezone":"EDT","end":1792094400,"start":1792071000,"gmtoffset":-14400},"post":{"timezone":"'
+    'EDT","end":1792108800,"start":1792094400,"gmtoffset":-14400}},"dataGranularity":"1d","range"'
+    ':"","validRanges":["1d","5d","1mo","3mo","6mo","1y","2y","5y","10y","ytd","max"]},"indicator'
+    's":{"quote":[{}],"adjclose":[{}]}}],"error":null}}'
+)
+
+#: Not probed and not claimed to be: three bars, hand-built, to put OTHER dates in front of the
+#: parser. The stamps are real session-open stamps (13:30Z, matching the probed bar above), and
+#: the last one — 1791984600, 2026-10-14 — is lifted from the baseline ``range=10d`` case, i.e.
+#: it is exactly what a body that ignored the window would end with (``q6_range_and_period_
+#: together``: given ``range`` AND a window, range wins and the whole relative body comes back).
+_YAHOO_BARS_FOR_OTHER_DATES = (
+    '{"chart":{"result":[{"timestamp":[1433856600,1433943000,1791984600],'
+    '"indicators":{"quote":[{"close":[207.0,208.0,769.5999755859375]}]}}],"error":null}}'
+)
+
+
+def test_yahoo_for_date_reads_the_bar_dated_exactly_that_date():
+    """The probed one-day body, read whole: ``meta`` first, an ``adjclose`` block alongside the
+    ``quote`` one, and the bar stamped at the session OPEN rather than at midnight."""
+    assert A.parse_yahoo_chart_for_date(_YAHOO_SPY_ONE_UTC_DAY, "usd", "2015-06-08") == {
+        "unit": "usd", "observation_date": "2015-06-08", "value": 208.47999572753906}
+    # The date is derived from the STAMP, which is 13:30Z on the date asked for — so a parser
+    # reading the stamp as anything but a UTC instant would answer for a different day.
+    assert json.loads(_YAHOO_SPY_ONE_UTC_DAY)["chart"]["result"][0]["timestamp"] == [1433770200]
+    assert datetime.fromtimestamp(1433770200, tz=timezone.utc).isoformat() == "2015-06-08T13:30:00+00:00"
+
+
+def test_yahoo_for_date_a_null_close_on_the_matched_bar_is_empty_not_zero():
+    """Yahoo nulls a session it has no print for, and ``parse_yahoo_chart``'s skip is KEPT here
+    rather than assumed — asserted on both parsers against one body. Under an exact-date match a
+    skipped bar cannot be replaced by a neighbouring one, so the bar being THERE with a null
+    close falls out as EMPTY: no value, and emphatically not the other bar's close."""
+    body = ('{"chart":{"result":[{"timestamp":[1433770200,1433856600],'
+            '"indicators":{"quote":[{"close":[null,207.0]}]}}]}}')
+    assert A.parse_yahoo_chart_for_date(body, "usd", "2015-06-08") == {"unit": "usd"}
+    assert A.parse_yahoo_chart(body, "usd") == {
+        "unit": "usd", "observation_date": "2015-06-09", "value": 207.0}  # skipped, never filled
+
+
+def test_yahoo_for_date_an_absent_bar_array_is_empty_here_and_malformed_to_the_other_parser():
+    """THE ONE SHAPE THE TWO PARSERS MUST ANSWER DIFFERENTLY, and the reason this function could
+    not just reuse ``parse_yahoo_chart``'s shape checks wholesale.
+
+    A one-day window on a non-trading day is answered ``200``, ``error: null``, ``meta`` intact,
+    and the bar arrays simply ABSENT — ``"quote":[{}]`` and no ``timestamp`` key at all
+    (``q3_window_on_non_trading_day``, SPY on Saturday 2015-06-13). ``parse_yahoo_chart`` reads
+    that as MALFORMED, which is right for ITS question — the live loop asks for ``range=10d`` and
+    a ten-day range with no bars in it is a body we cannot believe — and wrong for this one,
+    where it is the ordinary answer "the symbol did not print on this date". Both verdicts are
+    pinned here, against the one body, because each is only correct about its own question."""
+    absent = json.loads(_YAHOO_SPY_NO_BAR_AT_ALL)["chart"]["result"][0]
+    assert "timestamp" not in absent and absent["indicators"]["quote"] == [{}]  # the shape itself
+    assert absent["meta"]["symbol"] == "SPY" and json.loads(_YAHOO_SPY_NO_BAR_AT_ALL)["chart"]["error"] is None
+
+    assert A.parse_yahoo_chart(_YAHOO_SPY_NO_BAR_AT_ALL, "usd") == {"malformed": "shape"}
+    assert A.parse_yahoo_chart_for_date(_YAHOO_SPY_NO_BAR_AT_ALL, "usd", "2015-06-13") == {"unit": "usd"}
+    # EMPTY is not MALFORMED and not a value: the payload carries ``unit`` and nothing else, so
+    # the store records an absent observation rather than an unreadable body.
+    out = A.parse_yahoo_chart_for_date(_YAHOO_SPY_NO_BAR_AT_ALL, "usd", "2015-06-13")
+    assert "malformed" not in out and "value" not in out and "observation_date" not in out
+
+
+def test_yahoo_for_date_bars_for_other_dates_are_empty_and_never_a_neighbouring_bar():
+    """A body full of bars nobody asked about is reachable — a caller that windowed wrongly, or
+    not at all, since ``range=`` silently wins over a period window in the same URL. A POSITION
+    read answers such a body with the LAST bar under the historical key asked for; an exact match
+    cannot, and the two parsers are pinned against one body to show it."""
+    for missing in ("2015-06-08", "2015-06-11", "2015-06-13", "2026-10-15"):
+        assert A.parse_yahoo_chart_for_date(_YAHOO_BARS_FOR_OTHER_DATES, "usd", missing) == {"unit": "usd"}
+    # The dates it DOES carry are matched, each to its own bar, never to the one next door.
+    assert A.parse_yahoo_chart_for_date(_YAHOO_BARS_FOR_OTHER_DATES, "usd", "2015-06-09") == {
+        "unit": "usd", "observation_date": "2015-06-09", "value": 207.0}
+    assert A.parse_yahoo_chart_for_date(_YAHOO_BARS_FOR_OTHER_DATES, "usd", "2015-06-10") == {
+        "unit": "usd", "observation_date": "2015-06-10", "value": 208.0}
+    # parse_yahoo_chart, asked of the same body, answers with the last bar instead. Both are
+    # right about their own question, which is why there are two functions.
+    assert A.parse_yahoo_chart(_YAHOO_BARS_FOR_OTHER_DATES, "usd")["observation_date"] == "2026-10-14"
+
+
+@pytest.mark.parametrize("body", [
+    "not json",
+    "",
+    "{}",
+    '{"chart":{}}',
+    '{"chart":{"result":null}}',
+    '{"chart":{"result":[]}}',
+    '{"chart":{"result":[{"timestamp":[1433770200]}]}}',                      # no indicators
+    '{"chart":{"result":[{"timestamp":[1433770200],"indicators":{"quote":[]}}]}}',
+    # timestamp and close of different lengths: which close belongs to which bar is unknowable
+    '{"chart":{"result":[{"timestamp":[1433770200],"indicators":{"quote":[{"close":[1,2]}]}}]}}',
+    '{"chart":{"result":[{"timestamp":[1433770200,1433856600],"indicators":{"quote":[{"close":[1]}]}}]}}',
+    # a stamp that is not a readable epoch second
+    '{"chart":{"result":[{"timestamp":[100000000000000],"indicators":{"quote":[{"close":[1.0]}]}}]}}',
+])
+def test_yahoo_for_date_an_unreadable_body_is_malformed_never_an_absent_observation(body):
+    """MALFORMED and EMPTY are different answers: the first says we cannot read what arrived, the
+    second says the source has no figure for the date. No ``unit`` key, so the closed response
+    schema rejects it rather than a reading being admitted with no value. Every shape here is one
+    ``parse_yahoo_chart`` already rejects — only the ABSENT bar array above diverges."""
+    out = A.parse_yahoo_chart_for_date(body, "usd", "2015-06-08")
+    assert out == {"malformed": "shape"} and "unit" not in out
+
+
+def test_yahoo_for_date_an_unreadable_stamp_is_malformed_rather_than_an_escaping_exception():
+    """Why the iteration sits INSIDE the guard, unlike ``parse_yahoo_chart``'s: a stamp that is
+    not an epoch second at all raises there, and an exception escaping into the collector is not
+    an observation. Here it is MALFORMED, which is what an unreadable body is."""
+    body = '{"chart":{"result":[{"timestamp":["nope"],"indicators":{"quote":[{"close":[1.0]}]}}]}}'
+    assert A.parse_yahoo_chart_for_date(body, "usd", "2015-06-08") == {"malformed": "shape"}
+    with pytest.raises(TypeError):
+        A.parse_yahoo_chart(body, "usd")
+
+
+def test_yahoo_for_date_a_garbage_value_is_passed_through_for_the_schema_to_reject():
+    """Exactly as ``parse_yahoo_chart`` does: the raw token is carried, never defaulted."""
+    body = '{"chart":{"result":[{"timestamp":[1433770200],"indicators":{"quote":[{"close":["abc"]}]}}]}}'
+    assert A.parse_yahoo_chart_for_date(body, "usd", "2015-06-08")["value"] == "abc"
+
+
+# --- WO-1.16: YahooChartAdapter's dated mode, which is the REQUEST half of the same change ---- #
+#
+# Two questions, one endpoint, and the second is opt-in. With ``observation_date`` left at None —
+# every live call, since ``build_adapter`` has no argument that could set it — the adapter is the
+# one it has always been. With a date set, the request REPLACES ``range`` with an absolute
+# ``period1``/``period2`` window and the body is read by the exact-match parser above.
+
+
+def _yahoo(symbol="SPY", history=0, field="close", getter=None, **kw):
+    return A.YahooChartAdapter(
+        symbol, history, field, source_id=f"yahoo.{symbol}", as_of_rule="obs_date", unit="usd",
+        clock=lambda: NOW, **({} if getter is None else {"getter": getter}), **kw)
+
+
+def test_yahoo_undated_adapter_builds_exactly_the_url_it_built_before_this_wo():
+    """THE LIVE-LOOP NON-REGRESSION. Asserted as whole URLs rather than by substring: the undated
+    request is not "still roughly right", it is character-for-character what it was. The first one
+    is the URL the probe recorded as ``adapter_url_today`` for SPY before anything was changed."""
+    chart = "https://query1.finance.yahoo.com/v8/finance/chart"
+    assert _yahoo()._url() == f"{chart}/SPY?range=10d&interval=1d"
+    assert _yahoo(history=5)._url() == f"{chart}/SPY?range=2y&interval=1d"
+    assert _yahoo("^GSPC")._url() == f"{chart}/%5EGSPC?range=10d&interval=1d"
+    assert _yahoo("HG=F", history=20)._url() == f"{chart}/HG%3DF?range=2y&interval=1d"
+    # And nothing the CATALOG builds can be in the dated mode: every live yahoo wiring still asks
+    # for a relative range and carries no window at all.
+    live = [build_adapter(i, lambda: NOW) for i in INGREDIENTS if i.kind == "yahoo"]
+    assert live, "the catalog serves no yahoo ingredient: this guard would pass vacuously"
+    assert all("range=" in a._url() and "period1" not in a._url() for a in live)
+
+
+def test_yahoo_dated_adapter_replaces_range_with_an_absolute_window_rather_than_appending_it():
+    """``range`` and a window together is not a harmless belt-and-braces: given both, RANGE WINS
+    and the whole relative body comes back (``q6_range_and_period_together``: ``range=2y`` plus a
+    one-day window for 2015-06-08 answered 502 bars ending at that morning's). So ``range`` must
+    be ABSENT, which is asserted as an absence — on the parsed keys and on the raw query text —
+    not inferred from ``period1`` being present."""
+    from urllib.parse import parse_qs, urlsplit
+
+    url = _yahoo(observation_date="2015-06-08")._url()
+    query = urlsplit(url).query
+    assert set(parse_qs(query)) == {"period1", "period2", "interval"}
+    assert "range" not in parse_qs(query) and "range" not in query
+    assert parse_qs(query)["interval"] == ["1d"]
+    # The history flag changes the RANGE, and in dated mode there is no range to change.
+    # ``history`` picks the RANGE, and in dated mode there is no range for it to pick.
+    assert _yahoo(history=20, observation_date="2015-06-08")._url() == url
+
+
+def test_yahoo_dated_window_is_the_whole_utc_day_of_the_date_asked_for():
+    """The window has to CONTAIN a bar stamped at the session open — 13:30Z or 14:30Z depending
+    on the offset in force — so it is the whole UTC day: 00:00:00Z of D to 23:59:59Z of D.
+
+    The two bounds are checked twice over, both times WITHOUT reusing the adapter's arithmetic.
+    First against the integers in the probed URL itself, which is where they came from. Then,
+    for four more dates, computed through ``calendar.timegm`` on a UTC struct_time — a different
+    route to an epoch second than ``datetime(...).timestamp()`` — so an off-by-one in the
+    adapter's "next midnight, minus a second" would show up here rather than be reproduced."""
+    import calendar
+
+    # The probed one-day window, verbatim from the URL in evidence/wo116_yahoo_window_probe.json.
+    assert _yahoo(observation_date="2015-06-08")._url() == (
+        "https://query1.finance.yahoo.com/v8/finance/chart/SPY"
+        "?period1=1433721600&period2=1433807999&interval=1d")
+
+    for iso in ("2015-06-08",   # the probed date, the same answer by the other route
+                "2015-03-08",   # US DST begins: the session opens 14:30Z the day before, 13:30Z after
+                "2015-11-01",   # and ends
+                "2016-02-29",   # a leap day
+                "1993-01-29"):  # SPY's first trade date, the left edge a backfill can reach
+        year, month, day = (int(part) for part in iso.split("-"))
+        first_second = calendar.timegm((year, month, day, 0, 0, 0, 0, 0, 0))
+        last_second = calendar.timegm((year, month, day, 23, 59, 59, 0, 0, 0))
+        assert f"period1={first_second}&period2={last_second}&interval=1d" in (
+            _yahoo(observation_date=iso)._url()), iso
+        # Not the zero-width encoding a caller reaches for first, which returns ZERO BARS for a
+        # real trading day (``q2_window_one_day_zero_width``, measured on three symbols).
+        assert first_second != last_second and last_second - first_second == 86399
+
+
+def test_yahoo_dated_adapter_refuses_adjclose_at_construction_rather_than_answering_with_close():
+    """``field="adjclose"`` is deliberate for two live ingredients and the dated parser reads
+    ``close`` only, because a backfilled ``adjclose`` has no point-in-time meaning at all — it
+    drifts retroactively with every dividend and split (PID.md, WO-1.16 scope correction). So the
+    combination raises where it is written, rather than being resolved quietly into the
+    unadjusted close, which would report a different QUANTITY than the live collector stores
+    under the same ingredient."""
+    with pytest.raises(ValueError):
+        _yahoo(field="adjclose", observation_date="2015-06-08")
+    # Neither half is refused on its own: adjclose stays available to the LIVE adapter, and a
+    # dated request for the close — named or defaulted — is built normally.
+    assert _yahoo(field="adjclose")._url().endswith("range=10d&interval=1d")
+    assert "period1=" in _yahoo(field="close", observation_date="2015-06-08")._url()
+    assert "period1=" in _yahoo(observation_date="2015-06-08")._url()
+
+
+def test_yahoo_dated_adapter_refuses_a_date_it_cannot_read_at_construction():
+    """A string we cannot read as a date is not one we may turn into a window."""
+    for unreadable in ("2015-6-8", "06/08/2015", "yesterday", "2015-06-31", ""):
+        with pytest.raises(ValueError):
+            _yahoo(observation_date=unreadable)
+
+
+def test_yahoo_dated_adapter_lets_a_400_stay_a_failure_where_fred_turns_its_404_into_empty():
+    """THE DELIBERATE ASYMMETRY WITH ``FredAdapter``, pinned as an asymmetry: the two adapters are
+    asked the same kind of question in the same test and answer differently, on purpose.
+
+    ``FredAdapter`` NEEDS its carve-out — FRED answers a window on a real gap date with ``404``
+    and an HTML page, so without the translation every non-trading day would be a fetch failure.
+    Yahoo's gap day is already representable as ``200`` with the bar arrays absent (the EMPTY
+    test above), so a 400 here is reachable only by an IMPOSSIBLE window — before the first
+    trade, in the future, or reversed — which is the REQUEST being wrong. Translated to EMPTY it
+    would be recorded as "the symbol did not print that day" and a driver whose dates ran ahead
+    of the clock could log quiet EMPTYs for dates that have not happened."""
+    def refused(url, timeout, headers=None):
+        raise AdapterFetchError("HTTP_ERROR", 400)  # q4_* / q5_window_reversed, an impossible window
+
+    with pytest.raises(AdapterFetchError) as raised:
+        _yahoo(observation_date="1980-01-02", getter=refused).fetch(timeout_seconds=5.0)
+    assert raised.value.error_class == "HTTP_ERROR" and raised.value.http_status == 400
+    # Not a mode-dependent accident: the undated adapter raises the same way, and so does a 404.
+    with pytest.raises(AdapterFetchError):
+        _yahoo(getter=refused).fetch(timeout_seconds=5.0)
+
+    def missing(url, timeout, headers=None):
+        raise AdapterFetchError("HTTP_ERROR", 404)
+
+    with pytest.raises(AdapterFetchError):
+        _yahoo(observation_date="2015-06-08", getter=missing).fetch(timeout_seconds=5.0)
+
+    # FredAdapter, the same 404, the same dated mode: EMPTY, an ANSWER rather than a failure.
+    # This is the behaviour being deliberately NOT copied, not an oversight in one of the two.
+    fred = A.FredAdapter("T5YIE", None, observation_date="2015-06-20", source_id="fred.T5YIE",
+                         as_of_rule="obs_date", unit="percent", clock=lambda: NOW, getter=missing)
+    assert fred.fetch(timeout_seconds=5.0).payload == {"unit": "percent"}
+
+
 def test_multpl_first_row():
     body = "<tr><td>Oct 9, 2026</td><td>\n&#x2002;\n41.87\n</td></tr><tr><td>Sep 1, 2026</td><td>40</td></tr>"
     assert A.parse_multpl_table(body, "ratio") == {"unit": "ratio", "observation_date": "2026-10-09", "value": 41.87}
