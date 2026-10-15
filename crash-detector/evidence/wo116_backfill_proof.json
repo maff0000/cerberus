@@ -1,0 +1,241 @@
+{
+  "adjclose_refusal": {
+    "column": "adjclose",
+    "has_no_revision_mechanism": false,
+    "kind": "yahoo",
+    "leg": "adjclose_refusal",
+    "no_network_reached": true,
+    "observation_date": "2018-11-15",
+    "proves": "that the REAL private_credit_stress catalog row is refused by backfill_range itself \u2014 at the label dispatch, before any date is touched and before any URL exists \u2014 and that YahooChartAdapter refuses the same row independently at construction",
+    "raised": true,
+    "raised_message": "yahoo.BIZD.adj is kind 'yahoo': declared backfillable but no vintage label is derived for it (see ingestion.vintage.NO_REVISION_MECHANISM_KINDS and NO_REVISION_MECHANISM_COLUMNS)",
+    "raised_type": "ValueError",
+    "ref": "BIZD",
+    "refusal_door": "label_dispatch",
+    "refusal_is_label_dispatch": true,
+    "requests_issued_during_leg": 0,
+    "second_door_build_backfill_adapter_raised": true,
+    "second_door_raised_message": "a dated Yahoo fetch reads close only; adjclose has no point-in-time meaning (PID.md WO-1.16 scope correction)",
+    "second_door_raised_type": "ValueError",
+    "serves": [
+      "private_credit_stress"
+    ],
+    "source_id": "yahoo.BIZD.adj"
+  },
+  "agreed": 2,
+  "cboe": {
+    "adapter_class": "CboeAdapter",
+    "adapter_id": "cd.ingest.cboe_history_csv.v1",
+    "agree": true,
+    "as_of_rule": "obs_date",
+    "backfill": {
+      "admitted": [
+        "2015-06-15"
+      ],
+      "counts": {
+        "admitted": 1,
+        "failed": 0,
+        "fetches": 1,
+        "refused": 0,
+        "skipped": 0
+      },
+      "failed": [],
+      "fetches": 1,
+      "refused": [],
+      "skipped": [],
+      "vintage": "no_revision_mechanism"
+    },
+    "backfill_and_cross_check_same_url": true,
+    "backfill_http_status": 200,
+    "backfill_request_sent": true,
+    "backfill_request_url": "https://cdn-api.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv",
+    "backfill_response_content_length": null,
+    "bucket": "admitted",
+    "class": null,
+    "column": "CLOSE",
+    "differs_from_series_latest_value": true,
+    "expected_vintage_label": "no_revision_mechanism",
+    "has_no_revision_mechanism": true,
+    "independent_body_sha256": "be4c798459037cbb71c8840f8729f545c32525e1c772bb019930c238d2198d42",
+    "independent_content_length": null,
+    "independent_how": "one plain GET of the bare VIX_History.csv URL, rows split and MM/DD/YYYY converted BY HAND in this file, outside CboeAdapter and outside parse_cboe_csv_for_date",
+    "independent_http_status": 200,
+    "independent_last_row": "10/14/2026,15.170000,17.450000,14.980000,16.870000",
+    "independent_raw_cell": "15.390000",
+    "independent_row_count": 9294,
+    "independent_span": [
+      "1990-01-02",
+      "2026-10-14"
+    ],
+    "independent_url": "https://cdn-api.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv",
+    "independent_value": 15.39,
+    "kind": "cboe",
+    "leg": "cboe",
+    "observation_date": "2015-06-15",
+    "ref": "VIX",
+    "series_latest_value": 16.87,
+    "source_id": "cboe.VIX",
+    "stored_rows": [
+      {
+        "admitted_utc": "2026-10-15T20:55:58.283225Z",
+        "payload": {
+          "observation_date": "2015-06-15",
+          "unit": "index",
+          "value": 15.39
+        },
+        "source_as_of_utc": "2015-06-15T00:00:00Z",
+        "vintage": "no_revision_mechanism"
+      }
+    ],
+    "stored_source_as_of_utc": "2015-06-15T00:00:00Z",
+    "stored_value": 15.39,
+    "unit": "index",
+    "vintage_label": "no_revision_mechanism"
+  },
+  "credential": "none \u2014 both endpoints are keyless public HTTP",
+  "database": "/tmp/wo116_backfill_proof.sqlite",
+  "disagreed": 0,
+  "endpoints": {
+    "cboe": "cdn-api.cboe.com",
+    "yahoo": "query1.finance.yahoo.com"
+  },
+  "finished_utc": "2026-10-15T20:55:58.744208Z",
+  "precedent": [
+    "tools/probe/wo114_backfill_proof.py",
+    "tools/probe/wo115_backfill_proof.py"
+  ],
+  "proves": "that backfill_range recovers the CORRECT historical value for a named past date from BOTH live endpoints \u2014 the right session, matched by exact date, not the latest row wearing a past key \u2014 and that the real private_credit_stress row (yahoo.BIZD.adj) is refused through the same entry point. NOT that either value is point-in-time-original: neither source exposes a vintage trail, which is what the no_revision_mechanism label says and the narrower claim it carries (ingestion.vintage)",
+  "ran_utc": "2026-10-15T20:55:58.046837Z",
+  "verdict": "PROVEN",
+  "vintage_label_expected": "no_revision_mechanism",
+  "wire": [
+    {
+      "answered_utc": "2026-10-15T20:55:58.150350Z",
+      "content_length": null,
+      "content_type": "text/csv",
+      "host": "cdn-api.cboe.com",
+      "http_status": 200,
+      "method": "GET",
+      "port": 443,
+      "request_target": "/api/global/us_indices/daily_prices/VIX_History.csv",
+      "requested_utc": "2026-10-15T20:55:58.103178Z",
+      "scheme": "https",
+      "url": "https://cdn-api.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv"
+    },
+    {
+      "answered_utc": "2026-10-15T20:55:58.361586Z",
+      "content_length": null,
+      "content_type": "text/csv",
+      "host": "cdn-api.cboe.com",
+      "http_status": 200,
+      "method": "GET",
+      "port": 443,
+      "request_target": "/api/global/us_indices/daily_prices/VIX_History.csv",
+      "requested_utc": "2026-10-15T20:55:58.324859Z",
+      "scheme": "https",
+      "url": "https://cdn-api.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv"
+    },
+    {
+      "answered_utc": "2026-10-15T20:55:58.519104Z",
+      "content_length": "1336",
+      "content_type": "application/json;charset=utf-8",
+      "host": "query1.finance.yahoo.com",
+      "http_status": 200,
+      "method": "GET",
+      "port": 443,
+      "request_target": "/v8/finance/chart/SPY?period1=1542240000&period2=1542326399&interval=1d",
+      "requested_utc": "2026-10-15T20:55:58.431002Z",
+      "scheme": "https",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?period1=1542240000&period2=1542326399&interval=1d"
+    },
+    {
+      "answered_utc": "2026-10-15T20:55:58.689199Z",
+      "content_length": null,
+      "content_type": "application/json;charset=utf-8",
+      "host": "query1.finance.yahoo.com",
+      "http_status": 200,
+      "method": "GET",
+      "port": 443,
+      "request_target": "/v8/finance/chart/SPY?range=10y&interval=1d",
+      "requested_utc": "2026-10-15T20:55:58.580124Z",
+      "scheme": "https",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?range=10y&interval=1d"
+    }
+  ],
+  "work_order": "CERBERUS-WO-1.16",
+  "yahoo": {
+    "adapter_class": "YahooChartAdapter",
+    "adapter_id": "cd.ingest.yahoo_chart.v1",
+    "agree": true,
+    "as_of_rule": "obs_date",
+    "backfill": {
+      "admitted": [
+        "2018-11-15"
+      ],
+      "counts": {
+        "admitted": 1,
+        "failed": 0,
+        "fetches": 1,
+        "refused": 0,
+        "skipped": 0
+      },
+      "failed": [],
+      "fetches": 1,
+      "refused": [],
+      "skipped": [],
+      "vintage": "no_revision_mechanism"
+    },
+    "backfill_and_cross_check_same_url": false,
+    "backfill_http_status": 200,
+    "backfill_request_carries_no_range": true,
+    "backfill_request_is_absolute_window": true,
+    "backfill_request_sent": true,
+    "backfill_request_url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?period1=1542240000&period2=1542326399&interval=1d",
+    "backfill_response_content_length": "1336",
+    "bucket": "admitted",
+    "class": null,
+    "column": "",
+    "cross_check_request_is_relative_range": true,
+    "differs_from_series_latest_value": true,
+    "expected_vintage_label": "no_revision_mechanism",
+    "field_resolved": "close",
+    "has_no_revision_mechanism": true,
+    "independent_bar_count": 2513,
+    "independent_body_sha256": "782826d02064907d2e9485c6b322eead5ed8a041f2f1d8ade0dcbdcac4aad5f6",
+    "independent_content_length": null,
+    "independent_how": "one plain GET asking a RELATIVE range=10y \u2014 the live collector's request shape, not the dated path's absolute period1/period2 window \u2014 with the bar for this date picked BY HAND in this file, outside YahooChartAdapter and outside parse_yahoo_chart_for_date",
+    "independent_http_status": 200,
+    "independent_meta_symbol": "SPY",
+    "independent_priced_bar_count": 2513,
+    "independent_range_covers_date": true,
+    "independent_span": [
+      "2016-10-17",
+      "2026-10-15"
+    ],
+    "independent_url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?range=10y&interval=1d",
+    "independent_value": 273.0199890136719,
+    "kind": "yahoo",
+    "leg": "yahoo",
+    "observation_date": "2018-11-15",
+    "ref": "SPY",
+    "series_latest_bar_date": "2026-10-15",
+    "series_latest_value": 771.7899780273438,
+    "source_id": "yahoo.SPY",
+    "stored_rows": [
+      {
+        "admitted_utc": "2026-10-15T20:55:58.535298Z",
+        "payload": {
+          "observation_date": "2018-11-15",
+          "unit": "usd",
+          "value": 273.0199890136719
+        },
+        "source_as_of_utc": "2018-11-15T00:00:00Z",
+        "vintage": "no_revision_mechanism"
+      }
+    ],
+    "stored_source_as_of_utc": "2018-11-15T00:00:00Z",
+    "stored_value": 273.0199890136719,
+    "unit": "usd",
+    "vintage_label": "no_revision_mechanism"
+  }
+}
