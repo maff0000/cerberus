@@ -45,6 +45,12 @@ WHAT EACH SECTION MEASURES
 
     SEVEN — a non-FRED kind raises before any date is touched. Measured by an exploding
     adapter builder: if the loop is entered at all, the test fails with its own message.
+
+    EIGHT — the THIRD warrant, added by WO-1.16. ``cboe`` is neither revision-prone nor
+    measured stable: it exposes no vintage mechanism AT ALL, so an admitted reading claims
+    ``no_revision_mechanism``, and the driver derives that from the KIND without ever
+    asking the FRED stability question. Its transport is a static body that ignores every
+    parameter, so a date is answered by MATCHING A ROW and by nothing else.
 """
 
 from __future__ import annotations
@@ -64,7 +70,8 @@ from ingestion.backfill_adapters import VINTAGE_BACKFILLABLE_KINDS
 from ingestion.backfill_adapters import build_backfill_adapter as _real_build_backfill_adapter
 from ingestion.catalog import INGREDIENTS
 from ingestion.store import SqliteStore
-from ingestion.vintage import STABILITY_MEASURED_FROM, VINTAGE_CURRENT_ONLY, VINTAGE_ORIGINAL
+from ingestion.vintage import (STABILITY_MEASURED_FROM, VINTAGE_CURRENT_ONLY,
+                               VINTAGE_NO_REVISION_MECHANISM, VINTAGE_ORIGINAL)
 
 #: The instant every clock in this file reads. The ALFRED probe's own date, for no reason
 #: other than that it is the date this work order's evidence was gathered on.
@@ -153,8 +160,10 @@ def _partitions(result, dates) -> None:
 
 # --- the transports, offline ------------------------------------------------------------ #
 #
-# Two fakes because the two branches ask two DIFFERENT questions of two different endpoints,
-# and the whole point of this round is that the driver treats the answers differently.
+# THREE fakes, because the three branches ask three DIFFERENT questions of three different
+# endpoints, and the whole point of this file is that the driver treats the answers
+# differently. Each fake's behaviour is a PROBED one, named against the evidence file that
+# recorded it, rather than a guess at how an HTTP API ought to behave.
 
 
 class _Alfred:
@@ -267,6 +276,46 @@ class _Fred:
         return self._csv(inside)
 
 
+class _Cboe:
+    """``cdn-api.cboe.com``'s ``{index}_History.csv``, offline — and DELIBERATELY NOT
+    window-aware, which is the one way it differs from :class:`_Fred` and the reason it is
+    four lines long.
+
+    THE SIMPLICITY IS THE PROBED FINDING, NOT A SHORTCUT. ``tools/probe/cboe_history_probe
+    .py`` (run 2026-10-15, ``evidence/wo116_cboe_probe.json``) asked this endpoint with eight
+    date-windowing spellings — FRED's ``cosd``/``coed`` among them — plus two negative
+    controls, and every single response was BYTE-IDENTICAL to the bare URL's, same SHA-256.
+    There is no window to honour and no parameter to branch on, so this fake answers one
+    fixed body to every URL it is ever handed. A fake that varied by URL would be asserting
+    a behaviour the real server does not have, and would hide the fact that on this branch
+    the observation date NEVER REACHES THE WIRE: it is a property of the adapter's parse
+    alone (:class:`ingestion.adapters.CboeAdapter`, WO-1.16).
+
+    That also makes the body's LAST ROW the standing hazard, on every request, for every
+    date: a parse that read by position would answer each backfilled date with this week's
+    close under that date's key. ``_VIX_LATEST_CLOSE`` names that wrong answer so the tests
+    below can assert it was available and not taken.
+    """
+
+    def __init__(self, body: str):
+        self.body = body
+        self.asked: list[str] = []
+
+    def rows(self) -> list:
+        """``(MM/DD/YYYY, CLOSE)`` per row of the body, as the endpoint serves them."""
+        lines = self.body.strip().split("\n")
+        header = lines[0].split(",")
+        return [(cells[0], cells[header.index("CLOSE")])
+                for cells in (line.split(",") for line in lines[1:])]
+
+    def carries(self, mm_dd_yyyy: str) -> bool:
+        return any(date == mm_dd_yyyy for date, _ in self.rows())
+
+    def __call__(self, url, timeout, headers=None):
+        self.asked.append(url)
+        return self.body  # every parameter ignored, every time: the probed behaviour
+
+
 #: A quarter of GDP, its first publication, and a later revision of the same quarter. The
 #: revisions are what make "first published" a claim with a wrong answer available.
 _GDP = {
@@ -281,6 +330,31 @@ _GDP_PERIODS = ["2008-09-30T00:00:00Z", "2008-12-31T00:00:00Z", "2009-03-31T00:0
 #: A plausible current DFF body: a row for every date these tests ask for, latest last.
 _DFF_ROWS = (("1998-12-31", "4.68"), ("1999-01-01", "4.63"), ("2005-06-15", "3.04"),
              ("2020-03-16", "0.65"), (TODAY, "3.88"))
+
+#: ``VIX_History.csv``, REAL: header and every row copied verbatim out of
+#: ``evidence/wo116_cboe_probe.json`` (``rows_for_month_verbatim`` for 2015-06, then
+#: ``rows_tail``), so the body under test is the body the endpoint actually serves —
+#: ``MM/DD/YYYY`` dates, six-decimal figures, and four columns of which one is asked for.
+#: ``tests/test_ingestion.py`` holds the same rows for the PARSER's unit tests; this copy is
+#: the driver's, kept local because every transport in this file is (see the module
+#: docstring), and both name the same evidence file as their source.
+#:
+#: 2015-06-13 and 06-14 were a WEEKEND and are simply ABSENT — CBOE publishes no
+#: missing-data marker, so "no figure for this date" arrives as a missing row. That gap is
+#: what the miss test below drives, and it is the probe's finding rather than a hole
+#: punched to make a test convenient.
+_VIX_BODY = (
+    "DATE,OPEN,HIGH,LOW,CLOSE\n"
+    "06/11/2015,13.040000,13.220000,12.560000,12.850000\n"
+    "06/12/2015,13.310000,14.020000,13.300000,13.780000\n"
+    "06/15/2015,15.480000,15.570000,14.910000,15.390000\n"
+    "06/16/2015,15.620000,15.620000,14.810000,14.810000\n"
+    "10/13/2026,15.610000,15.610000,15.170000,15.270000\n"
+    "10/14/2026,15.170000,17.450000,14.980000,16.870000\n"
+)
+#: The CLOSE on the body's LAST row — the figure a read-by-position would put under every
+#: backfilled date's key. The wrong answer, named, so it can be asserted absent.
+_VIX_LATEST_CLOSE = 16.87
 
 
 # --- ONE: the vintage branch, across several dates -------------------------------------- #
@@ -597,3 +671,141 @@ def test_an_undeclared_kind_raises_before_a_single_date_is_touched(store, monkey
             backfill_range(ing, ("1998-01-01", "2005-06-01", TODAY), store, CLOCK, pace=0)
 
     assert _attempts(store) == [] and _readings(store) == []
+
+
+# --- EIGHT: the no-revision-mechanism branch, end to end --------------------------------- #
+
+
+def test_a_source_with_no_revision_mechanism_backfills_each_date_under_its_own_label(
+        store, monkeypatch):
+    """WO-1.16, MEASURED THROUGH THE DRIVER. Four real 2015 VIX sessions, each admitted under
+    the period ITS date claims, each carrying the close the body holds for THAT date — and
+    every stored row labelled ``no_revision_mechanism``.
+
+    THE LABEL IS THE ASSERTION THAT MATTERS, and it is read back OFF THE ROW rather than off
+    the in-memory result, because the label is written at INSERT and the row is what any
+    later reader of this store will see. ``no_revision_mechanism`` is a THIRD warrant, and
+    neither of the other two would be true here: ``original`` is mechanism-earned and no
+    vintage was read (CBOE serves none); ``current_only`` rests on a positive stability
+    MEASUREMENT and none was made for this source. Both of those are available labels that a
+    careless branch could reach, which is why both are asserted against by name.
+
+    THE SECOND ASSERTION IS THE FORGERY, as it is on the FRED branch: the body's last row is
+    this week's close and it is present in every single response, so a parse that read by
+    position would put 16.87 under all four 2015 keys. It appears under none of them.
+    """
+    dates = ("2015-06-11", "2015-06-12", "2015-06-15", "2015-06-16")
+    cboe = _offline(monkeypatch, _Cboe(_VIX_BODY))
+    result = backfill_range(_ing("cboe.VIX"), dates, store, CLOCK, pace=0)
+
+    assert result.source_id == "cboe.VIX"
+    assert result.vintage == VINTAGE_NO_REVISION_MECHANISM
+    assert result.vintage not in (VINTAGE_ORIGINAL, VINTAGE_CURRENT_ONLY)
+    assert result.admitted == dates
+    assert result.counts == {"admitted": 4, "skipped": 0, "refused": 0, "failed": 0, "fetches": 4}
+
+    # Four rows, one per date, each under its own period (``obs_date``), each with its own
+    # close — and THE LABEL ON THE ROW, which is the thing WO-1.16 adds.
+    assert _readings(store) == [
+        ("2015-06-11T00:00:00Z",
+         {"unit": "index", "observation_date": "2015-06-11", "value": 12.85},
+         VINTAGE_NO_REVISION_MECHANISM),
+        ("2015-06-12T00:00:00Z",
+         {"unit": "index", "observation_date": "2015-06-12", "value": 13.78},
+         VINTAGE_NO_REVISION_MECHANISM),
+        ("2015-06-15T00:00:00Z",
+         {"unit": "index", "observation_date": "2015-06-15", "value": 15.39},
+         VINTAGE_NO_REVISION_MECHANISM),
+        ("2015-06-16T00:00:00Z",
+         {"unit": "index", "observation_date": "2015-06-16", "value": 14.81},
+         VINTAGE_NO_REVISION_MECHANISM)]
+    assert {vintage for _, _, vintage in _readings(store)} == {VINTAGE_NO_REVISION_MECHANISM}
+
+    # THE WRONG ANSWER WAS AVAILABLE ON EVERY RESPONSE AND WAS TAKEN NONE OF THE FOUR TIMES.
+    assert cboe.rows()[-1] == ("10/14/2026", "16.870000")  # it really is in the body served
+    assert _VIX_LATEST_CLOSE not in [payload["value"] for _, payload, _ in _readings(store)]
+
+    # THE DATE NEVER REACHED THE WIRE, and could not have: the URL is bare and identical on
+    # all four requests. This is the branch's defining difference from WO-1.15's FRED one,
+    # where the date goes out as ``cosd``/``coed`` — here it lives only in the parse.
+    assert len(cboe.asked) == 4 and len(set(cboe.asked)) == 1
+    assert urlsplit(cboe.asked[0]).query == ""
+    assert cboe.asked[0].endswith("/VIX_History.csv")
+
+    assert _attempts(store) == [("OK", f"{date}T00:00:00Z", None) for date in dates]
+    _partitions(result, dates)
+
+
+def test_a_date_the_static_body_has_no_row_for_is_a_clean_miss_and_the_range_goes_on(
+        store, monkeypatch):
+    """The CBOE shape of "the source has no figure for this date": an ABSENT ROW.
+
+    2015-06-13 and 06-14 were a weekend. CBOE publishes no missing-data marker — no
+    FRED-style ``.``, no blank cell — so a non-session is not a row with nothing in it, it is
+    no row at all, and the two of them are consecutive, which is the ordinary case a real
+    range walks into roughly two days in seven.
+
+    IT IS A MISS, NOT A TRANSPORT FAILURE, and the distinction is the whole reason
+    ``CboeAdapter`` does NOT translate 404 the way ``FredAdapter`` does. The body for a gap
+    date ARRIVES, intact and complete — it simply has no row for that date. So the fetch
+    happens (``fetches == 4``, four requests on the transport), the attempt is recorded under
+    the store's own EMPTY discriminator, nothing is stored, and the next date is admitted
+    normally. A gap costs the range one request and nothing else.
+    """
+    dates = ("2015-06-12", "2015-06-13", "2015-06-14", "2015-06-15")
+    cboe = _offline(monkeypatch, _Cboe(_VIX_BODY))
+    result = backfill_range(_ing("cboe.VIX"), dates, store, CLOCK, pace=0)
+
+    assert result.vintage == VINTAGE_NO_REVISION_MECHANISM
+    assert result.admitted == ("2015-06-12", "2015-06-15")
+    assert result.failed == (("2015-06-13", "EMPTY"), ("2015-06-14", "EMPTY"))
+    assert result.refused == () and result.skipped == ()
+
+    # The gap dates were really ASKED FOR — fetched, answered, and found to have no row.
+    assert result.fetches == 4 and len(cboe.asked) == 4
+    assert not cboe.carries("06/13/2015") and not cboe.carries("06/14/2015")
+    assert [outcome for outcome, _, _ in _attempts(store)] == ["OK", "EMPTY", "EMPTY", "OK"]
+
+    # NOTHING STORED FOR THE GAP, and the date after it is admitted under its own period with
+    # its own value — the range walked straight through two consecutive misses.
+    assert _readings(store) == [
+        ("2015-06-12T00:00:00Z",
+         {"unit": "index", "observation_date": "2015-06-12", "value": 13.78},
+         VINTAGE_NO_REVISION_MECHANISM),
+        ("2015-06-15T00:00:00Z",
+         {"unit": "index", "observation_date": "2015-06-15", "value": 15.39},
+         VINTAGE_NO_REVISION_MECHANISM)]
+    _partitions(result, dates)
+
+
+def test_the_driver_derives_the_label_from_the_kind_and_never_asks_the_fred_question(
+        store, monkeypatch):
+    """``requires_original_vintage`` IS NOT CONSULTED for a no-revision-mechanism kind, and
+    this measures the DRIVER's reference to it specifically.
+
+    It is a separate site from the one ``test_wo114.py`` already covers. That test explodes
+    the function under ``ingestion.backfill_adapters`` and proves the ROUTING never asks it;
+    ``ingestion.backfill`` imports its OWN reference to decide the LABEL, and the three-way
+    branch added by WO-1.16 dispatches on the kind BEFORE reaching it. So this explodes
+    ``backfill``'s reference and nothing else, and names the claim narrowly for that reason.
+
+    WHY IT MUST NOT BE ASKED RATHER THAN MERELY NEED NOT BE: the function answers from
+    ``REVISION_STABLE``, a table of FRED series, and ``("VIX", None)`` is not in it — so it
+    would return ``True`` and the range would claim ``original``, the label reserved for a
+    figure read from a real vintage. A confident wrong answer, not an error, which is the
+    failure mode ``VINTAGE_NO_REVISION_MECHANISM`` exists to make impossible.
+    """
+    def explode(*args, **kwargs):
+        raise AssertionError("the driver asked the FRED stability question about a cboe kind")
+
+    monkeypatch.setattr(B, "requires_original_vintage", explode)
+    _offline(monkeypatch, _Cboe(_VIX_BODY))
+    result = backfill_range(_ing("cboe.VIX"), ("2015-06-15",), store, CLOCK, pace=0)
+
+    assert result.admitted == ("2015-06-15",)
+    assert result.vintage == VINTAGE_NO_REVISION_MECHANISM
+    assert _readings(store) == [
+        ("2015-06-15T00:00:00Z",
+         {"unit": "index", "observation_date": "2015-06-15", "value": 15.39},
+         VINTAGE_NO_REVISION_MECHANISM)]
+    _partitions(result, ("2015-06-15",))
