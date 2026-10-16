@@ -16,7 +16,8 @@ SIX CALCULATIONS, EACH THE ROW'S DECLARED ONE (``governance/mapping/indicator_ma
                        monthly history, 0-100.
 ``RATIO``  (WO-1.6)    ``buffett_indicator``: Z.1 corporate equities ($M) over nominal GDP ($B),
                        in percent: ``NCBEILQ027S / (GDP * 1000) * 100``, i.e. a RATIO with scale 0.1.
-``FISCAL_CONJUNCTION`` ``fiscal_dominance`` (WO-1.6): the legacy ARGUS discriminator. Fed balance-sheet
+``FISCAL_CONJUNCTION`` ``monetisation_flag`` (WO-1.6; the row was called ``fiscal_dominance`` until the
+                       WO-1.19 rename): the legacy ARGUS discriminator. Fed balance-sheet
                        (WALCL) growth over 12 months >= 10% AND core CPI annualised over 3 months >= 4%.
                        Both legs or nothing: balance-sheet growth alone never fires. 1.0 = fired, 0.0 = not.
 
@@ -66,7 +67,7 @@ __all__ = [
 #: A percentile over fewer points than this is a truncated or broken page, not a history.
 MINIMUM_PERCENTILE_HISTORY = 360
 
-#: The fiscal-dominance discriminator's two fire bands. NOT chosen here: they are the legacy ARGUS
+#: The monetisation discriminator's two fire bands. NOT chosen here: they are the legacy ARGUS
 #: crash-engine's, which records them as R2D2-LOCKED (migration 072, ``fred_tells.py``): Fed total assets
 #: growth >= 10% over 12 months AND core CPI >= 4.0% annualised over the latest 3 months.
 FISCAL_BALANCE_SHEET_GROWTH_FIRE = 0.10
@@ -165,7 +166,12 @@ DERIVATIONS = {
     "shiller_cape": Derivation(DerivationKind.PERCENTILE, ("series",), "percentile", 1.0, 0),
     # NCBEILQ027S is in $ millions and GDP in $ billions: (NCB / (GDP * 1000)) * 100 == NCB / GDP * 0.1.
     "buffett_indicator": Derivation(DerivationKind.RATIO, ("numerator", "denominator"), "percent_of_gdp", 0.1, 0),
-    "fiscal_dominance": Derivation(
+    # WO-1.19 RENAME: the KEY is an indicator id and moved with the ratified row (fiscal_dominance ->
+    # monetisation_flag). The KIND's own name does NOT move: ``DerivationKind.FISCAL_CONJUNCTION``'s value
+    # reaches the store as this indicator's ``adapter_id`` (``engine.derive.fiscal_conjunction``, built in
+    # ingestion.wiring), so renaming it would orphan every reading already recorded under it. The figure,
+    # the roles and the fire bands are unchanged by the rename.
+    "monetisation_flag": Derivation(
         DerivationKind.FISCAL_CONJUNCTION, ("balance_sheet", "core_price_index"), "fired_flag", 1.0, 0
     ),
     # WO-1.7 (all three provisional, see ingestion.catalog.SUBSTITUTED_FEEDS and STATUS.md):

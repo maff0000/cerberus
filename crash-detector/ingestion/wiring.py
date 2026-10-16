@@ -93,7 +93,7 @@ DERIVED_FROM: dict = {
     "shiller_cape": ("multpl.shiller_pe_table",),
     # WO-1.6 (substitutions recorded in ingestion.catalog.SUBSTITUTED_FEEDS):
     "buffett_indicator": ("fred.NCBEILQ027S", "fred.GDP"),
-    "fiscal_dominance": ("fred.WALCL", "fred.CPILFESL"),
+    "monetisation_flag": ("fred.WALCL", "fred.CPILFESL"),   # WO-1.19 rename; was fiscal_dominance
     # WO-1.7 (gold_real_rate_cross and ism_manufacturing are SUBSTITUTED_FEEDS; sloos' second leg is hand-entered):
     "gold_real_rate_cross": ("lbma.gold_fix_usd.history", "fred.DFII10.history"),
     "ism_manufacturing": ("fred.GACDFSA066MSFRBPHI", "fred.GACDISA066MSFRBNY", "fred.BACTSAMFRBDAL"),
@@ -113,10 +113,14 @@ WIRED_DESPITE_PENDING_STATUS: dict = {
 
 #: (indicator, dial) bindings that are NOT scored although the indicator is live on its other dial.
 HELD_BINDINGS: dict = {
-    ("copper_gold", "monetary_debasement"): "HELD: the ratified row declares polarity `low_is_better` for this dial "
-    "while its own comment says falling copper/gold = gold strength = debasement. Under every other row's "
-    "vocabulary ('worse' = more debasement) that comment would be `low_is_worse`. The two cannot both be right "
-    "and which is intended is the Owner's call; scoring either way would be a guess on a x2 weight.",
+    ("copper_gold", "monetary_debasement"): "HELD: no monetary band is declared for this row in "
+    "deploy/indicator-scaling.json, so there is nothing on this dial to score the figure against. THE REASON THIS "
+    "BINDING IS HELD CHANGED AT WO-1.19 and is recorded rather than quietly carried over: it was held because the "
+    "ratified row declared `low_is_better` here while its own comment said falling copper/gold = gold strength = "
+    "debasement, and which was intended was the Owner's call. THAT IS DECIDED (Matt, 2026-10-16): falling "
+    "copper/gold is gold outperforming, which is debasement, so the ratified row now declares `low_is_worse` on "
+    "both dials. What is still missing is the band, and declaring one puts a x2 weight on the monetary dial on "
+    "numbers nobody has calibrated - a band decision, not a wiring one.",
 }
 
 #: The as-of rule for a DERIVED figure whose date is the quarter START (the engine returns the components' own

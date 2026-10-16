@@ -39,7 +39,7 @@ it needs a new `DerivationKind` and this round should prove the state machine wo
 | `curve_master` | equity | `yield_curve_10y3m`, `yield_curve_10y2y` | max |
 | `volatility_master` | equity | `vix_level`, `vix_term_structure` | max |
 | `financial_conditions_master` | equity | `chicago_fed_nfci` | identity |
-| `fiscal_master` | monetary | `fiscal_dominance` | identity |
+| `fiscal_master` | monetary | `monetisation_flag` (`fiscal_dominance` until the WO-1.19 rename; the id is RESERVED for the owed deficit/interest-burden measure, which is the indicator this master is named for and will take this slot when it is built) | identity |
 | `real_rate_master` | monetary | `real_rate_10y_tips` (monetary polarity) | identity |
 | `currency_master` | monetary | `broad_dollar` | identity |
 

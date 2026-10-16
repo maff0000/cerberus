@@ -100,13 +100,14 @@ INGREDIENTS: tuple[Ingredient, ...] = (
        feed="FRED:NCBEILQ027S", stands="FRED NCBEILQ027S (Z.1 nonfinancial corporate equities, market value, $M)"),
     _f("GDP", "usd_billions", ["buffett_indicator"], "COMPONENT", poll=POLL_SLOW, rule="quarter_end", feed="FRED:GDP",
        stands="FRED GDP (nominal GDP, $B, annual rate)"),
-    # fiscal_dominance: the legacy discriminator's two inputs, as RAW LEVEL HISTORY. The engine takes the
+    # monetisation_flag (the ratified row called fiscal_dominance until the WO-1.19 rename): the legacy
+    # discriminator's two inputs, as RAW LEVEL HISTORY. The engine takes the
     # 12-month change of WALCL and the 3-month annualised change of core CPI; the collector computes neither.
     # WALCL is weekly (history 70 rows spans the 53 weeks the year-on-year needs, with slack); CPILFESL is
     # monthly (history 8 rows: the latest, and the one 3 months before it, with slack for a missing month).
-    _f("WALCL", "usd_millions", ["fiscal_dominance"], "COMPONENT", poll=POLL_SLOW, history=70, feed="FRED:WALCL",
+    _f("WALCL", "usd_millions", ["monetisation_flag"], "COMPONENT", poll=POLL_SLOW, history=70, feed="FRED:WALCL",
        stands="FRED WALCL (Fed total assets, $M) with its last 70 weekly levels"),
-    _f("CPILFESL", "index", ["fiscal_dominance"], "COMPONENT", poll=POLL_SLOW, rule="month_end", history=8,
+    _f("CPILFESL", "index", ["monetisation_flag"], "COMPONENT", poll=POLL_SLOW, rule="month_end", history=8,
        feed="FRED:CPILFESL", stands="FRED CPILFESL (core CPI index) with its last 8 monthly levels"),
     # ---- WO-1.12: gold_spot = HERMES' published XAU/USD H4 candle close ------------------------
     # This IMPLEMENTS the ratified row's own feed (`market:XAUUSD`, provenance `spot`) and is therefore NOT a
@@ -252,12 +253,19 @@ SUBSTITUTED_FEEDS: dict[str, str] = {
     "as credit. v2 (BDC NAV-discount leg, manual cadence) and v3 (non-accrual/PIK by filing-text extraction or a paid "
     "vendor) remain OPEN and are not attempted. Substitute directed by Trinity (provisional, not Owner-ratified). Its "
     "staleness window is overridden to 7 days (see WINDOW_OVERRIDES).",
-    "fiscal_dominance": "Declared 'Treasury/BEA deficit + interest-cost: deficit/GDP vs interest-cost/revenue, "
+    "monetisation_flag": "Declared 'Treasury/BEA deficit + interest-cost: deficit/GDP vs interest-cost/revenue, "
     "discriminated vs benign growth'. Wired instead as the legacy ARGUS crash-engine discriminator (fred_tells.py, "
     "R2D2-locked bands): Fed balance-sheet (WALCL) growth >= 10% over 12 months AND core CPI (CPILFESL) >= 4% "
     "annualised over 3 months, as a conjunction. This is a DIFFERENT quantity from the ratified row's wording "
-    "(monetisation vs deficit/interest burden). Ported on the Trinity dispatch of WO-1.6; OWNER CONFIRMATION that it "
-    "may stand for this row is OUTSTANDING.",
+    "(monetisation vs deficit/interest burden). Ported on the Trinity dispatch of WO-1.6. OWNER CONFIRMATION "
+    "RECEIVED (Matt, 2026-10-16) and it did NOT confirm a deficit measure: the Owner's ruling is that the wired "
+    "monetisation conjunction stands, and that the row is RENAMED (WO-1.19, fiscal_dominance -> monetisation_flag) "
+    "so its name stops claiming the deficit/interest-burden quantity it never computed. THIS ENTRY STAYS because "
+    "the row's ratified `source` and `calculation` lines are deliberately left as ratified and still declare that "
+    "other quantity, so the declared-vs-wired gap is real and belongs on the dial. The deficit/interest-cost "
+    "measure is OWED as a SEPARATE indicator holding the reserved id `fiscal_dominance`; it belongs in the "
+    "`fiscal_master` slot of the acute statistic (DECISION-RULE.md, governance/WO-1.3a-engine-spec.md) and is not "
+    "built here. The bands are still the legacy engine's and still uncalibrated by this project.",
 }
 
 #: Per-indicator staleness windows that REPLACE the ratified row's ``staleness_window_seconds``, with the reason.

@@ -121,7 +121,7 @@ def test_a_clean_monetary_reading_names_the_master_that_is_extreme():
     """The same, against the SEPARATE monetary table and its three masters."""
     reading = contributions_of(
         {
-            "fiscal_dominance": 0.2,
+            "monetisation_flag": 0.2,
             "real_rate_10y_tips": 0.2,
             "broad_dollar": 0.95,
         }
@@ -150,7 +150,7 @@ def test_a_clean_monetary_reading_names_the_master_that_is_extreme():
     assert count.count == 1
     assert count.considered == (
         "broad_dollar",
-        "fiscal_dominance",
+        "monetisation_flag",
         "real_rate_10y_tips",
     )
 
@@ -191,7 +191,7 @@ def test_the_two_watch_only_masters_are_carried_as_demoted_and_still_set_the_acu
     )
     monetary = contributions_of(
         {
-            "fiscal_dominance": 0.95,
+            "monetisation_flag": 0.95,
             "real_rate_10y_tips": 0.2,
             "broad_dollar": 0.2,
         }
@@ -330,7 +330,7 @@ def test_real_rate_10y_tips_is_read_from_the_tuple_it_arrived_in():
     # 0.1 on the monetary one, for the SAME indicator id.
     monetary_reading = contributions_of(
         {
-            "fiscal_dominance": 0.3,
+            "monetisation_flag": 0.3,
             "real_rate_10y_tips": 0.1,
             "broad_dollar": 0.3,
         }

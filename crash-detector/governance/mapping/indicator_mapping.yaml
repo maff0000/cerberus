@@ -220,11 +220,12 @@ indicators:
     dial: [equity_crash, monetary_debasement]   # BOTH
     category: volatility_internals
     tier: 2
-    polarity: {equity_crash: low_is_worse, monetary_debasement: low_is_better}  # falling = gold strength side
+    polarity: {equity_crash: low_is_worse, monetary_debasement: low_is_worse}  # falling is worse on BOTH dials, for two different reasons
     cadence: daily
     staleness_window_seconds: 604800    # 7 days (WO-1.9): market-day series, worst-case ~6d gap + 1d grace
     source: {feed: "market:HG,GC", provenance: "futures"}
     calculation: "Falling = growth deterioration (equity) AND gold strength (debasement)"
+    note: "WO-1.19 POLARITY CORRECTION on the monetary_debasement leg, Owner-confirmed (Matt, 2026-10-16, relayed from a direct review of the live dial). The leg read `low_is_better`, which under ingestion/wiring.py POLARITY is RISING_MEANS_MORE_RISK — it scored a RISING copper/gold ratio as MORE debasement. That is backwards: FALLING copper/gold is gold OUTPERFORMING copper, which is the debasement tell, so this leg is `low_is_worse`, the same direction as the equity leg but for a different reason (growth deterioration there, gold strength here) exactly as this row's own `calculation` line has said since ratification. The equity leg is unchanged. STILL HELD, AND NOW FOR A DIFFERENT REASON: the monetary binding is in ingestion/wiring.py HELD_BINDINGS, which held it on precisely this contradiction. The contradiction is resolved; what remains is that NO monetary band has ever been declared for this row in deploy/indicator-scaling.json, and declaring one puts a x2 weight on the monetary dial — a calibration act (Owner/backtest), not a wiring one. OPEN ITEM, deliberately not attempted in WO-1.19."
   - id: chicago_fed_nfci
     name: "Chicago Fed NFCI"
     dial: equity_crash
@@ -257,8 +258,8 @@ indicators:
     staleness_window_seconds: 1209600
     source: {feed: "market:GC + FRED:DFII10", provenance: "derived"}
     calculation: "Gold vs 10y TIPS divergence, normalised 0-100; the classic debasement tell"
-  - id: fiscal_dominance
-    name: "Fiscal dominance discriminator"
+  - id: monetisation_flag
+    name: "Monetisation flag (balance-sheet growth + core CPI)"
     dial: monetary_debasement
     category: master_tells
     tier: 1
@@ -267,6 +268,7 @@ indicators:
     staleness_window_seconds: 10368000
     source: {feed: "Treasury/BEA deficit + interest-cost", provenance: "derived, playbook"}
     calculation: "Deficit/GDP vs interest-cost/revenue, discriminated vs benign growth"
+    note: "WO-1.19 RENAME, Owner-confirmed (Matt, 2026-10-16). THIS ROW WAS RATIFIED ON 2026-08-24 AS `fiscal_dominance`, name 'Fiscal dominance discriminator', and that name was WRONG ABOUT WHAT IS WIRED. What ingestion/engine actually compute for it is the legacy ARGUS crash-engine discriminator (ingestion.catalog SUBSTITUTED_FEEDS, crash_detector.engine.derivations FISCAL_CONJUNCTION): Fed balance-sheet (FRED WALCL) growth >= 10% over 12 months AND core CPI (FRED CPILFESL) >= 4% annualised over 3 months, as a 0/1 conjunction. That is a MONETISATION conjunction, a DIFFERENT QUANTITY from the deficit/interest-burden measure the `source` and `calculation` lines below describe. The Owner's direction is to stop claiming the deficit name for the monetisation figure, so the id and name say monetisation and the figure is unchanged. THE `source` AND `calculation` LINES ARE DELIBERATELY LEFT VERBATIM AS RATIFIED: a ratified declaration is recorded, not rewritten (the same discipline as ingestion.wiring WIRED_DESPITE_PENDING_STATUS), and the gap between what they declare and what is wired is the disclosure SUBSTITUTED_FEEDS exists to carry onto the dial. THE ID `fiscal_dominance` IS RESERVED, NOT RETIRED, and is NOT reused for anything else: the real Treasury/BEA deficit-and-interest-cost measure those two lines declare is still OWED, and the slot it belongs in already exists — `fiscal_master`, the IDENTITY master over this row in crash_detector.engine.statistics MONETARY_DEBASEMENT_MASTERS, which is one of the three masters DECISION-RULE.md's acute statistic maximises (governance/WO-1.3a-engine-spec.md: acute_monetary = max(fiscal_master, real_rate_master, currency_master)). When that indicator is built it takes the reserved id and that master's component, and `fiscal_master` keeps its name throughout — master ids are PERSISTED (evaluator/history_store.py acute_from_master_id, master_scores), so renaming one would break the recorded history of readings. OPEN ITEM. NOT BUILT HERE: no new row is added by WO-1.19 and nothing about the figure, the band (0 -> 1, the identity on a flag) or the WATCH-ONLY demotion of `fiscal_master` changes."
   - id: m2_yoy
     name: "M2 money supply YoY"
     dial: [monetary_debasement, equity_crash]   # BOTH

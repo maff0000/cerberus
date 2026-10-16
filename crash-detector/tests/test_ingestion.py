@@ -848,7 +848,7 @@ def test_report_flags_a_failing_feed_even_when_the_last_good_reading_is_in_windo
     assert s["fed_funds_rate"] == "FEED_FAILING"
 
 
-# --- WO-1.6: legacy-source reuse (gold_spot, buffett_indicator, fiscal_dominance) ------------------ #
+# --- WO-1.6: legacy-source reuse (gold_spot, buffett_indicator, monetisation_flag) ------------------ #
 
 import json  # noqa: E402
 
@@ -933,19 +933,19 @@ def test_quarter_end_as_of_rule_ages_a_quarter_start_dated_figure_from_the_perio
 
 def test_the_three_wo_1_6_indicators_are_served_and_no_longer_listed_not_tractable():
     served = {i for ing in INGREDIENTS for i in ing.serves}
-    for ind in ("gold_spot", "buffett_indicator", "fiscal_dominance"):
+    for ind in ("gold_spot", "buffett_indicator", "monetisation_flag"):
         assert ind in served and ind not in NOT_TRACTABLE
     assert set(NOT_TRACTABLE) == set()  # WO-1.8 wired the last one, as a disclosed proxy
 
 
 def test_substituted_feeds_are_exactly_the_five_that_differ_from_the_ratified_row_and_say_so():
     feeds = {row["id"]: row["source"]["feed"] for row in MAPPING}
-    assert set(SUBSTITUTED_FEEDS) == {"buffett_indicator", "fiscal_dominance", "ism_manufacturing", "gold_real_rate_cross",
+    assert set(SUBSTITUTED_FEEDS) == {"buffett_indicator", "monetisation_flag", "ism_manufacturing", "gold_real_rate_cross",
                                        "private_credit_stress", "sloos_bank_lending"}
     assert "PROVISIONAL" in SUBSTITUTED_FEEDS["gold_real_rate_cross"] and "NOT-OWNER-RATIFIED" in SUBSTITUTED_FEEDS["gold_real_rate_cross"]
     assert "provisional" in SUBSTITUTED_FEEDS["ism_manufacturing"] and "Richmond" in SUBSTITUTED_FEEDS["ism_manufacturing"]
-    assert "Wilshire" in feeds["buffett_indicator"] and "Treasury/BEA" in feeds["fiscal_dominance"]
-    assert "OWNER CONFIRMATION" in SUBSTITUTED_FEEDS["fiscal_dominance"]
+    assert "Wilshire" in feeds["buffett_indicator"] and "Treasury/BEA" in feeds["monetisation_flag"]
+    assert "OWNER CONFIRMATION" in SUBSTITUTED_FEEDS["monetisation_flag"]
 
 
 def test_the_window_overrides_never_exceed_the_engines_relevance_ceiling_and_are_exactly_the_recorded_two():
