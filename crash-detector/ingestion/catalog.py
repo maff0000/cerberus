@@ -92,6 +92,8 @@ INGREDIENTS: tuple[Ingredient, ...] = (
     _f("PCEPILFE", "percent_yoy", ["core_pce_yoy"], poll=POLL_SLOW, rule="month_end", tr="pc1"),
     # ---- FRED, quarterly (SLOOS, auto C&I leg only — see PARTIAL) -----------------------
     _f("DRTSCILM", "net_percent_tightening", ["sloos_bank_lending"], "COMPONENT", poll=POLL_SLOW),
+    # ---- WO-1.19: the SMALL-FIRM half of the SAME SLOOS question, replacing the hand-entered NDFI leg -----
+    _f("DRTSCIS", "net_percent_tightening", ["sloos_bank_lending"], "COMPONENT", poll=POLL_SLOW),
     # ---- WO-1.6: substitute / ported-rule inputs (see SUBSTITUTED_FEEDS) ---------------------
     # buffett_indicator: Z.1 corporate equities (market value, $ millions) over nominal GDP ($ billions).
     # Both are quarterly and FRED dates them at the quarter START; they are aged from the quarter END

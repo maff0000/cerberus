@@ -182,7 +182,7 @@ DERIVATIONS = {
         DerivationKind.Z_COMPOSITE, ("philadelphia", "new_york", "dallas"), "regional_survey_z_composite", 1.0, 0
     ),
     "sloos_bank_lending": Derivation(
-        DerivationKind.LEG_MEAN, ("commercial_industrial", "ndfi"), "net_percent_tightening", 1.0, 0
+        DerivationKind.LEG_MEAN, ("large_medium_firms", "small_firms"), "net_percent_tightening", 1.0, 0
     ),
     # WO-1.8: a MARKET-PRICE PROXY for the ratified composite (BDC NAV discount + non-accrual + PIK), see SUBSTITUTED_FEEDS.
     "private_credit_stress": Derivation(
@@ -419,10 +419,12 @@ def _z_composite(spec: Derivation, inputs: dict) -> Derived:
 
 
 def _leg_mean(spec: Derivation, inputs: dict) -> Derived:
-    """``sloos_bank_lending``: the plain mean of the automatic C&I leg and the hand-entered NDFI leg.
+    """``sloos_bank_lending``: the plain mean of two automatic FRED feeds of the SAME SLOOS question.
 
-    Both legs are required; a missing one is DerivationUnavailable and never filled. The figure is dated by the OLDER
-    leg, so it ages out when either leg does. The mean is an engineering choice (the row says '+', not how to combine).
+    Both legs are the net percent of banks tightening C&I lending standards, read for the two firm-size cohorts the
+    survey reports separately: large and medium firms (FRED DRTSCILM) and small firms (FRED DRTSCIS). Both legs are
+    required; a missing one is DerivationUnavailable and never filled. The figure is dated by the OLDER leg, so it ages
+    out when either leg does. The mean is an engineering choice (the row says '+', not how to combine).
     """
     values, days = [], []
     for role in spec.roles:

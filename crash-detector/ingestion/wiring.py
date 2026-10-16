@@ -94,10 +94,11 @@ DERIVED_FROM: dict = {
     # WO-1.6 (substitutions recorded in ingestion.catalog.SUBSTITUTED_FEEDS):
     "buffett_indicator": ("fred.NCBEILQ027S", "fred.GDP"),
     "monetisation_flag": ("fred.WALCL", "fred.CPILFESL"),   # WO-1.19 rename; was fiscal_dominance
-    # WO-1.7 (gold_real_rate_cross and ism_manufacturing are SUBSTITUTED_FEEDS; sloos' second leg is hand-entered):
+    # WO-1.7 (gold_real_rate_cross and ism_manufacturing are SUBSTITUTED_FEEDS):
     "gold_real_rate_cross": ("lbma.gold_fix_usd.history", "fred.DFII10.history"),
     "ism_manufacturing": ("fred.GACDFSA066MSFRBPHI", "fred.GACDISA066MSFRBNY", "fred.BACTSAMFRBDAL"),
-    "sloos_bank_lending": ("fred.DRTSCILM", "manual.sloos_ndfi"),
+    # WO-1.19: sloos' second leg was manual.sloos_ndfi; it is now the small-firm cut of the same FRED survey question.
+    "sloos_bank_lending": ("fred.DRTSCILM", "fred.DRTSCIS"),
     # WO-1.8 (SUBSTITUTED_FEEDS: a BIZD market-price proxy for the ratified filing-based composite):
     "private_credit_stress": ("yahoo.BIZD.adj",),
     # WO-1.10 (PROVISIONAL_CONSTRUCTIONS: a new indicator over a DEFINED 50-name sample; one component per name, in sample order):
