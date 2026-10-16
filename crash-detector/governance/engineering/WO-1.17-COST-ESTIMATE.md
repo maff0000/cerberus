@@ -409,3 +409,194 @@ were issued to produce it: every figure is arithmetic over the frozen sets in `i
 the rows of `ingestion.catalog.INGREDIENTS`, the cost model read off `_acquire` in §4.1, and the
 eight windows of §2.
 
+
+---
+
+## 7. The shape, examined — one finding per subsection
+
+§0's three findings are traced here, one per subsection, each against the code and the evidence
+rather than against the brief. **This round writes §7.1 only** (§0 finding 1). The lever analysis
+and the recommended shape §0 points at — "70,196 GETs / 41,779 fetches, ≈18 h" — are **not derived
+below and remain a placeholder**, recorded here the way §6.6 recorded its own: not applied to §0,
+not this round's work.
+
+### 7.1 §0 finding 1 is REAL. The floor check catches the opposite error, and ALFRED's per-series archive floor is invisible to it
+
+**Verdict first: the gap is real, it is not closed by the `vintage_floor` check or by anything
+else in `ingestion/`, and on the evidence already in the tree it WOULD fire during WO-1.17's
+planned execution — on 10 of route 4.1's 17 rows, for 2,214 of its 10,099 fetches (33,350 GETs,
+22% of the route, 17.6% of the whole plan).** No fix is proposed here; §7.1 confirms the gap.
+
+**The rule, as the code states it.** `AlfredVintageAdapter`'s docstring: *"the EARLIEST vintage
+date, within `[observation_date, today]`, at which ALFRED serves a non-empty value for this
+observation date"*, followed by the claim that makes it a point-in-time fact — *"that is the first
+vintage that could have published the figure, so its value is the figure as first published"*.
+The first sentence is a search specification. The second is a **premise about the archive**, and
+it is the premise that fails.
+
+**The three measurement points, read off `ingestion/adapters.py:1077-1136` (opened this round, not recalled).**
+
+1. **`adapters.py:1105` — the ceiling.** `high, found = today, probe(today, absent_on_404=False)`.
+   Today's vintage. A 404 here is a real failure, not an ABSENT (the carve-out is stated at
+   `adapters.py:1098`: `absent_on_404` is `False` only at this one call). If today's body carries
+   no row for the observation date → `_ABSENT` → `adapters.py:1109` returns `{"unit": ...}`, EMPTY:
+   "no vintage ever published this". If it does carry one → `_SERVED`, and the search continues.
+2. **`adapters.py:1113-1114` — the floor.** `low = observed - timedelta(days=1)`; `beneath = probe(low)`,
+   this time with `absent_on_404=True`.
+3. **`adapters.py:1125-1134` — the bisection**, on the invariant the two probes establish: `low`
+   ABSENT, `high` SERVED, halve to adjacent days, return the payload last seen SERVED.
+
+**What `vintage_floor` catches.** `adapters.py:1118-1122` fires on exactly one state: the floor
+probe came back `_SERVED` — *a vintage dated the day before the observation date already carried a
+figure for that observation date*. That is a source publishing a period before the period ended: a
+projection, a nowcast, a forecast series. The refusal is correct and the reasoning in the comment
+is correct — if something served earlier than the window's left edge, the earliest-serving vintage
+is outside the window and the answer would not be the earliest. **The error it catches is "served
+too EARLY".**
+
+**What it does not catch, traced for the case §0 worries about.** Take a series whose ALFRED
+vintage archive begins at `floor_v` (e.g. `fred.NCBEILQ027S`, `floor_v = 2013-06-06`) and an
+observation date `D` long before it (e.g. `D = 1999-12-01`, inside episode 2000-02's window):
+
+* **Ceiling, `probe(today)` → `_SERVED`.** Today's body of a FRED series carries its whole
+  back-history, restated: the archive began in 2013, the *series* did not. Measured, not assumed —
+  `evidence/wo114_alfred_probe.json` records `NCBEILQ027S` `shared_span = ["1945-10-01", "2013-01-01"]`,
+  i.e. the current body and the 2013 floor vintage share observations back to 1945. So the search
+  proceeds.
+* **Floor, `probe(1999-11-30)` → `_ABSENT`, and it is the 404 branch that makes it so.** Below
+  `floor_v`, ALFRED does not serve a clamped body — it answers **404**. That is precisely what
+  WO-1.14's probe measured: `tools/probe/alfred_vintage_probe.py:128-139`'s `vintage_depth` finds
+  `earliest` by bisecting **on HTTP status, 200 vs 404**, so every "earliest" in the evidence file
+  is the attested boundary of a uniform 404 region beneath it. `probe`'s `absent_on_404=True`
+  (`adapters.py:1098`) turns that 404 into `{"unit": self._unit}` — a well-formed EMPTY — and
+  `_vintage_state` reads it as `_ABSENT`.
+* **Therefore `state == _SERVED` at `adapters.py:1118` is FALSE and `vintage_floor` does not fire.**
+  The check's trigger condition is genuinely not met: *nothing was served before the observation
+  date*, which is the one thing the check looks for. It is not that the check is wrong — it is
+  answering a different question.
+* **The bisection then runs normally and converges on `floor_v` itself.** Every vintage in
+  `[D, floor_v)` 404s → ABSENT; `floor_v` and everything above it serves `D` (measured: the floor
+  vintage's own span starts 1945-10-01, so it carries `D`). The "monotone in between" assumption
+  the docstring declares holds exactly here. The returned payload is well-formed, carries
+  `vintage_date = 2013-06-06`, and satisfies the stated rule **literally**: it IS the earliest
+  vintage in `[D, today]` that serves a value. It is also a figure as restated **13.4 years after
+  the observation**, through every benchmark revision in between.
+* **And the label is applied without ever looking at it.** `ingestion/backfill.py:304-307` takes
+  `vintage = VINTAGE_ORIGINAL if requires_original_vintage(ing.ref, ing.transformation)` as **ONE
+  decision for the whole range, before the first fetch**; `requires_original_vintage`
+  (`ingestion/vintage.py:363`) takes a series and a transformation and **no date**. So the row is
+  stored claiming the warrant `VINTAGE_ORIGINAL` declares in its own comment — *"a vintage was READ.
+  The warrant is the server's own vintage-dated answer"* — for a number the source first published
+  in 1999 and this vintage merely re-states. §0 calls that the WO-1.14 forgery class arriving
+  through a door nobody checked; the trace agrees.
+
+**The alternative server behaviour does not close it either.** If ALFRED had *clamped* an
+out-of-range `vintage_date` instead of 404ing (it clamps out-of-range `cosd`/`coed` — measured
+2026-10-13, `parse_alfred_csv`'s docstring), the floor probe would return a body whose header names
+a vintage we did not ask for, and `adapters.py:293` would make it `{"malformed": "vintage"}` →
+`_UNREADABLE` → the fetch refused as MALFORMED at `adapters.py:1116-1117`. Still not
+`vintage_floor`, and still no first-publication claim — but a refusal rather than a forgery. The
+measured behaviour is the 404 branch, which is the one that answers.
+
+**Nothing else in the tree catches it.** `grep -rn "vintage_depth\|earliest" ingestion/` returns
+only docstring prose — **no runtime code reads a per-series archive floor**, and the evidence file
+that holds all 17 of them is referenced by `ingestion/vintage.py:196` (`EVIDENCE_FILE`) solely to
+source the `REVISION_PRONE`/`REVISION_STABLE` membership. `STABILITY_MEASURED_FROM = 1999-01-01`
+gates the OTHER branch (`VINTAGE_CURRENT_ONLY`) and is one global date, not a per-series depth, so
+§1's "every `STABILITY_MEASURED_FROM` refusal is moot here" stays true and buys nothing on this
+branch. `build_backfill_adapter` (`ingestion/backfill_adapters.py:199-209`) routes on the same
+dateless predicate.
+
+**The gap, stated exactly.** *The implementation is faithful to its rule; the rule's premise is
+never tested.* The bisection's floor is the OBSERVATION date, which bounds the answer from below
+and is what makes "could not have known" impossible — but nothing bounds the answer from ABOVE, so
+the rule cannot distinguish (a) *the first vintage published after the figure was published* from
+(b) *the first vintage ALFRED happens to keep*. Both present identically to a bisection that reads
+only SERVED/ABSENT at the observation date: a uniform 404 region beneath, a serving region above.
+The distinguishing evidence exists — "does any vintage of this series exist on date V" is a
+different question from "does vintage V carry observation D", and the two answers diverge exactly
+in case (b) — but no probe in `_acquire` asks the first question. Designing that is a later round's;
+§7.1 stops at confirming the gap.
+
+**One thing already right, worth recording:** the served vintage is not lost. `VINTAGE_RESPONSE_SCHEMA`
+(`adapters.py:134-143`) makes `vintage_date` **required alongside** `value`, and the payload is
+stored whole, so every affected row will carry the 2013-06-06-style vintage inside its payload JSON
+next to the `original` label. The contradiction is recorded on the row; it is simply not acted on.
+
+#### Does it fire during WO-1.17's planned run? Measured against WO-1.14's evidence — yes, on 10 rows
+
+`evidence/wo114_alfred_probe.json` (probed 2026-10-13) measured each bisected series' earliest
+ALFRED vintage. Comparing those 17 depths with §2's eight windows and §6.1's date model gives three
+outcomes per date, and all three are decided by measured facts:
+
+* **FIRST-PUB** — `observation_date ≥ floor_v`: the earliest serving vintage is a real publication
+  event. The rule's premise holds; nothing to fix.
+* **RESTATEMENT** (the §0 finding) — `floor_obs ≤ observation_date < floor_v` *and* the floor
+  vintage's own span covers the date (so it is attested to serve it): bisection returns `floor_v`,
+  stored as `VINTAGE_ORIGINAL`. **A false first-publication claim.**
+* **EMPTY** — `observation_date < floor_obs`, the earliest observation ALFRED's body holds at all:
+  the ceiling probe comes back ABSENT and `adapters.py:1109` returns EMPTY. Honest, and `backfill.py`
+  records the date as `failed`/EMPTY — but it is a date the backfill does not have.
+
+| row | cadence | earliest ALFRED vintage | that vintage's earliest obs | episodes with a restatement band | RESTATEMENT fetches | EMPTY fetches | FIRST-PUB fetches | worst obs→vintage lag |
+|---|---|---|---|---|---:|---:|---:|---:|
+| `fred.DTWEXBGS` | bus-daily | **2019-02-04** | 2006-01-02 | 2007-09, 2011, 2015-16, Q4 2018 | **1213** | 794 | 499 | **11.8 y** |
+| `fred.NFCI` | weekly (Fri) | **2011-05-25** | 1973-01-05 | 2000-02, 2007-09, 2011 | **320** | 0 | 201 | **11.6 y** |
+| `fred.IC4WSA` | weekly (Sat) | **2009-05-28** | 1967-01-28 | 2000-02, 2007-09 | **277** | 0 | 244 | **9.6 y** |
+| `fred.WALCL` | weekly (Wed) | **2011-07-07** | 2002-12-18 | 2000-02, 2007-09, 2011 | **165** | 163 | 195 | **8.6 y** |
+| `fred.GACDFSA066MSFRBPHI` | monthly | **2015-04-16** | 1968-05-01 | 2000-02, 2007-09, 2011 | **78** | 0 | 35 | **15.4 y** |
+| `fred.GACDISA066MSFRBNY` | monthly | **2014-03-17** | 2001-07-01 | 2000-02, 2007-09, 2011 | **59** | 19 | 35 | **12.7 y** |
+| `fred.BACTSAMFRBDAL` | monthly | **2016-01-25** | 2004-06-01 | 2007-09, 2011, 2015-16 | **48** | 37 | 28 | **8.7 y** |
+| `fred.NCBEILQ027S` | quarterly | **2013-06-06** | 1945-10-01 | 2000-02, 2007-09, 2011 | **25** | 0 | 12 | **13.4 y** |
+| `fred.DRTSCILM` | quarterly | **2010-04-20** | 1990-04-01 | 2000-02, 2007-09 | **22** | 0 | 15 | **10.3 y** |
+| `fred.PCEPILFE.pc1` | monthly | **2000-08-01** | 1960-01-01 | 2000-02 (part) | **7** | 0 | 106 | 0.7 y |
+| `fred.BAMLH0A0HYM2` | bus-daily | **2023-10-16** | 2023-10-16 | — | 0 | **2402** | 104 | — |
+| `fred.BAMLC0A0CM` | bus-daily | **2023-10-16** | 2023-10-16 | — | 0 | **2402** | 104 | — |
+| `fred.UMCSENT` | monthly | 1998-07-31 | 1952-11-01 | — | 0 | 0 | 113 | — |
+| `fred.M2SL.pc1` | monthly | 1990-01-01 | 1960-01-01 | — | 0 | 0 | 113 | — |
+| `fred.CPIAUCSL.pc1` | monthly | 1990-01-01 | 1989-05-01 | — | 0 | 0 | 113 | — |
+| `fred.CPILFESL` | monthly | 1996-12-12 | 1957-01-01 | — | 0 | 0 | 113 | — |
+| `fred.GDP` | quarterly | 1991-12-04 | 1959-01-01 | — | 0 | 0 | 37 | — |
+| **Total — 17 rows** | | | | | **2,214** | **5,817** | **2,068** | |
+
+The fetch total is **10,099** against §6.5's **10,098** for route 4.1 and the GET total is
+**149,549** against §6.4's **149,534** — the same method (§6.1) applied per row, so the split
+reconciles with the grid rather than replacing it.
+
+**Read, in order:**
+
+1. **10 of 17 bisected rows have a restatement band inside WO-1.17's windows** — `DTWEXBGS`, `NFCI`,
+   `IC4WSA`, `WALCL`, `GACDFSA066MSFRBPHI`, `GACDISA066MSFRBNY`, `BACTSAMFRBDAL`, `NCBEILQ027S`,
+   `DRTSCILM`, `PCEPILFE.pc1`. **2,214 fetches / 33,350 GETs** would be stored as `VINTAGE_ORIGINAL`
+   while carrying a restatement: **22% of route 4.1's fetches, 22.3% of its GETs, 17.6% of the whole
+   plan's 189,843.** The lags are not marginal — **8.6 to 15.4 years** of revision between the
+   observation and the vintage that answers for it.
+2. **The two `REVISION_UNDETERMINED` rows fail differently, and worse for coverage.** `BAMLH0A0HYM2`
+   and `BAMLC0A0CM` have an ALFRED archive starting **2023-10-16** whose floor vintage holds exactly
+   ONE observation (its own date), and the current body holds 784/783 — which is 2023-10-16 → the
+   probe date in business days. So ALFRED's body for these two appears to begin in 2023, and the
+   **ceiling** probe returns ABSENT for every date in **seven of the eight episodes**: 4,804 fetches
+   → EMPTY, no reading, no mislabel. Only April 2025 is inside their archive. *This is the one
+   inferential step in §7.1* — the evidence measures the current body's observation COUNT, not its
+   first date — and **the verdict does not rest on it**: the 2,214-fetch restatement band is
+   established from measured depths and measured floor-vintage spans alone, on rows where
+   `shared_span` confirms the current body reaches at least as deep.
+3. **§0's "80% of the bisection budget buys a restatement" survives as a number and needs its
+   composition corrected.** Not-a-first-publication is **81.1%** of route 4.1's GETs — but that is
+   **22.3% restatement + 58.8% EMPTY**, and the EMPTY majority is three rows (the two BAML plus
+   `DTWEXBGS` before 2006) asking for data ALFRED does not hold at all. Per §6.6's convention this
+   is recorded here, **not applied to §0**.
+4. **The 5 clean rows are clean for one reason: their archive predates 1999-11-02**, the oldest date
+   in the plan — `UMCSENT` 1998-07-31, `M2SL.pc1` and `CPIAUCSL.pc1` at or before the probe's 1990
+   floor, `CPILFESL` 1996-12-12, `GDP` 1991-12-04. Nothing about those five rows is safer by
+   construction; they are on the right side of an accident of ALFRED's archive.
+5. **`PCEPILFE.pc1` is the near-miss that shows the band is an over-count at its right edge**: its
+   7 affected dates sit within 0.7 y of its archive floor, and a date whose real first publication
+   falls after the floor is answered correctly by the bisection (which climbs past the floor vintage
+   when the floor vintage does not carry it). The band criterion above already requires the floor
+   vintage to be attested as carrying the date, which is why the count is 7 and not 8.
+
+**Not claimed here.** That the restatement differs materially from first publication for these 10
+rows is NOT asserted: `evidence/wo114_alfred_probe.json` measured `differing` per series at other
+vintage pairs, and whether a 1999 observation's 2013 restatement moves a DECISION-RULE threshold is
+a separate question from whether the row may claim it was first published. §7.1 is about the claim.
