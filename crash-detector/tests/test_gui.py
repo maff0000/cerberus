@@ -71,7 +71,8 @@ def test_full_store_shows_two_separate_values_and_live_indicators(db_path, wirin
     for substituted in ("buffett_indicator", "monetisation_flag", "ism_manufacturing", "gold_real_rate_cross",
                         "private_credit_stress"):
         assert live[substituted]["substitute"] and "SUBSTITUTE FEED" in live[substituted]["why"]
-    assert live["buffett_indicator"]["window_days"] == 120.0  # the recorded override, not the ratified 45
+    # WO-1.19: the 120-day override is gone; this IS the ratified figure now (Owner-confirmed 2026-10-16).
+    assert live["buffett_indicator"]["window_days"] == 210.0
     assert live["monetisation_flag"]["value"] == 0.0 and live["monetisation_flag"]["dials"] == ["monetary_debasement"]
     assert live["buffett_indicator"]["dials"] == ["equity_crash"]
     assert live["gold_spot"]["dials"] == ["monetary_debasement"]

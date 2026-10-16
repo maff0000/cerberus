@@ -518,19 +518,45 @@ class StalenessWindow:
 
 #: The HARD UPPER BOUND on a per-indicator RELEVANCE window, in seconds: how old an
 #: observation of a slow series may be and still be that series' CURRENT observation.
-#: DERIVED from the Owner-ratified indicator mapping (``governance/mapping/indicator_mapping.yaml``,
-#: ratified 2026-08-24): the widest window it declares is 10_368_000 s (120 days; private
-#: credit stress and SLOOS, both quarterly). A ceiling and not a setting, for the same reason
-#: :data:`STALENESS_WINDOW_CEILING_SECONDS` is: a relevance window that can be 1e18 abolishes
-#: staleness.
-RELEVANCE_WINDOW_CEILING_SECONDS: float = 10_368_000.0
+#: DERIVED from the Owner-ratified indicator mapping (``governance/mapping/indicator_mapping.yaml``):
+#: the widest window that mapping declares, whatever that happens to be. It is therefore NOT a
+#: constant of this module's choosing, and it MOVES WHEN THE RATIFIED MAPPING MOVES.
+#:
+#: WO-1.19 (2026-10-16) RAISED IT, from 10_368_000 s (120 days) to 18_144_000 s (210 days).
+#: It was 120 days because that was the widest the mapping declared as ratified on 2026-08-24
+#: (private_credit_stress and sloos_bank_lending, both quarterly). It is now 210 days because
+#: that is ``buffett_indicator``'s window, newly ratified and now the widest the mapping
+#: declares. THE REASON IS MEASURED, NOT ARGUED: ``evidence/wo119_release_lag_probe.json``
+#: probed real ALFRED vintages for both of that row's wired legs over 14 real quarters and found
+#: the slower one (the Z.1 series NCBEILQ027S) lagging the quarter end by up to 101 days, which
+#: puts the real PEAK AGE of a healthy reading - one quarter cycle plus that lag - at up to ~192
+#: days. A flat 120-day window could not avoid reading a LIVE feed STALE between releases, for
+#: that row or for sloos_bank_lending (~133-day measured peak, now ratified at 150 days).
+#:
+#: THIS IS AN OWNER RATIFICATION, NOT A CODE-SIDE WORKAROUND: Matt confirmed the new windows on
+#: those measured numbers on 2026-10-16, so the ratified mapping was edited and this derived
+#: ceiling followed it. Widening a ceiling to fit the data was the move the previous seat
+#: declined, and it remains declined - what changed is the ratified declaration this ceiling
+#: reads FROM, not this module's willingness to exceed it.
+#:
+#: A ceiling and not a setting, for the same reason :data:`STALENESS_WINDOW_CEILING_SECONDS` is:
+#: a relevance window that can be 1e18 abolishes staleness. Its enforcement is UNCHANGED by
+#: WO-1.19 - still REFUSED, never clamped (see :meth:`RelevanceWindow.__post_init__`).
+RELEVANCE_WINDOW_CEILING_SECONDS: float = 18_144_000.0
 
 RELEVANCE_WINDOW_CEILING_SOURCE = (
     "the widest per-indicator window in the Owner-ratified indicator mapping "
-    "(10,368,000 s = 120 days: private_credit_stress and sloos_bank_lending, quarterly "
-    "series). WO-1.3 (2026-10-11): the Owner directed that real data be wired into the "
-    "engine, which resolves the collision admit_staleness_window recorded between FEED "
-    "LIVENESS (the 900 s ceiling above, unchanged) and DATA CADENCE (this)."
+    "(18,144,000 s = 210 days: buffett_indicator, whose wired legs are quarterly). WO-1.19 "
+    "(2026-10-16) raised this from 10,368,000 s (120 days: private_credit_stress and "
+    "sloos_bank_lending), because the Owner RATIFIED wider windows for buffett_indicator (210 "
+    "days) and sloos_bank_lending (150 days) on REAL MEASURED release lag - ALFRED vintages over "
+    "14-15 real quarters per leg, recorded in evidence/wo119_release_lag_probe.json - which "
+    "showed a flat 120-day window reading a LIVE feed STALE between releases on both rows "
+    "(measured peak ages ~192 and ~133 days). The ceiling is still DERIVED from the mapping and "
+    "not chosen here: it moved because the ratified declaration moved. WO-1.3 (2026-10-11): the "
+    "Owner directed that real data be wired into the engine, which resolves the collision "
+    "admit_staleness_window recorded between FEED LIVENESS (the 900 s ceiling above, unchanged) "
+    "and DATA CADENCE (this)."
 )
 
 

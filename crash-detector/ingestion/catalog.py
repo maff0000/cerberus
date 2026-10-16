@@ -238,7 +238,12 @@ SUBSTITUTED_FEEDS: dict[str, str] = {
     "buffett_indicator": "Declared 'Wilshire/GDP, percentiled'; Wilshire is unavailable (FRED withdrew WILL5000PRFC). "
     "Wired as the Z.1 ratio FRED NCBEILQ027S / (GDP*1000), in percent, banded as that ratio (the row's "
     "'percentiled' step is NOT applied). Substitute accepted by Matt per the Trinity dispatch of WO-1.6; the legacy "
-    "engine proved it live (Trinity 2026-07-07, ~218%). Its staleness window is overridden (see WINDOW_OVERRIDES).",
+    "engine proved it live (Trinity 2026-07-07, ~218%). ITS STALENESS WINDOW IS NO LONGER OVERRIDDEN: WO-1.19 raised "
+    "the RATIFIED window on the row itself to 210 days (Owner-confirmed, Matt 2026-10-16, on the measured ALFRED "
+    "release lag in evidence/wo119_release_lag_probe.json), so the WINDOW_OVERRIDES entry that used to pin this row "
+    "at 120 days was removed rather than left to shadow the figure the Owner had just ratified. The declared-vs-wired "
+    "gap this entry exists to record is UNAFFECTED: the row still DECLARES a monthly Wilshire/GDP series and is still "
+    "wired to the quarterly Z.1 ratio, which is exactly why that 45-day declared window never fitted.",
     "private_credit_stress": "The ratified row declares a COMPOSITE of BDC NAV discount + non-accrual rate + PIK share "
     "(quarterly SEC filings) with public spreads as a fast proxy. Those three metrics live in free-text filing narrative, "
     "not structured XBRL tags (confirmed against ARCC's EDGAR data), so they are NOT extracted. v1 is a MARKET-PRICE "
@@ -266,22 +271,35 @@ SUBSTITUTED_FEEDS: dict[str, str] = {
 #: Per-indicator staleness windows that REPLACE the ratified row's ``staleness_window_seconds``, with the reason.
 #: A window shorter than the data's own release rhythm would mark a healthy feed permanently STALE.
 WINDOW_OVERRIDES: dict[str, tuple[int, str]] = {
-    "buffett_indicator": (
-        120 * DAY,
-        "the ratified row says 45 days (it assumed a monthly Wilshire series; this ratio is QUARTERLY). The Z.1 "
-        "release for a quarter lands about 70 days after the quarter ends and the next one about 91 days later, so a "
-        "healthy ratio is 70 to ~165 days old when aged from the quarter END. 120 days is the WIDEST relevance window "
-        "the engine will admit (crash_detector.staleness.RELEVANCE_WINDOW_CEILING_SECONDS, the Owner's own figure for "
-        "quarterly series), so the ratio reads STALE for roughly the last 45 days before each release. That is stated, "
-        "not hidden; widening it means raising a staleness ceiling, which is an Owner decision with external review.",
-    ),
+    # ---- WO-1.19: buffett_indicator's OVERRIDE IS GONE, because the ratified figure itself moved ----
+    # This dict held `buffett_indicator: 120 * DAY` from WO-1.6 until 2026-10-16. That entry existed for
+    # exactly one reason: the ratified row declared 45 days on the assumption of a MONTHLY Wilshire series
+    # when the wired ratio is QUARTERLY, and 120 days was the WIDEST the engine would then admit. It said in
+    # terms that it did not fit the real rhythm either - that the ratio still "reads STALE for roughly the
+    # last 45 days before each release" - and that fixing that properly "means raising a staleness ceiling,
+    # which is an Owner decision with external review."
+    #
+    # THAT DECISION HAPPENED (Matt, 2026-10-16, on the measured ALFRED lag in
+    # evidence/wo119_release_lag_probe.json): the row's own `staleness_window_seconds` is now 210 days, which
+    # is the right runtime value, so an override REPLACING it has nothing left to say. Keeping the old entry
+    # would be worse than redundant - `window_seconds` would shadow the newly ratified 210 days with the 120
+    # the Owner just superseded, re-creating the very false STALE the ratification removes. So the row now
+    # falls through to its ratified window, and the disclosure that used to live here lives on the ratified
+    # row itself, where a confirmed figure belongs.
+    #
+    # NOT YET, AND THIS IS THE NEXT ROUND'S WORK: a flat 210 days is still not the real shape of a Z.1
+    # release. The engineering value that would beat it is a per-row RELEASE-CALENDAR MODEL (expected next
+    # release, not a flat maximum age), which would be MORE PRECISE than any flat number and would come back
+    # into this dict - or replace it - once built. Until it is, a flat override duplicating the flat ratified
+    # number earns nothing.
     "private_credit_stress": (
         7 * DAY,
         "the ratified row's 120 days assumed QUARTERLY filings (NAV / non-accrual / PIK). v1 is a DAILY ETF price; under a "
         "120-day window a dead feed would keep a months-old drawdown reading as current, which is the opposite of the "
         "row's own 'absence reads Unknown never calm'. 7 days is the market-day daily window the mapping declares for "
         "every ETF/index/futures row (WO-1.9: worst-case holiday-weekend gap just under 6 days plus a day of grace; "
-        "it was 4 days before WO-1.9), and is inside the engine's 120-day relevance ceiling. Revert this "
+        "it was 4 days before WO-1.9), and is inside the engine's relevance ceiling (120 days when this override was "
+        "set; 210 since WO-1.19 raised it). Revert this "
         "override when a quarterly v2/v3 leg is added.",
     ),
     # ---- WO-1.19 item (4): three MONTHLY rows ratified at 45 days against a rhythm their feeds do not keep ----
@@ -307,7 +325,8 @@ WINDOW_OVERRIDES: dict[str, tuple[int, str]] = {
         "this row the way it explains m2_yoy and core_pce_yoy. What IS on record here is the SYMPTOM, not a "
         "derivation: Matt read this row STALE on cerberus-live's dial on a monthly schedule and dispatched all "
         "three rows together (PID.md, WO-1.19 item 4). 75 days is adopted to match the other two monthly rows and "
-        "to clear the observed symptom, and is well inside the engine's 120-day relevance ceiling. OWED, and the "
+        "to clear the observed symptom, and is well inside the engine's relevance ceiling (120 days when this window "
+        "was set; 210 since WO-1.19 raised it). OWED, and the "
         "reason this is flagged and not closed: either the release calendar is not what is stated above "
         "(unverified - no network here), or this row's STALE has a DIFFERENT cause - a missed collector pass, or "
         "the as-of dating of a mid-month preliminary - in which case this window HIDES that cause instead of "
@@ -321,7 +340,8 @@ WINDOW_OVERRIDES: dict[str, tuple[int, str]] = {
         "a healthy M2 reading is up to ~59 days old when aged from the month END. It passes the ratified 45 days "
         "with about two weeks of the month still to run, which is the false STALE read off the live dial. 75 days "
         "covers that worst case with ~16 days of slack for a release that slips, and sits well inside the engine's "
-        "120-day relevance ceiling (crash_detector.staleness.RELEVANCE_WINDOW_CEILING_SECONDS). It is deliberately "
+        "relevance ceiling (crash_detector.staleness.RELEVANCE_WINDOW_CEILING_SECONDS: 120 days when this window was "
+        "set, 210 since WO-1.19 raised it on measured quarterly release lag). It is deliberately "
         "NOT that ceiling: a window wider than the rhythm needs lets a DEAD feed keep reading current, which is "
         "the failure the private_credit_stress override above exists to undo.",
     ),
@@ -333,8 +353,9 @@ WINDOW_OVERRIDES: dict[str, tuple[int, str]] = {
         "several days LATER than BLS's CPI for the same reference month, which is exactly why cpi_yoy still fits "
         "45 days and this row cannot. Adding one release interval, a healthy core PCE reading is up to ~62 days "
         "old aged from the month END. 75 days would leave only ~13 days of slack on a lag that is UNVERIFIED here; "
-        "85 days leaves ~23 and is still comfortably inside the 120-day relevance ceiling, with 35 days to spare "
-        "against it.",
+        "85 days leaves ~23 and is still comfortably inside the relevance ceiling, with 35 days to spare against the "
+        "120-day ceiling in force when this window was set - and far more against the 210 days WO-1.19 raised it to, "
+        "which does not change this window: it is derived from BEA's release rhythm, not from the ceiling.",
     ),
 }
 

@@ -240,8 +240,11 @@ def test_a_second_fetched_leg_completes_the_row_missing_then_live_then_ages_out(
     So the three-step life is asserted unchanged in shape, with the second leg FETCHED rather than
     typed. One leg alone is still absence, and it still says WHY by naming the leg it has not
     read — no longer by pointing a reader at a command. Both legs make it LIVE at the mean. It
-    still ages out of its 120-day window on the OLDER leg's date, so a row completed by a second
-    automatic feed is no more permanent than one completed by hand.
+    still ages out of its window on the OLDER leg's date, so a row completed by a second
+    automatic feed is no more permanent than one completed by hand. That window is 150 days, not the
+    120 this test was written against: WO-1.19 (Owner-confirmed 2026-10-16) ratified it wider on the
+    measured SLOOS release lag, so the row stays LIVE ~29 days longer than it used to and the ageing
+    step below had to be recomputed rather than renumbered.
     """
     survey = {"unit": "net_percent_tightening", "observation_date": "2026-07-01"}
     with SqliteStore(db_path) as w:  # only the large/medium-firm leg has been collected
@@ -255,9 +258,12 @@ def test_a_second_fetched_leg_completes_the_row_missing_then_live_then_ages_out(
         _put(w, "fred.DRTSCIS", {**survey, "value": 18.0}, "2026-07-01T00:00:00Z")
     live = _sloos_state(db_path, NOW)  # 2026-10-11: 102 days after the survey
     assert live["state"] == "LIVE" and live["value"] == 12.0 and live["dials"] == ["equity_crash"]
-    assert live["window_days"] == 120.0 and live["as_of_utc"].startswith("2026-07-01")
+    assert live["window_days"] == 150.0 and live["as_of_utc"].startswith("2026-07-01")
 
-    later = NOW + timedelta(days=19)  # 121 days: past the 120-day window
+    # 102.5 days old at NOW, so the 150-day window has ~47.5 days left to run: at the OLD 120-day
+    # window this row aged out 19 days after NOW, and it no longer does. 49 days puts it 151.5 days
+    # past the survey date, genuinely beyond the ratified window rather than beyond the retired one.
+    later = NOW + timedelta(days=49)
     gone = _sloos_state(db_path, later)
     assert gone["state"] == "STALE" and gone["value"] is None
     with SqliteStore(db_path, read_only=True) as ro:

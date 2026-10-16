@@ -948,17 +948,93 @@ def test_substituted_feeds_are_exactly_the_five_that_differ_from_the_ratified_ro
     assert "OWNER CONFIRMATION" in SUBSTITUTED_FEEDS["monetisation_flag"]
 
 
-def test_the_window_overrides_never_exceed_the_engines_relevance_ceiling_and_are_exactly_the_recorded_five():
+def test_the_window_overrides_never_exceed_the_engines_relevance_ceiling_and_are_exactly_the_recorded_four():
     from crash_detector.staleness import RELEVANCE_WINDOW_CEILING_SECONDS
     from ingestion.catalog import WINDOW_OVERRIDES, window_seconds
 
-    assert set(WINDOW_OVERRIDES) == {"buffett_indicator", "private_credit_stress",
-                                     "michigan_sentiment", "m2_yoy", "core_pce_yoy"}
+    # WO-1.19 (2026-10-16): buffett_indicator is NO LONGER one of them. Its override existed only to lift the
+    # row's 45 declared days to the old 120-day ceiling; the Owner then RATIFIED 210 days on the row itself, so
+    # the override had nothing left to replace. Four remain.
+    assert set(WINDOW_OVERRIDES) == {"private_credit_stress", "michigan_sentiment", "m2_yoy", "core_pce_yoy"}
     assert window_seconds("private_credit_stress", 10368000) == 7 * 86400 <= RELEVANCE_WINDOW_CEILING_SECONDS
     assert WINDOW_OVERRIDES["private_credit_stress"][1]
-    assert window_seconds("buffett_indicator", 3888000) == 120 * 86400 <= RELEVANCE_WINDOW_CEILING_SECONDS
     assert window_seconds("hy_oas", 691200) == 691200.0
-    assert WINDOW_OVERRIDES["buffett_indicator"][1]  # a reason is on record
+    for ident, (seconds, reason) in WINDOW_OVERRIDES.items():
+        assert seconds <= RELEVANCE_WINDOW_CEILING_SECONDS, ident
+        assert reason, ident  # a reason is on record for every one
+
+
+def test_buffett_indicator_falls_through_to_its_ratified_window_now_that_the_override_is_gone():
+    """The ratified figure, not a code-side replacement, is what the engine applies to this row.
+
+    WO-1.19 Owner ratification (Matt, 2026-10-16) on the measured ALFRED release lag in
+    evidence/wo119_release_lag_probe.json: the slower wired leg (NCBEILQ027S) lags the quarter END by up to
+    101 days, so a healthy reading PEAKS at ~192 days old (one ~91-day quarter cycle plus that lag). 210 days
+    is the ratified window, giving that measured worst case ~18 days for release variance.
+    """
+    from crash_detector.staleness import RELEVANCE_WINDOW_CEILING_SECONDS, RelevanceWindow
+    from ingestion.catalog import WINDOW_OVERRIDES, window_seconds
+
+    ratified = {row["id"]: row["staleness_window_seconds"] for row in MAPPING}
+    assert ratified["buffett_indicator"] == 210 * 86400 == 18_144_000
+    assert "buffett_indicator" not in WINDOW_OVERRIDES
+    # Nothing shadows it: window_seconds returns the ratified number unchanged.
+    applied = window_seconds("buffett_indicator", ratified["buffett_indicator"])
+    assert applied == float(210 * 86400)
+    # And it is a window the engine will actually admit - it is AT the ceiling, which it derives FROM this row.
+    assert applied == RELEVANCE_WINDOW_CEILING_SECONDS
+    assert RelevanceWindow(seconds=applied).covers(applied)
+    # The old 120-day pin is really gone, not merely renumbered.
+    assert applied > 120 * 86400
+
+
+def test_sloos_bank_lending_ratified_window_covers_its_measured_peak_age_without_an_override():
+    """Both legs are aged from the QUARTER START (as_of_rule 'obs_date'), measured lag 30-42 days.
+
+    The peak age is not the lag: this quarter's reading stays current until the next quarter's print lands,
+    one ~91-day cycle plus that print's own lag (up to 42 days) later - a measured peak of ~133 days, which
+    the previously ratified 120 days did not cover. 150 days covers it with ~17 days of margin.
+    """
+    from crash_detector.staleness import RELEVANCE_WINDOW_CEILING_SECONDS, RelevanceWindow
+    from ingestion.catalog import WINDOW_OVERRIDES, window_seconds
+
+    ratified = {row["id"]: row["staleness_window_seconds"] for row in MAPPING}
+    assert ratified["sloos_bank_lending"] == 150 * 86400 == 12_960_000
+    assert "sloos_bank_lending" not in WINDOW_OVERRIDES
+    applied = window_seconds("sloos_bank_lending", ratified["sloos_bank_lending"])
+    assert applied == float(150 * 86400)
+    assert applied > 133 * 86400          # covers the real measured peak age
+    assert applied > 120 * 86400          # which the window it replaced did not
+    # NOT the ceiling: this row is not the widest the mapping declares, buffett_indicator is.
+    assert applied < RELEVANCE_WINDOW_CEILING_SECONDS
+    assert RelevanceWindow(seconds=applied).covers(applied)
+
+
+def test_the_relevance_ceiling_is_still_derived_from_the_widest_window_the_ratified_mapping_declares():
+    """The ceiling is not a constant of staleness.py's choosing: it tracks the ratified mapping.
+
+    WO-1.19 moved it (120 -> 210 days) only BECAUSE the mapping's widest declaration moved. This test is the
+    one that would fail if a future edit raised the ceiling without a ratified row behind it, or widened a row
+    past a ceiling that was left behind.
+    """
+    from crash_detector.staleness import (
+        RELEVANCE_WINDOW_CEILING_SECONDS,
+        RELEVANCE_WINDOW_CEILING_SOURCE,
+        RelevanceWindow,
+    )
+    from ingestion.catalog import window_seconds
+
+    windows = {row["id"]: row["staleness_window_seconds"] for row in MAPPING}
+    widest = max(windows.values())
+    assert widest == RELEVANCE_WINDOW_CEILING_SECONDS == 18_144_000.0
+    assert [i for i, w in windows.items() if w == widest] == ["buffett_indicator"]
+    # Every ratified row, and every window actually APPLIED, is constructible as a RelevanceWindow.
+    for ident, declared in windows.items():
+        assert RelevanceWindow(seconds=float(window_seconds(ident, declared))).seconds > 0.0, ident
+    # The derivation is stated, dated and attributed where the refusal message will quote it.
+    for token in ("18,144,000", "210 days", "buffett_indicator", "WO-1.19", "2026-10-16",
+                  "wo119_release_lag_probe.json", "sloos_bank_lending", "150"):
+        assert token in RELEVANCE_WINDOW_CEILING_SOURCE, token
 
 
 # --- WO-1.19 item (4): the three MONTHLY rows whose release lag the ratified 45 days did not fit --------- #

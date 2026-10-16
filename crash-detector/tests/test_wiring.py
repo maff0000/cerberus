@@ -366,9 +366,13 @@ def test_relevance_window_is_inclusive_at_its_limit_and_refuses_beyond_and_the_f
     assert w.covers(345600.0) and w.covers(0.0)
     assert not w.covers(345600.001) and not w.covers(-1.0)
     assert not w.covers(float("nan")) and not w.covers(float("inf"))
+    # The ceiling is INCLUSIVE at its limit and refused one second past it. WO-1.19 (2026-10-16) raised that
+    # limit from 10_368_000 (120 days) to 18_144_000 (210 days) because the Owner ratified buffett_indicator's
+    # 210-day window on measured release lag; the old 120-day value is now an ordinary admissible window.
     assert RelevanceWindow(seconds=10_368_000.0).covers(10_368_000.0)
+    assert RelevanceWindow(seconds=18_144_000.0).covers(18_144_000.0)
     with pytest.raises(Exception):
-        RelevanceWindow(seconds=10_368_001.0)
+        RelevanceWindow(seconds=18_144_001.0)
 
 
 @pytest.mark.parametrize("bad", [float("nan"), float("inf"), float("-inf"), True, "3.0", None])

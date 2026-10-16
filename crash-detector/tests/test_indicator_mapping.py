@@ -522,8 +522,15 @@ def test_the_data_file_path_comes_from_the_environment(monkeypatch, tmp_path):
 def test_the_loader_makes_NO_judgement_of_its_own_a_bad_row_dies_in_the_constructor(tmp_path):
     """A loader with its own copy of the rules is a second place the rules live, and the two
     come apart in the direction nobody is testing. Here a row whose window is wider than the
-    RELEVANCE ceiling (120 days, WO-1.3) fails with the SAME refusal a hand-built
-    RelevanceWindow gets; a quarterly row is now ADMITTED (see the admitting arm below)."""
+    RELEVANCE ceiling (210 days — WO-1.3 derived it at 120, WO-1.19 raised it to 210 on
+    2026-10-16 when the Owner ratified buffett_indicator's window on measured release lag)
+    fails with the SAME refusal a hand-built RelevanceWindow gets; a quarterly row is still
+    ADMITTED, and more comfortably than before (see the admitting arm below).
+
+    The planted window must stay WIDER THAN THE CEILING to test anything at all, so it moved
+    with the ceiling: 121 days was over the old 120 and is now well under 210, which would have
+    turned this into a test that the loader refuses nothing. 211 days is one day past the
+    current ceiling, the same hair's breadth 121 was past the old one."""
     path = tmp_path / "wide.json"
     path.write_text(json.dumps({
         "$comment": [], "mapping_artefact": "PLANT_SYNTH_ARTEFACT",
@@ -534,7 +541,7 @@ def test_the_loader_makes_NO_judgement_of_its_own_a_bad_row_dies_in_the_construc
                 {"dial_id": EQUITY_DIAL_ID, "polarity": "RISING_MEANS_MORE_RISK"}
             ],
             "provisional_tier": "x3",
-            "staleness_window_seconds": 121 * 86400.0,
+            "staleness_window_seconds": 211 * 86400.0,  # one day past the 210-day ceiling
             "provenance": {
                 "ruling_ref": "PLANT_SYNTH_RULING",
                 "mapping_artefact": "PLANT_SYNTH_ARTEFACT",
