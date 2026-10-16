@@ -828,6 +828,12 @@ def test_an_undeclared_kind_raises_before_a_single_date_is_touched(store, monkey
     would have had to be edited twice to keep asserting a boundary that had moved underneath
     it.
 
+    ``manual`` HAS ALSO LEFT THIS SET, for an unrelated reason and in the other direction
+    (WO-1.19): no ingredient has that kind any more. Its one row was ``sloos_bank_lending``'s
+    second leg, a SLOOS table scrape nobody could automate, and it was retired when ``DRTSCIS``
+    made the same figure a FRED feed. The kind is gone from the catalog, not moved into
+    ``VINTAGE_BACKFILLABLE_KINDS``, so there is nothing left here to refuse.
+
     WHAT THIS TEST NO LONGER COVERS, SO THE GAP IS NOT SILENT. ``yahoo`` has left this set,
     and its 51 ``adjclose`` rows are refused by a DIFFERENT mechanism at a different place —
     they are a backfillable KIND with an unbackfillable COLUMN, so they reach the label
@@ -839,7 +845,7 @@ def test_an_undeclared_kind_raises_before_a_single_date_is_touched(store, monkey
     """
     _no_adapter_may_be_built(monkeypatch)
     others = [ing for ing in INGREDIENTS if ing.kind not in VINTAGE_BACKFILLABLE_KINDS]
-    assert {ing.kind for ing in others} == {"multpl", "lbma", "hermes", "manual"}
+    assert {ing.kind for ing in others} == {"multpl", "lbma", "hermes"}
 
     for ing in others:
         with pytest.raises(ValueError, match="point-in-time backfill is declared only for"):

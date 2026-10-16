@@ -1,5 +1,9 @@
 """WO-1.7: gold_real_rate_cross (provisional correlation percentile), ism_manufacturing (regional z composite),
-sloos_bank_lending (hand-entered NDFI leg). Absence stays absence; a blocked gold feed is never shown live."""
+sloos_bank_lending (mean of two legs). Absence stays absence; a blocked gold feed is never shown live.
+
+WO-1.19 rewrote the sloos section below. Its second leg was hand-entered until this WO replaced it with
+``fred.DRTSCIS`` and deleted ``ingestion/manual.py``; the tests of that entry mechanism went with it, and
+the tests of the row's own life were inverted rather than dropped. See the section comment there."""
 
 from __future__ import annotations
 
@@ -12,8 +16,7 @@ import pytest
 
 from crash_detector.engine.derivations import DerivationUnavailable, derive
 from ingestion import adapters as A
-from ingestion import manual
-from ingestion.catalog import INGREDIENTS, MANUAL_SLOOS_NDFI
+from ingestion.catalog import INGREDIENTS
 from ingestion.report import indicator_states
 from ingestion.store import SqliteStore
 from ingestion.wiring import build_wiring, observations_from_store
@@ -165,43 +168,57 @@ def test_ism_ingredients_are_the_three_verified_fred_series_and_none_of_richmond
     assert refs == {"GACDFSA066MSFRBPHI", "GACDISA066MSFRBNY", "BACTSAMFRBDAL"}
 
 
-# --- sloos_bank_lending / manual entry ------------------------------------------------------ #
+# --- sloos_bank_lending ---------------------------------------------------------------------- #
+#
+# WO-1.19 RETIRED SIX TESTS FROM THIS SECTION AND INVERTED A SEVENTH, and the two moves are
+# deliberately different.
+#
+# RETIRED: the tests of the manual-entry mechanism — ``manual.record``'s date and percentage
+# refusals, the CLI's preview-by-default / ``--confirm`` / duplicate-survey behaviour, its
+# refusal of an abbreviated flag and of an unreadable DB, and the guard that the collector loop
+# never polled the hand-entered source. ``ingestion/manual.py``, ``MANUAL_SLOOS_NDFI`` and its
+# Ingredient row are DELETED (09643ad), so those tests had no subject left. They were removed
+# rather than skipped or xfailed: a skip is a claim that the behaviour still matters and is not
+# being measured, and nothing here is owed a future measurement. If a hand-entered ingredient is
+# ever wanted again it arrives with its own mechanism and its own tests, not with these.
+#
+# INVERTED, NOT DELETED: the row's own life. It used to be asserted MISSING with
+# "AWAITING MANUAL ENTRY" on one fetched leg, because the other leg could only be typed in. Both
+# legs are now automatic FRED feeds, so the same three-step life is asserted with the second leg
+# FETCHED — see the test's docstring, which records what it used to say.
 
 
-def test_sloos_is_the_mean_of_both_legs_dated_by_the_older_and_needs_both():
-    leg = lambda day, v: [{"unit": "x", "observation_date": day, "value": v}]  # noqa: E731
-    got = derive("sloos_bank_lending", {"commercial_industrial": leg("2026-07-01", 10.0), "ndfi": leg("2026-04-01", 30.0)})
-    assert got.value == 20.0 and got.observation_date == "2026-04-01"
+def test_sloos_is_the_mean_of_its_two_fred_legs_dated_by_the_older_and_needs_both():
+    """WO-1.19's formula: the PLAIN MEAN of two fully-automatic FRED feeds of the SAME question.
+
+    Both legs are the net percent of banks tightening C&I lending standards, read for the two
+    firm-size cohorts the SLOOS reports separately — large and medium firms (``fred.DRTSCILM``)
+    and small firms (``fred.DRTSCIS``). Neither is hand-entered any more; the second leg replaced
+    ``manual.sloos_ndfi`` in 08f546e and the roles were renamed with it, from
+    ``("commercial_industrial", "ndfi")`` to ``("large_medium_firms", "small_firms")``.
+
+    The readings below are shaped like the real feeds: quarterly survey dates, the feeds' own
+    ``net_percent_tightening`` unit, and values inside the [-100, 100] band the derivation
+    enforces. The legs are deliberately UNEQUAL and the small-firm leg is deliberately the tighter
+    and the OLDER of the two, so neither half of the claim can pass by coincidence — a mean that
+    read one leg twice, and a date taken from the newer leg, both go red here.
+    """
+    leg = lambda day, v: [{"unit": "net_percent_tightening", "observation_date": day, "value": v}]  # noqa: E731
+    large_medium, small = leg("2026-07-01", 10.0), leg("2026-04-01", 30.0)
+
+    got = derive("sloos_bank_lending", {"large_medium_firms": large_medium, "small_firms": small})
+
+    assert got.value == (10.0 + 30.0) / 2.0 == 20.0
+    assert got.observation_date == "2026-04-01"  # the OLDER leg: small firms have not reported Q3 here
+    assert got.unit == "net_percent_tightening"
+    # One leg is never half a reading, and a figure outside the band is absence rather than a number.
     with pytest.raises(DerivationUnavailable):
-        derive("sloos_bank_lending", {"commercial_industrial": leg("2026-07-01", 10.0), "ndfi": []})
+        derive("sloos_bank_lending", {"large_medium_firms": large_medium, "small_firms": []})
     with pytest.raises(DerivationUnavailable, match="not a net percentage"):
-        derive("sloos_bank_lending", {"commercial_industrial": leg("2026-07-01", 10.0), "ndfi": leg("2026-07-01", 250.0)})
-
-
-@pytest.mark.parametrize("survey_date,value", [("2026-07-02", 5.0), ("2026-08-01", 5.0), ("2026-13-01", 5.0), ("junk", 5.0),
-                                                ("2027-01-01", 5.0), ("2026-07-01", 100.5), ("2026-07-01", float("nan")),
-                                                ("2026-07-01", float("inf"))])
-def test_manual_entry_refuses_bad_dates_future_dates_and_non_percentages(survey_date, value, db_path):
-    with SqliteStore(db_path) as store, pytest.raises(manual.EntryRefused):
-        manual.record(store, survey_date, value, NOW)
-    with SqliteStore(db_path, read_only=True) as ro:
-        assert ro.latest_reading(MANUAL_SLOOS_NDFI) is None  # nothing recorded
-
-
-def test_manual_cli_previews_by_default_records_with_confirm_and_refuses_a_second_value_for_a_survey(db_path, capsys):
-    base = ["--db", db_path, "sloos-ndfi", "--survey-date", "2026-07-01", "--value", "12.5"]
-    assert manual.main(base) == 0 and "PREVIEW ONLY" in capsys.readouterr().out
-    with SqliteStore(db_path) as s:
-        assert s.latest_reading(MANUAL_SLOOS_NDFI) is None
-    assert manual.main(base + ["--confirm"]) == 0 and "RECORDED" in capsys.readouterr().out
-    with SqliteStore(db_path) as s:
-        reading = s.latest_reading(MANUAL_SLOOS_NDFI)
-        assert reading["payload"] == {"unit": "net_percent_tightening", "observation_date": "2026-07-01", "value": 12.5}
-        assert reading["source_as_of_utc"].startswith("2026-07-01")
-        assert s.last_attempt(MANUAL_SLOOS_NDFI)[1] == "OK"
-    again = ["--db", db_path, "sloos-ndfi", "--survey-date", "2026-07-01", "--value", "99", "--confirm"]
-    assert manual.main(again) == 2 and "already has a recorded value" in capsys.readouterr().err
-    assert manual.main(["--db", db_path, "list"]) == 0 and "2026-07-01  12.5" in capsys.readouterr().out
+        derive("sloos_bank_lending", {"large_medium_firms": large_medium, "small_firms": leg("2026-07-01", 250.0)})
+    # The pre-WO-1.19 role names are NOT a second accepted spelling: the rename is a hard edge.
+    with pytest.raises(ValueError):
+        derive("sloos_bank_lending", {"commercial_industrial": large_medium, "ndfi": small})
 
 
 def _sloos_state(db_path, now):
@@ -209,55 +226,40 @@ def _sloos_state(db_path, now):
         return next(i for i in build_state(ro, now)["indicators"] if i["id"] == "sloos_bank_lending")
 
 
-def test_a_hand_entered_value_is_treated_like_a_fetched_one_missing_then_live_then_ages_out(db_path):
-    with SqliteStore(db_path) as w:  # the automatic C&I leg, fetched (here: seeded) for the same survey
-        _put(w, "fred.DRTSCILM", {"unit": "net_percent_tightening", "observation_date": "2026-07-01", "value": 6.0},
-             "2026-07-01T00:00:00Z")
+def test_a_second_fetched_leg_completes_the_row_missing_then_live_then_ages_out(db_path):
+    """THE INVERSION. This test asserted the opposite until WO-1.19, and deliberately still exists.
+
+    What it used to say: with the automatic C&I leg fetched and the NDFI leg not yet typed in, the
+    row read ``MISSING`` with "AWAITING MANUAL ENTRY (python3 -m ingestion.manual sloos-ndfi
+    --help)" in its reason, and only ``manual.record`` could complete it. Every clause of that is
+    now false — the hand-entered leg is replaced by ``fred.DRTSCIS``, the note is deleted from
+    ``ingestion/report.py``, and the CLI it named does not exist. Deleting the assertion would
+    have left the row with no test that it completes AT ALL, which is the hole this WO is most
+    able to open: it is the one row that moved from permanently-MISSING to LIVE.
+
+    So the three-step life is asserted unchanged in shape, with the second leg FETCHED rather than
+    typed. One leg alone is still absence, and it still says WHY by naming the leg it has not
+    read — no longer by pointing a reader at a command. Both legs make it LIVE at the mean. It
+    still ages out of its 120-day window on the OLDER leg's date, so a row completed by a second
+    automatic feed is no more permanent than one completed by hand.
+    """
+    survey = {"unit": "net_percent_tightening", "observation_date": "2026-07-01"}
+    with SqliteStore(db_path) as w:  # only the large/medium-firm leg has been collected
+        _put(w, "fred.DRTSCILM", {**survey, "value": 6.0}, "2026-07-01T00:00:00Z")
     row = _sloos_state(db_path, NOW)
-    assert row["state"] == "MISSING" and row["value"] is None and "AWAITING MANUAL ENTRY" in row["why"]
-    with SqliteStore(db_path) as w:
-        manual.record(w, "2026-07-01", 18.0, NOW)
+    assert row["state"] == "MISSING" and row["value"] is None
+    assert "fred.DRTSCIS: never read" in row["why"]  # the unread leg, named
+    assert "AWAITING MANUAL ENTRY" not in row["why"]  # the note, and the CLI it named, are both gone
+
+    with SqliteStore(db_path) as w:  # ...and now the small-firm leg, for the SAME survey
+        _put(w, "fred.DRTSCIS", {**survey, "value": 18.0}, "2026-07-01T00:00:00Z")
     live = _sloos_state(db_path, NOW)  # 2026-10-11: 102 days after the survey
     assert live["state"] == "LIVE" and live["value"] == 12.0 and live["dials"] == ["equity_crash"]
     assert live["window_days"] == 120.0 and live["as_of_utc"].startswith("2026-07-01")
+
     later = NOW + timedelta(days=19)  # 121 days: past the 120-day window
     gone = _sloos_state(db_path, later)
     assert gone["state"] == "STALE" and gone["value"] is None
     with SqliteStore(db_path, read_only=True) as ro:
         states = {s["id"]: s["state"] for s in indicator_states(ro, later)}
     assert states["sloos_bank_lending"] == "STALE"
-
-
-def test_the_collector_loop_never_tries_to_poll_the_manual_source(db_path):
-    from ingestion.run import run_once
-
-    with SqliteStore(db_path) as store:
-        summary = run_once(store, only=(MANUAL_SLOOS_NDFI,))
-    assert summary == []  # skipped, not fetched, not a failure
-    with SqliteStore(db_path, read_only=True) as ro:
-        assert ro.latest_reading(MANUAL_SLOOS_NDFI) is None and ro.last_attempt(MANUAL_SLOOS_NDFI) is None
-
-
-def test_manual_cli_refuses_an_abbreviated_confirm_flag_and_records_nothing(db_path):
-    from ingestion import manual
-    args = ["--db", str(db_path), "sloos-ndfi", "--survey-date", "2026-07-01", "--value", "5"]
-    with pytest.raises(SystemExit) as exit_:
-        manual.main(args + ["--conf"])
-    assert exit_.value.code == 2
-    with SqliteStore(db_path) as s:
-        assert s.latest_reading(MANUAL_SLOOS_NDFI) is None
-
-
-def test_manual_cli_turns_an_unreadable_db_into_a_refusal_not_a_traceback(tmp_path, capsys):
-    from ingestion import manual
-    assert manual.main(["--db", str(tmp_path / "missing" / "x.sqlite"), "list"]) == 2
-    assert "REFUSED" in capsys.readouterr().err
-
-
-def test_manual_cli_preview_refuses_a_date_that_confirm_would_refuse(db_path, capsys):
-    from ingestion import manual
-    base = ["--db", str(db_path), "sloos-ndfi", "--survey-date", "2026-07-01", "--value", "5"]
-    assert manual.main(base + ["--confirm"]) == 0
-    capsys.readouterr()
-    assert manual.main(base) == 2
-    assert "already has a recorded value" in capsys.readouterr().err

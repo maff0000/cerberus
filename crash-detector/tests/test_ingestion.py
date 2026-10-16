@@ -63,7 +63,7 @@ def test_every_declared_input_of_a_derived_indicator_is_ingested():
     # WO-1.7: gold is the LBMA fix, NOT the COMEX futures; the futures close must not feed it silently.
     assert {"gold_pm+gold_am", "DFII10"} <= serving("gold_real_rate_cross") and "GC=F" not in serving("gold_real_rate_cross")
     assert {"GACDFSA066MSFRBPHI", "GACDISA066MSFRBNY", "BACTSAMFRBDAL"} <= serving("ism_manufacturing")
-    assert {"DRTSCILM", "sloos_table2_q14"} <= serving("sloos_bank_lending")
+    assert {"DRTSCILM", "DRTSCIS"} <= serving("sloos_bank_lending")
     assert {"VIX", "VIX3M"} <= serving("vix_term_structure")
     assert {"HYG", "LQD"} <= serving("credit_stress_hyg_lqd")
     assert {"RSP", "SPY"} <= serving("breadth_rsp_spy")
