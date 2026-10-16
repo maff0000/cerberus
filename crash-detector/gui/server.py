@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import html
 import json
+import math
 import os
 import signal
 import sys
@@ -35,7 +36,8 @@ header h1{margin:0;font-size:20px} header small{color:#aab3c5}
 .banner{background:#fff3cd;border-bottom:2px solid #e0b100;padding:10px 24px;font-weight:600}
 main{padding:20px 24px;max-width:1280px}
 .dials{display:flex;gap:20px;flex-wrap:wrap}
-.dial{flex:1 1 380px;background:#fff;border:1px solid #cfd5df;border-radius:6px;padding:16px 20px}
+.dial{flex:1 1 380px;background:#fff;border:1px solid #cfd5df;border-radius:6px;padding:16px 20px;position:relative}
+.gauge{position:absolute;top:10px;right:14px;width:108px;height:62px}
 .dial h2{margin:0 0 6px;font-size:16px;text-transform:uppercase;letter-spacing:.05em;color:#46506a}
 .num{font-size:52px;font-weight:700;line-height:1.1}
 .num.none{font-size:30px;color:#8a1c1c}
@@ -61,7 +63,8 @@ def _dial_html(d: dict) -> str:
         number = '<div class="num none">NO READING</div>'
     else:
         number = f'<div class="num">{d["value"]:.3f}</div><div class="why">scale 0–1, placeholder bands, higher = more stress</div>'
-    lines = [f'<h2>{esc(d["title"])}</h2>', _tag(d["status"]), number]
+    gauge = _gauge_svg(d["value"])
+    lines = [gauge, f'<h2>{esc(d["title"])}</h2>', _tag(d["status"]), number]
     if d["as_of_utc"]:
         lines.append(f'<div class="why">oldest scored input as of {esc(d["as_of_utc"])}</div>')
     if d["reason"]:
@@ -76,6 +79,38 @@ def _dial_html(d: dict) -> str:
     if d["inputs_used"]:
         lines.append(f'<div class="why">Inputs used: {esc(", ".join(d["inputs_used"]))}</div>')
     return '<section class="dial">' + "".join(lines) + "</section>"
+
+
+def _gauge_svg(value: object) -> str:
+    """A semicircular 0-1 gauge: a red/amber/green faded track plus a needle at ``value``.
+
+    PLACEHOLDER BANDING, same standing as this dial's own "placeholder bands" caption: the
+    track is a smooth green-to-red gradient across the whole 0-1 span, not three hard
+    thresholds, because no band boundary here has been calibrated any more than the number it
+    is drawn behind. ``value is None`` draws the track with NO needle at all — a needle has to
+    point somewhere, and pointing it at 0 (or anywhere) for an absent reading would be exactly
+    the "calm number for a missing input" this GUI's own docstring refuses to show.
+    """
+    cx, cy, r = 60.0, 65.0, 50.0
+    track = (
+        '<svg class="gauge" viewBox="0 0 120 70" xmlns="http://www.w3.org/2000/svg">'
+        '<defs><linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">'
+        '<stop offset="0%" stop-color="#1f7a3d"/><stop offset="50%" stop-color="#e0b100"/>'
+        '<stop offset="100%" stop-color="#a61e1e"/></linearGradient></defs>'
+        f'<path d="M{cx - r},{cy} A{r},{r} 0 0 1 {cx + r},{cy}" fill="none" '
+        'stroke="url(#gaugeGrad)" stroke-width="12" stroke-linecap="round"/>'
+    )
+    if value is None:
+        return track + "</svg>"
+    clamped = max(0.0, min(1.0, float(value)))  # a defensive clamp on the drawing only; never on the number shown
+    angle = math.radians(180.0 - clamped * 180.0)  # 0 -> left (calm), 1 -> right (stress)
+    tip_x, tip_y = cx + 42.0 * math.cos(angle), cy - 42.0 * math.sin(angle)
+    needle = (
+        f'<line x1="{cx}" y1="{cy}" x2="{tip_x:.1f}" y2="{tip_y:.1f}" '
+        'stroke="#1c2330" stroke-width="3" stroke-linecap="round"/>'
+        f'<circle cx="{cx}" cy="{cy}" r="4" fill="#1c2330"/>'
+    )
+    return track + needle + "</svg>"
 
 
 def _fmt(value: object, unit: str) -> str:

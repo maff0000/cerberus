@@ -136,6 +136,61 @@ def running(db_path):
     srv.server_close()
 
 
+# --- WO-1.21: the top-right gauge, one per dial ----------------------------------------- #
+#
+# Three claims, each pinned separately: the needle's angle is the REAL geometry of a
+# semicircular 0-1 gauge (0 -> left, 1 -> right, 0.5 -> straight up), a dial with NO READING
+# gets the track and NO needle at all (a needle has to point somewhere, and this GUI's whole
+# discipline is that an absent dial never shows a number that looks like one), and the gauge
+# is actually present in the rendered page for both dials.
+
+
+def test_the_gauge_needle_points_left_at_zero_right_at_one_and_straight_up_at_half():
+    from gui.server import _gauge_svg
+
+    # A semicircular gauge's pivot is the arc's centre; "left" and "right" are the horizontal
+    # bounds of the SAME y as the pivot, and "straight up" is the same x, well above it.
+    assert '<line x1="60.0" y1="65.0" x2="18.0" y2="65.0"' in _gauge_svg(0.0)
+    assert '<line x1="60.0" y1="65.0" x2="102.0" y2="65.0"' in _gauge_svg(1.0)
+    assert '<line x1="60.0" y1="65.0" x2="60.0" y2="23.0"' in _gauge_svg(0.5)
+
+
+def test_the_gauge_has_no_needle_at_all_when_there_is_no_reading():
+    from gui.server import _gauge_svg
+
+    svg = _gauge_svg(None)
+    assert "<line " not in svg and "<circle" not in svg  # "<line" alone is a prefix of "<linearGradient"
+    assert "<svg" in svg and "gaugeGrad" in svg  # the track itself still renders
+
+
+def test_the_gauge_clamps_an_out_of_range_value_on_the_drawing_only():
+    # The dial's own number is never clamped anywhere in this file; this is a defensive bound
+    # on the NEEDLE's drawing alone, so a provisional figure outside [0,1] still SHOWS as the
+    # number it is while the needle does not fly off the semicircle.
+    from gui.server import _gauge_svg
+
+    assert _gauge_svg(0.0) == _gauge_svg(-0.4)
+    assert _gauge_svg(1.0) == _gauge_svg(1.7)
+
+
+def test_the_gauge_renders_in_the_page_for_both_dials_and_tracks_their_reading(running, db_path, wiring):
+    with SqliteStore(db_path) as w:
+        _seed(w, wiring, CALM, age=timedelta(hours=1))
+    page = _get(running + "/")[2].decode()
+    assert page.count('<svg class="gauge"') == 2  # one per dial, never fewer, never combined
+    assert page.count('id="gaugeGrad"') == 2  # one definition per gauge; "gaugeGrad" alone also counts each url(#...) reference
+
+
+def test_a_no_reading_dial_gets_a_gauge_track_with_no_needle_on_the_live_page(db_path):
+    with SqliteStore(db_path):
+        pass
+    page = gui_server.render_page(_state(db_path))
+    assert page.count('<svg class="gauge"') == 2
+    # Both dials are NO READING on an empty store: neither gauge may show a needle.
+    dials_html = page.split('<div class="dials">')[1].split("</main>")[0]
+    assert dials_html.count("<line ") == 0 and dials_html.count("<circle") == 0  # "<line" alone also matches "<linearGradient"
+
+
 def test_server_refuses_to_render_when_the_store_is_unreadable(running):
     for path in ("/", "/api/state", "/healthz"):
         assert _get(running + path)[0] == 503
