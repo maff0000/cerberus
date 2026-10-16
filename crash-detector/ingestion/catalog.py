@@ -33,13 +33,11 @@ from ingestion.adapters import (
 )
 
 __all__ = ["Ingredient", "INGREDIENTS", "NOT_TRACTABLE", "PARTIAL", "SUBSTITUTED_FEEDS", "WINDOW_OVERRIDES",
-           "window_seconds", "EGRESS_HOSTS", "NON_HTTP_PEERS", "build_adapter", "MANUAL_SLOOS_NDFI", "QUORUM",
+           "window_seconds", "EGRESS_HOSTS", "NON_HTTP_PEERS", "build_adapter", "QUORUM",
            "PROVISIONAL_CONSTRUCTIONS"]
 
 DAY, WEEK = 86_400, 7 * 86_400
 
-#: The manual SLOOS NDFI leg's source id (a constant so ``ingestion.manual`` and the tests name the same thing).
-MANUAL_SLOOS_NDFI = "manual.sloos_ndfi"
 #: Polling interval, deliberately independent of publication cadence: a daily series is
 #: polled every 6h so a late print is caught the same day; slower series are polled daily.
 #: Re-polling is free of side effects on readings (idempotent on source period).
@@ -90,9 +88,10 @@ INGREDIENTS: tuple[Ingredient, ...] = (
     _f("M2SL", "percent_yoy", ["m2_yoy"], poll=POLL_SLOW, rule="month_end", tr="pc1"),
     _f("CPIAUCSL", "percent_yoy", ["cpi_yoy"], poll=POLL_SLOW, rule="month_end", tr="pc1"),
     _f("PCEPILFE", "percent_yoy", ["core_pce_yoy"], poll=POLL_SLOW, rule="month_end", tr="pc1"),
-    # ---- FRED, quarterly (SLOOS, auto C&I leg only — see PARTIAL) -----------------------
+    # ---- FRED, quarterly: BOTH legs of sloos_bank_lending, the same SLOOS C&I tightening question asked of
+    # two firm-size cohorts - large/medium firms (DRTSCILM) and small firms (DRTSCIS). Both quarterly from 1990,
+    # both ordinary automatic FRED feeds (WO-1.19; neither is hand-entered). ------------------------------
     _f("DRTSCILM", "net_percent_tightening", ["sloos_bank_lending"], "COMPONENT", poll=POLL_SLOW),
-    # ---- WO-1.19: the SMALL-FIRM half of the SAME SLOOS question, replacing the hand-entered NDFI leg -----
     _f("DRTSCIS", "net_percent_tightening", ["sloos_bank_lending"], "COMPONENT", poll=POLL_SLOW),
     # ---- WO-1.6: substitute / ported-rule inputs (see SUBSTITUTED_FEEDS) ---------------------
     # buffett_indicator: Z.1 corporate equities (market value, $ millions) over nominal GDP ($ billions).
@@ -147,11 +146,6 @@ INGREDIENTS: tuple[Ingredient, ...] = (
     _f("BACTSAMFRBDAL", "diffusion_index", ["ism_manufacturing"], "COMPONENT", poll=POLL_SLOW, rule="month_end",
        history=1000, feed="FRED:BACTSAMFRBDAL",
        stands="Dallas Fed Texas Manufacturing Outlook, general business activity (FRED BACTSAMFRBDAL)"),
-    # ---- WO-1.7: sloos_bank_lending MANUAL leg. No feed exists; ``ingestion.manual`` records a hand-entered value ---
-    Ingredient(MANUAL_SLOOS_NDFI, "manual", "sloos_table2_q14", "net_percent_tightening",
-               "manual:Fed SLOOS Table 2 Q14 (avg of 5 sub-categories), hand-entered", ("sloos_bank_lending",),
-               "COMPONENT", 0, as_of_rule="obs_date",
-               stands_for="Fed SLOOS Table 2 Q14 NDFI net tightening, average of the 5 sub-categories, hand-entered quarterly"),
     # ---- CBOE public history CSVs ------------------------------------------------------
     Ingredient("cboe.SKEW", "cboe", "SKEW", "index", "CBOE:SKEW", ("cboe_skew",), "DIRECT", POLL_DAILY,
                column="SKEW", stands_for="CBOE SKEW index close"),
@@ -198,10 +192,9 @@ INGREDIENTS: tuple[Ingredient, ...] = (
                stands_for="Shiller CAPE as published, with multpl's full monthly table (the engine percentiles it)"),
 )
 
-#: Indicators that are only half-fed with no way to complete them. EMPTY since WO-1.7: sloos_bank_lending's manual
-#: NDFI leg is now a first-class ingredient (``MANUAL_SLOOS_NDFI``, entered with ``python -m ingestion.manual``). The
-#: indicator reads MISSING until a value is entered and STALE again 120 days after the survey it describes, so it can
-#: never read complete on one leg.
+#: Indicators that are only half-fed with no way to complete them. EMPTY, and nothing is waiting to be entered by
+#: hand: sloos_bank_lending was the last entry here, and since WO-1.19 its second leg is ``fred.DRTSCIS`` - an
+#: ordinary automatic FRED feed on the same poll path as the first, not the result of a manual-entry workaround.
 PARTIAL: dict[str, str] = {}
 
 #: Indicators whose DECLARED source cannot be reached with public/free data, or whose
@@ -226,7 +219,7 @@ PROVISIONAL_CONSTRUCTIONS: dict[str, str] = {
 #: A substitute is a provenance decision; each is recorded here with whose authority it rests on, and
 #: ``tests/test_ingestion.py`` allows a catalog/mapping feed mismatch for exactly these and no others.
 SUBSTITUTED_FEEDS: dict[str, str] = {
-    "sloos_bank_lending": "Declared as the SLOOS C&I leg PLUS the NDFI leg; the row does not say how to combine them. Wired as the PLAIN MEAN of the automatic C&I leg (FRED DRTSCILM) and the HAND-ENTERED NDFI leg (python3 -m ingestion.manual): an engineering choice awaiting Owner acceptance. The figure is dated by the OLDER leg; it is MISSING until an NDFI value is entered and STALE 120 days after a survey quarter start, so expect a short STALE gap each quarter until the next print is hand-entered.",
+    "sloos_bank_lending": "Declared as the SLOOS C&I leg PLUS an NDFI leg. The NDFI leg is NOT a Fed series - the SLOOS asks it only as an occasional special question - so it is not wired (WO-1.19; if NDFI exposure is wanted it belongs in a separate indicator, not this row). Wired instead as the PLAIN MEAN of TWO FULLY-AUTOMATIC FRED LEGS: the SAME SLOOS C&I tightening question asked of two firm-size cohorts, large/medium firms (DRTSCILM) and small firms (DRTSCIS), both quarterly from 1990 and both the series the row's own recession evidence is actually about. Nothing here is hand-entered and the row flips from MISSING to LIVE. The figure is dated by the OLDER leg; the mean-of-legs choice remains an engineering choice awaiting Owner acceptance.",
     "ism_manufacturing": "Declared 'ISM' (licensed; FRED withdrew NAPM). Wired as an EQUAL-WEIGHTED COMPOSITE OF Z-SCORED "
     "REGIONAL FED MANUFACTURING SURVEYS: Philadelphia (FRED GACDFSA066MSFRBPHI), Empire State/New York "
     "(GACDISA066MSFRBNY) and Dallas (BACTSAMFRBDAL), each z-scored against its own full published history and the three "
@@ -367,5 +360,8 @@ def build_adapter(ing: Ingredient, clock: Callable[[], datetime]):
         instrument, timeframe = ing.ref.split(":")
         return HermesCandleAdapter(instrument, timeframe, **common)
     if ing.kind == "manual":
-        raise ValueError(f"{ing.source_id} is hand-entered (ingestion.manual); it has no adapter to poll")
+        # Kept deliberately after WO-1.19 retired the only hand-entered ingredient: NO ingredient has kind
+        # "manual" today, so this cannot fire. It is a structural guard, so that adding a hand-entered
+        # ingredient later refuses to be polled here instead of falling through to "unknown kind".
+        raise ValueError(f"{ing.source_id} is hand-entered; it has no adapter to poll")
     raise ValueError(f"unknown ingredient kind {ing.kind!r}")

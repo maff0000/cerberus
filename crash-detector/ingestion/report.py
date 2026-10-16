@@ -51,9 +51,7 @@ def indicator_states(store: SqliteStore, now: datetime) -> list[dict]:
                 failing.append(f"{ing.source_id}: last attempt {last[1]} at {last[0].isoformat()}")
             reading = store.latest_reading(ing.source_id)
             if reading is None:
-                note = ("AWAITING MANUAL ENTRY (python3 -m ingestion.manual sloos-ndfi --help)"
-                        if ing.kind == "manual" else "never read")
-                worst, parts = "MISSING", parts + [f"{ing.source_id}: {note}"]
+                worst, parts = "MISSING", parts + [f"{ing.source_id}: never read"]
                 continue
             as_of = datetime.fromisoformat(reading["source_as_of_utc"].replace("Z", "+00:00"))
             age = (now - as_of).total_seconds()

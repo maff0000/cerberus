@@ -108,8 +108,9 @@ DERIVED_FROM: dict = {
 #: Rows the ratified mapping still marks ``registration_pending`` that are wired anyway (WO-1.7), with the reason. The
 #: ratified file is not edited; the wiring says it is overriding its status.
 WIRED_DESPITE_PENDING_STATUS: dict = {
-    "sloos_bank_lending": "the manual NDFI leg now has a recorded entry mechanism (ingestion.manual); the indicator is "
-    "live only while BOTH legs are present and inside the 120-day window",
+    "sloos_bank_lending": "both legs are ordinary automatic FRED feeds (DRTSCILM and DRTSCIS, the same SLOOS C&I "
+    "tightening question asked of two firm-size cohorts), so the row needs nothing hand-entered to read LIVE; it is "
+    "live while BOTH legs are present and inside the relevance window",
 }
 
 #: (indicator, dial) bindings that are NOT scored although the indicator is live on its other dial.
