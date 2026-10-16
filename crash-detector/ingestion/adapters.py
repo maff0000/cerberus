@@ -59,6 +59,7 @@ __all__ = [
     "ALFRED_HOST",
     "ALFRED_BASE",
     "MAX_VINTAGE_PROBES",
+    "MAX_FIRST_PUBLICATION_LAG_DAYS",
     "HERMES_PEER",
     "HERMES_CANDLE_CONTRACT",
     "HERMES_CANDLE_CONTRACT_VERSION",
@@ -250,6 +251,47 @@ ALFRED_BASE = f"https://{ALFRED_HOST}/graph/alfredgraph.csv"
 #: guard against a broken invariant looping, not a budget the search is expected to approach.
 #: Reaching it is a recorded failure and never a partial answer.
 MAX_VINTAGE_PROBES = 24
+
+#: The widest gap, in CALENDAR DAYS, between an observation date and the vintage that first
+#: serves it that may still be read as a FIRST PUBLICATION. Past it,
+#: :class:`AlfredVintageAdapter` refuses the fetch instead of handing the caller a
+#: restatement to label ``original``.
+#:
+#: WHY A CEILING IS NEEDED AT ALL (WO-1.17 cost estimate §7.1). The bisection's floor is the
+#: observation date, which makes "a vintage that could not have known" impossible. NOTHING
+#: bounds it from above, so the rule cannot tell the first vintage published AFTER the figure
+#: was published from the first vintage ALFRED HAPPENS TO KEEP. ALFRED's archive starts on a
+#: different date for every series (``tools/probe/alfred_vintage_probe.py::vintage_depth``
+#: measures 17 of them, 1990 to 2023) and answers 404 beneath it; a 404 is the same
+#: ``_ABSENT`` an unpublished vintage gives, so the search converges on the ARCHIVE's floor
+#: and returns it as though it were a publication event. §7.1 measured that on 10 of the 17
+#: bisected rows, at gaps of 8.6 to 15.4 YEARS.
+#:
+#: WHY 365 AND NOT LESS. The number has to clear the slowest GENUINE publication this adapter
+#: serves, and FRED dates a quarterly observation at the quarter's START, so the gap already
+#: contains the whole quarter before the release lag begins. ``evidence/wo114_backfill_proof.json``
+#: measured ``fred.GDP``'s own bisection seven times: the advance estimate lands ~120 days
+#: after the observation date — and observation 2025-07-01 was first served by vintage
+#: 2025-12-23, **175 days**, a real first publication admitted as ``original`` with a value
+#: that differs from today's. Quarterly Z.1 (``fred.NCBEILQ027S``) is structurally slower
+#: still. 365 is 2.1x the longest gap measured here and leaves half a year of slack, because
+#: a ceiling that holds only while the source keeps to its schedule would discard real
+#: point-in-time data exactly when the source is disrupted — which is when a replay of a
+#: crash most needs it.
+#:
+#: WHY 365 AND NOT MORE. Every restatement §7.1 measured is 3,123 to 5,615 days, so the band
+#: between the two populations is empty for an order of magnitude either way and the exact
+#: number inside it buys little: against §7.1's eight windows, 365 refuses 2,057 of 2,265
+#: affected fetches where 180 would refuse 2,093 — 36 fetches, 1.6%, for a 5-day margin
+#: against a publication this project has already seen.
+#:
+#: WHAT IT CANNOT CATCH, DECLARED. The ~208 it misses are observations within a year of their
+#: OWN series' archive floor, whose gaps (1 to 244 days) overlap genuine publication lags. No
+#: threshold separates those at any value: a restatement served a month after the observation
+#: is arithmetically identical to a first publication served a month after it. Closing that
+#: needs a probe this adapter does not make — "does any vintage of this series exist on date
+#: V", a different question from the one the bisection asks.
+MAX_FIRST_PUBLICATION_LAG_DAYS = 365
 
 #: A series id and a transformation are interpolated into a URL, so what may appear there is
 #: stated POSITIVELY and anything else is refused at construction. Not a leak control (that is
@@ -998,6 +1040,39 @@ class AlfredVintageAdapter(_BaseAdapter):
     so the fetch is refused as MALFORMED rather than answered with a vintage that is not in
     fact the earliest.
 
+    AND WHY THERE IS A CEILING AS WELL AS A FLOOR (WO-1.17). The floor makes "could not have
+    known" impossible. It does NOT make the answer a first publication, because nothing bounds
+    the search from above: ALFRED's vintage archive begins on a different date for every
+    series and answers 404 beneath that date, which is the same ``_ABSENT`` as "no vintage
+    published this yet". So for an observation OLDER than the series' archive, the bisection
+    converges on the archive's own floor and returns it — a well-formed answer, literally the
+    earliest vintage in ``[observation_date, today]`` that serves the date, and a figure
+    RESTATED years after the fact rather than as first published. The cost estimate's §7.1
+    measured that on 10 of the 17 bisected rows, at gaps of 8.6 to 15.4 years. The search
+    cannot distinguish the two cases, so the ANSWER is measured against
+    :data:`MAX_FIRST_PUBLICATION_LAG_DAYS` and a gap wider than that is refused as MALFORMED
+    (``vintage_too_distant``) rather than returned for the caller to label ``original``. That
+    constant carries the derivation, and the narrower cases the gap arithmetic CANNOT reach.
+
+    THE TWO REFUSALS ARE NOT THE SAME REFUSAL. ``vintage_floor`` means a vintage served the
+    figure too EARLY — before the observation date, so the earliest-serving vintage lies
+    outside the searched window. ``vintage_too_distant`` means the vintage found is too LATE
+    to be a publication event. One says the window's left edge is wrong for this series; the
+    other says the answer inside it is not the fact it claims to be — so they are named
+    separately rather than folded into one token that would mean neither.
+
+    HOW FAR THAT NAME TRAVELS, declared because it is shorter than it looks. The reason string
+    does NOT reach the caller. Both refusals fail the closed ``response_schema`` identically
+    (``JSONSCHEMA_ADDITIONALPROPERTIES`` at the document root), so
+    ``crash_detector.collectors.runner`` reports ``Malformed`` and ``ingestion.backfill``
+    records the store's own discriminator — the single class ``MALFORMED`` — against the date.
+    That is deliberate upstream (nothing value-bearing travels on ``Malformed``, PBG-SEC-002)
+    and it loses nothing this adapter is entitled to lose: the DATE is still recorded as one
+    the backfill does not have, which is the fact an operator re-runs on. What a reader cannot
+    yet do is tell these two refusals apart from each other, or from an unreadable body,
+    without reading the attempt row. Widening that is a change to the outcome type, not to
+    this adapter, and is not made here.
+
     THE TWO ENDS ARE MEASURED, THE MIDDLE IS ASSUMED MONOTONE — a DECLARED limit. Bisection
     is only sound if "serves a value at D" never goes true-then-false as the vintage
     advances. Publishers overwhelmingly do not WITHDRAW a published observation, but if one
@@ -1132,6 +1207,17 @@ class AlfredVintageAdapter(_BaseAdapter):
                 high, found = middle, payload
             else:
                 low = middle
+
+        # The CEILING on the answer, and the MIRROR of the floor check above: that one catches
+        # a vintage served too EARLY to be the earliest, this one a vintage dated too LATE to
+        # be a first publication at all. The gap is ALFRED's own per-series archive floor —
+        # every vintage beneath it 404s, which is the same _ABSENT as "not published yet", so
+        # the search cannot see the difference and converges on the floor. The answer is real
+        # and satisfies this rule's words literally; the PREMISE that makes it a point-in-time
+        # fact — that the earliest SERVING vintage is the earliest EXISTING one — does not
+        # hold, and the caller would store it as VINTAGE_ORIGINAL. Refused, never mislabelled.
+        if (date.fromisoformat(found["vintage_date"]) - observed).days > MAX_FIRST_PUBLICATION_LAG_DAYS:
+            return {"malformed": "vintage_too_distant"}
         return found
 
 
