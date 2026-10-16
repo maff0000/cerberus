@@ -17,6 +17,14 @@ IT IS NOT A CADENCE ENGINE, AND THE DIFFERENCE IS THE WHOLE POINT
     small part that CAN be stated as a formula, stated as one, with the rest refused out
     loud (:data:`GENERABLE_AS_OF_RULES`).
 
+    THAT SEPARATE PIECE NOW EXISTS FOR FRED (WO-1.17):
+    ``ingestion.backfill_calendar.fred_observation_dates`` answers the same question for the 13
+    ``obs_date`` rows by FETCHING the undated series body and reading its dates. It is a
+    separate MODULE and not a branch of this one on purpose — the paragraph below is this
+    module's whole warrant and it would stop being true. The two return the same shape and are
+    interchangeable at a call site; where both can answer they agree, and where they differ the
+    body wins.
+
 WHERE THE CONVENTION COMES FROM: ``ing.as_of_rule``, AND WHY THAT IS NOT A COINCIDENCE
     The cadence is NOT inferred from the series id, from the poll interval, or from a table
     kept here that would have to be maintained alongside the catalog. It is read off the

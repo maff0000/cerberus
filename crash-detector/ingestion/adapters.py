@@ -66,6 +66,8 @@ __all__ = [
     "hermes_latest_key",
     "parse_hermes_candle",
     "parse_lbma_gold",
+    "fred_column",
+    "fred_graph_url",
     "parse_fred_csv",
     "parse_fred_csv_for_date",
     "parse_alfred_csv",
@@ -224,6 +226,52 @@ def parse_fred_csv(text: str, column: str, unit: str, history: int = 0) -> dict:
     if history:
         out["history"] = [[d, v] for d, v in reversed(rows)]
     return out
+
+
+# --- the fredgraph.csv request, built in ONE place ------------------------------------- #
+#
+# WO-1.17. These two were inline in :class:`FredAdapter` and are lifted out UNCHANGED because a
+# SECOND caller now needs the same request: ``ingestion.backfill_calendar`` asks FRED for a
+# series' whole undated body to read the dates it publishes on. A date list is only honest if it
+# is the calendar of the body the backfill will actually READ, so that module must ask the
+# identical question of the identical URL — and the only way to guarantee that over time is for
+# there to be one builder rather than two that agree today.
+#
+# Not a general tidy-up: ``tools/probe/*`` and :meth:`AlfredVintageAdapter._column` carry their
+# own copies of the column expression and are deliberately untouched here. The probes are frozen
+# evidence scripts, and ALFRED is a different endpoint whose consolidation is not this round's
+# question.
+
+
+def fred_column(series: str, transformation: Union[str, None]) -> str:
+    """The value-column header ``fredgraph.csv`` returns for this (series, transformation).
+
+    FRED names the column after the series, suffixed with the UPPERCASED transform when one was
+    requested server-side (``M2SL`` + ``pc1`` -> ``M2SL_PC1``). :func:`parse_fred_csv` and
+    :func:`parse_fred_csv_for_date` both refuse a body whose header is not exactly this, so this
+    is the expectation those refusals are measured against and not a cosmetic label.
+    """
+    return series + (f"_{transformation.upper()}" if transformation else "")
+
+
+def fred_graph_url(series: str, transformation: Union[str, None] = None, *,
+                   observation_date: Union[str, None] = None) -> str:
+    """The ``fredgraph.csv`` URL. UNDATED by default, which is the whole-series body.
+
+    With ``observation_date`` set the request carries ``cosd=D&coed=D`` — the window
+    :class:`FredAdapter` uses in its dated mode, and a COURTESY rather than a promise: FRED
+    ignores a window lying entirely before the series' first observation and returns the whole
+    body anyway (``evidence/wo115_fred_window_probe.json``), which is why every reader of this
+    body matches on the date KEY and never on position.
+
+    Left undated, this is character-for-character the URL the live collector has always issued
+    for a FRED ingredient, and ``tests/test_ingestion.py`` holds that by equality against the
+    adapter so an edit here cannot quietly move the live loop's destination.
+    """
+    suffix = f"&transformation={transformation}" if transformation else ""
+    window = ("" if observation_date is None else
+              f"&cosd={observation_date}&coed={observation_date}")
+    return f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}{suffix}{window}"
 
 
 #: ALFRED's keyless graph CSV — the SAME public, credential-free door as ``fredgraph.csv``
@@ -983,13 +1031,11 @@ class FredAdapter(_BaseAdapter):
         self._observation_date = observation_date
 
     def _url(self) -> str:
-        suffix = f"&transformation={self._transformation}" if self._transformation else ""
-        window = ("" if self._observation_date is None else
-                  f"&cosd={self._observation_date}&coed={self._observation_date}")
-        return f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={self._series}{suffix}{window}"
+        return fred_graph_url(self._series, self._transformation,
+                              observation_date=self._observation_date)
 
     def _parse(self, body: str) -> dict:
-        column = self._series + (f"_{self._transformation.upper()}" if self._transformation else "")
+        column = fred_column(self._series, self._transformation)
         if self._observation_date is None:
             return parse_fred_csv(body, column, self._unit, self._history)
         return parse_fred_csv_for_date(body, column, self._unit, self._observation_date)
