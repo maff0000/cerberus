@@ -8,14 +8,25 @@ supply the list, and for 23 of the 34 backfillable ingredient rows nothing in th
 arithmetic (``quarter_end``, ``month_end``) and refuses the rest out loud. This module is the
 "separate, later piece of work" that module's docstring forecast rather than an extension of
 it, and it closes that gap one SOURCE at a time: the 13 FRED ``obs_date`` rows
-(:func:`fred_observation_dates`) and the 3 CBOE rows (:func:`cboe_observation_dates`). Yahoo's
-chart JSON is a third calendar in a third body and is a later round still.
+(:func:`fred_observation_dates`), the 3 CBOE rows (:func:`cboe_observation_dates`) and the 7
+Yahoo PLAIN-CLOSE rows (:func:`yahoo_observation_dates`) — the third and last source, which
+completes the 23.
 
-ONE ARGUMENT, TWO ENDPOINTS, AND THE DIFFERENCE BETWEEN THEM IS MEASURED AND NOT ASSUMED
-    The warrant below is written about FRED because that is the half that came first, and
-    every word of it holds for CBOE unchanged: the list is READ, a modelled calendar is wrong
-    in both directions, and a missed date is a silent hole. What differs is only what the
-    endpoint does with a window, and neither was guessed at:
+THE 51 ``adjclose`` YAHOO ROWS ARE NOT PART OF THAT COUNT AND ARE REFUSED BY NAME.
+    ``ingestion/catalog.py`` carries 58 ``yahoo`` rows, of which 51 ask for ``column
+    == "adjclose"``. A backfilled adjusted close has NO point-in-time meaning at all: it drifts
+    retroactively with every dividend and split, for every date before the event, forever
+    (PID.md, WO-1.16 scope correction, and the reason
+    ``ingestion.vintage.NO_REVISION_MECHANISM_COLUMNS`` admits ``close`` and ``""`` for this
+    kind and NOT ``adjclose``). So :func:`yahoo_observation_dates` refuses those rows out loud
+    rather than handing back a plausible-looking calendar for a quantity nobody can recover,
+    the same refusal :class:`~ingestion.adapters.YahooChartAdapter` makes at construction.
+
+ONE ARGUMENT, THREE ENDPOINTS, AND THE DIFFERENCES BETWEEN THEM ARE MEASURED AND NOT ASSUMED
+    The warrant below is written about FRED because that is the source that came first, and
+    every word of it holds for CBOE and for Yahoo unchanged: the list is READ, a modelled
+    calendar is wrong in both directions, and a missed date is a silent hole. What differs is
+    only what each endpoint does with a window, and not one of the three was guessed at:
 
     * FRED *sometimes* honours ``cosd``/``coed`` and ignores it when the window lies before
       the series' first observation (``evidence/wo115_fred_window_probe.json``), so
@@ -24,8 +35,28 @@ ONE ARGUMENT, TWO ENDPOINTS, AND THE DIFFERENCE BETWEEN THEM IS MEASURED AND NOT
       controls each returned a byte-identical body (``evidence/wo116_cboe_probe.json``), so
       for CBOE there is no dated request to avoid asking for; there is only the one URL
       :func:`~ingestion.adapters.cboe_history_url` builds.
+    * ``query1.finance.yahoo.com`` GENUINELY windows, and is the one source of the three whose
+      window can be trusted to mean what it says: an absolute ``period1``/``period2`` span is
+      either applied exactly or the request is refused with a clean ``400``, never answered
+      with somebody else's bars (``evidence/wo116_yahoo_window_probe.json``). So
+      :func:`yahoo_observation_dates` is the one that ASKS DATED — and the arithmetic filter is
+      kept anyway, because the body is matched on the date KEY here as everywhere else.
 
-    Either way the window is applied HERE, in arithmetic, over the whole body that arrives.
+    Either way the window is applied HERE, in arithmetic, over whatever body arrives.
+
+THE DEPTH OF A REQUEST IS ALSO MEASURED, AND FOR YAHOO THE OBVIOUS DEEP ASK IS A TRAP
+    FRED and CBOE each serve their whole past in one body, so "ask undated" is the whole of
+    their depth question. Yahoo's is not: the live loop asks ``range=10d`` (``2y`` with a
+    history), neither of which reaches a backfill episode in 2000, and the obvious widening —
+    ``range=max`` — is an honoured value that answers a DIFFERENT QUESTION than the one asked.
+    It is served COARSENED, with ``interval=1d`` silently ignored: SPY came back 406 bars at
+    ``dataGranularity == "1mo"``, ``^GSPC`` 169 bars at ``"3mo"`` beginning 1984-12-01, where
+    that same symbol's absolute window reaches its real 1927-12-30 first bar (measured
+    2026-10-16, ``evidence/wo117_yahoo_range_probe.json``). A date list read off such a body
+    would be MONTH-START dates presented as a daily publication calendar — the silent-hole
+    failure this module exists to prevent, arriving as a ``200`` nobody would question. The
+    absolute window keeps ``1d`` at every depth measured, so ONE wide windowed GET is the
+    mechanism and no chunking is needed; :func:`yahoo_observation_dates` argues the sizes.
 
 THE METHOD IS THE POINT: NO CALENDAR IS MODELLED HERE, AND THAT IS NOT FASTIDIOUSNESS
     The tempting shape is "weekdays, minus US federal holidays". ``WO-1.17-COST-ESTIMATE.md``
@@ -79,19 +110,29 @@ A BODY WE CANNOT READ IS A RAISE AND NEVER AN EMPTY TUPLE
     is not this series', a row that is not its header's width, a date cell that is not a date, and a date
     carried twice are all :class:`ValueError`. An empty tuple means one thing only: the source
     served a body we fully understood and it has no observation in the window asked for.
+
+    THE ONE PRINCIPLED EXCEPTION IS YAHOO'S ``null`` CLOSE, and it is an exception to the
+    "never skip" rule rather than a crack in it: a ``null`` is not a row we failed to read, it
+    is the SOURCE ITSELF naming that session as having no print. Skipping it is reading the
+    body, not dropping part of it — argued at :func:`yahoo_chart_dates`, where the three
+    missing-value conventions of the three sources sit side by side (FRED's ``.``, CBOE's
+    empty cell, Yahoo's ``null``) and are each the publisher's own word for the same thing.
 """
 
 from __future__ import annotations
 
-from datetime import date, datetime
+import json
+from datetime import date, datetime, timezone
 from typing import Callable, Tuple, Union
 
-from ingestion.adapters import cboe_history_url, fred_column, fred_graph_url, http_get
+from ingestion.adapters import (YAHOO_USER_AGENT, cboe_history_url, fred_column, fred_graph_url,
+                                http_get, yahoo_chart_url)
 from ingestion.catalog import Ingredient
 
 __all__ = ["MISSING_VALUE_TOKENS", "CBOE_MISSING_VALUE_TOKENS",
            "fred_body_dates", "fred_observation_dates",
-           "cboe_body_dates", "cboe_observation_dates"]
+           "cboe_body_dates", "cboe_observation_dates",
+           "yahoo_chart_dates", "yahoo_observation_dates"]
 
 #: FRED's OWN tokens for "this date exists in the series and carries no figure". A row bearing
 #: one is NOT a publication date and must not enter a date list: asking the backfill for it buys
@@ -326,4 +367,216 @@ def cboe_observation_dates(ing: Ingredient, start: str, end: str, *,
     first, last = date.fromisoformat(start), date.fromisoformat(end)
     body = getter(cboe_history_url(ing.ref), timeout_seconds, None)
     published = cboe_body_dates(body, ing.column)
+    return tuple(d for d in published if first <= date.fromisoformat(d) <= last)
+
+
+def yahoo_chart_dates(text: str) -> Tuple[str, ...]:
+    """Every date a Yahoo v8 chart body carries a PRINTED close for, ascending. Pure.
+
+    The third sibling of :func:`fred_body_dates` and :func:`cboe_body_dates`, reading the same
+    body :func:`~ingestion.adapters.parse_yahoo_chart` reads — ``chart.result[0].timestamp``
+    beside ``chart.result[0].indicators.quote[0].close`` — and deriving each bar's date from its
+    ``timestamp`` exactly as that function derives it: a ``1d`` bar is stamped at the session
+    OPEN (1433770200 is 2015-06-08T13:30Z for a US listing on summer time, 14:30Z the same
+    session in winter), so the UTC date of the stamp is the session's date.
+
+    A ``null`` CLOSE IS SKIPPED, AND IT IS THE ONE SKIP THIS MODULE ALLOWS ITSELF.
+    Everything else in this module refuses a body rather than dropping a row from it, because a
+    dropped row is a date the backfill is never told to ask for and a hole nothing downstream
+    reports. A ``null`` close is not that. It is the SOURCE's own word for "no print this
+    session" — the same signal FRED spells ``.`` and CBOE spells as an empty cell, and the same
+    skip :func:`~ingestion.adapters.parse_yahoo_chart` and
+    :func:`~ingestion.adapters.parse_yahoo_chart_for_date` already make ("Yahoo nulls a session
+    it has no print for; skip, never fill"). So this is not a row we failed to read and quietly
+    abandoned; it is a row we read correctly, whose content is "nothing happened". Keeping it
+    would be the error: it would enter the date list as a recoverable publication, buy the
+    backfill a GET, and come back EMPTY — and worse, it would assert that the symbol printed on
+    a date the source has just said it did not.
+
+    THE DISTINCTION IS "A BODY WE CANNOT READ" vs "A BODY SAYING NOTHING HAPPENED", and the
+    raise list is drawn exactly along it. Not JSON, no ``chart.result[0]``, no
+    ``indicators.quote[0]``, ``timestamp`` and ``close`` of different lengths, a ``timestamp``
+    that is not a readable epoch second, and a date carried twice are each a
+    :class:`ValueError` — in every one of those the body has stopped telling us what it
+    contains, and guessing is how a date goes missing. :func:`parse_yahoo_chart_for_date`
+    answers the same shapes with a ``{"malformed": ...}`` payload recorded against ONE date;
+    the divergence is this module's, stated in its docstring, and it is the same divergence
+    :func:`fred_body_dates` and :func:`cboe_body_dates` make from their own siblings.
+
+    THERE IS NO ``YAHOO_MISSING_VALUE_TOKENS`` BESIDE ITS TWO SIBLINGS, deliberately: Yahoo's
+    missing-value convention is not a token at all but JSON ``null``, i.e. a TYPE rather than a
+    string, and a one-element tuple holding ``None`` would be a list of string tokens
+    pretending to hold one. The check is ``close is None`` and nothing else — a close of ``0``
+    is a print, and a ``"."`` would be FRED's convention imported into a body that has never
+    used it.
+
+    ABSENT BAR ARRAYS ARE NO BARS, NOT A BROKEN BODY, and that shape is measured rather than
+    inferred: a window matching no session — a weekend, a market holiday, a zero-width window —
+    comes back ``200`` with ``meta`` intact, ``"indicators":{"quote":[{}]}`` and NO
+    ``timestamp`` key at all (``evidence/wo116_yahoo_window_probe.json``,
+    ``q3_window_on_non_trading_day``, SPY on 2015-06-13). That is this function's empty tuple,
+    which is the one thing an empty tuple may mean here: a body we fully understood, carrying
+    no session in the window asked for. (:func:`~ingestion.adapters.parse_yahoo_chart` reads
+    the same shape as ``{"malformed": "shape"}``, correctly for ITS question — a ten-day live
+    range with no bars in it is a body that cannot be read — and wrongly for this one.)
+
+    The result is SORTED rather than taken in body order, for :func:`fred_body_dates`' reason:
+    Yahoo serves oldest bar first and every reader of this body matches on the date KEY rather
+    than on position, so this one does not rely on the order either.
+    """
+    try:
+        result = json.loads(text)["chart"]["result"][0]
+        quote = result["indicators"]["quote"][0]
+        # ABSENT arrays are the probed shape of "no session in this window", so they are read
+        # as no bars — NOT, as parse_yahoo_chart reads them, as a body we cannot read.
+        stamps = result.get("timestamp") or []
+        closes = quote.get("close") or []
+    except (AttributeError, IndexError, KeyError, TypeError, ValueError):
+        raise ValueError(
+            f"not a Yahoo v8 chart body: {text[:120]!r}. A chart.result[0] carrying an "
+            f"indicators.quote[0] is the shape every reader of this endpoint expects, and a "
+            f"body we cannot read is not one whose dates we may guess at") from None
+    if len(stamps) != len(closes):
+        raise ValueError(
+            f"this body carries {len(stamps)} timestamps and {len(closes)} closes: the bar "
+            f"arrays contradict each other and no pairing of them is this function's to pick")
+    seen: set = set()
+    for position, (stamp, close) in enumerate(zip(stamps, closes), start=1):
+        if close is None:  # the source's own "no print this session"; argued above.
+            continue
+        try:
+            observed = datetime.fromtimestamp(stamp, tz=timezone.utc).date()
+        except (OSError, OverflowError, TypeError, ValueError):
+            raise ValueError(
+                f"bar {position} of this body is stamped {stamp!r}, which is not a readable "
+                f"epoch second; a date we cannot read is not one we may guess at") from None
+        if observed in seen:
+            raise ValueError(
+                f"this body carries {observed.isoformat()} twice: the body contradicts itself "
+                f"and this function will not pick one of the two bars for the caller")
+        seen.add(observed)
+    return tuple(day.isoformat() for day in sorted(seen))
+
+
+def yahoo_observation_dates(ing: Ingredient, start: str, end: str, *,
+                            timeout_seconds: float,
+                            getter: Callable[..., str] = http_get) -> Tuple[str, ...]:
+    """The dates ``ing``'s Yahoo symbol PRINTED a close on within ``[start, end]``, ascending.
+
+    ONE GET, and that it can be one is a MEASUREMENT rather than a convenience — see below.
+    Interchangeable at a call site with :func:`fred_observation_dates`,
+    :func:`cboe_observation_dates` and ``ingestion.backfill_dates.observation_dates``: same
+    argument shape, same inclusive-bound convention, same ascending tuple of ISO strings, ready
+    to hand straight to ``ingestion.backfill.backfill_range``. For the 7 plain-close rows the
+    formula sibling can answer for NONE of them — all 7 are ``obs_date``, which it refuses out
+    loud — so this is the only honest source of their date lists.
+
+    THE 7 ROWS, AND THE 51 THIS REFUSES. ``ing.column != ""`` is a :class:`ValueError` and not
+    a silent fall back to ``close``: 51 of the catalog's 58 ``yahoo`` rows ask for ``adjclose``,
+    whose value for a past date drifts retroactively with every later dividend and split,
+    forever, so there is no point-in-time quantity for a backfill to recover and therefore no
+    honest publication calendar to hand it (PID.md, WO-1.16 scope correction;
+    ``ingestion.vintage.NO_REVISION_MECHANISM_COLUMNS`` admits ``close`` and ``""`` for this
+    kind and not ``adjclose``). Answering such a caller with the unadjusted close's calendar
+    would be the :class:`~ingestion.adapters.YahooChartAdapter` defect it refuses at
+    construction, one layer earlier: a date list for a DIFFERENT quantity than the one asked
+    about. The refusal names the column so the caller can read why.
+
+    ``range=max`` IS HONOURED AND IS STILL THE WRONG REQUEST, WHICH IS WHY IT WAS MEASURED.
+    The live loop's ``range=10d`` (``2y`` with a history) reaches nowhere near a backfill
+    episode in 2000, so the deep ask had to be settled rather than assumed. ``max`` is a real
+    value — every symbol's own ``meta.validRanges`` lists it and the server echoes
+    ``meta.range == "max"`` — but the body it returns is COARSENED, with ``interval=1d``
+    silently ignored (measured 2026-10-16, ``evidence/wo117_yahoo_range_probe.json``):
+
+    * ``SPY?range=max&interval=1d`` -> 406 bars at ``dataGranularity == "1mo"``, oldest
+      1993-02-01 (its real first trade is 1993-01-29, so even the depth is off by the stub of
+      a month);
+    * ``^GSPC?range=max&interval=1d`` -> 169 bars at ``"3mo"``, oldest 1984-12-01 — SHALLOWER
+      than the same symbol's absolute window, which reaches its real 1927-12-30 first bar.
+
+    A date list read off that body would be month- or quarter-START dates presented as a daily
+    publication calendar: a ``200``, plausible, and wrong in the one way this module exists to
+    prevent. So the request is an ABSOLUTE ``period1``/``period2`` window over the asked-for
+    span, built by :func:`~ingestion.adapters.yahoo_chart_url` — the same builder the live loop
+    and the per-date backfill use, so there is ONE way to ask Yahoo for bars and not three.
+
+    AND IT IS ONE GET, NOT A CHUNKED WALK, BECAUSE THE WINDOW KEEPS ``1d`` AT EVERY DEPTH
+    MEASURED. The deepest ask any of these 7 rows can make came back whole: ``^GSPC`` over
+    1927-01-01..2026-10-15 is 24,815 daily bars in 2,654,167 bytes, ``dataGranularity == "1d"``,
+    one response; its 2000-01-01 span (the one WO-1.17's episodes need) is 6,737 bars in
+    725,517 bytes, and SPY's whole life 8,486 bars in 851,702. So chunking the span into
+    several windows would buy nothing and cost a seam to get wrong. The ceiling is
+    :data:`~ingestion.adapters.MAX_BODY_BYTES` (4,000,000) and the widest measured body sits at
+    66% of it — at ~107 bytes per bar that ceiling is ~37,000 daily bars, about 148 trading
+    years, which no symbol in this catalog approaches. If one ever did,
+    :func:`~ingestion.adapters.http_get` raises ``BODY_TOO_LARGE`` and the calendar read FAILS
+    rather than returning a truncated list, which is the correct direction for this module.
+
+    THE DATED ASK IS THE DIVERGENCE FROM ITS TWO SIBLINGS, AND IT IS THE ENDPOINT'S DOING.
+    :func:`fred_observation_dates` must ask UNDATED because FRED ignores a window lying before
+    a series' start and serves the whole body anyway; CBOE has no window to ask for at all.
+    Yahoo's window is neither: it is applied exactly or the request is refused outright with a
+    clean ``400``, never answered with somebody else's bars
+    (``evidence/wo116_yahoo_window_probe.json``, ``q2_window_one_day_utc_day`` and ``q4_*``).
+    The arithmetic filter below is kept anyway and is not ceremony: it is the same
+    match-on-the-KEY discipline every reader of this body holds, and it is what makes this
+    function's answer independent of a server's courtesy — if a future body ever carried a bar
+    outside the span asked for (``range=`` silently WINS over a period window in one URL, which
+    is why :func:`~ingestion.adapters.yahoo_chart_url` refuses to build both), the bound here
+    still holds.
+
+    ``end`` BEFORE ``start`` RETURNS ``()`` WITHOUT A GET, because an empty interval contains no
+    dates — arithmetic, not a model of a calendar — and because the alternative is worse: a
+    reversed window is a measured ``400`` (``q5_window_reversed``), so the sibling-compatible
+    empty answer would otherwise arrive as a fetch failure for a question that answers itself.
+    Both bounds are parsed BEFORE the GET, so a bound we cannot read costs no bytes.
+
+    ``ing.history`` is deliberately NOT passed, for this module's stated reason — here it would
+    pick ``range=2y`` over the window and silently return a date list that stops at two years
+    old. ``today`` is deliberately not applied either, though
+    :func:`~ingestion.adapters.parse_yahoo_chart` applies one: that guard exists so a live poll
+    cannot store a partial intraday bar as a close, and whether a date too recent to have
+    closed may be backfilled is the DRIVER's floor to hold (the same answer
+    :func:`~ingestion.adapters.parse_yahoo_chart_for_date` gives), not a date list's to
+    second-guess. ``timeout_seconds`` is required and has no default, as for both siblings: a
+    26-year window is ~700 KB where a live poll is 2 KB, and the budget belongs to the caller
+    that knows which it is asking for.
+
+    ``getter`` is called with the same three positional arguments
+    :meth:`~ingestion.adapters._BaseAdapter._acquire` calls it with, and the third is NOT
+    ``None`` here as it is for the FRED and CBOE readers: this endpoint answers ``429`` to
+    urllib's default agent, so the header is
+    :data:`~ingestion.adapters.YAHOO_USER_AGENT` — the identical string
+    :meth:`~ingestion.adapters.YahooChartAdapter._headers` sends, from one constant.
+
+    Raises :class:`ValueError` for a kind that is not ``yahoo``, for a column that is not
+    ``""``, and for a bound it cannot parse. An
+    :class:`~crash_detector.collectors.adapter.AdapterFetchError` from the GET propagates
+    UNTOUCHED, including the ``400`` of an impossible window — a window entirely before the
+    symbol's first trade, or entirely in the future. That asymmetry is
+    :class:`~ingestion.adapters.YahooChartAdapter`'s own and is argued there at length: none of
+    those is the source saying anything about a date, each is the REQUEST being wrong, and
+    translated into an empty list it would read as "the symbol printed nothing in those years",
+    indistinguishable from a quiet stretch of weekends. A symbol whose calendar could not be
+    fetched has no date list, and a caller must not be able to mistake that for a symbol that
+    never traded.
+    """
+    if ing.kind != "yahoo":
+        raise ValueError(
+            f"{ing.source_id} is kind {ing.kind!r}; this reads a Yahoo v8 chart body. The FRED "
+            f"and Cboe calendars are read off different bodies by different functions")
+    if ing.column != "":
+        raise ValueError(
+            f"{ing.source_id} asks for column {ing.column!r}, and only the 7 plain-close yahoo "
+            f"rows are in scope: an adjusted close drifts retroactively with every later "
+            f"dividend and split, so it has no point-in-time value to recover and no honest "
+            f"publication calendar to hand a backfill (PID.md, WO-1.16 scope correction)")
+    first, last = date.fromisoformat(start), date.fromisoformat(end)
+    if last < first:
+        # An empty interval carries no dates, and asking for it is a measured 400. Argued above.
+        return ()
+    body = getter(yahoo_chart_url(ing.ref, start=start, end=end), timeout_seconds,
+                  {"User-Agent": YAHOO_USER_AGENT})
+    published = yahoo_chart_dates(body)
     return tuple(d for d in published if first <= date.fromisoformat(d) <= last)

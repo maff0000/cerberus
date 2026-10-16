@@ -579,6 +579,90 @@ def parse_cboe_csv_for_date(text: str, column: str, unit: str, observation_date:
                 "value": _number_or_token(cells[index])}
     return {"unit": unit}
 
+#: The agent string Yahoo's edge requires, and it is not cosmetic: this endpoint answers 429 to
+#: urllib's default agent and 200 to an identified browser-style one, where FRED's edge does the
+#: opposite (see :func:`http_get`). It is a module constant rather than a literal inside
+#: :meth:`YahooChartAdapter._headers` because there is now a SECOND caller that must send the
+#: same header — ``ingestion.backfill_calendar.yahoo_observation_dates`` — and two copies of an
+#: agent string that must match is the shape in which one of them quietly stops matching.
+YAHOO_USER_AGENT = "Mozilla/5.0 (compatible; cerberus-ingest/1.0)"
+
+
+def yahoo_chart_url(symbol: str, *, relative_range: Union[str, None] = None,
+                    start: Union[str, None] = None, end: Union[str, None] = None) -> str:
+    """The v8 chart URL, windowed ONE way or the OTHER and never both. Measured, not preferred.
+
+    Lifted out of :meth:`YahooChartAdapter._url` in WO-1.17 for the reason
+    :func:`cboe_history_url` was lifted out of :meth:`CboeAdapter._url` in WO-1.16: a third
+    reader of this endpoint now exists (``ingestion.backfill_calendar.yahoo_observation_dates``,
+    the whole date list) beside the live poll and the per-date backfill, and three places
+    building the same URL is three conventions that agree today.
+    ``tests/test_ingestion.py`` and ``tests/test_wo117_calendar.py`` hold this equal to the
+    adapter's URL in BOTH of its modes, so the lift cannot have moved the live loop's
+    destination by a character.
+
+    TWO MECHANISMS, EXACTLY ONE PER REQUEST, AND THE EXCLUSIVITY IS A RAISE.
+    ``relative_range`` is the ``range=`` the live loop has always sent (``10d``, or ``2y`` for a
+    history read); ``start``/``end`` is an absolute ``period1``/``period2`` window over whole UTC
+    days, inclusive at both ends. Given BOTH in one URL, ``range`` silently WINS and the period
+    window is ignored — ``range=2y`` plus a one-day window for 2015-06-08 answered 502 bars
+    ending at that morning's (probed 2026-10-15, ``evidence/wo116_yahoo_window_probe.json``,
+    ``q6_range_and_period_together``). A builder that could emit both would therefore be a
+    builder that can silently answer a historical question with today's bars, so it refuses.
+
+    THE WINDOW IS WHOLE UTC DAYS BECAUSE A ``1d`` BAR IS STAMPED AT THE SESSION OPEN — 1433770200
+    is 2015-06-08T13:30Z for a US listing on summer time, 14:30Z the same session in winter — so
+    the window must CONTAIN that instant: ``period1`` = 00:00:00Z of ``start``, ``period2`` =
+    00:00:00Z of ``end``+1 LESS ONE SECOND. The encoding a caller reaches for first (a zero-width
+    point at midnight) returns ZERO BARS for a real trading day on three measured symbols
+    (``q2_window_one_day_zero_width``), an off-by-one that looks exactly like a market holiday.
+    ``start == end`` is the single-day window :class:`YahooChartAdapter` has always built for a
+    dated fetch, character for character; a wider pair is the same arithmetic over more days.
+
+    A REVERSED WINDOW IS A RAISE AND NOT A URL, because the server's answer to one is a clean
+    ``400`` (``q5_window_reversed``) — a URL builder whose output can only be a fetch failure
+    should not build it. ``start == end`` is not reversed and is the ordinary one-day case.
+
+    AND ``range=max`` IS DELIBERATELY NOT HOW THE DEEP READS ARE ASKED FOR, measured 2026-10-16
+    (``evidence/wo117_yahoo_range_probe.json``): ``max`` IS an honoured value — the server echoes
+    ``meta.range == "max"`` and it is in every symbol's own ``meta.validRanges`` — but it is
+    served at a COARSENED granularity with ``interval=1d`` ignored: SPY came back 406 bars at
+    ``dataGranularity == "1mo"`` and ``^GSPC`` 169 bars at ``"3mo"``, starting 1984-12-01 where
+    the same symbol's absolute window reaches 1927-12-30. So a date list read off a ``range=max``
+    body would be a list of MONTH-START dates wearing the costume of a daily calendar. The
+    absolute window keeps ``1d`` at every depth measured (``^GSPC`` 1927-12-30..2026-10-15 is
+    24,815 daily bars, 2,654,167 bytes, ONE GET), which is why the deep reader uses it.
+    """
+    windowed = start is not None or end is not None
+    if windowed and relative_range is not None:
+        raise ValueError(
+            f"range={relative_range!r} and an absolute {start}..{end} window in one URL: given "
+            f"both, RANGE WINS and the window is ignored (evidence/wo116_yahoo_window_probe.json,"
+            f" q6_range_and_period_together). One mechanism per request, never both")
+    if windowed and (start is None or end is None):
+        raise ValueError(
+            f"an absolute window needs BOTH bounds; got start={start!r} end={end!r}. A half "
+            f"window is not a window this endpoint can be asked for")
+    if not windowed and relative_range is None:
+        raise ValueError(
+            "no window at all: pass relative_range (the live loop's range=) or both start and "
+            "end (an absolute period1/period2 window)")
+    quoted = symbol.replace("^", "%5E").replace("=", "%3D")
+    chart = f"https://query1.finance.yahoo.com/v8/finance/chart/{quoted}"
+    if relative_range is not None:
+        return f"{chart}?range={relative_range}&interval=1d"
+    first, last = date.fromisoformat(start), date.fromisoformat(end)
+    if last < first:
+        raise ValueError(
+            f"{start}..{end} is reversed, and this endpoint answers a reversed window with a "
+            f"clean 400 (q5_window_reversed): a URL that can only fail is not built")
+    opened = datetime(first.year, first.month, first.day, tzinfo=timezone.utc)
+    last_second = (datetime(last.year, last.month, last.day, tzinfo=timezone.utc)
+                   + timedelta(days=1) - timedelta(seconds=1))
+    return (f"{chart}?period1={int(opened.timestamp())}"
+            f"&period2={int(last_second.timestamp())}&interval=1d")
+
+
 def parse_yahoo_chart(text: str, unit: str, history: int = 0, today: Union[date, None] = None,
                       field: str = "close") -> dict:
     """Latest daily close of a Yahoo v8 chart body; optionally the last ``history`` closes.
@@ -1475,24 +1559,18 @@ class YahooChartAdapter(_BaseAdapter):
 
     def _headers(self) -> Mapping[str, str]:
         # Yahoo answers 429 to urllib's default agent and 200 to an identified browser-style
-        # one; FRED does the opposite (see http_get). Per-adapter, declared, not global.
-        return {"User-Agent": "Mozilla/5.0 (compatible; cerberus-ingest/1.0)"}
+        # one; FRED does the opposite (see http_get). Per-adapter, declared, not global — and
+        # the string itself is YAHOO_USER_AGENT because the calendar reader must send the same.
+        return {"User-Agent": YAHOO_USER_AGENT}
 
     def _url(self) -> str:
-        quoted = self._symbol.replace("^", "%5E").replace("=", "%3D")
-        chart = f"https://query1.finance.yahoo.com/v8/finance/chart/{quoted}"
+        # Both modes are yahoo_chart_url's (WO-1.17's lift), which is where the window
+        # arithmetic and the one-mechanism-per-request refusal are argued. A dated fetch is the
+        # single-day case of the absolute window: start == end == the date asked for.
         if self._observation_date is None:
-            rng = "2y" if self._history else "10d"
-            return f"{chart}?range={rng}&interval=1d"
-        # The whole UTC day of the named date, inclusive, and NO range= at all: both and
-        # range wins. The session-open stamp a 1d bar carries lies inside this span under
-        # either DST offset, where a zero-width window at midnight carries nothing. Both
-        # findings are measured; the derivation is argued in the class docstring.
-        day = date.fromisoformat(self._observation_date)  # already validated at construction
-        midnight = datetime(day.year, day.month, day.day, tzinfo=timezone.utc)
-        last_second = midnight + timedelta(days=1) - timedelta(seconds=1)
-        return (f"{chart}?period1={int(midnight.timestamp())}"
-                f"&period2={int(last_second.timestamp())}&interval=1d")
+            return yahoo_chart_url(self._symbol, relative_range="2y" if self._history else "10d")
+        return yahoo_chart_url(self._symbol, start=self._observation_date,
+                               end=self._observation_date)
 
     def _parse(self, body: str) -> dict:
         if self._observation_date is None:

@@ -1,10 +1,10 @@
 """WO-1.17 the date-list readers: they READ a calendar they do not model, and refuse bodies.
 
-``ingestion.backfill_calendar`` closes the FRED half (13 rows) and the CBOE half (3 rows) of
-the gap
-``WO-1.17-COST-ESTIMATE.md`` §3 names — 13 ``obs_date`` ingredient rows with no date source in
-the tree. The thing worth testing is not that it can filter a list; it is that the list comes
-off the BODY. So every test here hands it a crafted body through a fake transport, and the
+``ingestion.backfill_calendar`` closes the gap ``WO-1.17-COST-ESTIMATE.md`` §3 names — the 23
+``obs_date`` ingredient rows with no date source in the tree — one SOURCE at a time: the FRED
+half (13 rows), the CBOE half (3) and the YAHOO half (7 plain-close rows), which is all of it.
+The thing worth testing is not that it can filter a list; it is that the list comes off the
+BODY. So every test here hands it a crafted body through a fake transport, and the
 bodies carry the shapes a modelled calendar gets wrong: a Good Friday the exchange closes for
 and FRED does not, a Columbus Day FRED skips and the exchange trades, a holiday row present
 with FRED's ``.`` for no figure, and a series whose span starts well inside the window asked
@@ -16,12 +16,20 @@ THE WINDOW IS TESTED AGAINST A BODY THAT IGNORES IT, which is not a contrivance:
 whole body is always what arrives and the bound is arithmetic here — these tests pin that the
 arithmetic, not the server, is what excludes a date.
 
-THE CBOE SECTION AT THE FOOT OF THIS FILE tests the same discipline against a body with a
+THE CBOE SECTION IN THE MIDDLE OF THIS FILE tests the same discipline against a body with a
 DIFFERENT shape — ``MM/DD/YYYY`` dates, a header width that varies by index, and no
 missing-data marker at all — using rows copied verbatim out of
 ``evidence/wo116_cboe_probe.json``. There the server ignoring the window is not a quirk but
 the only behaviour available: ``cdn-api.cboe.com`` honours no windowing parameter whatsoever,
 so the arithmetic bound is the entire mechanism.
+
+THE YAHOO SECTION BELOW IT tests it against a third body with a third shape — v8 chart JSON,
+bars stamped at the session OPEN rather than dated, and ``null`` rather than any token for a
+session with no print — using bodies copied verbatim out of
+``evidence/wo117_yahoo_range_probe.json`` and ``evidence/wo116_yahoo_window_probe.json``. There
+the server is the only one of the three that APPLIES the window it is given, exactly or not at
+all, so the arithmetic bound is held against a body deliberately wider than the request that
+fetched it: what makes the answer ours is that it does not depend on a server's courtesy.
 """
 
 from __future__ import annotations
@@ -31,10 +39,11 @@ from datetime import date, datetime, timezone
 import pytest
 
 from crash_detector.collectors.adapter import AdapterFetchError
-from ingestion.adapters import (CboeAdapter, FredAdapter, cboe_history_url, fred_column,
-                                fred_graph_url)
+from ingestion.adapters import (YAHOO_USER_AGENT, CboeAdapter, FredAdapter, YahooChartAdapter,
+                                cboe_history_url, fred_column, fred_graph_url, yahoo_chart_url)
 from ingestion.backfill_calendar import (cboe_body_dates, cboe_observation_dates,
-                                         fred_body_dates, fred_observation_dates)
+                                         fred_body_dates, fred_observation_dates,
+                                         yahoo_chart_dates, yahoo_observation_dates)
 from ingestion.backfill_dates import observation_dates
 from ingestion.catalog import INGREDIENTS
 
@@ -265,8 +274,8 @@ def test_it_agrees_with_the_formula_on_a_row_both_can_answer_for():
 
 def test_a_non_fred_ingredient_is_refused_and_costs_no_get():
     """CBOE's ``*_History.csv`` and Yahoo's chart JSON are their own calendars read by their own
-    functions — ``cboe_observation_dates`` below, and Yahoo in a later round. Handing either
-    body to the FRED reader must not produce a plausible-looking list."""
+    functions — ``cboe_observation_dates`` and ``yahoo_observation_dates``, both below. Handing
+    either body to the FRED reader must not produce a plausible-looking list."""
     getter = _serves("anything")
     others = [i for i in INGREDIENTS if i.kind != "fred"]
     assert {i.kind for i in others} >= {"cboe", "yahoo"}, "the later rounds' kinds are absent"
@@ -622,3 +631,401 @@ def test_a_cboe_fetch_failure_propagates_and_is_never_an_empty_date_list():
 def test_a_conforming_cboe_body_with_no_rows_is_empty_and_not_an_error():
     """The one thing an empty tuple is allowed to mean, for CBOE as for FRED."""
     assert cboe_body_dates("DATE,SKEW\n", "SKEW") == ()
+
+
+# =========================================================================================== #
+# YAHOO: the same discipline, a third body — and the one window a server really applies        #
+# =========================================================================================== #
+
+#: The 7 PLAIN-CLOSE yahoo rows, which complete §3's 23 (13 + 3 + 7). Named here rather than
+#: filtered silently, for the reason :data:`FRED_OBS_DATE_ROWS` and :data:`CBOE_ROWS` are — and
+#: filtered on ``column`` as well as ``kind``, because the catalog's other 51 ``yahoo`` rows ask
+#: for ``adjclose`` and ``yahoo_observation_dates`` refuses those by name.
+YAHOO_PLAIN_CLOSE_ROWS = tuple(i.source_id for i in INGREDIENTS
+                               if i.kind == "yahoo" and i.column == "")
+
+#: SPY over a 2015 fortnight, REAL: the body
+#: ``?period1=1433721600&period2=1434758399&interval=1d`` — 00:00:00Z of 2015-06-08 to
+#: 23:59:59Z of 2015-06-19 — answered VERBATIM, copied out of
+#: ``evidence/wo117_yahoo_range_probe.json`` (``r5_small_window_verbatim``, probed 2026-10-16).
+#: TEN bars at ``dataGranularity == "1d"``, each stamped at the session OPEN (1433770200 is
+#: 2015-06-08T13:30Z), and ``meta`` and the ``adjclose`` block kept exactly as served: the
+#: reader has to reach past both, and a hand-trimmed body would not prove that.
+#:
+#: The fortnight contains ONE weekend, 06-13 and 06-14, and the body carries no bar for either.
+#: That is the finding the calendar read exists for — a non-session is an ABSENT BAR, with no
+#: marker of its own anywhere in the body.
+_YAHOO_SPY_FORTNIGHT = (
+    '{"chart":{"result":[{"meta":{"currency":"USD","symbol":"SPY","exchangeName":"PCX","fullExcha'
+    'ngeName":"NYSEArca","instrumentType":"ETF","firstTradeDate":728317800,"regularMarketTime":17'
+    '92173448,"hasPrePostMarketData":true,"gmtoffset":-14400,"timezone":"EDT","exchangeTimezoneNa'
+    'me":"America/New_York","regularMarketPrice":763.66,"regularMarketChangePercent":-1.053,"full'
+    'dayPrice":763.66,"fulldayChange":-8.13,"fulldayChangePercent":-1.053,"fiftyTwoWeekHigh":781.'
+    '62,"fiftyTwoWeekLow":629.28,"regularMarketDayHigh":773.23,"regularMarketDayLow":762.58,"regu'
+    'larMarketVolume":30194710,"longName":"State Street SPDR S&P 500 ETF Trust","shortName":"Stat'
+    'e Street SPDR S&P 500 ETF T","chartPreviousClose":209.77,"priceHint":2,"currentTradingPeriod'
+    '":{"pre":{"timezone":"EDT","start":1792137600,"end":1792157400,"gmtoffset":-14400},"regular"'
+    ':{"timezone":"EDT","start":1792157400,"end":1792180800,"gmtoffset":-14400},"post":{"timezone'
+    '":"EDT","start":1792180800,"end":1792195200,"gmtoffset":-14400}},"dataGranularity":"1d","ran'
+    'ge":"","validRanges":["1d","5d","1mo","3mo","6mo","1y","2y","5y","10y","ytd","max"]},"timest'
+    'amp":[1433770200,1433856600,1433943000,1434029400,1434115800,1434375000,1434461400,143454780'
+    '0,1434634200,1434720600],"indicators":{"quote":[{"open":[209.63999938964844,208.449996948242'
+    '2,209.3699951171875,211.47999572753906,210.63999938964844,208.63999938964844,208.92999267578'
+    '125,210.58999633789062,211.30999755859375,211.4600067138672],"low":[208.38999938964844,207.6'
+    '9000244140625,209.3000030517578,211.1999969482422,209.67999267578125,207.7899932861328,208.7'
+    '2000122070312,209.36000061035156,210.6300048828125,210.36000061035156],"volume":[89063300,10'
+    '5034700,134551300,73876400,135382400,124384200,85308200,126708600,165867900,130478700],"high'
+    '":[209.82000732421875,209.10000610351562,211.41000366210938,212.08999633789062,211.479995727'
+    '53906,209.4499969482422,210.35000610351562,211.32000732421875,213.33999633789062,211.5500030'
+    '517578],"close":[208.47999572753906,208.4499969482422,210.9499969482422,211.6300048828125,21'
+    '0.00999450683594,209.11000061035156,210.25,210.58999633789062,212.77999877929688,210.8099975'
+    '5859375]}],"adjclose":[{"adjclose":[172.5474090576172,172.52256774902344,174.59169006347656,'
+    '175.15451049804688,173.8136749267578,173.06883239746094,174.01235961914062,174.2937622070312'
+    '5,176.10630798339844,175.32456970214844]}]}}],"error":null}}'
+)
+
+#: Every session ``_YAHOO_SPY_FORTNIGHT`` carries, which is what the reader must return for the
+#: fortnight asked for. Written out rather than generated, for the reason
+#: :data:`_JUNE_2015_SESSIONS` is: a generated expectation would be a MODEL of the calendar.
+_SPY_FORTNIGHT_SESSIONS = (
+    "2015-06-08", "2015-06-09", "2015-06-10", "2015-06-11", "2015-06-12",
+    "2015-06-15", "2015-06-16", "2015-06-17", "2015-06-18", "2015-06-19",
+)
+
+#: ``^GSPC`` over the FIRST FORTNIGHT OF RECORDED HISTORY, REAL and verbatim from the same
+#: evidence file (``r5_ancient_window_verbatim``): the oldest shape this endpoint serves anyone.
+#: SEVEN bars at ``"1d"``, stamped with NEGATIVE epoch seconds — -1325583000 is
+#: 1927-12-30T14:30Z, the session open under the winter offset, and also this symbol's own
+#: ``meta.firstTradeDate``. A reader that could not take a pre-epoch stamp fails here and
+#: nowhere else in this file.
+_YAHOO_GSPC_FIRST_FORTNIGHT = (
+    '{"chart":{"result":[{"meta":{"currency":"USD","symbol":"^GSPC","exchangeName":"SNP","fullExc'
+    'hangeName":"SNP","instrumentType":"INDEX","firstTradeDate":-1325583000,"regularMarketTime":1'
+    '792173461,"hasPrePostMarketData":false,"gmtoffset":-14400,"timezone":"EDT","exchangeTimezone'
+    'Name":"America/New_York","regularMarketPrice":7662.17,"regularMarketChangePercent":-1.057,"f'
+    'ulldayPrice":7662.17,"fulldayChange":-81.89,"fulldayChangePercent":-1.057,"fiftyTwoWeekHigh"'
+    ':7844.52,"fiftyTwoWeekLow":6316.91,"regularMarketDayHigh":7756.84,"regularMarketDayLow":7651'
+    '.91,"regularMarketVolume":1636254000,"longName":"S&P 500","shortName":"S&P 500","chartPrevio'
+    'usClose":17.66,"priceHint":2,"currentTradingPeriod":{"pre":{"timezone":"EDT","start":1792137'
+    '600,"end":1792157400,"gmtoffset":-14400},"regular":{"timezone":"EDT","start":1792157400,"end'
+    '":1792180800,"gmtoffset":-14400},"post":{"timezone":"EDT","start":1792180800,"end":179219520'
+    '0,"gmtoffset":-14400}},"dataGranularity":"1d","range":"","validRanges":["1d","5d","1mo","3mo'
+    '","6mo","1y","2y","5y","10y","ytd","max"]},"timestamp":[-1325583000,-1325237400,-1325151000,'
+    '-1325064600,-1324978200,-1324719000,-1324632600],"indicators":{"quote":[{"low":[17.659999847'
+    '41211,17.760000228881836,17.719999313354492,17.549999237060547,17.65999984741211,17.5,17.370'
+    '0008392334],"volume":[0,0,0,0,0,0,0],"open":[17.65999984741211,17.760000228881836,17.7199993'
+    '13354492,17.549999237060547,17.65999984741211,17.5,17.3700008392334],"close":[17.65999984741'
+    '211,17.760000228881836,17.719999313354492,17.549999237060547,17.65999984741211,17.5,17.37000'
+    '08392334],"high":[17.65999984741211,17.760000228881836,17.719999313354492,17.549999237060547'
+    ',17.65999984741211,17.5,17.3700008392334]}],"adjclose":[{"adjclose":[17.65999984741211,17.76'
+    '0000228881836,17.719999313354492,17.549999237060547,17.65999984741211,17.5,17.3700008392334]'
+    '}]}}],"error":null}}'
+)
+
+#: Every session ``_YAHOO_GSPC_FIRST_FORTNIGHT`` carries. 1927-12-25 to 12-29 are days before
+#: the symbol's first recorded trade and 1928-01-02 is a MONDAY with no bar; the body is the
+#: only thing that knows which, and this list is what it says rather than what a calendar model
+#: would deduce.
+_GSPC_FIRST_SESSIONS = (
+    "1927-12-30", "1928-01-03", "1928-01-04", "1928-01-05", "1928-01-06",
+    "1928-01-09", "1928-01-10",
+)
+
+#: SPY, a one-day window on SATURDAY 2015-06-13, REAL and verbatim out of
+#: ``evidence/wo116_yahoo_window_probe.json`` (``q3_window_on_non_trading_day``, probed
+#: 2026-10-15). HTTP 200, ``error: null``, ``meta`` complete — and the bar arrays simply ABSENT:
+#: ``"quote":[{}]`` with NO ``timestamp`` key anywhere in the body. This is the shape of "no
+#: session in the window you asked for", and it is this module's one legitimate empty tuple.
+_YAHOO_SPY_NO_BAR_AT_ALL = (
+    '{"chart":{"result":[{"meta":{"currency":"USD","symbol":"SPY","exchangeName":"PCX","fullExcha'
+    'ngeName":"NYSEArca","instrumentType":"ETF","firstTradeDate":728317800,"regularMarketTime":17'
+    '92089978,"hasPrePostMarketData":true,"gmtoffset":-14400,"timezone":"EDT","exchangeTimezoneNa'
+    'me":"America/New_York","regularMarketPrice":770.01,"regularMarketChangePercent":0.053,"fulld'
+    'ayPrice":770.01,"fulldayChange":0.41,"fulldayChangePercent":0.053,"fiftyTwoWeekHigh":781.62,'
+    '"fiftyTwoWeekLow":629.28,"regularMarketDayHigh":771.91,"regularMarketDayLow":764.44,"regular'
+    'MarketVolume":26568561,"longName":"State Street SPDR S&P 500 ETF Trust","shortName":"State S'
+    'treet SPDR S&P 500 ETF T","chartPreviousClose":210.01,"priceHint":2,"currentTradingPeriod":{'
+    '"pre":{"timezone":"EDT","end":1792071000,"start":1792051200,"gmtoffset":-14400},"regular":{"'
+    'timezone":"EDT","end":1792094400,"start":1792071000,"gmtoffset":-14400},"post":{"timezone":"'
+    'EDT","end":1792108800,"start":1792094400,"gmtoffset":-14400}},"dataGranularity":"1d","range"'
+    ':"","validRanges":["1d","5d","1mo","3mo","6mo","1y","2y","5y","10y","ytd","max"]},"indicator'
+    's":{"quote":[{}],"adjclose":[{}]}}],"error":null}}'
+)
+
+
+# --- the population, and the URLs the live loop has always asked ------------------------- #
+
+
+def test_the_seven_yahoo_plain_close_rows_have_no_other_date_source_either():
+    """All 7 are ``obs_date``, so the formula sibling refuses every one of them — and with the
+    13 and the 3 above they are the 23 rows §3 counts as having no date source in the tree.
+    Re-derived from the catalog rather than asserted."""
+    assert YAHOO_PLAIN_CLOSE_ROWS == ("yahoo.HYG", "yahoo.LQD", "yahoo.RSP", "yahoo.SPY",
+                                      "yahoo.^GSPC", "yahoo.HG=F", "yahoo.GC=F")
+    for source_id in YAHOO_PLAIN_CLOSE_ROWS:
+        assert _ing(source_id).as_of_rule == "obs_date"
+        with pytest.raises(ValueError):
+            observation_dates(_ing(source_id), "2015-06-08", "2015-06-19")
+    assert (len(FRED_OBS_DATE_ROWS) + len(CBOE_ROWS) + len(YAHOO_PLAIN_CLOSE_ROWS)) == 23
+
+
+def test_the_yahoo_calendar_asks_the_same_urls_the_live_adapter_has_always_asked():
+    """THE NON-REGRESSION, by EQUALITY, in BOTH of the adapter's modes — the one
+    ``yahoo_chart_url``'s docstring says this file holds. The builder was lifted out of
+    ``YahooChartAdapter._url`` this round; if the lift changed a character, the live poll or the
+    per-date backfill is asking a different endpoint and this fails."""
+    for ing in (i for i in INGREDIENTS if i.kind == "yahoo"):
+        # Built the way ``ingestion.catalog.build_adapter`` builds it for the live loop.
+        live = YahooChartAdapter(ing.ref, ing.history, field=ing.column or "close",
+                                 source_id=ing.source_id, as_of_rule=ing.as_of_rule,
+                                 unit=ing.unit, clock=lambda: NOW)
+        assert live._url() == yahoo_chart_url(
+            ing.ref, relative_range="2y" if ing.history else "10d")
+        # The agent string is one constant with two senders, which is the reason it is one.
+        assert live._headers() == {"User-Agent": YAHOO_USER_AGENT}
+    assert yahoo_chart_url("SPY", relative_range="10d") == (
+        "https://query1.finance.yahoo.com/v8/finance/chart/SPY?range=10d&interval=1d")
+    assert yahoo_chart_url("^GSPC", relative_range="2y") == (
+        "https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?range=2y&interval=1d")
+    # And the DATED mode is the ``start == end`` case of the absolute window, character for
+    # character: the same URL the WO-1.16 probe measured for the whole UTC day of 2015-06-08.
+    dated = YahooChartAdapter("SPY", observation_date="2015-06-08", source_id="yahoo.SPY",
+                              as_of_rule="obs_date", unit="usd", clock=lambda: NOW)
+    assert dated._url() == yahoo_chart_url("SPY", start="2015-06-08", end="2015-06-08") == (
+        "https://query1.finance.yahoo.com/v8/finance/chart/SPY"
+        "?period1=1433721600&period2=1433807999&interval=1d")
+
+
+def test_one_url_carries_one_window_mechanism_and_an_unaskable_one_is_never_built():
+    """``range`` and an absolute window in one URL is not belt-and-braces: given both, RANGE
+    WINS and the window is silently ignored (``evidence/wo116_yahoo_window_probe.json``,
+    ``q6_range_and_period_together``). A builder that could emit both is a builder that can
+    answer a 1927 question with this morning's bars, so the combination raises — as does every
+    other request this endpoint cannot be asked, including the reversed window it answers with
+    a clean 400 (``q5_window_reversed``). A URL that can only fail is not built."""
+    with pytest.raises(ValueError, match="One mechanism per request, never both"):
+        yahoo_chart_url("SPY", relative_range="2y", start="2015-06-08", end="2015-06-19")
+    for half in ({"start": "2015-06-08"}, {"end": "2015-06-19"}):
+        with pytest.raises(ValueError, match="an absolute window needs BOTH bounds"):
+            yahoo_chart_url("SPY", **half)
+    with pytest.raises(ValueError, match="no window at all"):
+        yahoo_chart_url("SPY")
+    with pytest.raises(ValueError, match="is reversed"):
+        yahoo_chart_url("SPY", start="2015-06-19", end="2015-06-08")
+    # ``start == end`` is not reversed; it is the ordinary one-day case, held above.
+    assert "period1=" in yahoo_chart_url("SPY", start="2015-06-08", end="2015-06-08")
+
+
+# --- the calendar is READ, not modelled -------------------------------------------------- #
+
+
+def test_the_yahoo_dates_are_the_bars_the_body_carries_and_the_weekend_is_simply_absent():
+    """The probed fortnight, read whole, against the body THAT URL actually returned — which is
+    why the asserted URL is the probe's verbatim rather than a substring. Ten bars, ten
+    sessions, and the weekend inside the span is not a bar at all."""
+    getter = _serves(_YAHOO_SPY_FORTNIGHT)
+    dates = yahoo_observation_dates(_ing("yahoo.SPY"), "2015-06-08", "2015-06-19",
+                                    timeout_seconds=45.0, getter=getter)
+    assert dates == _SPY_FORTNIGHT_SESSIONS
+    assert len(dates) == 10
+    assert getter.calls == [("https://query1.finance.yahoo.com/v8/finance/chart/SPY"
+                             "?period1=1433721600&period2=1434758399&interval=1d",
+                             45.0, {"User-Agent": YAHOO_USER_AGENT})], (
+        "ONE GET, the absolute window, and the agent string this endpoint requires")
+    for weekend in ("2015-06-13", "2015-06-14"):
+        assert weekend not in dates, "an absent bar is not a session we may invent"
+        assert date.fromisoformat(weekend).weekday() >= 5
+
+
+def test_a_1927_body_is_read_by_the_same_arithmetic_as_a_2015_one():
+    """``^GSPC``'s first fortnight of recorded history: NEGATIVE epoch stamps, read with no
+    special case, and the two absences a model would get wrong in opposite directions —
+    1927-12-25..29 are before the symbol's first recorded trade, and 1928-01-02 is a MONDAY
+    with no bar. What this returns is the dates THIS SOURCE has a bar for, which is the only
+    thing a backfill could recover, rather than the dates an exchange calendar says it should.
+
+    ``ing.history`` is 260 for this row and is deliberately NOT passed to the builder: had it
+    been, the URL would carry ``range=2y`` and the date list would stop two years ago."""
+    getter = _serves(_YAHOO_GSPC_FIRST_FORTNIGHT)
+    dates = yahoo_observation_dates(_ing("yahoo.^GSPC"), "1927-12-25", "1928-01-10",
+                                    timeout_seconds=45.0, getter=getter)
+    assert dates == _GSPC_FIRST_SESSIONS
+    assert _ing("yahoo.^GSPC").history == 260
+    url = getter.calls[0][0]
+    assert url == ("https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC"
+                   "?period1=-1326067200&period2=-1324598401&interval=1d")
+    assert "range=" not in url, "a history row's range would stop the list two years ago"
+    # The date comes off the STAMP, and that stamp is a session open before the epoch.
+    assert datetime.fromtimestamp(-1325583000, tz=timezone.utc).isoformat() == (
+        "1927-12-30T14:30:00+00:00")
+    assert "1928-01-02" not in dates and date.fromisoformat("1928-01-02").weekday() == 0
+
+
+def test_a_null_close_is_excluded_and_is_the_one_skip_this_module_allows_itself():
+    """Yahoo's missing-value convention is JSON ``null`` — a TYPE, not a token, which is why
+    there is no ``YAHOO_MISSING_VALUE_TOKENS`` beside its two siblings — and it is the SOURCE's
+    own word for "no print this session". So the bar is EXCLUDED rather than refused, the one
+    row-level skip in a module that otherwise refuses a body whole; and excluded rather than
+    kept, because kept it would buy the backfill a GET that comes back EMPTY and assert a print
+    the source has just denied.
+
+    The ``0`` beside it is why the check is ``close is None`` and not falsiness: a close of zero
+    is a print, and a reader testing truthiness would drop a real session."""
+    body = ('{"chart":{"result":[{"timestamp":[1433770200,1433856600,1433943000],'
+            '"indicators":{"quote":[{"close":[208.47999572753906,null,0]}]}}],"error":null}}')
+    assert yahoo_chart_dates(body) == ("2015-06-08", "2015-06-10")
+
+
+def test_an_absent_bar_array_is_no_sessions_and_not_a_body_we_cannot_read():
+    """MEASURED, and the one shape the two readers of this body must answer DIFFERENTLY. A
+    window matching no session is ``200`` with ``meta`` intact and the bar arrays simply
+    ABSENT (``q3_window_on_non_trading_day``, SPY on Saturday 2015-06-13). Here that is the
+    empty tuple — a body we fully understood, carrying no session in the window asked for —
+    where ``parse_yahoo_chart`` reads the same bytes as ``{"malformed": "shape"}``, correctly
+    for ITS question (a ten-day live range with no bars in it cannot be believed) and wrongly
+    for this one. Asserted on the real body, through both the pure reader and the windowed
+    one."""
+    assert '"quote":[{}]' in _YAHOO_SPY_NO_BAR_AT_ALL
+    assert '"timestamp"' not in _YAHOO_SPY_NO_BAR_AT_ALL, "no bar array to read at all"
+    assert yahoo_chart_dates(_YAHOO_SPY_NO_BAR_AT_ALL) == ()
+    assert yahoo_observation_dates(_ing("yahoo.SPY"), "2015-06-13", "2015-06-13",
+                                   timeout_seconds=45.0,
+                                   getter=_serves(_YAHOO_SPY_NO_BAR_AT_ALL)) == ()
+
+
+# --- the window: an exact bound on the dates, applied HERE ------------------------------- #
+
+
+def test_yahoo_dates_outside_the_window_are_excluded_at_both_ends():
+    """The arithmetic bound, over the real fortnight body: the first two sessions fall before it
+    and the last two after it. Inclusive at both ends.
+
+    This is the one of the three endpoints that APPLIES the window it is given — exactly, or it
+    refuses the request with a 400 and never answers with somebody else's bars — so the body
+    here is WIDER than the request that fetched it, which the server would not really serve. The
+    filter is kept anyway and is not ceremony: it is what makes the answer independent of a
+    server's courtesy, and it is held here against a body that was not courteous."""
+    getter = _serves(_YAHOO_SPY_FORTNIGHT)
+    dates = yahoo_observation_dates(_ing("yahoo.SPY"), "2015-06-10", "2015-06-17",
+                                    timeout_seconds=45.0, getter=getter)
+    assert dates == ("2015-06-10", "2015-06-11", "2015-06-12",
+                     "2015-06-15", "2015-06-16", "2015-06-17")
+    assert dates[0] == "2015-06-10" and dates[-1] == "2015-06-17", "bounds are inclusive"
+    assert "2015-06-08" not in dates and "2015-06-09" not in dates
+    assert "2015-06-18" not in dates and "2015-06-19" not in dates
+    assert len(getter.calls) == 1
+    assert getter.calls[0][0] == yahoo_chart_url("SPY", start="2015-06-10", end="2015-06-17")
+
+
+def test_a_reversed_yahoo_window_is_an_empty_tuple_and_costs_no_get():
+    """An empty interval contains no dates — arithmetic, not a model of a calendar — and both
+    siblings answer a reversed window the same way. It is answered WITHOUT a GET for a reason
+    they do not have: a reversed window is a measured 400 (``q5_window_reversed``) and
+    ``yahoo_chart_url`` refuses to build one, so the sibling-compatible empty answer would
+    otherwise arrive as a fetch failure for a question that answers itself."""
+    getter = _serves(_YAHOO_SPY_FORTNIGHT)
+    assert yahoo_observation_dates(_ing("yahoo.SPY"), "2015-06-19", "2015-06-08",
+                                   timeout_seconds=45.0, getter=getter) == ()
+    assert getter.calls == [], "the function's own reasoning: an empty interval costs no bytes"
+
+
+# --- refusals: a body we cannot read stops the run ---------------------------------------- #
+
+
+def test_an_adjclose_row_is_refused_by_name_and_costs_no_get():
+    """The 51 rows this round does NOT cover, refused one layer earlier than
+    ``YahooChartAdapter`` refuses them at construction. An adjusted close drifts retroactively
+    with every later dividend and split, forever, so there is no point-in-time quantity to
+    recover and therefore no honest publication calendar to hand a backfill. Answering with the
+    unadjusted close's calendar would be a date list for a DIFFERENT quantity than the one
+    asked about — so the refusal NAMES the column, and it happens before a byte is fetched."""
+    getter = _serves(_YAHOO_SPY_FORTNIGHT)
+    adjusted = [i for i in INGREDIENTS if i.kind == "yahoo" and i.column != ""]
+    assert len(adjusted) == 51 and {i.column for i in adjusted} == {"adjclose"}
+    with pytest.raises(ValueError, match="yahoo.BIZD.adj asks for column 'adjclose'"):
+        yahoo_observation_dates(_ing("yahoo.BIZD.adj"), "2015-06-08", "2015-06-19",
+                                timeout_seconds=45.0, getter=getter)
+    for ing in adjusted:
+        with pytest.raises(ValueError, match="only the 7 plain-close yahoo rows are in scope"):
+            yahoo_observation_dates(ing, "2015-06-08", "2015-06-19",
+                                    timeout_seconds=45.0, getter=getter)
+    assert getter.calls == []
+
+
+def test_a_non_yahoo_ingredient_is_refused_and_costs_no_get():
+    """FRED's ``fredgraph.csv`` and CBOE's ``*_History.csv`` are their own calendars read by
+    their own functions above. Handing either body to this reader must not produce a
+    plausible-looking list."""
+    getter = _serves(_YAHOO_SPY_FORTNIGHT)
+    others = [i for i in INGREDIENTS if i.kind != "yahoo"]
+    assert {i.kind for i in others} >= {"fred", "cboe"}
+    for ing in others:
+        with pytest.raises(ValueError, match="this reads a Yahoo v8 chart body"):
+            yahoo_observation_dates(ing, "2015-06-08", "2015-06-19",
+                                    timeout_seconds=45.0, getter=getter)
+    assert getter.calls == []
+
+
+@pytest.mark.parametrize("body", [
+    "",
+    "<!DOCTYPE html><html>Yahoo error page</html>",
+    '{"chart":{"result":[],"error":null}}',
+    '{"chart":{"result":null,"error":{"code":"Not Found","description":"No data found"}}}',
+    '{"chart":{"result":[{"timestamp":[1433770200]}]}}',
+    '{"chart":{"result":[{"timestamp":[1433770200],"indicators":{"quote":[]}}]}}',
+])
+def test_a_body_that_is_not_a_yahoo_v8_chart_at_all_is_refused(body):
+    """A body that has stopped telling us what it contains is a raise, where
+    ``parse_yahoo_chart_for_date`` answers the same shapes with a ``{"malformed": ...}`` payload
+    recorded against ONE date — this module's stated divergence, made by all three of its
+    readers. Note what is NOT in this list: the absent bar arrays above, which are a body we
+    read perfectly well saying nothing happened."""
+    with pytest.raises(ValueError, match="not a Yahoo v8 chart body"):
+        yahoo_chart_dates(body)
+
+
+def test_bar_arrays_that_contradict_each_other_are_refused_rather_than_paired():
+    """Two timestamps and one close: no pairing of them is this function's to pick, and picking
+    one would silently drop or invent a date."""
+    with pytest.raises(ValueError, match="2 timestamps and 1 closes"):
+        yahoo_chart_dates('{"chart":{"result":[{"timestamp":[1433770200,1433856600],'
+                          '"indicators":{"quote":[{"close":[208.47999572753906]}]}}]}}')
+
+
+@pytest.mark.parametrize("stamp", [
+    'null',             # a hole in the array rather than a stamp
+    '"2015-06-09"',     # an ISO date where an epoch second belongs
+    '1433856600000',    # the same instant in MILLISECONDS, i.e. the year 47400
+])
+def test_a_yahoo_stamp_we_cannot_read_raises_rather_than_being_skipped(stamp):
+    """The deliberate divergence from the sibling parsers, which skip a bar they cannot read
+    because they are hunting ONE date. A calendar read that skipped it would drop a date from
+    the whole list silently, and the run's output is which dates were recovered — a hole with
+    nothing to compare it against. The position is named so the body can be found."""
+    with pytest.raises(ValueError, match="bar 2 of this body is stamped"):
+        yahoo_chart_dates('{"chart":{"result":[{"timestamp":[1433770200,' + stamp + '],'
+                          '"indicators":{"quote":[{"close":[208.0,209.0]}]}}]}}')
+
+
+def test_a_yahoo_date_carried_twice_is_refused_rather_than_silently_halved():
+    """Two bars inside ONE UTC day — 1433770200 is 13:30Z and 1433788200 is 18:30Z of
+    2015-06-08, which is what an interval other than ``1d`` would hand this reader. The body
+    contradicts itself about the session and this function will not pick one of the two."""
+    with pytest.raises(ValueError, match="carries 2015-06-08 twice"):
+        yahoo_chart_dates('{"chart":{"result":[{"timestamp":[1433770200,1433788200],'
+                          '"indicators":{"quote":[{"close":[208.0,209.0]}]}}]}}')
+
+
+def test_a_yahoo_fetch_failure_propagates_and_is_never_an_empty_date_list():
+    """Including the 400 of an IMPOSSIBLE WINDOW — one entirely before the symbol's first trade,
+    or entirely in the future (``q4_*``). None of those is the source saying anything about a
+    date; each is the REQUEST being wrong, and translated into an empty list it would read as
+    "the symbol printed nothing in those years", indistinguishable from a quiet run of
+    weekends. A symbol whose calendar could not be fetched has no date list."""
+    def refused(url, timeout_seconds, headers=None):
+        raise AdapterFetchError("HTTP_ERROR", 400)
+
+    with pytest.raises(AdapterFetchError) as raised:
+        yahoo_observation_dates(_ing("yahoo.SPY"), "1980-01-01", "1980-12-31",
+                                timeout_seconds=45.0, getter=refused)
+    assert raised.value.error_class == "HTTP_ERROR" and raised.value.http_status == 400
