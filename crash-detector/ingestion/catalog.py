@@ -284,6 +284,58 @@ WINDOW_OVERRIDES: dict[str, tuple[int, str]] = {
         "it was 4 days before WO-1.9), and is inside the engine's 120-day relevance ceiling. Revert this "
         "override when a quarterly v2/v3 leg is added.",
     ),
+    # ---- WO-1.19 item (4): three MONTHLY rows ratified at 45 days against a rhythm their feeds do not keep ----
+    # The arithmetic for a monthly series aged by the ``month_end`` rule is: the PUBLICATION LAG of the reference
+    # month, PLUS one full release interval (~31 days) - because the row carries month M's observation as its
+    # current one right up until month M+1's print lands. 45 days therefore only fits a lag of about two weeks.
+    # That same arithmetic is why cpi_yoy and sahm_rule, also monthly and also ratified at 45 days, are NOT on this
+    # list and are left alone: CPI prints ~12 days after its reference month (worst healthy age ~44 days) and the
+    # Sahm rule follows the employment report at ~5 days (~37 days), so both still fit inside the ratified window.
+    #
+    # NO RELEASE CALENDAR WAS FETCHED FOR ANY FIGURE BELOW. There is no network access on this path, so every lag
+    # quoted here is from knowledge of the publication schedules and NOT read off a BLS / BEA / Federal Reserve
+    # release calendar. They are recorded as the derivations they are rather than as checked fact, and each window
+    # keeps slack over the figure it is derived from precisely BECAUSE that figure is unverified here. Checking the
+    # three lags against the published calendars is OWED and would let these numbers be tightened on evidence.
+    "michigan_sentiment": (
+        75 * DAY,
+        "the ratified row says 45 days. THIS ENTRY RESTS ON A WEAKER FOOTING THAN THE OTHER TWO AND SAYS SO RATHER "
+        "THAN READING AS A DERIVATION IT IS NOT. The Michigan Surveys of Consumers publish WITHIN the month they "
+        "describe - a preliminary reading mid-month, the final late in the same month - so on that calendar a "
+        "healthy UMCSENT observation aged from the month END is at most about one release interval old (~35 days), "
+        "which the ratified 45 days ALREADY covers. Publication lag therefore does NOT explain a STALE reading on "
+        "this row the way it explains m2_yoy and core_pce_yoy. What IS on record here is the SYMPTOM, not a "
+        "derivation: Matt read this row STALE on cerberus-live's dial on a monthly schedule and dispatched all "
+        "three rows together (PID.md, WO-1.19 item 4). 75 days is adopted to match the other two monthly rows and "
+        "to clear the observed symptom, and is well inside the engine's 120-day relevance ceiling. OWED, and the "
+        "reason this is flagged and not closed: either the release calendar is not what is stated above "
+        "(unverified - no network here), or this row's STALE has a DIFFERENT cause - a missed collector pass, or "
+        "the as-of dating of a mid-month preliminary - in which case this window HIDES that cause instead of "
+        "fixing it. Revert to the ratified 45 days if the live dial's own as-of dates show the lag is as stated.",
+    ),
+    "m2_yoy": (
+        75 * DAY,
+        "the ratified row says 45 days (it assumed the four-week rhythm every monthly row was given; the H.6 "
+        "release does not keep it). The Fed's H.6 Money Stock Measures for reference month M lands on roughly the "
+        "fourth Tuesday of M+1, about 22-28 days after M ends, and the next one a release interval after that, so "
+        "a healthy M2 reading is up to ~59 days old when aged from the month END. It passes the ratified 45 days "
+        "with about two weeks of the month still to run, which is the false STALE read off the live dial. 75 days "
+        "covers that worst case with ~16 days of slack for a release that slips, and sits well inside the engine's "
+        "120-day relevance ceiling (crash_detector.staleness.RELEVANCE_WINDOW_CEILING_SECONDS). It is deliberately "
+        "NOT that ceiling: a window wider than the rhythm needs lets a DEAD feed keep reading current, which is "
+        "the failure the private_credit_stress override above exists to undo.",
+    ),
+    "core_pce_yoy": (
+        85 * DAY,
+        "the ratified row says 45 days, and this row's real lag is the LONGEST of the three, so it is the one of "
+        "the three deliberately NOT set to ~75 days. BEA's Personal Income and Outlays, which carries the core PCE "
+        "price index, lands at the very END of M+1 - typically between the 24th and the last business day - "
+        "several days LATER than BLS's CPI for the same reference month, which is exactly why cpi_yoy still fits "
+        "45 days and this row cannot. Adding one release interval, a healthy core PCE reading is up to ~62 days "
+        "old aged from the month END. 75 days would leave only ~13 days of slack on a lag that is UNVERIFIED here; "
+        "85 days leaves ~23 and is still comfortably inside the 120-day relevance ceiling, with 35 days to spare "
+        "against it.",
+    ),
 }
 
 
