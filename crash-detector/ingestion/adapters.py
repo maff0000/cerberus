@@ -71,6 +71,7 @@ __all__ = [
     "parse_fred_csv",
     "parse_fred_csv_for_date",
     "parse_alfred_csv",
+    "cboe_history_url",
     "parse_cboe_csv",
     "parse_cboe_csv_for_date",
     "parse_yahoo_chart",
@@ -468,6 +469,28 @@ def _vintage_state(payload: Mapping[str, Any]) -> str:
     if "value" not in payload:
         return _ABSENT
     return _SERVED if type(payload["value"]) is float else _UNREADABLE
+
+
+def cboe_history_url(index: str) -> str:
+    """The ``{index}_History.csv`` URL. There is no dated variant, and that is MEASURED.
+
+    ``cdn-api.cboe.com`` honours NO date-windowing parameter: eight spellings (``dt``,
+    ``date``, ``startDate``/``endDate``, ``start``/``end``, ``from``/``to``,
+    ``start_date``/``end_date``, FRED's own ``cosd``/``coed``) plus a nonsense control each
+    came back ``200`` with a body BYTE-IDENTICAL to this bare URL's, same SHA-256 and same row
+    count (probed 2026-10-15, ``tools/probe/cboe_history_probe.py``,
+    ``evidence/wo116_cboe_probe.json``). So this takes no ``observation_date``, where
+    :func:`fred_graph_url` does: there is nothing for a dated request to ask for, and a
+    parameter that could not change the response would be a promise this endpoint never made.
+
+    That one body serves both readers — :func:`parse_cboe_csv` for "what is this index at
+    now?", :func:`parse_cboe_csv_for_date` for one named date, and
+    ``ingestion.backfill_calendar.cboe_observation_dates`` for the whole date list — so there
+    is ONE way to ask Cboe for an index's history and not three that agree today.
+    ``tests/test_wo117_calendar.py`` holds this equal to :meth:`CboeAdapter._url` so an edit
+    here cannot quietly move the live loop's destination.
+    """
+    return f"https://cdn-api.cboe.com/api/global/us_indices/daily_prices/{index}_History.csv"
 
 
 def parse_cboe_csv(text: str, column: str, unit: str) -> dict:
@@ -1326,7 +1349,7 @@ class CboeAdapter(_BaseAdapter):
         self._observation_date = observation_date
 
     def _url(self) -> str:
-        return f"https://cdn-api.cboe.com/api/global/us_indices/daily_prices/{self._index}_History.csv"
+        return cboe_history_url(self._index)
 
     def _parse(self, body: str) -> dict:
         if self._observation_date is None:
