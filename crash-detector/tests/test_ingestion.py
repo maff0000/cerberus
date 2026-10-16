@@ -948,16 +948,87 @@ def test_substituted_feeds_are_exactly_the_five_that_differ_from_the_ratified_ro
     assert "OWNER CONFIRMATION" in SUBSTITUTED_FEEDS["monetisation_flag"]
 
 
-def test_the_window_overrides_never_exceed_the_engines_relevance_ceiling_and_are_exactly_the_recorded_two():
+def test_the_window_overrides_never_exceed_the_engines_relevance_ceiling_and_are_exactly_the_recorded_five():
     from crash_detector.staleness import RELEVANCE_WINDOW_CEILING_SECONDS
     from ingestion.catalog import WINDOW_OVERRIDES, window_seconds
 
-    assert set(WINDOW_OVERRIDES) == {"buffett_indicator", "private_credit_stress"}
+    assert set(WINDOW_OVERRIDES) == {"buffett_indicator", "private_credit_stress",
+                                     "michigan_sentiment", "m2_yoy", "core_pce_yoy"}
     assert window_seconds("private_credit_stress", 10368000) == 7 * 86400 <= RELEVANCE_WINDOW_CEILING_SECONDS
     assert WINDOW_OVERRIDES["private_credit_stress"][1]
     assert window_seconds("buffett_indicator", 3888000) == 120 * 86400 <= RELEVANCE_WINDOW_CEILING_SECONDS
     assert window_seconds("hy_oas", 691200) == 691200.0
     assert WINDOW_OVERRIDES["buffett_indicator"][1]  # a reason is on record
+
+
+# --- WO-1.19 item (4): the three MONTHLY rows whose release lag the ratified 45 days did not fit --------- #
+#
+# The three windows below are DERIVATIONS from publication schedules that were NOT read off a release
+# calendar (there is no network on this path) — the catalog entry for each says so. These tests therefore
+# pin the NUMBER THAT WAS ADOPTED and the properties that hold whatever the true lag turns out to be: that
+# it is wider than the ratified 45 days, that it is inside the engine's relevance ceiling, and that it is
+# NOT that ceiling. They are not evidence that the lag is what the reason text says.
+
+RATIFIED_MONTHLY_WINDOW = 45 * 86400  # 3_888_000: what every monthly row in the ratified mapping declares
+WO_1_19_MONTHLY_OVERRIDES = {"michigan_sentiment": 75 * 86400, "m2_yoy": 75 * 86400, "core_pce_yoy": 85 * 86400}
+
+
+def test_the_three_wo_1_19_monthly_rows_resolve_to_their_widened_windows_inside_the_relevance_ceiling():
+    from crash_detector.staleness import RELEVANCE_WINDOW_CEILING_SECONDS
+    from ingestion.catalog import WINDOW_OVERRIDES, window_seconds
+
+    ratified = {row["id"]: row["staleness_window_seconds"] for row in MAPPING}
+    for ident, expected in WO_1_19_MONTHLY_OVERRIDES.items():
+        assert ratified[ident] == RATIFIED_MONTHLY_WINDOW, ident      # the window being REPLACED, from the ratified row
+        assert window_seconds(ident, ratified[ident]) == float(expected), ident
+        assert expected > RATIFIED_MONTHLY_WINDOW, ident              # every one of the three WIDENS, none narrows
+        # Inside the engine's own relevance ceiling, and deliberately not AT it: a window wider than the
+        # rhythm needs lets a DEAD feed keep reading current (the failure private_credit_stress undoes).
+        assert expected <= RELEVANCE_WINDOW_CEILING_SECONDS, ident
+        assert expected < RELEVANCE_WINDOW_CEILING_SECONDS, ident
+        assert WINDOW_OVERRIDES[ident][1], ident                      # a reason is on record for each
+
+
+def test_core_pce_yoy_is_the_widest_of_the_three_because_beas_release_is_the_latest():
+    # Not three identical numbers: core PCE lands at the very end of M+1, later than CPI for the same month,
+    # which is the whole reason cpi_yoy still fits 45 days and this row does not. 85 > 75 is load-bearing.
+    from ingestion.catalog import window_seconds
+
+    assert window_seconds("core_pce_yoy", RATIFIED_MONTHLY_WINDOW) > window_seconds("m2_yoy", RATIFIED_MONTHLY_WINDOW)
+    assert window_seconds("m2_yoy", RATIFIED_MONTHLY_WINDOW) == window_seconds("michigan_sentiment", RATIFIED_MONTHLY_WINDOW)
+
+
+def test_michigan_sentiments_override_records_that_it_is_owed_and_not_a_verified_root_cause_fix():
+    # This row's own release-lag arithmetic does NOT explain the STALE symptom Matt observed: the Michigan
+    # surveys publish WITHIN the month they describe, so the ratified 45 days already covered the lag. The
+    # 75 days clears the symptom and is matched to the other two; the catalog entry must keep saying that it
+    # is OWED and reversible, so this does not read later as a diagnosed fix. A silent rewrite fails here.
+    from ingestion.catalog import WINDOW_OVERRIDES
+
+    reason = WINDOW_OVERRIDES["michigan_sentiment"][1]
+    assert "SYMPTOM" in reason and "OWED" in reason
+    assert "does NOT explain" in reason or "DIFFERENT cause" in reason
+    assert "45" in reason  # the ratified window it is reversible to
+
+
+def test_cpi_yoy_and_sahm_rule_were_correctly_left_alone_and_still_resolve_to_the_ratified_forty_five_days():
+    # The POINT of this test is that these two were EXAMINED and needed no override, not that nobody touched
+    # them: their arithmetic already fits inside 45 days (CPI prints ~12 days after its reference month, the
+    # Sahm rule follows the employment report at ~5), so an override here would be an unjustified widening —
+    # and a wider window than the rhythm needs is exactly how a DEAD feed keeps reading current. Adding one
+    # to either row must fail this test and be argued for on its own evidence.
+    from ingestion.catalog import WINDOW_OVERRIDES, window_seconds
+
+    ratified = {row["id"]: row["staleness_window_seconds"] for row in MAPPING}
+    cadences = {row["id"]: row["cadence"] for row in MAPPING}
+    for ident in ("cpi_yoy", "sahm_rule"):
+        assert cadences[ident] == "monthly", ident                    # same cadence and same ratified window
+        assert ratified[ident] == RATIFIED_MONTHLY_WINDOW, ident      # as the three rows that WERE widened
+        assert ident not in WINDOW_OVERRIDES, ident                   # deliberately NOT overridden
+        assert window_seconds(ident, ratified[ident]) == float(RATIFIED_MONTHLY_WINDOW), ident
+        # and the resolver really is passing the ratified value through untouched, not coincidentally
+        # returning 45 days from somewhere else:
+        assert window_seconds(ident, 12345.0) == 12345.0, ident
 
 
 def test_wo_1_6_ingredients_poll_slowly_and_the_fred_history_ones_ask_for_history():
