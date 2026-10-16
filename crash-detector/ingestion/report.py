@@ -25,10 +25,24 @@ from pathlib import Path
 
 import yaml
 
+from ingestion import release_calendar
 from ingestion.catalog import INGREDIENTS, NOT_TRACTABLE, PARTIAL, QUORUM, window_seconds
 from ingestion.store import SqliteStore
 
 MAPPING = Path(__file__).resolve().parents[1] / "governance" / "mapping" / "indicator_mapping.yaml"
+
+#: The two quarterly rows whose relevance window is DERIVED from real measured release lag in
+#: ``ingestion.release_calendar`` instead of being looked up from the ratified figure. Both
+#: constants reproduce their ratified windows EXACTLY (18,144,000 s and 12,960,000 s, neither
+#: row carrying an override), so reading them here resolves the SAME number this module already
+#: resolved — what changes is only that the number is now traceable to the measured evidence it
+#: came from rather than read off a flat figure. One constant per row and no as_of-date logic is
+#: the whole model: LIVE/STALE is binary here and the engine holds no intermediate state for a
+#: phase-aware window to populate, which that module's docstring sets out at length.
+RELEASE_CALENDAR_WINDOWS: dict[str, float] = {
+    "buffett_indicator": float(release_calendar.BUFFETT_INDICATOR_RELEVANCE_SECONDS),
+    "sloos_bank_lending": float(release_calendar.SLOOS_BANK_LENDING_RELEVANCE_SECONDS),
+}
 
 
 def indicator_states(store: SqliteStore, now: datetime) -> list[dict]:
@@ -40,7 +54,10 @@ def indicator_states(store: SqliteStore, now: datetime) -> list[dict]:
             out.append({"id": ind, "state": "NOT_TRACTABLE", "detail": NOT_TRACTABLE[ind]})
             continue
         ings = [i for i in INGREDIENTS if ind in i.serves]
-        window = window_seconds(ind, row["staleness_window_seconds"])
+        if ind in RELEASE_CALENDAR_WINDOWS:
+            window = RELEASE_CALENDAR_WINDOWS[ind]
+        else:
+            window = window_seconds(ind, row["staleness_window_seconds"])
         worst, parts = "LIVE", []
         failing = []
         healthy = 0  # components with a fresh reading whose latest attempt was OK (the QUORUM rows only count these)
@@ -51,9 +68,7 @@ def indicator_states(store: SqliteStore, now: datetime) -> list[dict]:
                 failing.append(f"{ing.source_id}: last attempt {last[1]} at {last[0].isoformat()}")
             reading = store.latest_reading(ing.source_id)
             if reading is None:
-                note = ("AWAITING MANUAL ENTRY (python3 -m ingestion.manual sloos-ndfi --help)"
-                        if ing.kind == "manual" else "never read")
-                worst, parts = "MISSING", parts + [f"{ing.source_id}: {note}"]
+                worst, parts = "MISSING", parts + [f"{ing.source_id}: never read"]
                 continue
             as_of = datetime.fromisoformat(reading["source_as_of_utc"].replace("Z", "+00:00"))
             age = (now - as_of).total_seconds()

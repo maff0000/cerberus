@@ -63,7 +63,7 @@ def test_buffett_never_pairs_two_different_quarters():
         derive("buffett_indicator", {"numerator": [_p("2026-04-01", 1.0)], "denominator": [_p("2026-01-01", 1.0)]})
 
 
-# --- WO-1.6: fiscal_dominance ------------------------------------------------------------------- #
+# --- WO-1.6: monetisation_flag ------------------------------------------------------------------- #
 
 
 def _walcl(latest, year_ago, latest_date="2026-10-07"):
@@ -83,7 +83,7 @@ def _fiscal(walcl_growth, core_3m_ratio):
     core = {"core_price_index": [_p("2026-08-01", 99.5 * core_3m_ratio, history=[
         ["2026-04-01", 99.0], ["2026-05-01", 99.5], ["2026-06-01", 99.8], ["2026-07-01", 100.0],
         ["2026-08-01", 99.5 * core_3m_ratio]])]}
-    return derive("fiscal_dominance", {**walcl, **core})
+    return derive("monetisation_flag", {**walcl, **core})
 
 
 def test_fiscal_fires_only_when_both_legs_are_over_their_band():
@@ -112,22 +112,22 @@ def test_fiscal_refuses_a_missing_month_instead_of_bridging_it():
     core = {"core_price_index": [_p("2026-08-01", 103.0, history=[
         ["2026-03-01", 99.0], ["2026-04-01", 99.5], ["2026-06-01", 99.8], ["2026-08-01", 103.0]])]}
     with pytest.raises(DerivationUnavailable, match="2026-05-01"):
-        derive("fiscal_dominance", {**walcl, **core})
+        derive("monetisation_flag", {**walcl, **core})
 
 
 def test_fiscal_refuses_a_balance_sheet_history_too_short_for_the_year():
     walcl = {"balance_sheet": [_p("2026-10-07", 120.0, history=[["2026-09-02", 100.0], ["2026-10-07", 120.0]])]}
     with pytest.raises(DerivationUnavailable, match="365 days"):
-        derive("fiscal_dominance", {**walcl, **_core(1.0105)})
+        derive("monetisation_flag", {**walcl, **_core(1.0105)})
 
 
 @pytest.mark.parametrize("bad", [None, "x", float("nan"), True])
 def test_fiscal_a_non_number_level_is_absence_not_zero(bad):
     walcl = {"balance_sheet": [_p("2026-10-07", 120.0, history=[["2025-10-01", bad], ["2026-10-07", 120.0]])]}
     with pytest.raises(DerivationUnavailable):
-        derive("fiscal_dominance", {**walcl, **_core(1.0105)})
+        derive("monetisation_flag", {**walcl, **_core(1.0105)})
 
 
 def test_fiscal_a_payload_without_history_is_refused():
     with pytest.raises(DerivationUnavailable, match="history"):
-        derive("fiscal_dominance", {"balance_sheet": [_p("2026-10-07", 120.0)], **_core(1.0105)})
+        derive("monetisation_flag", {"balance_sheet": [_p("2026-10-07", 120.0)], **_core(1.0105)})

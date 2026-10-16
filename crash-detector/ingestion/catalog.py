@@ -33,13 +33,11 @@ from ingestion.adapters import (
 )
 
 __all__ = ["Ingredient", "INGREDIENTS", "NOT_TRACTABLE", "PARTIAL", "SUBSTITUTED_FEEDS", "WINDOW_OVERRIDES",
-           "window_seconds", "EGRESS_HOSTS", "NON_HTTP_PEERS", "build_adapter", "MANUAL_SLOOS_NDFI", "QUORUM",
+           "window_seconds", "EGRESS_HOSTS", "NON_HTTP_PEERS", "build_adapter", "QUORUM",
            "PROVISIONAL_CONSTRUCTIONS"]
 
 DAY, WEEK = 86_400, 7 * 86_400
 
-#: The manual SLOOS NDFI leg's source id (a constant so ``ingestion.manual`` and the tests name the same thing).
-MANUAL_SLOOS_NDFI = "manual.sloos_ndfi"
 #: Polling interval, deliberately independent of publication cadence: a daily series is
 #: polled every 6h so a late print is caught the same day; slower series are polled daily.
 #: Re-polling is free of side effects on readings (idempotent on source period).
@@ -90,8 +88,11 @@ INGREDIENTS: tuple[Ingredient, ...] = (
     _f("M2SL", "percent_yoy", ["m2_yoy"], poll=POLL_SLOW, rule="month_end", tr="pc1"),
     _f("CPIAUCSL", "percent_yoy", ["cpi_yoy"], poll=POLL_SLOW, rule="month_end", tr="pc1"),
     _f("PCEPILFE", "percent_yoy", ["core_pce_yoy"], poll=POLL_SLOW, rule="month_end", tr="pc1"),
-    # ---- FRED, quarterly (SLOOS, auto C&I leg only — see PARTIAL) -----------------------
+    # ---- FRED, quarterly: BOTH legs of sloos_bank_lending, the same SLOOS C&I tightening question asked of
+    # two firm-size cohorts - large/medium firms (DRTSCILM) and small firms (DRTSCIS). Both quarterly from 1990,
+    # both ordinary automatic FRED feeds (WO-1.19; neither is hand-entered). ------------------------------
     _f("DRTSCILM", "net_percent_tightening", ["sloos_bank_lending"], "COMPONENT", poll=POLL_SLOW),
+    _f("DRTSCIS", "net_percent_tightening", ["sloos_bank_lending"], "COMPONENT", poll=POLL_SLOW),
     # ---- WO-1.6: substitute / ported-rule inputs (see SUBSTITUTED_FEEDS) ---------------------
     # buffett_indicator: Z.1 corporate equities (market value, $ millions) over nominal GDP ($ billions).
     # Both are quarterly and FRED dates them at the quarter START; they are aged from the quarter END
@@ -100,13 +101,14 @@ INGREDIENTS: tuple[Ingredient, ...] = (
        feed="FRED:NCBEILQ027S", stands="FRED NCBEILQ027S (Z.1 nonfinancial corporate equities, market value, $M)"),
     _f("GDP", "usd_billions", ["buffett_indicator"], "COMPONENT", poll=POLL_SLOW, rule="quarter_end", feed="FRED:GDP",
        stands="FRED GDP (nominal GDP, $B, annual rate)"),
-    # fiscal_dominance: the legacy discriminator's two inputs, as RAW LEVEL HISTORY. The engine takes the
+    # monetisation_flag (the ratified row called fiscal_dominance until the WO-1.19 rename): the legacy
+    # discriminator's two inputs, as RAW LEVEL HISTORY. The engine takes the
     # 12-month change of WALCL and the 3-month annualised change of core CPI; the collector computes neither.
     # WALCL is weekly (history 70 rows spans the 53 weeks the year-on-year needs, with slack); CPILFESL is
     # monthly (history 8 rows: the latest, and the one 3 months before it, with slack for a missing month).
-    _f("WALCL", "usd_millions", ["fiscal_dominance"], "COMPONENT", poll=POLL_SLOW, history=70, feed="FRED:WALCL",
+    _f("WALCL", "usd_millions", ["monetisation_flag"], "COMPONENT", poll=POLL_SLOW, history=70, feed="FRED:WALCL",
        stands="FRED WALCL (Fed total assets, $M) with its last 70 weekly levels"),
-    _f("CPILFESL", "index", ["fiscal_dominance"], "COMPONENT", poll=POLL_SLOW, rule="month_end", history=8,
+    _f("CPILFESL", "index", ["monetisation_flag"], "COMPONENT", poll=POLL_SLOW, rule="month_end", history=8,
        feed="FRED:CPILFESL", stands="FRED CPILFESL (core CPI index) with its last 8 monthly levels"),
     # ---- WO-1.12: gold_spot = HERMES' published XAU/USD H4 candle close ------------------------
     # This IMPLEMENTS the ratified row's own feed (`market:XAUUSD`, provenance `spot`) and is therefore NOT a
@@ -144,11 +146,6 @@ INGREDIENTS: tuple[Ingredient, ...] = (
     _f("BACTSAMFRBDAL", "diffusion_index", ["ism_manufacturing"], "COMPONENT", poll=POLL_SLOW, rule="month_end",
        history=1000, feed="FRED:BACTSAMFRBDAL",
        stands="Dallas Fed Texas Manufacturing Outlook, general business activity (FRED BACTSAMFRBDAL)"),
-    # ---- WO-1.7: sloos_bank_lending MANUAL leg. No feed exists; ``ingestion.manual`` records a hand-entered value ---
-    Ingredient(MANUAL_SLOOS_NDFI, "manual", "sloos_table2_q14", "net_percent_tightening",
-               "manual:Fed SLOOS Table 2 Q14 (avg of 5 sub-categories), hand-entered", ("sloos_bank_lending",),
-               "COMPONENT", 0, as_of_rule="obs_date",
-               stands_for="Fed SLOOS Table 2 Q14 NDFI net tightening, average of the 5 sub-categories, hand-entered quarterly"),
     # ---- CBOE public history CSVs ------------------------------------------------------
     Ingredient("cboe.SKEW", "cboe", "SKEW", "index", "CBOE:SKEW", ("cboe_skew",), "DIRECT", POLL_DAILY,
                column="SKEW", stands_for="CBOE SKEW index close"),
@@ -195,10 +192,9 @@ INGREDIENTS: tuple[Ingredient, ...] = (
                stands_for="Shiller CAPE as published, with multpl's full monthly table (the engine percentiles it)"),
 )
 
-#: Indicators that are only half-fed with no way to complete them. EMPTY since WO-1.7: sloos_bank_lending's manual
-#: NDFI leg is now a first-class ingredient (``MANUAL_SLOOS_NDFI``, entered with ``python -m ingestion.manual``). The
-#: indicator reads MISSING until a value is entered and STALE again 120 days after the survey it describes, so it can
-#: never read complete on one leg.
+#: Indicators that are only half-fed with no way to complete them. EMPTY, and nothing is waiting to be entered by
+#: hand: sloos_bank_lending was the last entry here, and since WO-1.19 its second leg is ``fred.DRTSCIS`` - an
+#: ordinary automatic FRED feed on the same poll path as the first, not the result of a manual-entry workaround.
 PARTIAL: dict[str, str] = {}
 
 #: Indicators whose DECLARED source cannot be reached with public/free data, or whose
@@ -223,7 +219,7 @@ PROVISIONAL_CONSTRUCTIONS: dict[str, str] = {
 #: A substitute is a provenance decision; each is recorded here with whose authority it rests on, and
 #: ``tests/test_ingestion.py`` allows a catalog/mapping feed mismatch for exactly these and no others.
 SUBSTITUTED_FEEDS: dict[str, str] = {
-    "sloos_bank_lending": "Declared as the SLOOS C&I leg PLUS the NDFI leg; the row does not say how to combine them. Wired as the PLAIN MEAN of the automatic C&I leg (FRED DRTSCILM) and the HAND-ENTERED NDFI leg (python3 -m ingestion.manual): an engineering choice awaiting Owner acceptance. The figure is dated by the OLDER leg; it is MISSING until an NDFI value is entered and STALE 120 days after a survey quarter start, so expect a short STALE gap each quarter until the next print is hand-entered.",
+    "sloos_bank_lending": "Declared as the SLOOS C&I leg PLUS an NDFI leg. The NDFI leg is NOT a Fed series - the SLOOS asks it only as an occasional special question - so it is not wired (WO-1.19; if NDFI exposure is wanted it belongs in a separate indicator, not this row). Wired instead as the PLAIN MEAN of TWO FULLY-AUTOMATIC FRED LEGS: the SAME SLOOS C&I tightening question asked of two firm-size cohorts, large/medium firms (DRTSCILM) and small firms (DRTSCIS), both quarterly from 1990 and both the series the row's own recession evidence is actually about. Nothing here is hand-entered and the row flips from MISSING to LIVE. The figure is dated by the OLDER leg; the mean-of-legs choice remains an engineering choice awaiting Owner acceptance.",
     "ism_manufacturing": "Declared 'ISM' (licensed; FRED withdrew NAPM). Wired as an EQUAL-WEIGHTED COMPOSITE OF Z-SCORED "
     "REGIONAL FED MANUFACTURING SURVEYS: Philadelphia (FRED GACDFSA066MSFRBPHI), Empire State/New York "
     "(GACDISA066MSFRBNY) and Dallas (BACTSAMFRBDAL), each z-scored against its own full published history and the three "
@@ -242,7 +238,12 @@ SUBSTITUTED_FEEDS: dict[str, str] = {
     "buffett_indicator": "Declared 'Wilshire/GDP, percentiled'; Wilshire is unavailable (FRED withdrew WILL5000PRFC). "
     "Wired as the Z.1 ratio FRED NCBEILQ027S / (GDP*1000), in percent, banded as that ratio (the row's "
     "'percentiled' step is NOT applied). Substitute accepted by Matt per the Trinity dispatch of WO-1.6; the legacy "
-    "engine proved it live (Trinity 2026-07-07, ~218%). Its staleness window is overridden (see WINDOW_OVERRIDES).",
+    "engine proved it live (Trinity 2026-07-07, ~218%). ITS STALENESS WINDOW IS NO LONGER OVERRIDDEN: WO-1.19 raised "
+    "the RATIFIED window on the row itself to 210 days (Owner-confirmed, Matt 2026-10-16, on the measured ALFRED "
+    "release lag in evidence/wo119_release_lag_probe.json), so the WINDOW_OVERRIDES entry that used to pin this row "
+    "at 120 days was removed rather than left to shadow the figure the Owner had just ratified. The declared-vs-wired "
+    "gap this entry exists to record is UNAFFECTED: the row still DECLARES a monthly Wilshire/GDP series and is still "
+    "wired to the quarterly Z.1 ratio, which is exactly why that 45-day declared window never fitted.",
     "private_credit_stress": "The ratified row declares a COMPOSITE of BDC NAV discount + non-accrual rate + PIK share "
     "(quarterly SEC filings) with public spreads as a fast proxy. Those three metrics live in free-text filing narrative, "
     "not structured XBRL tags (confirmed against ARCC's EDGAR data), so they are NOT extracted. v1 is a MARKET-PRICE "
@@ -252,34 +253,109 @@ SUBSTITUTED_FEEDS: dict[str, str] = {
     "as credit. v2 (BDC NAV-discount leg, manual cadence) and v3 (non-accrual/PIK by filing-text extraction or a paid "
     "vendor) remain OPEN and are not attempted. Substitute directed by Trinity (provisional, not Owner-ratified). Its "
     "staleness window is overridden to 7 days (see WINDOW_OVERRIDES).",
-    "fiscal_dominance": "Declared 'Treasury/BEA deficit + interest-cost: deficit/GDP vs interest-cost/revenue, "
+    "monetisation_flag": "Declared 'Treasury/BEA deficit + interest-cost: deficit/GDP vs interest-cost/revenue, "
     "discriminated vs benign growth'. Wired instead as the legacy ARGUS crash-engine discriminator (fred_tells.py, "
     "R2D2-locked bands): Fed balance-sheet (WALCL) growth >= 10% over 12 months AND core CPI (CPILFESL) >= 4% "
     "annualised over 3 months, as a conjunction. This is a DIFFERENT quantity from the ratified row's wording "
-    "(monetisation vs deficit/interest burden). Ported on the Trinity dispatch of WO-1.6; OWNER CONFIRMATION that it "
-    "may stand for this row is OUTSTANDING.",
+    "(monetisation vs deficit/interest burden). Ported on the Trinity dispatch of WO-1.6. OWNER CONFIRMATION "
+    "RECEIVED (Matt, 2026-10-16) and it did NOT confirm a deficit measure: the Owner's ruling is that the wired "
+    "monetisation conjunction stands, and that the row is RENAMED (WO-1.19, fiscal_dominance -> monetisation_flag) "
+    "so its name stops claiming the deficit/interest-burden quantity it never computed. THIS ENTRY STAYS because "
+    "the row's ratified `source` and `calculation` lines are deliberately left as ratified and still declare that "
+    "other quantity, so the declared-vs-wired gap is real and belongs on the dial. The deficit/interest-cost "
+    "measure is OWED as a SEPARATE indicator holding the reserved id `fiscal_dominance`; it belongs in the "
+    "`fiscal_master` slot of the acute statistic (DECISION-RULE.md, governance/WO-1.3a-engine-spec.md) and is not "
+    "built here. The bands are still the legacy engine's and still uncalibrated by this project.",
 }
 
 #: Per-indicator staleness windows that REPLACE the ratified row's ``staleness_window_seconds``, with the reason.
 #: A window shorter than the data's own release rhythm would mark a healthy feed permanently STALE.
 WINDOW_OVERRIDES: dict[str, tuple[int, str]] = {
-    "buffett_indicator": (
-        120 * DAY,
-        "the ratified row says 45 days (it assumed a monthly Wilshire series; this ratio is QUARTERLY). The Z.1 "
-        "release for a quarter lands about 70 days after the quarter ends and the next one about 91 days later, so a "
-        "healthy ratio is 70 to ~165 days old when aged from the quarter END. 120 days is the WIDEST relevance window "
-        "the engine will admit (crash_detector.staleness.RELEVANCE_WINDOW_CEILING_SECONDS, the Owner's own figure for "
-        "quarterly series), so the ratio reads STALE for roughly the last 45 days before each release. That is stated, "
-        "not hidden; widening it means raising a staleness ceiling, which is an Owner decision with external review.",
-    ),
+    # ---- WO-1.19: buffett_indicator's OVERRIDE IS GONE, because the ratified figure itself moved ----
+    # This dict held `buffett_indicator: 120 * DAY` from WO-1.6 until 2026-10-16. That entry existed for
+    # exactly one reason: the ratified row declared 45 days on the assumption of a MONTHLY Wilshire series
+    # when the wired ratio is QUARTERLY, and 120 days was the WIDEST the engine would then admit. It said in
+    # terms that it did not fit the real rhythm either - that the ratio still "reads STALE for roughly the
+    # last 45 days before each release" - and that fixing that properly "means raising a staleness ceiling,
+    # which is an Owner decision with external review."
+    #
+    # THAT DECISION HAPPENED (Matt, 2026-10-16, on the measured ALFRED lag in
+    # evidence/wo119_release_lag_probe.json): the row's own `staleness_window_seconds` is now 210 days, which
+    # is the right runtime value, so an override REPLACING it has nothing left to say. Keeping the old entry
+    # would be worse than redundant - `window_seconds` would shadow the newly ratified 210 days with the 120
+    # the Owner just superseded, re-creating the very false STALE the ratification removes. So the row now
+    # falls through to its ratified window, and the disclosure that used to live here lives on the ratified
+    # row itself, where a confirmed figure belongs.
+    #
+    # NOT YET, AND THIS IS THE NEXT ROUND'S WORK: a flat 210 days is still not the real shape of a Z.1
+    # release. The engineering value that would beat it is a per-row RELEASE-CALENDAR MODEL (expected next
+    # release, not a flat maximum age), which would be MORE PRECISE than any flat number and would come back
+    # into this dict - or replace it - once built. Until it is, a flat override duplicating the flat ratified
+    # number earns nothing.
     "private_credit_stress": (
         7 * DAY,
         "the ratified row's 120 days assumed QUARTERLY filings (NAV / non-accrual / PIK). v1 is a DAILY ETF price; under a "
         "120-day window a dead feed would keep a months-old drawdown reading as current, which is the opposite of the "
         "row's own 'absence reads Unknown never calm'. 7 days is the market-day daily window the mapping declares for "
         "every ETF/index/futures row (WO-1.9: worst-case holiday-weekend gap just under 6 days plus a day of grace; "
-        "it was 4 days before WO-1.9), and is inside the engine's 120-day relevance ceiling. Revert this "
+        "it was 4 days before WO-1.9), and is inside the engine's relevance ceiling (120 days when this override was "
+        "set; 210 since WO-1.19 raised it). Revert this "
         "override when a quarterly v2/v3 leg is added.",
+    ),
+    # ---- WO-1.19 item (4): three MONTHLY rows ratified at 45 days against a rhythm their feeds do not keep ----
+    # The arithmetic for a monthly series aged by the ``month_end`` rule is: the PUBLICATION LAG of the reference
+    # month, PLUS one full release interval (~31 days) - because the row carries month M's observation as its
+    # current one right up until month M+1's print lands. 45 days therefore only fits a lag of about two weeks.
+    # That same arithmetic is why cpi_yoy and sahm_rule, also monthly and also ratified at 45 days, are NOT on this
+    # list and are left alone: CPI prints ~12 days after its reference month (worst healthy age ~44 days) and the
+    # Sahm rule follows the employment report at ~5 days (~37 days), so both still fit inside the ratified window.
+    #
+    # NO RELEASE CALENDAR WAS FETCHED FOR ANY FIGURE BELOW. There is no network access on this path, so every lag
+    # quoted here is from knowledge of the publication schedules and NOT read off a BLS / BEA / Federal Reserve
+    # release calendar. They are recorded as the derivations they are rather than as checked fact, and each window
+    # keeps slack over the figure it is derived from precisely BECAUSE that figure is unverified here. Checking the
+    # three lags against the published calendars is OWED and would let these numbers be tightened on evidence.
+    "michigan_sentiment": (
+        75 * DAY,
+        "the ratified row says 45 days. THIS ENTRY RESTS ON A WEAKER FOOTING THAN THE OTHER TWO AND SAYS SO RATHER "
+        "THAN READING AS A DERIVATION IT IS NOT. The Michigan Surveys of Consumers publish WITHIN the month they "
+        "describe - a preliminary reading mid-month, the final late in the same month - so on that calendar a "
+        "healthy UMCSENT observation aged from the month END is at most about one release interval old (~35 days), "
+        "which the ratified 45 days ALREADY covers. Publication lag therefore does NOT explain a STALE reading on "
+        "this row the way it explains m2_yoy and core_pce_yoy. What IS on record here is the SYMPTOM, not a "
+        "derivation: Matt read this row STALE on cerberus-live's dial on a monthly schedule and dispatched all "
+        "three rows together (PID.md, WO-1.19 item 4). 75 days is adopted to match the other two monthly rows and "
+        "to clear the observed symptom, and is well inside the engine's relevance ceiling (120 days when this window "
+        "was set; 210 since WO-1.19 raised it). OWED, and the "
+        "reason this is flagged and not closed: either the release calendar is not what is stated above "
+        "(unverified - no network here), or this row's STALE has a DIFFERENT cause - a missed collector pass, or "
+        "the as-of dating of a mid-month preliminary - in which case this window HIDES that cause instead of "
+        "fixing it. Revert to the ratified 45 days if the live dial's own as-of dates show the lag is as stated.",
+    ),
+    "m2_yoy": (
+        75 * DAY,
+        "the ratified row says 45 days (it assumed the four-week rhythm every monthly row was given; the H.6 "
+        "release does not keep it). The Fed's H.6 Money Stock Measures for reference month M lands on roughly the "
+        "fourth Tuesday of M+1, about 22-28 days after M ends, and the next one a release interval after that, so "
+        "a healthy M2 reading is up to ~59 days old when aged from the month END. It passes the ratified 45 days "
+        "with about two weeks of the month still to run, which is the false STALE read off the live dial. 75 days "
+        "covers that worst case with ~16 days of slack for a release that slips, and sits well inside the engine's "
+        "relevance ceiling (crash_detector.staleness.RELEVANCE_WINDOW_CEILING_SECONDS: 120 days when this window was "
+        "set, 210 since WO-1.19 raised it on measured quarterly release lag). It is deliberately "
+        "NOT that ceiling: a window wider than the rhythm needs lets a DEAD feed keep reading current, which is "
+        "the failure the private_credit_stress override above exists to undo.",
+    ),
+    "core_pce_yoy": (
+        85 * DAY,
+        "the ratified row says 45 days, and this row's real lag is the LONGEST of the three, so it is the one of "
+        "the three deliberately NOT set to ~75 days. BEA's Personal Income and Outlays, which carries the core PCE "
+        "price index, lands at the very END of M+1 - typically between the 24th and the last business day - "
+        "several days LATER than BLS's CPI for the same reference month, which is exactly why cpi_yoy still fits "
+        "45 days and this row cannot. Adding one release interval, a healthy core PCE reading is up to ~62 days "
+        "old aged from the month END. 75 days would leave only ~13 days of slack on a lag that is UNVERIFIED here; "
+        "85 days leaves ~23 and is still comfortably inside the relevance ceiling, with 35 days to spare against the "
+        "120-day ceiling in force when this window was set - and far more against the 210 days WO-1.19 raised it to, "
+        "which does not change this window: it is derived from BEA's release rhythm, not from the ceiling.",
     ),
 }
 
@@ -357,5 +433,8 @@ def build_adapter(ing: Ingredient, clock: Callable[[], datetime]):
         instrument, timeframe = ing.ref.split(":")
         return HermesCandleAdapter(instrument, timeframe, **common)
     if ing.kind == "manual":
-        raise ValueError(f"{ing.source_id} is hand-entered (ingestion.manual); it has no adapter to poll")
+        # Kept deliberately after WO-1.19 retired the only hand-entered ingredient: NO ingredient has kind
+        # "manual" today, so this cannot fire. It is a structural guard, so that adding a hand-entered
+        # ingredient later refuses to be polled here instead of falling through to "unknown kind".
+        raise ValueError(f"{ing.source_id} is hand-entered; it has no adapter to poll")
     raise ValueError(f"unknown ingredient kind {ing.kind!r}")

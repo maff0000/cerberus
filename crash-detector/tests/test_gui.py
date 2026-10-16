@@ -68,11 +68,12 @@ def test_full_store_shows_two_separate_values_and_live_indicators(db_path, wirin
         assert (d["coverage"]["fraction"] == 1.0) == (not d["coverage"]["pending"]) and d["coverage"]["fraction"] > 0.0
     assert "gold_real_rate_cross" in gui_server.render_page(state)
     # WO-1.6: the two substituted feeds are LIVE but say, on the page, that they are not the ratified row's.
-    for substituted in ("buffett_indicator", "fiscal_dominance", "ism_manufacturing", "gold_real_rate_cross",
+    for substituted in ("buffett_indicator", "monetisation_flag", "ism_manufacturing", "gold_real_rate_cross",
                         "private_credit_stress"):
         assert live[substituted]["substitute"] and "SUBSTITUTE FEED" in live[substituted]["why"]
-    assert live["buffett_indicator"]["window_days"] == 120.0  # the recorded override, not the ratified 45
-    assert live["fiscal_dominance"]["value"] == 0.0 and live["fiscal_dominance"]["dials"] == ["monetary_debasement"]
+    # WO-1.19: the 120-day override is gone; this IS the ratified figure now (Owner-confirmed 2026-10-16).
+    assert live["buffett_indicator"]["window_days"] == 210.0
+    assert live["monetisation_flag"]["value"] == 0.0 and live["monetisation_flag"]["dials"] == ["monetary_debasement"]
     assert live["buffett_indicator"]["dials"] == ["equity_crash"]
     assert live["gold_spot"]["dials"] == ["monetary_debasement"]
 

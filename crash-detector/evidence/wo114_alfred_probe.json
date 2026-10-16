@@ -1,4 +1,13 @@
 {
+  "amendments": [
+    {
+      "note": "probed by this script with --merge; the header's probed_utc is the date the series already in the file were measured and is deliberately not restamped",
+      "probed_utc": "2026-10-16",
+      "series": [
+        "DRTSCIS"
+      ]
+    }
+  ],
   "compare_from": "1999-01-01",
   "credential": "none (keyless)",
   "endpoint": "https://alfred.stlouisfed.org/graph/alfredgraph.csv",
@@ -1222,6 +1231,90 @@
           {
             "served": "current",
             "value": 7.9,
+            "vintage": "current"
+          }
+        ],
+        "values_seen": 4
+      },
+      "transformation": null,
+      "vintage_depth": {
+        "earliest": "2010-04-20",
+        "note": "",
+        "probes": 16
+      }
+    },
+    {
+      "column": "DRTSCIS",
+      "probed_utc": "2026-10-16",
+      "revision": {
+        "current_vintage_observations": 146,
+        "differing": 18,
+        "differing_materially": 18,
+        "first_vintage": "2010-04-20",
+        "first_vintage_observations": 81,
+        "first_vintage_span": [
+          "1990-04-01",
+          "2010-04-01"
+        ],
+        "largest_change": {
+          "delta": 1.8,
+          "first_published": 5.2,
+          "observation": "1991-10-01",
+          "today": 7.0
+        },
+        "replay_window": {
+          "differing": 7,
+          "differing_materially": 7,
+          "from": "1999-01-01",
+          "largest_change": {
+            "delta": 0.3,
+            "first_published": -19.6,
+            "observation": "2004-04-01",
+            "today": -19.3
+          },
+          "note": "",
+          "shared_observations": 46,
+          "shared_span": [
+            "1999-01-01",
+            "2010-04-01"
+          ]
+        },
+        "shared_observations": 81,
+        "shared_span": [
+          "1990-04-01",
+          "2010-04-01"
+        ]
+      },
+      "series": "DRTSCIS",
+      "trail": {
+        "asked_on_or_before": "2024-07-01",
+        "distinct_values": 1,
+        "note": "",
+        "observation": "2024-07-01",
+        "readings": [
+          {
+            "served": "20240711",
+            "value": null,
+            "vintage": "2024-07-11"
+          },
+          {
+            "served": "20240815",
+            "value": 8.2,
+            "vintage": "2024-08-15"
+          },
+          {
+            "served": "20241029",
+            "value": 8.2,
+            "vintage": "2024-10-29"
+          },
+          {
+            "served": "20250805",
+            "value": 8.2,
+            "vintage": "2025-08-05"
+          },
+          {
+            "served": "current",
+            "value": 8.2,
             "vintage": "current"
           }
         ],

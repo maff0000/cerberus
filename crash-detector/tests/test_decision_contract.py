@@ -659,7 +659,7 @@ def test_scored_coverage_is_math_mds_worked_monetary_figure(wiring):
     two numbers IS R-10, and both are asserted here so the gap cannot close by accident.
     """
     scored = ("broad_dollar", "breakeven_5y", "cpi_yoy", "core_pce_yoy", "real_rate_10y_tips",
-              "fed_funds_rate", "m2_yoy", "fiscal_dominance")
+              "fed_funds_rate", "m2_yoy", "monetisation_flag")
 
     answer = scored_coverage(
         wiring, MONETARY_DIAL_ID, _contributions(MONETARY_DIAL_ID, scored)
@@ -724,7 +724,7 @@ def test_scored_coverage_feeds_the_contract_the_fraction_it_asks_for(wiring):
     ``scored_coverage`` as the source and the GUI's ``coverage`` figure as the wrong one.
     """
     scored = ("broad_dollar", "breakeven_5y", "cpi_yoy", "core_pce_yoy", "real_rate_10y_tips",
-              "fed_funds_rate", "m2_yoy", "fiscal_dominance")
+              "fed_funds_rate", "m2_yoy", "monetisation_flag")
     fraction = scored_coverage(
         wiring, MONETARY_DIAL_ID, _contributions(MONETARY_DIAL_ID, scored)
     )["fraction"]

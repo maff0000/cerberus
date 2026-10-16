@@ -48,8 +48,9 @@ def run_once(store: SqliteStore, *, force: bool = False, only: tuple = (), pace:
             continue
         now = clock()
         if ing.kind == "manual":
-            # Hand-entered (WO-1.7): there is nothing to poll. Registered so the store knows the source; its
-            # readings arrive only through ``ingestion.manual`` and it ages like any other.
+            # A hand-entered ingredient has nothing to poll: it is registered so the store knows the source,
+            # and ages like any other. NO ingredient is hand-entered since WO-1.19 (sloos_bank_lending's second
+            # leg became the automatic FRED feed DRTSCIS), so this branch is a structural guard, not a live path.
             store.register(ing.source_id, ManualEntryAdapter.adapter_id, ing.poll_seconds, ing.stands_for,
                            ing.declared_feed, ing.serves, now)
             continue
