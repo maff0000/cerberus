@@ -1030,8 +1030,13 @@ def test_the_vintage_chosen_is_the_first_that_published_the_figure_not_the_lates
     assert [v for _, v in alfred.revisions] == ["1.0", "1.5", "2.0"]
 
 
-@pytest.mark.parametrize("published", ["2008-09-01", "2008-09-02", "2008-10-30",
-                                       "2012-02-29", "2026-10-11"])
+# WO-1.17: 2012-02-29 (gap 1,276 days) and 2026-10-11 (gap 6,614) were parameters of this test
+# until the first-publication ceiling landed. They are not bisection boundaries any more, they are
+# refusals, so they moved to
+# ``test_a_first_serving_vintage_too_distant_to_be_a_publication_event_is_refused`` below rather
+# than being deleted. What is left here is every gap the ceiling admits, which is what this test
+# is about: the bisection pins the serving day exactly.
+@pytest.mark.parametrize("published", ["2008-09-01", "2008-09-02", "2008-10-30"])
 def test_the_boundary_is_pinned_exactly_the_first_serving_day_and_never_the_day_before(published):
     """Both arms of the bisection's answer: the day it picks served, the day before did not."""
     alfred = _Alfred(published=published, revisions=((published, "7.25"),))
@@ -1059,12 +1064,121 @@ def test_a_vintage_that_predates_the_observation_yet_already_serves_it_is_refuse
     assert "value" not in payload  # refused, never approximated to 2008-09-01
 
 
-def test_a_series_whose_vintage_trail_begins_after_the_observation_answers_from_its_first_vintage():
-    """The two ICE BofA OAS series' situation: no vintage exists that is older than the trail."""
+# --- WO-1.17: the first-publication CEILING, the mirror of the vintage_floor check above ---- #
+#
+# The floor asks "did a vintage serve this figure BEFORE the observation existed?". The ceiling
+# asks "is the vintage that first served it too LATE to be a publication event?". Both end in a
+# MALFORMED refusal and neither reaches the caller under its own name — the closed
+# ``response_schema`` rejects both reason strings identically, so ``ingestion.backfill`` records
+# the one class MALFORMED. These tests therefore assert the ADAPTER's payload, which is the only
+# place the two refusals are still distinguishable.
+
+
+def test_a_genuine_near_observation_first_publication_is_untouched_by_the_ceiling():
+    """NON-REGRESSION, on the real case MAX_FIRST_PUBLICATION_LAG_DAYS was derived against.
+
+    ``evidence/wo114_backfill_proof.json``'s own measurement: ``fred.GDP`` observation 2025-07-01
+    was first served by vintage 2025-12-23 — a 175-day gap, which is a real advance estimate and
+    the longest genuine publication lag this project has measured. 175 is well under 365 (it is
+    48% of it), and the derivation comment on the constant cites this exact pair as the reason the
+    threshold is not tighter: at a 180-day threshold this real first publication would have sat 5
+    days from refusal.
+    """
+    alfred = _Alfred(observation="2025-07-01", published="2025-12-23",
+                     revisions=(("2025-12-23", "30331.0"), ("2026-03-26", "30353.9")))
+    payload = _vintage_adapter(alfred, observation="2025-07-01").fetch(timeout_seconds=30).payload
+    assert payload == {"unit": "usd_billions", "observation_date": "2025-07-01",
+                       "value": 30331.0, "vintage_date": "2025-12-23"}
+    assert (date.fromisoformat("2025-12-23")
+            - date.fromisoformat("2025-07-01")).days == 175 <= A.MAX_FIRST_PUBLICATION_LAG_DAYS
+    # The later revision is what the SAME observation says today, and is still not chosen.
+    assert payload["value"] != 30353.9
+
+
+def test_a_first_serving_vintage_too_distant_to_be_a_publication_event_is_refused():
+    """§7.1's WORKED EXAMPLE, offline: ``fred.NCBEILQ027S``, archive floor 2013-06-06, an
+    observation inside episode 2000-02's window.
+
+    The shape that makes this the hard case, and the reason the bisection cannot see it: the
+    observation is 1999-12-01, ALFRED's archive for this series begins 2013-06-06, and EVERY
+    vintage beneath that floor answers 404. ``probe``'s ``absent_on_404=True`` turns each 404 into
+    the same ``_ABSENT`` an existing-but-silent vintage gives, so the search converges on the
+    FLOOR and the floor serves the date (the floor vintage's own span starts 1945-10-01 — the
+    archive began in 2013, the series did not). The payload would be well-formed, would carry
+    ``vintage_date = 2013-06-06``, and ``ingestion.backfill`` would store it as VINTAGE_ORIGINAL:
+    a figure restated 13.5 years later, claiming to be what was knowable in 1999.
+    """
+    alfred = _Alfred(column="NCBEILQ027S", observation="1999-12-01",
+                     trail_from="2013-06-06", published="2013-06-06",
+                     revisions=(("2013-06-06", "4000.0"),))
+    payload = _vintage_adapter(alfred, observation="1999-12-01",
+                               series="NCBEILQ027S").fetch(timeout_seconds=30).payload
+    # The EXACT refusal, not merely "it did not answer".
+    assert payload == {"malformed": "vintage_too_distant"}
+    # And specifically NOT the three other ways this fetch could have failed to answer: it is
+    # not EMPTY (today's vintage served the date), not an unreadable body, and not the floor.
+    assert payload != {"unit": "usd_billions"}
+    assert payload["malformed"] not in ("vintage", "header", "series", "vintage_floor")
+    # The search really did converge on the archive floor before the ceiling rejected it; the
+    # refusal is a judgement on a found answer, not a failure to find one.
+    assert "2013-06-06" in alfred.vintages_asked()
+    assert (date.fromisoformat("2013-06-06")
+            - date.fromisoformat("1999-12-01")).days == 4936 > A.MAX_FIRST_PUBLICATION_LAG_DAYS
+
+
+@pytest.mark.parametrize("published,gap,refused", [("2009-09-01", 365, False),
+                                                   ("2009-09-02", 366, True)])
+def test_the_ceiling_is_strictly_greater_than_the_threshold_and_not_off_by_one(published, gap,
+                                                                              refused):
+    """The cutoff is a hard number, so both sides of it are pinned.
+
+    The check is ``> MAX_FIRST_PUBLICATION_LAG_DAYS``: a gap OF exactly 365 days is admitted, 366
+    is refused. Asserted from both directions because an off-by-one here is silent in either —
+    too tight and it discards real point-in-time data, too loose and it admits a restatement.
+    """
+    assert (date.fromisoformat(published) - date.fromisoformat(_OBS)).days == gap
+    alfred = _Alfred(published=published, revisions=((published, "7.25"),))
+    payload = _vintage_adapter(alfred).fetch(timeout_seconds=30).payload
+    if refused:
+        assert payload == {"malformed": "vintage_too_distant"}
+    else:
+        assert payload["vintage_date"] == published and payload["value"] == 7.25
+
+
+def test_the_floor_refusal_and_the_ceiling_refusal_cannot_both_fire_on_one_fetch():
+    """They are mutually exclusive by CONTROL FLOW, not by coincidence of the dates.
+
+    Both conditions are read off the SAME probe — the day before the observation. ``vintage_floor``
+    fires when that probe comes back _SERVED and returns immediately, before the bisection runs,
+    so the distance check is never reached. ``vintage_too_distant`` is only reachable when that
+    probe came back _ABSENT. One probe cannot be both, so no fetch can produce both refusals and
+    neither can shadow the other. Pinned here with a series whose trail is ancient (1991) and
+    whose floor probe serves: the distance arithmetic has nothing to measure because only two
+    probes were ever issued.
+    """
+    alfred = _Alfred(published="2008-08-01", revisions=(("2008-08-01", "1.0"),))
+    payload = _vintage_adapter(alfred).fetch(timeout_seconds=30).payload
+    assert payload == {"malformed": "vintage_floor"}
+    assert alfred.vintages_asked() == ["2026-10-11", "2008-08-31"]  # ceiling, floor, then out
+
+
+def test_a_series_whose_vintage_trail_begins_long_after_the_observation_is_refused_not_answered():
+    """The two ICE BofA OAS series' situation, and WHAT CHANGED ABOUT IT IN WO-1.17.
+
+    Until the ceiling landed this test asserted the opposite — that the adapter ANSWERS from the
+    trail's first vintage (``vintage_date == "2023-10-16"``, ``value == 3.5``). That answer was
+    well-formed and satisfied the vintage rule's words literally, and it was exactly the forgery
+    §7.1 of the cost estimate traced: the archive's own floor returned as though it were a
+    publication event, for ``ingestion.backfill`` to label ``VINTAGE_ORIGINAL``. A figure that no
+    vintage carried until 15.1 years after the observation is not what a collector running in 2008
+    would have SEEN, which is the only thing ``VINTAGE_ORIGINAL`` claims. So the expectation is
+    inverted deliberately, not relaxed.
+    """
     alfred = _Alfred(trail_from="2023-10-16", published="2023-10-16",
                      revisions=(("2023-10-16", "3.5"),))
     payload = _vintage_adapter(alfred).fetch(timeout_seconds=30).payload
-    assert payload["vintage_date"] == "2023-10-16" and payload["value"] == 3.5
+    assert payload == {"malformed": "vintage_too_distant"}
+    assert "value" not in payload and "vintage_date" not in payload
 
 
 def test_today_s_vintage_carrying_no_value_for_the_date_is_empty_and_never_an_invented_one():
@@ -1083,10 +1197,15 @@ def test_a_404_beneath_the_trail_is_an_answer_but_a_404_at_today_s_vintage_is_a_
         _vintage_adapter(gone).fetch(timeout_seconds=30)
     assert refused.value.error_class == "HTTP_ERROR" and refused.value.http_status == 404
     # ...whereas beneath the ceiling the same 404 is read as "no such vintage" and the search
-    # completes; that is the arm the trail_from test above exercises.
-    assert _vintage_adapter(_Alfred(trail_from="2023-10-16", published="2023-10-16",
-                                    revisions=(("2023-10-16", "3.5"),))
-                            ).fetch(timeout_seconds=30).payload["value"] == 3.5
+    # completes. WO-1.17: the trail used here is 2008-10-01 rather than the 2023-10-16 the
+    # inverted test above now uses, because the point of THIS assertion is the 404-as-ABSENT
+    # branch and a 15-year trail would reach it and then be refused for distance, proving
+    # nothing about the 404. The trail still begins AFTER the observation, so every probe
+    # beneath 2008-10-01 is a real 404 and the search is driven entirely by them.
+    completed = _vintage_adapter(_Alfred(trail_from="2008-10-01", published="2008-10-01",
+                                         revisions=(("2008-10-01", "3.5"),))
+                                 ).fetch(timeout_seconds=30).payload
+    assert completed["value"] == 3.5 and completed["vintage_date"] == "2008-10-01"
 
 
 def test_any_other_transport_failure_is_never_read_as_an_absent_vintage():
