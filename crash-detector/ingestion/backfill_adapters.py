@@ -139,11 +139,18 @@ BACKFILL_EGRESS_HOSTS: dict[str, str] = {
 }
 
 #: The ingredient kinds a POINT-IN-TIME backfill has been reasoned about for, stated
-#: positively so every other kind is refused rather than quietly handled. ``multpl``,
-#: ``lbma``, the HERMES peer and ``manual`` are absent: a backfill of one of them would be
+#: positively so every other kind is refused rather than quietly handled. ``multpl``, the
+#: HERMES peer and ``manual`` are absent: a backfill of one of them would be
 #: today's value wearing a past date, which is the forgery this whole WO exists to prevent —
 #: so it is a refusal here, and whether those kinds can be backfilled at all is an open
 #: question with an owner, not a default this module gets to pick.
+#:
+#: ``lbma`` WAS NAMED HERE AND IS NOT ANY MORE (WO-1.20) — not admitted, RETIRED. Its only row,
+#: ``gold_real_rate_cross``'s gold leg, became ``yahoo.GC=F.history``, and the kind, its adapter
+#: and its egress host are gone from the tree. A kind with no rows and no adapter cannot be
+#: refused, so naming it would be asserting a boundary nothing stands on — the same reason
+#: ``manual`` left ``tests/test_wo114.py``'s kind set at WO-1.19 while STAYING in the sentence
+#: above, where it still has a live category (``ingestion.run``'s registration branch).
 #:
 #: THREE KINDS, FOR THREE DIFFERENT REASONS, AND THE REASONS DO NOT GENERALISE (WO-1.16):
 #:
@@ -169,7 +176,7 @@ BACKFILL_EGRESS_HOSTS: dict[str, str] = {
 #: halves are enforced on the paths that act on them: the
 #: adapter refuses to be CONSTRUCTED for a dated ``adjclose`` read, and ``ingestion.backfill``
 #: refuses to derive a LABEL for one. Widening this tuple to ``yahoo`` therefore admits the
-#: seven plain-close rows and still refuses the 51 ``adjclose`` ones (the two indicators of
+#: eight plain-close rows and still refuses the 51 ``adjclose`` ones (the two indicators of
 #: PID.md's scope correction); this module's docstring traces that end to end, because "the
 #: kind is backfillable" and "every row of that kind is backfillable" are not the same
 #: sentence and only the first is true here.

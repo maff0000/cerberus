@@ -156,8 +156,11 @@ destinations:
     host: query1.finance.yahoo.com
     operator: Yahoo
     purpose: >
-      Public chart endpoint for daily closes of HYG, LQD, RSP, SPY, the S&P 500 index and
-      COMEX copper/gold futures, declared as market:* feeds in the ratified mapping. Unofficial
+      Public chart endpoint for daily closes of HYG, LQD, RSP, SPY, the S&P 500 index, the BDC
+      income ETF, the 50-name breadth sample and COMEX copper/gold futures, declared as market:*
+      feeds in the ratified mapping. WO-1.20 added a SECOND, DEEPER read of COMEX gold (GC=F over
+      a 10-year page) as gold_real_rate_cross's gold leg, which that row declares as market:GC;
+      it replaces the retired prices.lbma.org.uk destination and adds NO new host. Unofficial
       and unlicensed: availability is not guaranteed and a failure is recorded, never defaulted.
     declared_in: "indicator_mapping.yaml (Owner-ratified 2026-08-24) source.feed market:*; CERBERUS PID WO-1.2b"
     services:
@@ -169,17 +172,5 @@ destinations:
       Shiller CAPE monthly table, declared as multpl/Shiller in the ratified mapping.
       Scraped HTML: a layout change is recorded MALFORMED, never defaulted.
     declared_in: "indicator_mapping.yaml (Owner-ratified 2026-08-24) source.feed multpl/Shiller; CERBERUS PID WO-1.2b"
-    services:
-      - cd-collectors
-  # WO-1.6 (2026-10-11). Registered on the Trinity dispatch for WO-1.6 (gold_spot from the LBMA
-  # daily gold fix, the genuine spot reference; the ratified row's feed is `market:XAUUSD`, spot).
-  - id: DEST-LBMA-001
-    host: prices.lbma.org.uk
-    operator: LBMA (London Bullion Market Association)
-    purpose: >
-      Public JSON of the daily LBMA gold fix (gold_pm.json, with gold_am.json as the same-day
-      fallback) for the `gold_spot` indicator. Its edge sits behind bot protection and may answer
-      HTTP 403 to this host; that is recorded as a failed fetch, never defaulted, and not circumvented.
-    declared_in: "indicator_mapping.yaml (Owner-ratified 2026-08-24) gold_spot source.provenance spot; CERBERUS WO-1.6 dispatch (Trinity)"
     services:
       - cd-collectors

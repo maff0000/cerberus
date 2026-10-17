@@ -5,6 +5,7 @@ Run with the rest of the suite: ``python3 -m pytest`` (pyproject adds ``src`` an
 
 from __future__ import annotations
 
+import json
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
@@ -60,8 +61,19 @@ def test_declared_feeds_name_a_feed_the_mapping_row_actually_declares():
 def test_every_declared_input_of_a_derived_indicator_is_ingested():
     """gold_real_rate_cross needs GC and DFII10; vix_term_structure needs VIX and VIX3M."""
     serving = lambda ind: {i.ref for i in INGREDIENTS if ind in i.serves}  # noqa: E731
-    # WO-1.7: gold is the LBMA fix, NOT the COMEX futures; the futures close must not feed it silently.
-    assert {"gold_pm+gold_am", "DFII10"} <= serving("gold_real_rate_cross") and "GC=F" not in serving("gold_real_rate_cross")
+    serving_ids = lambda ind: {i.source_id for i in INGREDIENTS if ind in i.serves}  # noqa: E731
+    # WO-1.20: the gold leg IS the COMEX futures close now, which is what the ratified row's
+    # ``market:GC`` names; WO-1.7 wired the LBMA fix instead and that fix is retired. The
+    # docstring's "needs GC and DFII10" is literally true here for the first time.
+    #
+    # ASSERTED BY SOURCE ID AND NOT BY REF, because the ref no longer distinguishes the two rows:
+    # ``yahoo.GC=F`` (history-less, copper_gold) and ``yahoo.GC=F.history`` (2600 rows, this row)
+    # are TWO catalog rows over ONE symbol, so ``serving`` answers ``"GC=F"`` for either and a
+    # ref-level assertion would pass if the wrong one were wired. The ids are the only spelling
+    # that says WHICH row, and which row is the whole question: one of them carries no history at
+    # all and the derivation refuses a payload without it.
+    assert {"GC=F", "DFII10"} <= serving("gold_real_rate_cross")
+    assert {"yahoo.GC=F.history", "fred.DFII10.history"} == serving_ids("gold_real_rate_cross")
     assert {"GACDFSA066MSFRBPHI", "GACDISA066MSFRBNY", "BACTSAMFRBDAL"} <= serving("ism_manufacturing")
     assert {"DRTSCILM", "DRTSCIS"} <= serving("sloos_bank_lending")
     assert {"VIX", "VIX3M"} <= serving("vix_term_structure")
@@ -849,69 +861,22 @@ def test_report_flags_a_failing_feed_even_when_the_last_good_reading_is_in_windo
 
 
 # --- WO-1.6: legacy-source reuse (gold_spot, buffett_indicator, monetisation_flag) ------------------ #
-
-import json  # noqa: E402
-
-PM = json.dumps([
-    {"d": "2026-10-07", "v": [4180.5, 3100.0, 3600.0], "is_cancelled": False},
-    {"d": "2026-10-08", "v": [4201.25, 3110.0, 3610.0], "is_cancelled": False},
-    {"d": "2026-10-09", "v": [None, None, None], "is_cancelled": False},
-])
-AM = json.dumps([
-    {"d": "2026-10-08", "v": [4195.0, 3105.0, 3605.0], "is_cancelled": False},
-    {"d": "2026-10-09", "v": [4216.5, 3120.0, 3620.0], "is_cancelled": False},
-])
-
-
-def test_lbma_prefers_pm_for_a_date_and_falls_back_to_am_only_for_a_date_with_no_pm():
-    # 10-09 has no PM fix yet (null) so its AM fix is the newest figure; 10-08 would have used PM (4201.25).
-    assert A.parse_lbma_gold(PM, AM, "usd_per_oz") == {"unit": "usd_per_oz", "observation_date": "2026-10-09", "value": 4216.5}
-    pm_only_latest = json.dumps([{"d": "2026-10-09", "v": [4220.0, 1, 1]}])
-    assert A.parse_lbma_gold(pm_only_latest, AM, "usd_per_oz")["value"] == 4220.0  # PM beats AM for the same date
-
-
-def test_lbma_skips_cancelled_and_null_rows_but_never_a_non_numeric_figure():
-    cancelled = json.dumps([{"d": "2026-10-09", "v": [1.0, 1.0, 1.0], "is_cancelled": True},
-                            {"d": "2026-10-08", "v": [4201.25, 1, 1]}])
-    assert A.parse_lbma_gold(cancelled, "[]", "u")["observation_date"] == "2026-10-08"
-    bad = json.dumps([{"d": "2026-10-09", "v": ["n/a", 1, 1]}])
-    out = A.parse_lbma_gold(bad, "[]", "u")
-    assert out["value"] == "n/a"  # passed through so the closed schema rejects it: MALFORMED, not skipped
-
-
-def test_lbma_unrecognised_bodies_are_malformed_and_an_empty_one_is_empty():
-    assert "unit" not in A.parse_lbma_gold("<html>Attention Required</html>", AM, "u")
-    assert "unit" not in A.parse_lbma_gold(PM, '{"d": 1}', "u")
-    assert "unit" not in A.parse_lbma_gold('[{"v": [1]}]', AM, "u")
-    assert A.parse_lbma_gold("[]", "[]", "u") == {"unit": "u"}
-
-
-def test_lbma_adapter_asks_for_both_fixes_with_the_browser_style_agent_and_records_a_403_not_a_value(store):
-    # WO-1.12 retarget, NOT a weakening: ``lbma.gold_fix_usd`` (gold_spot) is gone — HERMES serves that row
-    # now — but the LBMA adapter is STILL WIRED, as the gold leg of ``gold_real_rate_cross``
-    # (``lbma.gold_fix_usd.history``). The same two GETs, the same agent and the same 403 are asserted
-    # against that id, so the failing-endpoint evidence this test carries is kept rather than deleted. The
-    # indicator it now sinks is gold_real_rate_cross; gold_spot is asserted UNAFFECTED, which is the whole
-    # point of giving HERMES a NEW source id.
-    seen = []
-
-    def fake(url, timeout, headers):
-        seen.append((url, dict(headers or {})))
-        return PM if "gold_pm" in url else AM
-
-    result, ing = _run(store, "lbma.gold_fix_usd.history", fake)
-    assert [u for u, _ in seen] == [A.LBMA_PM_URL, A.LBMA_AM_URL]
-    assert all(h == {"User-Agent": A.LBMA_USER_AGENT} for _, h in seen)
-    assert isinstance(result.final_outcome, OK) and result.final_outcome.payload["value"] == 4216.5
-
-    def blocked(url, timeout, headers):
-        raise AdapterFetchError("HTTP_ERROR", 403)  # the Cloudflare "Attention Required" refusal seen on 2026-10-11
-
-    refused, _ = _run(store, "lbma.gold_fix_usd.history", blocked)
-    assert isinstance(refused.final_outcome, FetchFailed) and refused.final_outcome.http_status == 403
-    states = {x["id"]: x["state"] for x in indicator_states(store, NOW)}
-    assert states["gold_real_rate_cross"] == "FEED_FAILING"
-    assert states["gold_spot"] == "MISSING"  # its own id, never read in this test: NOT dragged down by LBMA
+#
+# WO-1.20 DELETED FOUR LBMA TESTS FROM THIS SECTION, and the move is a retirement rather than a
+# weakening. They tested ``ingestion.adapters.parse_lbma_gold`` (PM-else-AM selection, cancelled
+# and null rows, malformed and empty bodies) and ``LbmaGoldAdapter`` (the two GETs, the legacy
+# browser-style User-Agent, and the 403 recorded as a failure rather than a value). All of it is
+# GONE from the tree: the endpoint answered HTTP 403 to this host from WO-1.6 to WO-1.20 and never
+# once delivered a reading, so ``gold_real_rate_cross``'s gold leg became ``yahoo.GC=F.history``
+# and the function, the class, the constants and the kind went with the ingredient.
+#
+# They were DELETED, not skipped or xfailed, on the precedent of WO-1.19's manual-entry tests
+# (see ``tests/test_wo17.py``'s sloos section): there is no function left to call, and a skip
+# would be a claim that the behaviour still matters and is merely not being measured. The
+# endpoint-refusal evidence those tests carried is not lost — it is recorded in the catalog
+# comment on ``yahoo.GC=F.history``, in ``SUBSTITUTED_FEEDS["gold_real_rate_cross"]`` and in
+# ``deploy/egress-destinations.yaml``'s removal note, which is where a retired feed's history
+# belongs. What the new leg's own life is worth asserting is held in ``tests/test_wo17.py``.
 
 
 def test_fred_history_carries_raw_levels_oldest_first_and_a_bad_level_is_malformed_not_dropped():
@@ -1274,11 +1239,16 @@ def test_wo_1_6_ingredients_poll_slowly_and_the_fred_history_ones_ask_for_histor
     by_id = {i.source_id: i for i in INGREDIENTS}
     assert by_id["fred.WALCL"].history >= 54 and by_id["fred.CPILFESL"].history >= 4
     assert by_id["fred.NCBEILQ027S"].as_of_rule == by_id["fred.GDP"].as_of_rule == "quarter_end"
-    # WO-1.12: gold_spot's DIRECT ingredient is HERMES' candle close, not the LBMA fix. The LBMA
-    # ingredient that remains is the gold_real_rate_cross history leg, and it is a COMPONENT.
+    # WO-1.12: gold_spot's DIRECT ingredient is HERMES' candle close, not the LBMA fix.
     assert by_id["hermes.xau_usd.h4_close"].completes == "DIRECT" and by_id["hermes.xau_usd.h4_close"].serves == ("gold_spot",)
-    assert "lbma.gold_fix_usd" not in by_id  # retired with its 403; its history leg keeps its own id
-    assert by_id["lbma.gold_fix_usd.history"].serves == ("gold_real_rate_cross",)
+    # WO-1.20: the LAST LBMA row is gone too. WO-1.12 retired ``lbma.gold_fix_usd`` (gold_spot)
+    # and left ``lbma.gold_fix_usd.history`` standing as gold_real_rate_cross's gold leg; that
+    # leg is now ``yahoo.GC=F.history``, so NO ingredient of kind ``lbma`` exists and the kind is
+    # asserted ABSENT WHOLESALE rather than id by id — a re-added row under a third spelling
+    # would fail this, where a third ``not in`` would not.
+    assert not [i for i in INGREDIENTS if i.kind == "lbma"]
+    assert not [sid for sid in by_id if sid.startswith("lbma.")]
+    assert by_id["yahoo.GC=F.history"].serves == ("gold_real_rate_cross",)
 
 
 # --- WO-1.14: the ALFRED vintage adapter ------------------------------------------------- #

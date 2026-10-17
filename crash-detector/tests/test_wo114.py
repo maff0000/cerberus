@@ -144,13 +144,20 @@ def test_every_fred_ingredient_routes_exactly_as_the_vintage_declaration_says():
 
 
 def test_a_kind_nobody_has_reasoned_about_is_refused_rather_than_backfilled():
-    """multpl, LBMA and the HERMES peer: today's value wearing a past date is the forgery
+    """multpl and the HERMES peer: today's value wearing a past date is the forgery
     this WO exists to prevent, so the answer is a refusal.
 
     ``manual`` WAS A FOURTH KIND HERE AND IS NOT ONE ANY MORE (WO-1.19) — not admitted, but
     retired: its only row, ``sloos_bank_lending``'s hand-entered second leg, became the
     ``DRTSCIS`` FRED feed. A kind with no rows cannot be refused, so naming it in the set
     below would be asserting a boundary nothing stands on.
+
+    ``lbma`` HAS NOW LEFT THIS SET THE SAME WAY (WO-1.20), and for the same reason rather than
+    a new one: its only row, ``gold_real_rate_cross``'s gold leg, became ``yahoo.GC=F.history``,
+    and the kind, its adapter and its egress host are gone from the tree. RETIRED, NOT ADMITTED
+    — it is absent here because there is nothing of that kind left to refuse, not because a
+    point-in-time backfill of it was ever reasoned about. ``ingestion.backfill_adapters``'
+    declaration carries the same note.
 
     WO-1.16 MOVED ``cboe`` AND THEN ``yahoo`` OUT OF THIS SET, and the test says so by
     deriving the set from :data:`VINTAGE_BACKFILLABLE_KINDS` rather than by listing non-FRED
@@ -166,7 +173,7 @@ def test_a_kind_nobody_has_reasoned_about_is_refused_rather_than_backfilled():
     """
     assert VINTAGE_BACKFILLABLE_KINDS == ("fred", "cboe", "yahoo")
     others = [i for i in INGREDIENTS if i.kind not in VINTAGE_BACKFILLABLE_KINDS]
-    assert {i.kind for i in others} == {"multpl", "lbma", "hermes"}
+    assert {i.kind for i in others} == {"multpl", "hermes"}
     for ing in others:
         with pytest.raises(ValueError):
             build_backfill_adapter(ing, OBS, CLOCK)
@@ -232,8 +239,12 @@ def test_a_plain_close_yahoo_ingredient_routes_to_a_dated_yahoo_adapter_and_is_a
 
     monkeypatch.setattr("ingestion.backfill_adapters.requires_original_vintage", explode)
     plain = [i for i in INGREDIENTS if i.kind == "yahoo" and i.column == ""]
+    # EIGHT SINCE WO-1.20: ``yahoo.GC=F.history`` reads the printed close like the other seven,
+    # so it routes here on exactly the same warrant. Spelled out rather than derived from the
+    # same predicate the loop below filters on, which would assert nothing.
     assert {i.source_id for i in plain} == {"yahoo.HYG", "yahoo.LQD", "yahoo.RSP", "yahoo.SPY",
-                                            "yahoo.^GSPC", "yahoo.HG=F", "yahoo.GC=F"}
+                                            "yahoo.^GSPC", "yahoo.HG=F", "yahoo.GC=F",
+                                            "yahoo.GC=F.history"}
     for ing in plain:
         adapter = build_backfill_adapter(ing, OBS, CLOCK)
         assert type(adapter) is A.YahooChartAdapter, ing.source_id

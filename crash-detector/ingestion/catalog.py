@@ -27,7 +27,6 @@ from ingestion.adapters import (
     FredAdapter,
     HERMES_PEER,
     HermesCandleAdapter,
-    LbmaGoldAdapter,
     MultplShillerAdapter,
     YahooChartAdapter,
 )
@@ -47,7 +46,7 @@ POLL_DAILY, POLL_SLOW = 6 * 3600, DAY
 @dataclass(frozen=True)
 class Ingredient:
     source_id: str
-    kind: str                      # fred | cboe | yahoo | multpl | lbma | hermes | manual
+    kind: str                      # fred | cboe | yahoo | multpl | hermes | manual
     ref: str                       # series id / index / symbol
     unit: str
     declared_feed: str             # the mapping row's ``source.feed`` this implements
@@ -128,13 +127,56 @@ INGREDIENTS: tuple[Ingredient, ...] = (
     # ---- WO-1.7: gold_real_rate_cross (see SUBSTITUTED_FEEDS) -----------------------------------
     # Two RAW daily histories the ENGINE correlates. NEW source ids on purpose: the store keeps the first payload
     # admitted per source period, and ``fred.DFII10`` (history-less, serves real_rate_10y_tips) must not change.
-    # ~2600 rows is ~10 years of trading days (the schema's cap is MAX_HISTORY). Gold is the LBMA fix and NOT the
-    # COMEX futures close: if LBMA refuses this host (it does, HTTP 403) this indicator FAILS with it.
+    # ~2600 rows is ~10 years of trading days (the schema's cap is MAX_HISTORY). The decade is MARGIN, not a
+    # minimum: the percentile needs MINIMUM_PERCENTILE_HISTORY (360) earlier correlations over a CORRELATION_WINDOW
+    # (60), i.e. 421 shared dates, and both legs declare the same depth so neither silently narrows the base.
     Ingredient("fred.DFII10.history", "fred", "DFII10", "percent", "FRED:DFII10", ("gold_real_rate_cross",), "COMPONENT",
                POLL_DAILY, history=2600, stands_for="FRED DFII10 (10y TIPS real yield) with its last 2600 daily levels"),
-    Ingredient("lbma.gold_fix_usd.history", "lbma", "gold_pm+gold_am", "usd_per_oz", "market:XAUUSD (LBMA PM fix, AM fallback)",
+    # ---- WO-1.20: the gold leg becomes COMEX GOLD FUTURES; the LBMA fix is RETIRED --------------
+    # OWNER-CONFIRMED 2026-10-17 (Matt, via Trinity). ``lbma.gold_fix_usd.history`` is GONE from this tuple, and
+    # ``ingestion.adapters`` no longer carries an LBMA adapter at all: that endpoint answered HTTP 403 to this host
+    # for its ENTIRE life, from WO-1.6 to today, so the row replaced here never once delivered a reading and this
+    # indicator has been dark in production since it was wired. Leaving it declared would have kept the live
+    # collector polling a door that has never opened, for a figure nothing downstream reads.
+    #
+    # THIS LEG IS NOT A FEED SUBSTITUTE ANY MORE — IT IS THE ROW'S OWN DECLARED FEED. The ratified row declares
+    # ``market:GC + FRED:DFII10`` (2026-08-24) and ``market:GC`` IS COMEX gold futures. WO-1.7 wired the LBMA fix
+    # INSTEAD of it and said so in SUBSTITUTED_FEEDS ("GOLD IS THE LBMA FIX, NOT THE ROW'S 'market:GC' FUTURES");
+    # that gap is CLOSED here, not widened. What keeps ``gold_real_rate_cross`` in SUBSTITUTED_FEEDS is unchanged
+    # and is a DIFFERENT thing: the ratified row defines neither "divergence" nor "0-100", so the CONSTRUCTION is
+    # still Trinity's provisional, uncalibrated, not-Owner-ratified one.
+    #
+    # WHAT IS PROVISIONAL AND DISCLOSED, stated rather than smoothed over. This is a FUTURES SETTLEMENT and not the
+    # LBMA spot fix: the front-month contract carries a basis over spot (carry, convenience yield) and rolls between
+    # contracts. The decision rests on the GENERAL MARKET-STRUCTURE case — the gold futures/spot basis is small and
+    # slow-moving, so daily RETURNS of spot and front-month futures track closely, and daily changes are exactly
+    # what this correlation consumes — and NOT on a backtest. THE EVIDENCE ACTUALLY AVAILABLE WAS TOO THIN TO PROVE
+    # IT: three overlapping days of GC=F against HERMES' OANDA spot, confounded by a timing mismatch (HERMES
+    # publishes the first H4 candle of the UTC day, Yahoo prints the COMEX settlement) — directionally consistent,
+    # non-synchronous, and not a return correlation. The Owner accepted that as sufficient for a PROVISIONAL BUILD
+    # and explicitly NOT as a calibration, with the same standing as ism_manufacturing's regional-survey substitute
+    # and buffett_indicator's Z.1 ratio. It is a disclosure obligation on this row, not a settled equivalence.
+    #
+    # A NEW SOURCE ID, NOT A REUSE OF ``yahoo.GC=F``, on the precedent ``fred.DFII10``/``fred.DFII10.history`` sets
+    # immediately above: the store keeps the first payload admitted per source period, so the history-less
+    # ``yahoo.GC=F`` that serves ``copper_gold`` must go on answering with no history, and ITS observation history
+    # is left untouched. Two catalog rows over one series; never one row doing two jobs.
+    #
+    # ITS PAGE HAD TO BE WIDENED FOR IT. A Yahoo history read asked a flat ``range=2y`` (~503 closes) until this WO,
+    # which would have served a FIFTH of the 2600 rows declared here AND STILL PRINTED A NUMBER — 503 shared dates
+    # clears the 421 the percentile needs — so the base would have been two years while every declaration said ten.
+    # See ``ingestion.adapters.YAHOO_SHORT_PAGE_MAX_ROWS`` and ``evidence/wo120_yahoo_range_probe.json``, where
+    # ``range=10y`` is measured answering 2515 dated closes for this symbol and ``range=max`` is measured coarsening
+    # to MONTHLY bars, which is why the page asked for is 10y and not max.
+    #
+    # 2600 IS A CEILING, NOT A QUANTITY PROMISED: ``parse_yahoo_chart`` carries ``rows[-history:]``, so this row
+    # means "the whole 10y page" and 2515 rows is what actually arrives — the same shape as ``yahoo.BIZD.adj``'s 520
+    # against a 2y page that answers ~501. Ten years of trading days IS ~2515; the number matches
+    # ``fred.DFII10.history``'s declaration so the two legs are asked the same question, and both are far above the
+    # 421 shared dates the percentile needs.
+    Ingredient("yahoo.GC=F.history", "yahoo", "GC=F", "usd_per_oz", "market:GC (COMEX gold front-month close)",
                ("gold_real_rate_cross",), "COMPONENT", POLL_DAILY, history=2600,
-               stands_for="LBMA daily gold fix (USD/oz, PM else AM) with its last 2600 dated fixes"),
+               stands_for="COMEX gold front-month close (Yahoo GC=F) with its last 2600 daily closes"),
     # ---- WO-1.7: ism_manufacturing substitute = regional Fed surveys (see SUBSTITUTED_FEEDS) ------------
     # FRED ids VERIFIED to return data 2026-10-12. Monthly diffusion indices, seasonally adjusted, dated the 1st.
     _f("GACDFSA066MSFRBPHI", "diffusion_index", ["ism_manufacturing"], "COMPONENT", poll=POLL_SLOW, rule="month_end",
@@ -230,11 +272,19 @@ SUBSTITUTED_FEEDS: dict[str, str] = {
     "gold_real_rate_cross": "The ratified row says 'Gold vs 10y TIPS divergence, normalised 0-100' and defines neither. "
     "Wired as TRINITY'S PROVISIONAL, UNCALIBRATED, NOT-OWNER-RATIFIED construction (WO-1.7; Matt may choose a different "
     "one and nothing here is locked in): the 60-trading-day rolling Pearson correlation between daily gold changes "
-    "(simple return of the LBMA fix) and daily changes in the 10y TIPS real yield (FRED DFII10, in percentage points), "
+    "(the simple return of the gold leg's close) and daily changes in the 10y TIPS real yield (FRED DFII10, in percentage points), "
     "normally negative; the figure is the percentile (0-100) of the latest correlation within the ~10 years of "
-    "correlations the collector holds, so a flip toward positive reads high. RELATIVE, NOT ABSOLUTE: the figure ranks the latest correlation against the series' own history and never checks the correlation LEVEL, so even a stationary all-negative regime reads uniformly 0-100 and the dial will show stress roughly 10% of the time with no sign flip (Auditor 2026-10-12). A sustained POSITIVE-correlation regime reads mid-range, not high, for the same reason, and the rolling windows overlap so the percentile is not a probability. Changes are taken between consecutive shared dates whatever the gap (a holiday makes a multi-day change). GOLD IS THE LBMA FIX, NOT THE ROW'S "
-    "'market:GC' FUTURES: if LBMA is unreachable (it is, HTTP 403 from the build host) this indicator is FEED_FAILING "
-    "with it and shows no value; no futures substitution is made.",
+    "correlations the collector holds, so a flip toward positive reads high. RELATIVE, NOT ABSOLUTE: the figure ranks the latest correlation against the series' own history and never checks the correlation LEVEL, so even a stationary all-negative regime reads uniformly 0-100 and the dial will show stress roughly 10% of the time with no sign flip (Auditor 2026-10-12). A sustained POSITIVE-correlation regime reads mid-range, not high, for the same reason, and the rolling windows overlap so the percentile is not a probability. Changes are taken between consecutive shared dates whatever the gap (a holiday makes a multi-day change). THE GOLD LEG IS NOW THE ROW'S OWN DECLARED "
+    "FEED, NOT A SUBSTITUTE FOR IT (WO-1.20, Owner-confirmed 2026-10-17): COMEX gold front-month futures "
+    "(yahoo.GC=F.history), which is what the row's 'market:GC' names. It REPLACES the LBMA fix, which answered HTTP "
+    "403 to this host from WO-1.6 to WO-1.20 and left this indicator FEED_FAILING and dark in production for the "
+    "whole of its life; that ingredient and its adapter are RETIRED. DISCLOSED AND PROVISIONAL: a futures "
+    "settlement is not the spot fix (the front-month basis is small and slow-moving, and the contract rolls), the "
+    "decision rests on that GENERAL MARKET-STRUCTURE case and NOT on a backtest, and the real evidence available - "
+    "three overlapping, non-synchronous days of GC=F against HERMES' OANDA spot, confounded by a timing mismatch - "
+    "was directionally consistent but far too thin to prove a clean futures/spot RETURN correlation. The Owner "
+    "accepted it as a provisional build, explicitly not as a calibration. What remains a SUBSTITUTE on this row is "
+    "the CONSTRUCTION above, not the feed.",
     "buffett_indicator": "Declared 'Wilshire/GDP, percentiled'; Wilshire is unavailable (FRED withdrew WILL5000PRFC). "
     "Wired as the Z.1 ratio FRED NCBEILQ027S / (GDP*1000), in percent, banded as that ratio (the row's "
     "'percentiled' step is NOT applied). Substitute accepted by Matt per the Trinity dispatch of WO-1.6; the legacy "
@@ -379,7 +429,6 @@ EGRESS_HOSTS: dict[str, str] = {
     "cdn-api.cboe.com": "Cboe Global Markets",
     "query1.finance.yahoo.com": "Yahoo",
     "www.multpl.com": "multpl.com",
-    "prices.lbma.org.uk": "LBMA (London Bullion Market Association)",
 }
 
 
@@ -427,8 +476,6 @@ def build_adapter(ing: Ingredient, clock: Callable[[], datetime]):
         return YahooChartAdapter(ing.ref, ing.history, field=ing.column or "close", **common)
     if ing.kind == "multpl":
         return MultplShillerAdapter(history=ing.history, **common)
-    if ing.kind == "lbma":
-        return LbmaGoldAdapter(history=ing.history, **common)
     if ing.kind == "hermes":
         instrument, timeframe = ing.ref.split(":")
         return HermesCandleAdapter(instrument, timeframe, **common)

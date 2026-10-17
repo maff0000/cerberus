@@ -252,16 +252,24 @@ def test_cboe_is_the_whole_body_tier_and_answers_true_whatever_column_is_passed(
 
 
 def test_every_plain_close_yahoo_row_the_catalog_collects_answers_true():
-    """The seven rows WO-1.16 made backfillable, derived from the catalog and not retyped."""
+    """The eight rows WO-1.16 made backfillable, derived from the catalog and not retyped.
+
+    SEVEN UNTIL WO-1.20, when ``yahoo.GC=F.history`` — ``gold_real_rate_cross``'s new gold leg,
+    replacing the retired LBMA fix — joined this population. It is here because it declares
+    ``column == ""`` like the other seven, i.e. it reads the PRINTED close, which is the one
+    property this gate turns on; its history depth is irrelevant to the question. The roster
+    stays spelled out because it is the INDEPENDENT half of the assertion: deriving it from the
+    same predicate the gate uses would make this test agree with itself.
+    """
     plain = _yahoo_rows(column_in=("", "close"))
     assert {i.source_id for i in plain} == {
         "yahoo.HYG", "yahoo.LQD", "yahoo.RSP", "yahoo.SPY",
-        "yahoo.^GSPC", "yahoo.HG=F", "yahoo.GC=F",
+        "yahoo.^GSPC", "yahoo.HG=F", "yahoo.GC=F", "yahoo.GC=F.history",
     }
     for ing in plain:
         assert has_no_revision_mechanism(ing.kind, ing.column) is True, ing.source_id
     # Both spellings of the one field, because the catalog uses "" and build_adapter
-    # resolves it with ``ing.column or "close"``. Admitting only one would refuse all seven.
+    # resolves it with ``ing.column or "close"``. Admitting only one would refuse all eight.
     assert has_no_revision_mechanism("yahoo", "") is True
     assert has_no_revision_mechanism("yahoo", "close") is True
 
