@@ -19,10 +19,17 @@ two of them are not about cost at all. Read them before the numbers.
    restatement — and `ingestion.backfill` labels it `VINTAGE_ORIGINAL` anyway. That label's
    own docstring says it means "the figure the source FIRST published". For those pairs it
    would not be. This is the WO-1.14 forgery class arriving through a door nobody checked.
-2. **There is no date list for 23 of the 34 backfillable ingredient rows** (§3). `backfill_range`
+2. **There is no date list for 24 of the 35 backfillable ingredient rows** (§3). `backfill_range`
    requires the caller to supply dates; `ingestion/backfill_dates.py` generates them only for
-   `month_end`/`quarter_end`, which is 11 rows. The other 23 have no calendar source in the
+   `month_end`/`quarter_end`, which is 11 rows. The other 24 have no calendar source in the
    tree. This is a *prerequisite*, not a cost line.
+   **THIS PREREQUISITE IS NOW CLOSED, and this item is left standing only as the record of
+   what was found.** All three date-list readers are built and committed in
+   `ingestion/backfill_calendar.py` — FRED (`fa18e30`), CBOE (`613fea1`), Yahoo plain-close
+   (`0f0bb2f`), with the counts corrected to DRTSCIS's 14th `obs_date` row in `9988994`. Nothing
+   below reads on the assumption that it is still open; §3.1 carries the same note with the
+   numbers. Whether this item is struck through or restated as RESOLVED is a later round's call,
+   together with §6's arithmetic.
 3. **A dated backfill carries no `history` array** (§8.3), so the four COMPONENT ingredients
    whose dials need history (`fred.DFII10.history` 2600 levels, `yahoo.^GSPC` 260, `fred.WALCL`
    70, `fred.CPILFESL` 8) would be backfilled value-only. Whether R2D2's replay can run at all
@@ -133,21 +140,33 @@ row for and skip ~1 a year it does. Both calendars are modelled separately throu
 ### 3.1 THE PREREQUISITE (§0.2 restated with numbers)
 
 `observation_dates()` refuses any `as_of_rule` outside `("quarter_end", "month_end")` and
-refuses any kind that is not `fred`. That covers **11 of the 34** backfillable ingredient rows.
-The remaining **23** — 13 FRED `obs_date` rows, 3 CBOE, 7 Yahoo — have **no date source in the
+refuses any kind that is not `fred`. That covers **11 of the 35** backfillable ingredient rows.
+The remaining **24** — 14 FRED `obs_date` rows, 3 CBOE, 7 Yahoo — have **no date source in the
 tree**.
 
 This is cheap to close and must be closed before execution, not during it:
 
 | Source | How to get the real calendar | Cost |
 |---|---|---|
-| FRED daily/weekly (13 rows) | one undated `FredAdapter`-shaped GET of the full series body; read its observation dates | **13 GETs** |
+| FRED `obs_date` (14 rows) | one undated `FredAdapter`-shaped GET of the full series body; read its observation dates | **14 GETs** |
 | CBOE (3 rows) | the static `{index}_History.csv` already carries every date (`evidence/wo116_cboe_probe.json`: VIX 9,294 rows 1990-01-02→2026-10-14) | **3 GETs** |
 | Yahoo (7 rows) | one `period1`/`period2` chart request per symbol spanning the windows; the session timestamps are the calendar | **7 GETs** |
 
-**23 GETs total**, plus the code to extract and persist the lists. The holiday-deduction model
+**24 GETs total**, plus the code to extract and persist the lists. The holiday-deduction model
 used for the estimate below is an *approximation standing in for those lists*; it is stated as
 a model and not as a fact, and the real counts will differ by a few dates per window.
+
+**THE THREE READERS IN THIS TABLE ARE NO LONGER A FORECAST — they are built and committed**, so
+the future tense above is the tense of the estimate as written and not a statement about the
+tree. `ingestion/backfill_calendar.py` holds all three: `fred_observation_dates` (`fa18e30`),
+`cboe_observation_dates` (`613fea1`) and `yahoo_observation_dates` (`0f0bb2f`), the last of which
+completes the 24; `9988994` carried its counts to DRTSCIS's 14th `obs_date` row. Two things the
+built readers say that this table did not: the 14 FRED rows cost 14 GETs for only **13 distinct
+calendars** (`fred.DFII10` and `fred.DFII10.history` are two catalog rows over one series, and
+deduplicating them is the caller's business, not the reader's), and the 51 `adjclose` Yahoo rows
+are refused BY NAME rather than silently absent from the count. What remains owed is not the
+readers but the *persistence* of their output, and the replacement of the holiday-deduction
+model below by the real lists — which is §6's round, not this one.
 
 ---
 
@@ -221,18 +240,24 @@ cost is a CATALOG ROW, not a (series, transformation) pair**, because `backfill_
 ingredient and `build_backfill_adapter(ing, ...)` takes an `Ingredient`. That distinction changes one
 route's count: see 5.2.
 
-### 5.1 Route 4.1 — FRED bisected: **17 rows** (15 PRONE + 2 UNDETERMINED)
+### 5.1 Route 4.1 — FRED bisected: **18 rows** (16 PRONE + 2 UNDETERMINED)
 
 Membership is `requires_original_vintage(ing.ref, ing.transformation)` → `True`, i.e. the pair is
-absent from `REVISION_STABLE`. One row per pair here; 17 rows, 17 distinct pairs.
+absent from `REVISION_STABLE`. One row per pair here; 18 rows, 18 distinct pairs.
 
-**15 `REVISION_PRONE`:** `fred.IC4WSA`, `fred.NFCI`, `fred.DTWEXBGS`, `fred.UMCSENT`, `fred.M2SL.pc1`,
-`fred.CPIAUCSL.pc1`, `fred.PCEPILFE.pc1`, `fred.DRTSCILM`, `fred.NCBEILQ027S`, `fred.GDP`, `fred.WALCL`,
-`fred.CPILFESL`, `fred.GACDFSA066MSFRBPHI`, `fred.GACDISA066MSFRBNY`, `fred.BACTSAMFRBDAL`
+**16 `REVISION_PRONE`:** `fred.IC4WSA`, `fred.NFCI`, `fred.DTWEXBGS`, `fred.UMCSENT`, `fred.M2SL.pc1`,
+`fred.CPIAUCSL.pc1`, `fred.PCEPILFE.pc1`, `fred.DRTSCILM`, `fred.DRTSCIS`, `fred.NCBEILQ027S`, `fred.GDP`,
+`fred.WALCL`, `fred.CPILFESL`, `fred.GACDFSA066MSFRBPHI`, `fred.GACDISA066MSFRBNY`, `fred.BACTSAMFRBDAL`
 **+ 2 `REVISION_UNDETERMINED`:** `fred.BAMLH0A0HYM2`, `fred.BAMLC0A0CM`
-**= 15 + 2 = 17.**
+**= 16 + 2 = 18.**
 
-§6 needs these 17 split by the calendar each one's dates come off (§3), because eleven of them are
+`fred.DRTSCIS` is the 16th, added by WO-1.19 as the small-firm leg of `sloos_bank_lending`, and it
+is `REVISION_PRONE` **because it was probed and measured so, not because its sibling is**: 18 of
+the 81 observations its first ALFRED vintage (2010-04-20) shares with today's differ materially,
+the largest 1991-10-01 first published 5.2 and now 7.0 (`ingestion/vintage.py`, which holds the
+probe's own figures and notes that `DRTSCILM`'s are different ones).
+
+§6 needs these 18 split by the calendar each one's dates come off (§3), because eleven of them are
 not daily and costing them as daily would inflate the total by an order of magnitude:
 
 | Cadence | Count | Rows |
@@ -240,11 +265,16 @@ not daily and costing them as daily would inflate the total by an order of magni
 | FRED business-daily | **3** | `BAMLH0A0HYM2`, `BAMLC0A0CM`, `DTWEXBGS` |
 | Weekly | **3** | `WALCL` (Wed), `IC4WSA` (Sat), `NFCI` (Fri) |
 | Monthly (`month_end` → day 1) | **8** | `UMCSENT`, `M2SL.pc1`, `CPIAUCSL.pc1`, `PCEPILFE.pc1`, `CPILFESL`, `GACDFSA066MSFRBPHI`, `GACDISA066MSFRBNY`, `BACTSAMFRBDAL` |
-| Quarterly | **3** | `GDP`, `NCBEILQ027S` (both `quarter_end`), `DRTSCILM` (quarterly SLOOS, `obs_date` rule) |
+| Quarterly | **4** | `GDP`, `NCBEILQ027S` (both `quarter_end`), `DRTSCILM` and `DRTSCIS` (the two quarterly SLOOS legs, both `obs_date` rule) |
 
-`3 + 3 + 8 + 3 = 17`. **`fred.DRTSCILM` is the row §3's calendar table does not name** — its
-`as_of_rule` is `obs_date` (so it is one of the 13 rows with no generator, §3.1) while its publication
-cadence is quarterly. It is costed on quarter starts, which is where FRED dates it.
+`3 + 3 + 8 + 4 = 18`. **`fred.DRTSCILM` and `fred.DRTSCIS` are the rows §3's calendar table does not
+name** — their `as_of_rule` is `obs_date` (so they are two of the 14 rows with no generator, §3.1) while
+their publication cadence is quarterly. They are costed on quarter starts, which is where FRED dates
+them. The two legs are costed IDENTICALLY because they measure identically: `ingestion/catalog.py`
+gives them the same `as_of_rule` (`obs_date`, the `_f` default — neither carries a `rule=`) and the same
+`poll_seconds` (86,400), and `ingestion/release_calendar.py` records both legs' first-vintage lag at
+the same measured 30–42 days from quarter start over 15 real quarters, because they print together as
+one SLOOS release.
 
 ### 5.2 Route 4.2 — FRED measured-stable: **7 rows** for 6 pairs
 
@@ -275,9 +305,18 @@ The other **51** `yahoo` rows ask for `column="adjclose"` (`yahoo.BIZD.adj` plus
 
 ### 5.5 The four routes sum to §3's backfillable population
 
-**17 + 7 + 3 + 7 = 34 rows** — the same 34 §3 counts, from the other direction: 24 FRED rows
-(13 `obs_date` + 9 `month_end` + 2 `quarter_end`) + 3 CBOE + 7 Yahoo. Nothing is double-counted and
+**18 + 7 + 3 + 7 = 35 rows** — the same 35 §3 counts, from the other direction: 25 FRED rows
+(14 `obs_date` + 9 `month_end` + 2 `quarter_end`) + 3 CBOE + 7 Yahoo. Nothing is double-counted and
 nothing backfillable is unrouted.
+
+**The FRED sub-total moved too, and it is 25 and not 24.** Counted this round off the catalog rather
+than carried forward: `len([i for i in INGREDIENTS if i.kind == "fred"]) == 25`, splitting by
+`as_of_rule` into **14 `obs_date` + 9 `month_end` + 2 `quarter_end` = 25**. `DRTSCIS` is an
+ADDITIONAL catalog row, not a reclassified one — no row changed its `as_of_rule` — so the only
+sub-count that moves is `obs_date` (13 → 14) and the FRED total moves with it (24 → 25). The old
+text's "24 FRED rows" was the arithmetic of the old catalog and added up correctly then; it does not
+now, and 14 + 9 + 2 = 25 is both the route sum (18 bisected + 7 measured-stable = 25) and the
+catalog count, from two independent directions.
 
 ---
 
