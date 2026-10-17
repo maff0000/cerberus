@@ -34,8 +34,8 @@ CALM = {
     # WO-1.5 DERIVED: these are the FIGURES the engine must compute; _seed writes components that yield them.
     "breadth_rsp_spy": 0.29, "credit_stress_hyg_lqd": 0.80, "copper_gold": 2.0,
     "vix_term_structure": 0.85, "spx_vs_200dma": 5.0, "shiller_cape": 50.0,
-    # WO-1.6: buffett_indicator and fiscal_dominance are DERIVED (figures the engine must compute); gold_spot is direct.
-    "buffett_indicator": 100.0, "fiscal_dominance": 0.0, "gold_spot": 2000.0,
+    # WO-1.6: buffett_indicator and monetisation_flag are DERIVED (figures the engine must compute); gold_spot is direct.
+    "buffett_indicator": 100.0, "monetisation_flag": 0.0, "gold_spot": 2000.0,
     # WO-1.7: ism and sloos are seeded to exactly this figure; gold_real_rate_cross is whatever percentile the fixed
     # pseudo-random series below yields (re-derived independently with statistics.correlation, see GOLD_FIGURE).
     "ism_manufacturing": 0.0, "sloos_bank_lending": 0.0,
@@ -125,7 +125,7 @@ def _derived_components(wiring, indicator, figure, date_text, vix=14.0):
     """{ingredient source_id: payload} whose engine derivation is `figure`, built independently of the engine."""
     parts = wiring.derived_for[indicator]
     unit = "x"
-    if indicator == "fiscal_dominance":
+    if indicator == "monetisation_flag":
         return _fiscal_components(parts, figure >= 0.5, date_text)
     if indicator == "spx_vs_200dma":
         r = 1.0 + figure / 100.0
@@ -231,7 +231,7 @@ def _mag(reading):
 
 def test_only_whole_quantity_ingredients_are_live_and_the_rest_is_pending_with_a_reason(wiring):
     assert len(wiring.ingredient_for) == 18  # + gold_spot (WO-1.6)
-    assert len(wiring.derived_for) == 13  # + buffett_indicator, fiscal_dominance (WO-1.6); + gold_real_rate_cross, ism, sloos (WO-1.7); + private_credit_stress (WO-1.8); + constituent_breadth_200dma (WO-1.10)
+    assert len(wiring.derived_for) == 13  # + buffett_indicator, monetisation_flag (WO-1.6); + gold_real_rate_cross, ism, sloos (WO-1.7); + private_credit_stress (WO-1.8); + constituent_breadth_200dma (WO-1.10)
     assert set(wiring.pending) == set()  # WO-1.8: every ratified row is wired (private_credit_stress as a disclosed proxy)
     assert wiring.live_ids | set(wiring.pending) == {r["id"] for r in _rows()}
     assert not wiring.live_ids & set(wiring.pending)
@@ -366,9 +366,13 @@ def test_relevance_window_is_inclusive_at_its_limit_and_refuses_beyond_and_the_f
     assert w.covers(345600.0) and w.covers(0.0)
     assert not w.covers(345600.001) and not w.covers(-1.0)
     assert not w.covers(float("nan")) and not w.covers(float("inf"))
+    # The ceiling is INCLUSIVE at its limit and refused one second past it. WO-1.19 (2026-10-16) raised that
+    # limit from 10_368_000 (120 days) to 18_144_000 (210 days) because the Owner ratified buffett_indicator's
+    # 210-day window on measured release lag; the old 120-day value is now an ordinary admissible window.
     assert RelevanceWindow(seconds=10_368_000.0).covers(10_368_000.0)
+    assert RelevanceWindow(seconds=18_144_000.0).covers(18_144_000.0)
     with pytest.raises(Exception):
-        RelevanceWindow(seconds=10_368_001.0)
+        RelevanceWindow(seconds=18_144_001.0)
 
 
 @pytest.mark.parametrize("bad", [float("nan"), float("inf"), float("-inf"), True, "3.0", None])

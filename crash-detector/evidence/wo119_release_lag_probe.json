@@ -1,0 +1,647 @@
+{
+  "asks": "the earliest ALFRED vintage carrying each quarterly observation - i.e. the date our own feed could first have seen it",
+  "credential": "none (keyless)",
+  "endpoint": "https://alfred.stlouisfed.org/graph/alfredgraph.csv",
+  "first_quarter": "2023-01-01",
+  "horizon_days": 400,
+  "probe_invocation": "tools/probe/release_lag_probe.py run FOUR TIMES CONCURRENTLY, once per leg via its own --series flag, and the four records merged here unchanged. Each process kept the script's own PACE (0.7 s between requests), so ALFRED saw about four times the single-process request rate; that is the only difference from one sequential run and it is recorded here rather than left to be inferred. No figure below is affected by it: every lag is a property of the vintage ALFRED served, not of how fast it was asked.",
+  "probed_utc": "2026-10-16",
+  "series": [
+    {
+      "governs": "sloos_bank_lending",
+      "lag_days_from_quarter_end": {
+        "max": -49,
+        "min": -61
+      },
+      "lag_days_from_quarter_start": {
+        "max": 42,
+        "measured_quarters": 15,
+        "min": 30
+      },
+      "probed_utc": "2026-10-16",
+      "releases": [
+        {
+          "first_vintage": "2023-02-06",
+          "lag_days_from_quarter_end": -53,
+          "lag_days_from_quarter_start": 36,
+          "last_vintage_without": "2023-02-05",
+          "note": "",
+          "observation": "2023-01-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2023-05-08",
+          "lag_days_from_quarter_end": -53,
+          "lag_days_from_quarter_start": 37,
+          "last_vintage_without": "2023-05-07",
+          "note": "",
+          "observation": "2023-04-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2023-07-31",
+          "lag_days_from_quarter_end": -61,
+          "lag_days_from_quarter_start": 30,
+          "last_vintage_without": "2023-07-30",
+          "note": "",
+          "observation": "2023-07-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2023-11-06",
+          "lag_days_from_quarter_end": -55,
+          "lag_days_from_quarter_start": 36,
+          "last_vintage_without": "2023-11-05",
+          "note": "",
+          "observation": "2023-10-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2024-02-05",
+          "lag_days_from_quarter_end": -55,
+          "lag_days_from_quarter_start": 35,
+          "last_vintage_without": "2024-02-04",
+          "note": "",
+          "observation": "2024-01-01",
+          "probes": 10
+        },
+        {
+          "first_vintage": "2024-05-06",
+          "lag_days_from_quarter_end": -55,
+          "lag_days_from_quarter_start": 35,
+          "last_vintage_without": "2024-05-05",
+          "note": "",
+          "observation": "2024-04-01",
+          "probes": 10
+        },
+        {
+          "first_vintage": "2024-08-05",
+          "lag_days_from_quarter_end": -56,
+          "lag_days_from_quarter_start": 35,
+          "last_vintage_without": "2024-08-04",
+          "note": "",
+          "observation": "2024-07-01",
+          "probes": 10
+        },
+        {
+          "first_vintage": "2024-11-12",
+          "lag_days_from_quarter_end": -49,
+          "lag_days_from_quarter_start": 42,
+          "last_vintage_without": "2024-11-11",
+          "note": "",
+          "observation": "2024-10-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2025-02-03",
+          "lag_days_from_quarter_end": -56,
+          "lag_days_from_quarter_start": 33,
+          "last_vintage_without": "2025-02-02",
+          "note": "",
+          "observation": "2025-01-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2025-05-12",
+          "lag_days_from_quarter_end": -49,
+          "lag_days_from_quarter_start": 41,
+          "last_vintage_without": "2025-05-11",
+          "note": "",
+          "observation": "2025-04-01",
+          "probes": 10
+        },
+        {
+          "first_vintage": "2025-08-04",
+          "lag_days_from_quarter_end": -57,
+          "lag_days_from_quarter_start": 34,
+          "last_vintage_without": "2025-08-03",
+          "note": "",
+          "observation": "2025-07-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2025-11-03",
+          "lag_days_from_quarter_end": -58,
+          "lag_days_from_quarter_start": 33,
+          "last_vintage_without": "2025-11-02",
+          "note": "",
+          "observation": "2025-10-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2026-02-03",
+          "lag_days_from_quarter_end": -56,
+          "lag_days_from_quarter_start": 33,
+          "last_vintage_without": "2026-02-02",
+          "note": "",
+          "observation": "2026-01-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2026-05-04",
+          "lag_days_from_quarter_end": -57,
+          "lag_days_from_quarter_start": 33,
+          "last_vintage_without": "2026-05-03",
+          "note": "",
+          "observation": "2026-04-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2026-08-03",
+          "lag_days_from_quarter_end": -58,
+          "lag_days_from_quarter_start": 33,
+          "last_vintage_without": "2026-08-02",
+          "note": "",
+          "observation": "2026-07-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": null,
+          "note": "not carried by any vintage within 400 days - unpublished, or published later than this probe looks",
+          "observation": "2026-10-01",
+          "probes": 1
+        }
+      ],
+      "series": "DRTSCILM",
+      "unpublished_quarters": [
+        "2026-10-01"
+      ]
+    },
+    {
+      "governs": "sloos_bank_lending",
+      "lag_days_from_quarter_end": {
+        "max": -49,
+        "min": -61
+      },
+      "lag_days_from_quarter_start": {
+        "max": 42,
+        "measured_quarters": 15,
+        "min": 30
+      },
+      "probed_utc": "2026-10-16",
+      "releases": [
+        {
+          "first_vintage": "2023-02-06",
+          "lag_days_from_quarter_end": -53,
+          "lag_days_from_quarter_start": 36,
+          "last_vintage_without": "2023-02-05",
+          "note": "",
+          "observation": "2023-01-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2023-05-08",
+          "lag_days_from_quarter_end": -53,
+          "lag_days_from_quarter_start": 37,
+          "last_vintage_without": "2023-05-07",
+          "note": "",
+          "observation": "2023-04-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2023-07-31",
+          "lag_days_from_quarter_end": -61,
+          "lag_days_from_quarter_start": 30,
+          "last_vintage_without": "2023-07-30",
+          "note": "",
+          "observation": "2023-07-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2023-11-06",
+          "lag_days_from_quarter_end": -55,
+          "lag_days_from_quarter_start": 36,
+          "last_vintage_without": "2023-11-05",
+          "note": "",
+          "observation": "2023-10-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2024-02-05",
+          "lag_days_from_quarter_end": -55,
+          "lag_days_from_quarter_start": 35,
+          "last_vintage_without": "2024-02-04",
+          "note": "",
+          "observation": "2024-01-01",
+          "probes": 10
+        },
+        {
+          "first_vintage": "2024-05-06",
+          "lag_days_from_quarter_end": -55,
+          "lag_days_from_quarter_start": 35,
+          "last_vintage_without": "2024-05-05",
+          "note": "",
+          "observation": "2024-04-01",
+          "probes": 10
+        },
+        {
+          "first_vintage": "2024-08-05",
+          "lag_days_from_quarter_end": -56,
+          "lag_days_from_quarter_start": 35,
+          "last_vintage_without": "2024-08-04",
+          "note": "",
+          "observation": "2024-07-01",
+          "probes": 10
+        },
+        {
+          "first_vintage": "2024-11-12",
+          "lag_days_from_quarter_end": -49,
+          "lag_days_from_quarter_start": 42,
+          "last_vintage_without": "2024-11-11",
+          "note": "",
+          "observation": "2024-10-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2025-02-03",
+          "lag_days_from_quarter_end": -56,
+          "lag_days_from_quarter_start": 33,
+          "last_vintage_without": "2025-02-02",
+          "note": "",
+          "observation": "2025-01-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2025-05-12",
+          "lag_days_from_quarter_end": -49,
+          "lag_days_from_quarter_start": 41,
+          "last_vintage_without": "2025-05-11",
+          "note": "",
+          "observation": "2025-04-01",
+          "probes": 10
+        },
+        {
+          "first_vintage": "2025-08-04",
+          "lag_days_from_quarter_end": -57,
+          "lag_days_from_quarter_start": 34,
+          "last_vintage_without": "2025-08-03",
+          "note": "",
+          "observation": "2025-07-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2025-11-03",
+          "lag_days_from_quarter_end": -58,
+          "lag_days_from_quarter_start": 33,
+          "last_vintage_without": "2025-11-02",
+          "note": "",
+          "observation": "2025-10-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2026-02-03",
+          "lag_days_from_quarter_end": -56,
+          "lag_days_from_quarter_start": 33,
+          "last_vintage_without": "2026-02-02",
+          "note": "",
+          "observation": "2026-01-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2026-05-04",
+          "lag_days_from_quarter_end": -57,
+          "lag_days_from_quarter_start": 33,
+          "last_vintage_without": "2026-05-03",
+          "note": "",
+          "observation": "2026-04-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2026-08-03",
+          "lag_days_from_quarter_end": -58,
+          "lag_days_from_quarter_start": 33,
+          "last_vintage_without": "2026-08-02",
+          "note": "",
+          "observation": "2026-07-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": null,
+          "note": "not carried by any vintage within 400 days - unpublished, or published later than this probe looks",
+          "observation": "2026-10-01",
+          "probes": 1
+        }
+      ],
+      "series": "DRTSCIS",
+      "unpublished_quarters": [
+        "2026-10-01"
+      ]
+    },
+    {
+      "governs": "buffett_indicator",
+      "lag_days_from_quarter_end": {
+        "max": 101,
+        "min": 67
+      },
+      "lag_days_from_quarter_start": {
+        "max": 192,
+        "measured_quarters": 14,
+        "min": 158
+      },
+      "probed_utc": "2026-10-16",
+      "releases": [
+        {
+          "first_vintage": "2023-06-08",
+          "lag_days_from_quarter_end": 69,
+          "lag_days_from_quarter_start": 158,
+          "last_vintage_without": "2023-06-07",
+          "note": "",
+          "observation": "2023-01-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2023-09-08",
+          "lag_days_from_quarter_end": 70,
+          "lag_days_from_quarter_start": 160,
+          "last_vintage_without": "2023-09-07",
+          "note": "",
+          "observation": "2023-04-01",
+          "probes": 10
+        },
+        {
+          "first_vintage": "2023-12-07",
+          "lag_days_from_quarter_end": 68,
+          "lag_days_from_quarter_start": 159,
+          "last_vintage_without": "2023-12-06",
+          "note": "",
+          "observation": "2023-07-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2024-03-07",
+          "lag_days_from_quarter_end": 67,
+          "lag_days_from_quarter_start": 158,
+          "last_vintage_without": "2024-03-06",
+          "note": "",
+          "observation": "2023-10-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2024-06-07",
+          "lag_days_from_quarter_end": 68,
+          "lag_days_from_quarter_start": 158,
+          "last_vintage_without": "2024-06-06",
+          "note": "",
+          "observation": "2024-01-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2024-09-12",
+          "lag_days_from_quarter_end": 74,
+          "lag_days_from_quarter_start": 164,
+          "last_vintage_without": "2024-09-11",
+          "note": "",
+          "observation": "2024-04-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2024-12-12",
+          "lag_days_from_quarter_end": 73,
+          "lag_days_from_quarter_start": 164,
+          "last_vintage_without": "2024-12-11",
+          "note": "",
+          "observation": "2024-07-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2025-03-13",
+          "lag_days_from_quarter_end": 72,
+          "lag_days_from_quarter_start": 163,
+          "last_vintage_without": "2025-03-12",
+          "note": "",
+          "observation": "2024-10-01",
+          "probes": 10
+        },
+        {
+          "first_vintage": "2025-06-12",
+          "lag_days_from_quarter_end": 73,
+          "lag_days_from_quarter_start": 162,
+          "last_vintage_without": "2025-06-11",
+          "note": "",
+          "observation": "2025-01-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2025-09-11",
+          "lag_days_from_quarter_end": 73,
+          "lag_days_from_quarter_start": 163,
+          "last_vintage_without": "2025-09-10",
+          "note": "",
+          "observation": "2025-04-01",
+          "probes": 10
+        },
+        {
+          "first_vintage": "2026-01-09",
+          "lag_days_from_quarter_end": 101,
+          "lag_days_from_quarter_start": 192,
+          "last_vintage_without": "2026-01-08",
+          "note": "",
+          "observation": "2025-07-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2026-03-19",
+          "lag_days_from_quarter_end": 78,
+          "lag_days_from_quarter_start": 169,
+          "last_vintage_without": "2026-03-18",
+          "note": "",
+          "observation": "2025-10-01",
+          "probes": 10
+        },
+        {
+          "first_vintage": "2026-06-11",
+          "lag_days_from_quarter_end": 72,
+          "lag_days_from_quarter_start": 161,
+          "last_vintage_without": "2026-06-10",
+          "note": "",
+          "observation": "2026-01-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2026-09-11",
+          "lag_days_from_quarter_end": 73,
+          "lag_days_from_quarter_start": 163,
+          "last_vintage_without": "2026-09-10",
+          "note": "",
+          "observation": "2026-04-01",
+          "probes": 10
+        },
+        {
+          "first_vintage": null,
+          "note": "not carried by any vintage within 400 days - unpublished, or published later than this probe looks",
+          "observation": "2026-07-01",
+          "probes": 1
+        },
+        {
+          "first_vintage": null,
+          "note": "not carried by any vintage within 400 days - unpublished, or published later than this probe looks",
+          "observation": "2026-10-01",
+          "probes": 1
+        }
+      ],
+      "series": "NCBEILQ027S",
+      "unpublished_quarters": [
+        "2026-07-01",
+        "2026-10-01"
+      ]
+    },
+    {
+      "governs": "buffett_indicator",
+      "lag_days_from_quarter_end": {
+        "max": 84,
+        "min": 25
+      },
+      "lag_days_from_quarter_start": {
+        "max": 175,
+        "measured_quarters": 14,
+        "min": 115
+      },
+      "probed_utc": "2026-10-16",
+      "releases": [
+        {
+          "first_vintage": "2023-04-27",
+          "lag_days_from_quarter_end": 27,
+          "lag_days_from_quarter_start": 116,
+          "last_vintage_without": "2023-04-26",
+          "note": "",
+          "observation": "2023-01-01",
+          "probes": 10
+        },
+        {
+          "first_vintage": "2023-07-27",
+          "lag_days_from_quarter_end": 27,
+          "lag_days_from_quarter_start": 117,
+          "last_vintage_without": "2023-07-26",
+          "note": "",
+          "observation": "2023-04-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2023-10-26",
+          "lag_days_from_quarter_end": 26,
+          "lag_days_from_quarter_start": 117,
+          "last_vintage_without": "2023-10-25",
+          "note": "",
+          "observation": "2023-07-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2024-01-25",
+          "lag_days_from_quarter_end": 25,
+          "lag_days_from_quarter_start": 116,
+          "last_vintage_without": "2024-01-24",
+          "note": "",
+          "observation": "2023-10-01",
+          "probes": 10
+        },
+        {
+          "first_vintage": "2024-04-25",
+          "lag_days_from_quarter_end": 25,
+          "lag_days_from_quarter_start": 115,
+          "last_vintage_without": "2024-04-24",
+          "note": "",
+          "observation": "2024-01-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2024-07-25",
+          "lag_days_from_quarter_end": 25,
+          "lag_days_from_quarter_start": 115,
+          "last_vintage_without": "2024-07-24",
+          "note": "",
+          "observation": "2024-04-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2024-10-30",
+          "lag_days_from_quarter_end": 30,
+          "lag_days_from_quarter_start": 121,
+          "last_vintage_without": "2024-10-29",
+          "note": "",
+          "observation": "2024-07-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2025-01-30",
+          "lag_days_from_quarter_end": 30,
+          "lag_days_from_quarter_start": 121,
+          "last_vintage_without": "2025-01-29",
+          "note": "",
+          "observation": "2024-10-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2025-04-30",
+          "lag_days_from_quarter_end": 30,
+          "lag_days_from_quarter_start": 119,
+          "last_vintage_without": "2025-04-29",
+          "note": "",
+          "observation": "2025-01-01",
+          "probes": 10
+        },
+        {
+          "first_vintage": "2025-07-30",
+          "lag_days_from_quarter_end": 30,
+          "lag_days_from_quarter_start": 120,
+          "last_vintage_without": "2025-07-29",
+          "note": "",
+          "observation": "2025-04-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2025-12-23",
+          "lag_days_from_quarter_end": 84,
+          "lag_days_from_quarter_start": 175,
+          "last_vintage_without": "2025-12-22",
+          "note": "",
+          "observation": "2025-07-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2026-02-20",
+          "lag_days_from_quarter_end": 51,
+          "lag_days_from_quarter_start": 142,
+          "last_vintage_without": "2026-02-19",
+          "note": "",
+          "observation": "2025-10-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": "2026-04-30",
+          "lag_days_from_quarter_end": 30,
+          "lag_days_from_quarter_start": 119,
+          "last_vintage_without": "2026-04-29",
+          "note": "",
+          "observation": "2026-01-01",
+          "probes": 10
+        },
+        {
+          "first_vintage": "2026-07-30",
+          "lag_days_from_quarter_end": 30,
+          "lag_days_from_quarter_start": 120,
+          "last_vintage_without": "2026-07-29",
+          "note": "",
+          "observation": "2026-04-01",
+          "probes": 11
+        },
+        {
+          "first_vintage": null,
+          "note": "not carried by any vintage within 400 days - unpublished, or published later than this probe looks",
+          "observation": "2026-07-01",
+          "probes": 1
+        },
+        {
+          "first_vintage": null,
+          "note": "not carried by any vintage within 400 days - unpublished, or published later than this probe looks",
+          "observation": "2026-10-01",
+          "probes": 1
+        }
+      ],
+      "series": "GDP",
+      "unpublished_quarters": [
+        "2026-07-01",
+        "2026-10-01"
+      ]
+    }
+  ]
+}

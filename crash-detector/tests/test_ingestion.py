@@ -5,7 +5,7 @@ Run with the rest of the suite: ``python3 -m pytest`` (pyproject adds ``src`` an
 
 from __future__ import annotations
 
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
@@ -63,7 +63,7 @@ def test_every_declared_input_of_a_derived_indicator_is_ingested():
     # WO-1.7: gold is the LBMA fix, NOT the COMEX futures; the futures close must not feed it silently.
     assert {"gold_pm+gold_am", "DFII10"} <= serving("gold_real_rate_cross") and "GC=F" not in serving("gold_real_rate_cross")
     assert {"GACDFSA066MSFRBPHI", "GACDISA066MSFRBNY", "BACTSAMFRBDAL"} <= serving("ism_manufacturing")
-    assert {"DRTSCILM", "sloos_table2_q14"} <= serving("sloos_bank_lending")
+    assert {"DRTSCILM", "DRTSCIS"} <= serving("sloos_bank_lending")
     assert {"VIX", "VIX3M"} <= serving("vix_term_structure")
     assert {"HYG", "LQD"} <= serving("credit_stress_hyg_lqd")
     assert {"RSP", "SPY"} <= serving("breadth_rsp_spy")
@@ -848,7 +848,7 @@ def test_report_flags_a_failing_feed_even_when_the_last_good_reading_is_in_windo
     assert s["fed_funds_rate"] == "FEED_FAILING"
 
 
-# --- WO-1.6: legacy-source reuse (gold_spot, buffett_indicator, fiscal_dominance) ------------------ #
+# --- WO-1.6: legacy-source reuse (gold_spot, buffett_indicator, monetisation_flag) ------------------ #
 
 import json  # noqa: E402
 
@@ -933,31 +933,341 @@ def test_quarter_end_as_of_rule_ages_a_quarter_start_dated_figure_from_the_perio
 
 def test_the_three_wo_1_6_indicators_are_served_and_no_longer_listed_not_tractable():
     served = {i for ing in INGREDIENTS for i in ing.serves}
-    for ind in ("gold_spot", "buffett_indicator", "fiscal_dominance"):
+    for ind in ("gold_spot", "buffett_indicator", "monetisation_flag"):
         assert ind in served and ind not in NOT_TRACTABLE
     assert set(NOT_TRACTABLE) == set()  # WO-1.8 wired the last one, as a disclosed proxy
 
 
 def test_substituted_feeds_are_exactly_the_five_that_differ_from_the_ratified_row_and_say_so():
     feeds = {row["id"]: row["source"]["feed"] for row in MAPPING}
-    assert set(SUBSTITUTED_FEEDS) == {"buffett_indicator", "fiscal_dominance", "ism_manufacturing", "gold_real_rate_cross",
+    assert set(SUBSTITUTED_FEEDS) == {"buffett_indicator", "monetisation_flag", "ism_manufacturing", "gold_real_rate_cross",
                                        "private_credit_stress", "sloos_bank_lending"}
     assert "PROVISIONAL" in SUBSTITUTED_FEEDS["gold_real_rate_cross"] and "NOT-OWNER-RATIFIED" in SUBSTITUTED_FEEDS["gold_real_rate_cross"]
     assert "provisional" in SUBSTITUTED_FEEDS["ism_manufacturing"] and "Richmond" in SUBSTITUTED_FEEDS["ism_manufacturing"]
-    assert "Wilshire" in feeds["buffett_indicator"] and "Treasury/BEA" in feeds["fiscal_dominance"]
-    assert "OWNER CONFIRMATION" in SUBSTITUTED_FEEDS["fiscal_dominance"]
+    assert "Wilshire" in feeds["buffett_indicator"] and "Treasury/BEA" in feeds["monetisation_flag"]
+    assert "OWNER CONFIRMATION" in SUBSTITUTED_FEEDS["monetisation_flag"]
 
 
-def test_the_window_overrides_never_exceed_the_engines_relevance_ceiling_and_are_exactly_the_recorded_two():
+def test_the_window_overrides_never_exceed_the_engines_relevance_ceiling_and_are_exactly_the_recorded_four():
     from crash_detector.staleness import RELEVANCE_WINDOW_CEILING_SECONDS
     from ingestion.catalog import WINDOW_OVERRIDES, window_seconds
 
-    assert set(WINDOW_OVERRIDES) == {"buffett_indicator", "private_credit_stress"}
+    # WO-1.19 (2026-10-16): buffett_indicator is NO LONGER one of them. Its override existed only to lift the
+    # row's 45 declared days to the old 120-day ceiling; the Owner then RATIFIED 210 days on the row itself, so
+    # the override had nothing left to replace. Four remain.
+    assert set(WINDOW_OVERRIDES) == {"private_credit_stress", "michigan_sentiment", "m2_yoy", "core_pce_yoy"}
     assert window_seconds("private_credit_stress", 10368000) == 7 * 86400 <= RELEVANCE_WINDOW_CEILING_SECONDS
     assert WINDOW_OVERRIDES["private_credit_stress"][1]
-    assert window_seconds("buffett_indicator", 3888000) == 120 * 86400 <= RELEVANCE_WINDOW_CEILING_SECONDS
     assert window_seconds("hy_oas", 691200) == 691200.0
-    assert WINDOW_OVERRIDES["buffett_indicator"][1]  # a reason is on record
+    for ident, (seconds, reason) in WINDOW_OVERRIDES.items():
+        assert seconds <= RELEVANCE_WINDOW_CEILING_SECONDS, ident
+        assert reason, ident  # a reason is on record for every one
+
+
+def test_buffett_indicator_falls_through_to_its_ratified_window_now_that_the_override_is_gone():
+    """The ratified figure, not a code-side replacement, is what the engine applies to this row.
+
+    WO-1.19 Owner ratification (Matt, 2026-10-16) on the measured ALFRED release lag in
+    evidence/wo119_release_lag_probe.json: the slower wired leg (NCBEILQ027S) lags the quarter END by up to
+    101 days, so a healthy reading PEAKS at ~192 days old (one ~91-day quarter cycle plus that lag). 210 days
+    is the ratified window, giving that measured worst case ~18 days for release variance.
+    """
+    from crash_detector.staleness import RELEVANCE_WINDOW_CEILING_SECONDS, RelevanceWindow
+    from ingestion.catalog import WINDOW_OVERRIDES, window_seconds
+
+    ratified = {row["id"]: row["staleness_window_seconds"] for row in MAPPING}
+    assert ratified["buffett_indicator"] == 210 * 86400 == 18_144_000
+    assert "buffett_indicator" not in WINDOW_OVERRIDES
+    # Nothing shadows it: window_seconds returns the ratified number unchanged.
+    applied = window_seconds("buffett_indicator", ratified["buffett_indicator"])
+    assert applied == float(210 * 86400)
+    # And it is a window the engine will actually admit - it is AT the ceiling, which it derives FROM this row.
+    assert applied == RELEVANCE_WINDOW_CEILING_SECONDS
+    assert RelevanceWindow(seconds=applied).covers(applied)
+    # The old 120-day pin is really gone, not merely renumbered.
+    assert applied > 120 * 86400
+
+
+def test_sloos_bank_lending_ratified_window_covers_its_measured_peak_age_without_an_override():
+    """Both legs are aged from the QUARTER START (as_of_rule 'obs_date'), measured lag 30-42 days.
+
+    The peak age is not the lag: this quarter's reading stays current until the next quarter's print lands,
+    one ~91-day cycle plus that print's own lag (up to 42 days) later - a measured peak of ~133 days, which
+    the previously ratified 120 days did not cover. 150 days covers it with ~17 days of margin.
+    """
+    from crash_detector.staleness import RELEVANCE_WINDOW_CEILING_SECONDS, RelevanceWindow
+    from ingestion.catalog import WINDOW_OVERRIDES, window_seconds
+
+    ratified = {row["id"]: row["staleness_window_seconds"] for row in MAPPING}
+    assert ratified["sloos_bank_lending"] == 150 * 86400 == 12_960_000
+    assert "sloos_bank_lending" not in WINDOW_OVERRIDES
+    applied = window_seconds("sloos_bank_lending", ratified["sloos_bank_lending"])
+    assert applied == float(150 * 86400)
+    assert applied > 133 * 86400          # covers the real measured peak age
+    assert applied > 120 * 86400          # which the window it replaced did not
+    # NOT the ceiling: this row is not the widest the mapping declares, buffett_indicator is.
+    assert applied < RELEVANCE_WINDOW_CEILING_SECONDS
+    assert RelevanceWindow(seconds=applied).covers(applied)
+
+
+def test_the_relevance_ceiling_is_still_derived_from_the_widest_window_the_ratified_mapping_declares():
+    """The ceiling is not a constant of staleness.py's choosing: it tracks the ratified mapping.
+
+    WO-1.19 moved it (120 -> 210 days) only BECAUSE the mapping's widest declaration moved. This test is the
+    one that would fail if a future edit raised the ceiling without a ratified row behind it, or widened a row
+    past a ceiling that was left behind.
+    """
+    from crash_detector.staleness import (
+        RELEVANCE_WINDOW_CEILING_SECONDS,
+        RELEVANCE_WINDOW_CEILING_SOURCE,
+        RelevanceWindow,
+    )
+    from ingestion.catalog import window_seconds
+
+    windows = {row["id"]: row["staleness_window_seconds"] for row in MAPPING}
+    widest = max(windows.values())
+    assert widest == RELEVANCE_WINDOW_CEILING_SECONDS == 18_144_000.0
+    assert [i for i, w in windows.items() if w == widest] == ["buffett_indicator"]
+    # Every ratified row, and every window actually APPLIED, is constructible as a RelevanceWindow.
+    for ident, declared in windows.items():
+        assert RelevanceWindow(seconds=float(window_seconds(ident, declared))).seconds > 0.0, ident
+    # The derivation is stated, dated and attributed where the refusal message will quote it.
+    for token in ("18,144,000", "210 days", "buffett_indicator", "WO-1.19", "2026-10-16",
+                  "wo119_release_lag_probe.json", "sloos_bank_lending", "150"):
+        assert token in RELEVANCE_WINDOW_CEILING_SOURCE, token
+
+
+# --- WO-1.19 item (4): the three MONTHLY rows whose release lag the ratified 45 days did not fit --------- #
+#
+# The three windows below are DERIVATIONS from publication schedules that were NOT read off a release
+# calendar (there is no network on this path) — the catalog entry for each says so. These tests therefore
+# pin the NUMBER THAT WAS ADOPTED and the properties that hold whatever the true lag turns out to be: that
+# it is wider than the ratified 45 days, that it is inside the engine's relevance ceiling, and that it is
+# NOT that ceiling. They are not evidence that the lag is what the reason text says.
+
+RATIFIED_MONTHLY_WINDOW = 45 * 86400  # 3_888_000: what every monthly row in the ratified mapping declares
+WO_1_19_MONTHLY_OVERRIDES = {"michigan_sentiment": 75 * 86400, "m2_yoy": 75 * 86400, "core_pce_yoy": 85 * 86400}
+
+
+def test_the_three_wo_1_19_monthly_rows_resolve_to_their_widened_windows_inside_the_relevance_ceiling():
+    from crash_detector.staleness import RELEVANCE_WINDOW_CEILING_SECONDS
+    from ingestion.catalog import WINDOW_OVERRIDES, window_seconds
+
+    ratified = {row["id"]: row["staleness_window_seconds"] for row in MAPPING}
+    for ident, expected in WO_1_19_MONTHLY_OVERRIDES.items():
+        assert ratified[ident] == RATIFIED_MONTHLY_WINDOW, ident      # the window being REPLACED, from the ratified row
+        assert window_seconds(ident, ratified[ident]) == float(expected), ident
+        assert expected > RATIFIED_MONTHLY_WINDOW, ident              # every one of the three WIDENS, none narrows
+        # Inside the engine's own relevance ceiling, and deliberately not AT it: a window wider than the
+        # rhythm needs lets a DEAD feed keep reading current (the failure private_credit_stress undoes).
+        assert expected <= RELEVANCE_WINDOW_CEILING_SECONDS, ident
+        assert expected < RELEVANCE_WINDOW_CEILING_SECONDS, ident
+        assert WINDOW_OVERRIDES[ident][1], ident                      # a reason is on record for each
+
+
+def test_core_pce_yoy_is_the_widest_of_the_three_because_beas_release_is_the_latest():
+    # Not three identical numbers: core PCE lands at the very end of M+1, later than CPI for the same month,
+    # which is the whole reason cpi_yoy still fits 45 days and this row does not. 85 > 75 is load-bearing.
+    from ingestion.catalog import window_seconds
+
+    assert window_seconds("core_pce_yoy", RATIFIED_MONTHLY_WINDOW) > window_seconds("m2_yoy", RATIFIED_MONTHLY_WINDOW)
+    assert window_seconds("m2_yoy", RATIFIED_MONTHLY_WINDOW) == window_seconds("michigan_sentiment", RATIFIED_MONTHLY_WINDOW)
+
+
+def test_michigan_sentiments_override_records_that_it_is_owed_and_not_a_verified_root_cause_fix():
+    # This row's own release-lag arithmetic does NOT explain the STALE symptom Matt observed: the Michigan
+    # surveys publish WITHIN the month they describe, so the ratified 45 days already covered the lag. The
+    # 75 days clears the symptom and is matched to the other two; the catalog entry must keep saying that it
+    # is OWED and reversible, so this does not read later as a diagnosed fix. A silent rewrite fails here.
+    from ingestion.catalog import WINDOW_OVERRIDES
+
+    reason = WINDOW_OVERRIDES["michigan_sentiment"][1]
+    assert "SYMPTOM" in reason and "OWED" in reason
+    assert "does NOT explain" in reason or "DIFFERENT cause" in reason
+    assert "45" in reason  # the ratified window it is reversible to
+
+
+def test_cpi_yoy_and_sahm_rule_were_correctly_left_alone_and_still_resolve_to_the_ratified_forty_five_days():
+    # The POINT of this test is that these two were EXAMINED and needed no override, not that nobody touched
+    # them: their arithmetic already fits inside 45 days (CPI prints ~12 days after its reference month, the
+    # Sahm rule follows the employment report at ~5), so an override here would be an unjustified widening —
+    # and a wider window than the rhythm needs is exactly how a DEAD feed keeps reading current. Adding one
+    # to either row must fail this test and be argued for on its own evidence.
+    from ingestion.catalog import WINDOW_OVERRIDES, window_seconds
+
+    ratified = {row["id"]: row["staleness_window_seconds"] for row in MAPPING}
+    cadences = {row["id"]: row["cadence"] for row in MAPPING}
+    for ident in ("cpi_yoy", "sahm_rule"):
+        assert cadences[ident] == "monthly", ident                    # same cadence and same ratified window
+        assert ratified[ident] == RATIFIED_MONTHLY_WINDOW, ident      # as the three rows that WERE widened
+        assert ident not in WINDOW_OVERRIDES, ident                   # deliberately NOT overridden
+        assert window_seconds(ident, ratified[ident]) == float(RATIFIED_MONTHLY_WINDOW), ident
+        # and the resolver really is passing the ratified value through untouched, not coincidentally
+        # returning 45 days from somewhere else:
+        assert window_seconds(ident, 12345.0) == 12345.0, ident
+
+
+# --- WO-1.19 item (4), the QUARTERLY half: both rows' windows come from the RELEASE CALENDAR ------------- #
+#
+# ``ingestion.report.indicator_states`` now resolves these two rows' windows from
+# ``ingestion.release_calendar`` instead of from ``window_seconds``, and every number involved is
+# UNCHANGED by that: both calendar constants reproduce their ratified figures EXACTLY (210 and 150 days,
+# neither row carrying an override), so the dispatch is a TRUE NO-OP on resolved values. That is precisely
+# what makes it worth testing twice over, because a no-op has no symptom of its own:
+#
+#   * the ROUTING is now the only observable thing that changed, so it is asserted directly - the two rows
+#     must be resolved WITHOUT ``window_seconds`` being consulted at all, and every OTHER row must still be
+#     resolved THROUGH it (the WO-1.16/1.18 "prove the routing, not just the destination" pattern);
+#   * the no-op itself is pinned as a NON-REGRESSION, because there are now TWO live code paths to the same
+#     two numbers - this one, and ``gui.state.build_state``, which still reads ``window_seconds`` - and
+#     nothing but a test stops a future edit to either path from silently moving one and not the other.
+
+RELEASE_CALENDAR_WINDOW_DAYS = {"buffett_indicator": 210.0, "sloos_bank_lending": 150.0}
+
+#: Each row's as-of anchor, which is NOT the same anchor for the two: ``buffett_indicator``'s legs are aged
+#: from the QUARTER END (``as_of_rule quarter_end``) and ``sloos_bank_lending``'s from the QUARTER START
+#: (``obs_date``). The ages below are measured from these, so a window is being tested against the anchor
+#: it is actually derived against - the distinction ``release_calendar`` is explicit that it depends on.
+BUFFETT_AS_OF = datetime(2026, 6, 30, tzinfo=timezone.utc)   # 2026-Q2, dated 2026-04-01 by FRED
+SLOOS_AS_OF = datetime(2026, 7, 1, tzinfo=timezone.utc)      # the 2026-Q3 SLOOS survey
+
+
+def _both_quarterly_rows_complete(store):
+    """Every leg of both quarterly rows, one period each, dated at that row's own as-of anchor."""
+    from test_wiring import _put
+
+    _put(store, "fred.NCBEILQ027S", {"unit": "usd_millions", "observation_date": "2026-04-01", "value": 1.0},
+         BUFFETT_AS_OF.isoformat().replace("+00:00", "Z"))
+    _put(store, "fred.GDP", {"unit": "usd_billions", "observation_date": "2026-04-01", "value": 2.0},
+         BUFFETT_AS_OF.isoformat().replace("+00:00", "Z"))
+    for leg in ("fred.DRTSCILM", "fred.DRTSCIS"):
+        _put(store, leg, {"unit": "net_percent_tightening", "observation_date": "2026-07-01", "value": 6.0},
+             SLOOS_AS_OF.isoformat().replace("+00:00", "Z"))
+
+
+def test_the_two_quarterly_rows_windows_are_the_release_calendar_constants_themselves_not_copies_of_them():
+    """Not ``== 210 days`` alone: == the CONSTANT, so a divergence between the two cannot pass."""
+    from ingestion import release_calendar
+    from ingestion.report import RELEASE_CALENDAR_WINDOWS
+
+    assert set(RELEASE_CALENDAR_WINDOWS) == {"buffett_indicator", "sloos_bank_lending"}
+    # Identical to the module's own constants, to the second, and in the derived direction: the test reads
+    # the figure from ``release_calendar``, so a change there that ``report`` did not pick up fails here.
+    assert RELEASE_CALENDAR_WINDOWS["buffett_indicator"] == float(release_calendar.BUFFETT_INDICATOR_RELEVANCE_SECONDS)
+    assert RELEASE_CALENDAR_WINDOWS["sloos_bank_lending"] == float(release_calendar.SLOOS_BANK_LENDING_RELEVANCE_SECONDS)
+    # ...and each is the RATIFIED figure, which is the whole claim that this dispatch changes no number.
+    ratified = {row["id"]: row["staleness_window_seconds"] for row in MAPPING}
+    for ident, days in RELEASE_CALENDAR_WINDOW_DAYS.items():
+        assert RELEASE_CALENDAR_WINDOWS[ident] == days * 86400, ident
+        assert RELEASE_CALENDAR_WINDOWS[ident] == float(ratified[ident]), ident
+    # The derivation is real arithmetic over the measured lag, not a literal re-typed under a function name.
+    assert release_calendar.peak_relevance_seconds(cycle_days=91, worst_lag_days=101, tolerance_days=18) == 210 * 86400
+    assert release_calendar.peak_relevance_seconds(cycle_days=91, worst_lag_days=42, tolerance_days=17) == 150 * 86400
+
+
+def test_report_never_asks_window_seconds_about_the_two_calendar_rows_and_still_asks_it_about_every_other(
+        store, monkeypatch):
+    """The ROUTING, not the destination: the two numbers are unchanged, so routing is all that moved.
+
+    ``window_seconds`` is replaced by a recorder that EXPLODES if it is ever asked about a release-calendar
+    row. A future edit that resolved those two rows through the ratified path again would still produce the
+    right number today - the figures agree - and would therefore pass every value-based test in this file
+    while quietly undoing the traceability this round exists to add. It fails here instead.
+    """
+    from ingestion import report
+    from ingestion.catalog import window_seconds as real_window_seconds
+
+    asked = []
+
+    def recording_window_seconds(indicator_id, ratified_seconds):
+        if indicator_id in report.RELEASE_CALENDAR_WINDOWS:
+            raise AssertionError(f"report asked window_seconds about {indicator_id}, a release-calendar row")
+        asked.append(indicator_id)
+        return real_window_seconds(indicator_id, ratified_seconds)
+
+    monkeypatch.setattr(report, "window_seconds", recording_window_seconds)
+    _both_quarterly_rows_complete(store)
+    states = {s["id"]: s["state"] for s in report.indicator_states(store, NOW)}
+
+    # Neither calendar row went through it - and both were REACHED, so this is not a vacuous pass: a row
+    # skipped entirely (NOT_TRACTABLE) would also never reach ``window_seconds``.
+    assert not set(asked) & set(RELEASE_CALENDAR_WINDOW_DAYS)
+    for ident in RELEASE_CALENDAR_WINDOW_DAYS:
+        assert states[ident] == "DERIVED", ident      # resolved, fresh, and a state was computed for it
+    # Every OTHER ratified row still resolves THROUGH ``window_seconds``, by equality over the mapping -
+    # so adding a third row to the dispatch dict without a test cannot slip past this.
+    assert set(asked) == {row["id"] for row in MAPPING} - set(RELEASE_CALENDAR_WINDOW_DAYS)
+    assert len(asked) == len(set(asked)) == 29          # the 31 ratified ids, less the two calendar rows
+    for already_covered in ("fed_funds_rate", "gold_spot", "michigan_sentiment"):
+        assert already_covered in asked, already_covered   # rows with their own coverage above, still routed
+
+
+def test_the_calendar_resolved_window_is_what_actually_decides_live_or_stale_for_both_rows(store):
+    """The destination too: each row flips at ITS OWN calendar window, from ITS OWN anchor."""
+    _both_quarterly_rows_complete(store)
+
+    def state_at(ident, as_of, age_days):
+        return {s["id"]: s["state"] for s in indicator_states(store, as_of + timedelta(days=age_days))}[ident]
+
+    # Inside the window the rows are DERIVED (both are all-COMPONENT: the engine owns the quantity),
+    # beyond it STALE. The flip sits at the calendar figure and at no other number - in particular not at
+    # the 120 days ``buffett_indicator`` was pinned to before this WO, nor the 45 its row once declared.
+    assert state_at("buffett_indicator", BUFFETT_AS_OF, 209) == "DERIVED"
+    assert state_at("buffett_indicator", BUFFETT_AS_OF, 211) == "STALE"
+    assert state_at("buffett_indicator", BUFFETT_AS_OF, 130) == "DERIVED"   # STALE under the retired 120
+    assert state_at("sloos_bank_lending", SLOOS_AS_OF, 149) == "DERIVED"
+    assert state_at("sloos_bank_lending", SLOOS_AS_OF, 151) == "STALE"
+    # The two windows are genuinely DIFFERENT, so neither row is reading the other's figure: at 160 days
+    # of age the wider row is still live and the narrower one is not.
+    assert state_at("buffett_indicator", BUFFETT_AS_OF, 160) == "DERIVED"
+    assert state_at("sloos_bank_lending", SLOOS_AS_OF, 160) == "STALE"
+
+
+def test_the_release_calendar_path_and_the_ratified_path_cannot_silently_diverge_on_either_row(store, monkeypatch):
+    """The NON-REGRESSION. Pre-this-round behaviour and this round's behaviour, compared directly.
+
+    Emptying ``RELEASE_CALENDAR_WINDOWS`` restores EXACTLY the pre-this-round dispatch - every row falls
+    through to ``window_seconds`` - so the two code paths can be run over the same store at the same
+    instants and compared. They must agree on the resolved window AND on every state it produces, at ages
+    on both sides of both boundaries.
+
+    This is not a tautology waiting to rot: ``gui.state.build_state`` still resolves ``window_days`` through
+    ``window_seconds`` (the old path) and publishes it to the GUI, while this module now reads the calendar.
+    The 210/150 the GUI shows and the 210/150 the report enforces are therefore computed by two different
+    routes, and nothing else in the suite would notice if a future edit moved one of them alone.
+    """
+    from ingestion import report
+    from ingestion.catalog import window_seconds
+
+    _both_quarterly_rows_complete(store)
+    ratified = {row["id"]: row["staleness_window_seconds"] for row in MAPPING}
+
+    # 1. The resolved WINDOW_DAYS agree exactly, by both routes, for both rows.
+    for ident, days in RELEASE_CALENDAR_WINDOW_DAYS.items():
+        new_days = report.RELEASE_CALENDAR_WINDOWS[ident] / 86400
+        old_days = window_seconds(ident, ratified[ident]) / 86400
+        assert new_days == old_days == days, ident
+        # the figure ``gui.state`` publishes, computed the way it computes it, is that same number
+        assert round(window_seconds(ident, ratified[ident]) / 86400, 2) == days, ident
+
+    # 2. ...and so does every STATE, at ages spanning both windows and both boundaries.
+    ages = (0, 1, 100, 149, 151, 160, 209, 211, 400)
+    for anchor in (BUFFETT_AS_OF, SLOOS_AS_OF):
+        for age_days in ages:
+            now = anchor + timedelta(days=age_days)
+            new_states = {s["id"]: s["state"] for s in report.indicator_states(store, now)}
+            with monkeypatch.context() as old_path:
+                old_path.setattr(report, "RELEASE_CALENDAR_WINDOWS", {})    # pre-this-round dispatch
+                old_states = {s["id"]: s["state"] for s in report.indicator_states(store, now)}
+            # EVERY row, not just the two: this round must not have moved anything else either.
+            assert new_states == old_states, (anchor.date().isoformat(), age_days)
+            # and the comparison is live - the two rows really do change state across this range, so an
+            # agreement here is agreement about something.
+            assert new_states["buffett_indicator"] in ("DERIVED", "STALE")
+    # The ages chosen do straddle both boundaries rather than all landing on one side.
+    assert {state_of for state_of in (
+        {s["id"]: s["state"] for s in report.indicator_states(store, BUFFETT_AS_OF + timedelta(days=a))}
+        ["buffett_indicator"] for a in ages)} == {"DERIVED", "STALE"}
 
 
 def test_wo_1_6_ingredients_poll_slowly_and_the_fred_history_ones_ask_for_history():

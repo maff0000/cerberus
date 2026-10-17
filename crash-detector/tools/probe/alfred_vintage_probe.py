@@ -2,6 +2,8 @@
 """THE ALFRED VINTAGE PROBE — what does each FRED series' REVISION HISTORY actually look like?
 
     PYTHONPATH=src:. python3 tools/probe/alfred_vintage_probe.py --out evidence/<file>.json
+    PYTHONPATH=src:. python3 tools/probe/alfred_vintage_probe.py --out evidence/<file>.json \
+        --series DRTSCIS --merge          # amend an existing record with ONE new series
 
 WHY THIS EXISTS (WO-1.14). DECISION-RULE.md §10 forbids filling any calibrated parameter
 from "today's vintages", and requires a replay through 2000-02, 2007-09, 2011, 2015-16,
@@ -33,6 +35,14 @@ WHAT IT MEASURES, AND THE THREE SEPARATE FACTS IT KEEPS APART
 
 Each is reported as a number this file obtained, next to the request that obtained it.
 Nothing is inferred and nothing is averaged across series.
+
+AMENDING AN EXISTING RECORD (``--merge``, WO-1.19). A round that adds ONE FRED pair to the
+catalog has to measure that pair, not re-measure the other 23: rewriting 23 recorded
+measurements and their dates to learn one thing is how an evidence file loses the ability to
+say WHEN each of its numbers was obtained. ``--merge`` therefore probes the series asked for
+and folds them into the document already at ``--out``, leaving its header's ``probed_utc``
+alone, stamping the amended records with their own, and listing the amendment in
+``amendments``. See :func:`merge` for the two conditions that keep that honest.
 
 TRANSFORMATIONS ARE PROBED AS WIRED. ``M2SL``, ``CPIAUCSL`` and ``PCEPILFE`` are collected
 through FRED's own ``pc1`` (percent change from a year ago), so the quantity whose revisions
@@ -277,6 +287,57 @@ def fred_series_from_catalog() -> list[tuple[str, Union[str, None]]]:
     return out
 
 
+def merge(document: dict, records: list, today: date,
+          order: list[tuple[str, Union[str, None]]]) -> dict:
+    """Fold freshly probed ``records`` into an EXISTING probe document, in catalog order.
+
+    WHY THIS EXISTS (WO-1.19). ``evidence/wo114_alfred_probe.json`` is the evidence behind
+    ``ingestion.vintage``'s three sets, and WO-1.19 added exactly ONE new FRED pair to the
+    catalog — ``DRTSCIS``, the small-firm leg of the same SLOOS question ``DRTSCILM`` asks of
+    large ones. Re-probing all 24 pairs to measure one of them would overwrite 23 recorded
+    measurements, and their dates, for nothing. What lands instead is an AMENDMENT: the same
+    probe against the same endpoint, run for the new series alone, written into the file
+    beside the others carrying its own probe date.
+
+    Two conditions keep that honest rather than merely convenient.
+
+    * THE HEADER IS NOT RESTAMPED. ``probed_utc`` stays the date the series already in the
+      file were measured; each amended record carries a ``probed_utc`` of its own, and every
+      amendment is listed under ``amendments``. So no reader can mistake one date for the
+      other, which is precisely what a blanket restamp would make them do.
+    * THE MEASUREMENT PARAMETERS MUST AGREE EXACTLY. Merging into a file measured with a
+      different ``material_threshold``, ``compare_from`` or ``endpoint`` would file two
+      incomparable measurements under one header, and ``ingestion.vintage.classify`` reads
+      the whole list through one rule. A mismatch is refused, not reconciled.
+
+    A record for a pair already present is REPLACED rather than duplicated: re-probing a
+    series is a correction to the file, and ``tests/test_vintage_declaration.py`` fails on a
+    pair recorded twice.
+    """
+    for key, measured in (("endpoint", BASE), ("compare_from", COMPARE_FROM),
+                          ("material_threshold", MATERIAL)):
+        if document.get(key) != measured:
+            raise SystemExit(f"refusing to merge: the file was measured with {key}="
+                             f"{document.get(key)!r}, this probe measures {measured!r}")
+    stamped = [{**record, "probed_utc": today.isoformat()} for record in records]
+    fresh = {(record["series"], record["transformation"]) for record in stamped}
+    kept = [record for record in document["series"]
+            if (record["series"], record["transformation"]) not in fresh]
+    position = {pair: index for index, pair in enumerate(order)}
+    # Stable sort on catalog position: the kept records are already in that order, so this
+    # places each new one where the catalog puts it rather than at the end.
+    document["series"] = sorted(
+        kept + stamped,
+        key=lambda record: position.get((record["series"], record["transformation"]), len(order)))
+    document.setdefault("amendments", []).append({
+        "probed_utc": today.isoformat(),
+        "series": sorted(series for series, _ in fresh),
+        "note": "probed by this script with --merge; the header's probed_utc is the date the "
+                "series already in the file were measured and is deliberately not restamped",
+    })
+    return document
+
+
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", required=True, help="where to write the JSON record")
@@ -284,12 +345,18 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--trail-observation", default="2024-07-01",
                         help="the trail reads the series' latest observation on or before this date")
     parser.add_argument("--no-trail", action="store_true")
+    parser.add_argument("--merge", action="store_true",
+                        help="amend the document already at --out instead of replacing it")
     args = parser.parse_args(argv)
 
     today = date.today()
-    wanted = fred_series_from_catalog()
+    order = fred_series_from_catalog()
+    wanted = order
     if args.series:
-        wanted = [(s, t) for s, t in wanted if s in set(args.series)]
+        unknown = sorted(set(args.series) - {series for series, _ in order})
+        if unknown:
+            raise SystemExit(f"--series names what the catalog does not collect: {unknown}")
+        wanted = [(s, t) for s, t in order if s in set(args.series)]
     records = []
     for index, (series, transformation) in enumerate(wanted, 1):
         print(f"[{index}/{len(wanted)}] {series}{'/' + transformation if transformation else ''}",
@@ -303,12 +370,18 @@ def main(argv: list[str]) -> int:
               f"differing={rev.get('differing')} material={rev.get('differing_materially')} "
               f"distinct_in_trail={record.get('trail', {}).get('distinct_values')}", flush=True)
         time.sleep(PACE)
-    document = {"probed_utc": today.isoformat(), "endpoint": BASE, "credential": "none (keyless)",
-                "compare_from": COMPARE_FROM, "material_threshold": MATERIAL, "series": records}
+    if args.merge:
+        with open(args.out, encoding="utf-8") as handle:
+            document = merge(json.load(handle), records, today, order)
+    else:
+        document = {"probed_utc": today.isoformat(), "endpoint": BASE,
+                    "credential": "none (keyless)", "compare_from": COMPARE_FROM,
+                    "material_threshold": MATERIAL, "series": records}
     with open(args.out, "w", encoding="utf-8") as handle:
         json.dump(document, handle, indent=2, sort_keys=True)
         handle.write("\n")
-    print(f"-- {len(records)} series written to {args.out}")
+    print(f"-- {len(records)} series {'merged into' if args.merge else 'written to'} "
+          f"{args.out}, which now records {len(document['series'])}")
     return 0
 
 

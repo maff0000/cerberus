@@ -7,10 +7,15 @@ the declaration of WHICH series that actually matters for, derived from measurem
 than from reputation.
 
 THE EVIDENCE
-    ``evidence/wo114_alfred_probe.json`` — ALFRED's keyless vintage endpoint, probed
-    2026-10-13, all 23 FRED rows of :data:`ingestion.catalog.INGREDIENTS`, no errors. For
-    each series the probe compares the FIRST available vintage against the CURRENT one over
-    the observations the two share, and counts the ones that differ MATERIALLY: more than
+    ``evidence/wo114_alfred_probe.json`` — ALFRED's keyless vintage endpoint, every FRED row
+    of :data:`ingestion.catalog.INGREDIENTS`, no errors: 23 rows probed 2026-10-13, plus
+    ``DRTSCIS`` probed 2026-10-16 when WO-1.19 wired it, recorded in the file's own
+    ``amendments`` and carrying its own ``probed_utc`` rather than restamping the other 23.
+    :data:`EVIDENCE_PROBED_UTC` is therefore the header's date — when the ORIGINAL sweep was
+    taken — and an amended row's date is read off the row.
+
+    For each series the probe compares the FIRST available vintage against the CURRENT one
+    over the observations the two share, and counts the ones that differ MATERIALLY: more than
     ``material_threshold`` (0.005) of the value. Those counts, and nothing else, decide the
     sets below. :func:`classify` is the derivation; the frozen sets are its output on that
     file, and ``tests/test_vintage_declaration.py`` re-derives them and fails if the file
@@ -196,12 +201,30 @@ STABILITY_MEASURED_FROM = "1999-01-01"
 EVIDENCE_FILE = "evidence/wo114_alfred_probe.json"
 EVIDENCE_PROBED_UTC = "2026-10-13"
 
-#: (series, transformation) pairs the evidence shows ARE revised: 15 of 23.
+#: (series, transformation) pairs the evidence shows ARE revised: 16 of 24.
+#:
+#: ``DRTSCIS`` IS MEASURED, NOT INHERITED (WO-1.19). It is the small-firm leg of the same
+#: SLOOS C&I question ``DRTSCILM`` asks of large and medium firms, the two of them wired as
+#: the two legs of ``sloos_bank_lending``, and a sibling in one survey is exactly the kind of
+#: series it would be easy to classify by resemblance. It was not: it was probed on its own
+#: against the same endpoint (``--series DRTSCIS --merge``), and the file holds its own
+#: numbers. 18 of the 81 observations its first vintage (2010-04-20) shares with today's
+#: differ MATERIALLY, the largest 1991-10-01 first published at 5.2 and now 7.0. One
+#: material difference is enough under the rule above, and this verdict does not turn on
+#: WHICH window the rule judges: the replay window holds only 46 shared observations — below
+#: :data:`MIN_SHARED_OBSERVATIONS`, so :func:`classify` judges the full overlap — but 7 of
+#: those 46 differ materially too, so the pair is REVISION-PRONE either way.
+#:
+#: That the sibling agrees is an OBSERVATION about two measurements, not the reason for
+#: either: DRTSCILM's own figures are different ones (38 of 81, largest +7.7). Had DRTSCIS
+#: come back clean it would have been declared clean, which is the only thing that makes the
+#: agreement worth anything.
 REVISION_PRONE = frozenset({
     ("BACTSAMFRBDAL", None),
     ("CPIAUCSL", "pc1"),
     ("CPILFESL", None),
     ("DRTSCILM", None),
+    ("DRTSCIS", None),
     ("DTWEXBGS", None),
     ("GACDFSA066MSFRBPHI", None),
     ("GACDISA066MSFRBNY", None),
@@ -215,7 +238,7 @@ REVISION_PRONE = frozenset({
     ("WALCL", None),
 })
 
-#: Pairs MEASURED stable over a window large enough to mean it: 6 of 23.
+#: Pairs MEASURED stable over a window large enough to mean it: 6 of 24.
 REVISION_STABLE = frozenset({
     ("DFF", None),
     ("DFII10", None),
@@ -225,7 +248,7 @@ REVISION_STABLE = frozenset({
     ("T5YIE", None),
 })
 
-#: Pairs whose first ALFRED vintage is too recent to compare against: 2 of 23. Both ICE BofA
+#: Pairs whose first ALFRED vintage is too recent to compare against: 2 of 24. Both ICE BofA
 #: OAS series, whose vintage trail begins 2023-10-16 with a single observation. No material
 #: difference was found and none could have been. Treated as revision-prone by
 #: :func:`requires_original_vintage`.

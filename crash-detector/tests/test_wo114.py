@@ -7,7 +7,7 @@ ONE — the ROUTE IS THE EVIDENCE'S. A FRED ingredient whose (series, transforma
 ``AlfredVintageAdapter`` (the figure as FIRST published); a pair measured stable is
 backfilled from FRED's current body through the ordinary ``FredAdapter``. Nothing in
 ``ingestion.backfill_adapters`` decides that — the declaration does, and these tests sweep
-every FRED ingredient in the catalog so the two cannot drift apart for 15 of 23 series while
+every FRED ingredient in the catalog so the two cannot drift apart for 16 of 24 series while
 looking right for the one a hand-written test happened to name.
 
 TWO — the LIVE LOOP CANNOT REACH THE VINTAGE ADAPTER, STRUCTURALLY. ``AlfredVintageAdapter``
@@ -110,7 +110,7 @@ def test_a_measured_stable_fred_ingredient_backfills_from_freds_current_body():
 
 
 def test_every_fred_ingredient_routes_exactly_as_the_vintage_declaration_says():
-    """The sweep. Not one named series each way — all 23, against the declaration itself."""
+    """The sweep. Not one named series each way — all 24, against the declaration itself."""
     prone, stable = [], []
     for ing in FRED:
         adapter = build_backfill_adapter(ing, OBS, CLOCK)
@@ -120,14 +120,22 @@ def test_every_fred_ingredient_routes_exactly_as_the_vintage_declaration_says():
         else:
             assert type(adapter) is A.FredAdapter, ing.source_id
             stable.append(ing.source_id)
-    # 24 FRED ingredient rows over 23 distinct (series, transformation) pairs: DFII10 is
+    # 25 FRED ingredient rows over 24 distinct (series, transformation) pairs: DFII10 is
     # ingested twice, once plain and once with history for the gold_real_rate_cross
     # derivation. Both rows route the same way, because the route is a property of the PAIR
     # the evidence judged and not of the catalog row — which is why this is a sweep.
-    assert len(FRED) == 24 and len({(i.ref, i.transformation) for i in FRED}) == 23
-    # 15 measured revision-prone + 2 UNDETERMINED (fail-safe: fetched point-in-time) = 17
-    # pairs, and 6 measured-stable pairs over 7 rows.
-    assert (len(prone), len(stable)) == (17, 7)
+    #
+    # WO-1.19 MOVED THIS FROM 24/23 BY ADDING ONE ROW AND ONE PAIR: DRTSCIS, the small-firm
+    # leg of sloos_bank_lending, which took over from a manual table-scrape that was never
+    # automatable. The gap between the two numbers is still exactly one and still DFII10's —
+    # a second series ingested twice would show up here as the gap widening, not as a pair
+    # quietly routing on someone else's evidence.
+    assert len(FRED) == 25 and len({(i.ref, i.transformation) for i in FRED}) == 24
+    # 16 measured revision-prone + 2 UNDETERMINED (fail-safe: fetched point-in-time) = 18
+    # pairs, and 6 measured-stable pairs over 7 rows. DRTSCIS is the 16th, and it is MEASURED
+    # — probed on its own against ALFRED, 18 of the 81 observations its first vintage shares
+    # with today's differing materially — not inherited from its DRTSCILM sibling.
+    assert (len(prone), len(stable)) == (18, 7)
     assert [s for s in stable if s.startswith("fred.DFII10")] == [
         "fred.DFII10", "fred.DFII10.history"]
     assert {"fred.BAMLC0A0CM", "fred.BAMLH0A0HYM2"} <= set(prone), (
@@ -136,8 +144,13 @@ def test_every_fred_ingredient_routes_exactly_as_the_vintage_declaration_says():
 
 
 def test_a_kind_nobody_has_reasoned_about_is_refused_rather_than_backfilled():
-    """multpl, LBMA, the HERMES peer and manual entry: today's value wearing a past date is
-    the forgery this WO exists to prevent, so the answer is a refusal.
+    """multpl, LBMA and the HERMES peer: today's value wearing a past date is the forgery
+    this WO exists to prevent, so the answer is a refusal.
+
+    ``manual`` WAS A FOURTH KIND HERE AND IS NOT ONE ANY MORE (WO-1.19) — not admitted, but
+    retired: its only row, ``sloos_bank_lending``'s hand-entered second leg, became the
+    ``DRTSCIS`` FRED feed. A kind with no rows cannot be refused, so naming it in the set
+    below would be asserting a boundary nothing stands on.
 
     WO-1.16 MOVED ``cboe`` AND THEN ``yahoo`` OUT OF THIS SET, and the test says so by
     deriving the set from :data:`VINTAGE_BACKFILLABLE_KINDS` rather than by listing non-FRED
@@ -153,7 +166,7 @@ def test_a_kind_nobody_has_reasoned_about_is_refused_rather_than_backfilled():
     """
     assert VINTAGE_BACKFILLABLE_KINDS == ("fred", "cboe", "yahoo")
     others = [i for i in INGREDIENTS if i.kind not in VINTAGE_BACKFILLABLE_KINDS]
-    assert {i.kind for i in others} == {"multpl", "lbma", "hermes", "manual"}
+    assert {i.kind for i in others} == {"multpl", "lbma", "hermes"}
     for ing in others:
         with pytest.raises(ValueError):
             build_backfill_adapter(ing, OBS, CLOCK)
@@ -301,7 +314,7 @@ def test_the_live_path_never_returns_the_vintage_adapter_for_anything():
     live = [build_adapter(i, CLOCK) for i in INGREDIENTS if i.kind != "manual"]
     assert not any(isinstance(a, A.AlfredVintageAdapter) for a in live)
     prone = [i for i in FRED if requires_original_vintage(i.ref, i.transformation)]
-    assert len(prone) == 17 and all(type(build_adapter(i, CLOCK)) is A.FredAdapter for i in prone)
+    assert len(prone) == 18 and all(type(build_adapter(i, CLOCK)) is A.FredAdapter for i in prone)
 
 
 def test_the_live_constructor_has_no_argument_that_could_select_a_vintage_adapter():

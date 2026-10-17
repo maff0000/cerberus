@@ -864,20 +864,31 @@ EQUITY_CRASH_MASTERS = (
 #: EVERY THRESHOLD ON EVERY ROW IS PROVISIONAL AND UNCALIBRATED (PO-DECISIONS-0025 r3).
 MONETARY_DEBASEMENT_MASTERS = (
     # WATCH-ONLY (WO-1.3e; R2D2's WO-1.3b audit of the monetary masters, verdict RED). This
-    # master is IDENTITY over ``fiscal_dominance``, which is a 0/1 FLAG — it has two values,
+    # master is IDENTITY over ``monetisation_flag`` (the row called ``fiscal_dominance`` until the WO-1.19
+    # rename), which is a 0/1 FLAG — it has two values,
     # so it is either silent or pinned at the top of the scale, and there is no reading of
     # it that sits between. R2D2 measured a 0% hit rate for it across the whole backtest,
     # and the indicator itself is an Owner-UNCONFIRMED substitute for what the spec asked
     # for. A binary, unconfirmed, never-right input holding its own ALARM trigger is a
     # single flip away from declaring a crash.
     #
-    # THE DEMOTION IS UNTIL OWNER-CONFIRMED, NOT FOREVER: when the Owner rules on what
-    # ``fiscal_dominance`` is to be and it is calibrated against something, this row is the
-    # one place the decision is written and the one line that has to change.
+    # THE DEMOTION IS UNTIL OWNER-CONFIRMED, NOT FOREVER: when this master's component is
+    # calibrated against something, this row is the one place the decision is written and the one
+    # line that has to change.
+    #
+    # WO-1.19: ``component_ids`` MOVED WITH THE RATIFIED ROW'S RENAME (fiscal_dominance ->
+    # monetisation_flag) because it is matched by STRING against the dial's scored indicator ids in
+    # ``_master_result``; a stale id here is not a cosmetic slip, it makes this master
+    # ``MasterUnknown`` and takes the whole monetary acute statistic to UNKNOWN with it.
+    # ``master_id`` DELIBERATELY DOES NOT MOVE: master ids are PERSISTED (evaluator/history_store.py
+    # ``acute_from_master_id`` and ``master_scores``), and the name is still the right one for the
+    # slot — a true fiscal-dominance measure (deficit/interest burden) is the OWED indicator that
+    # belongs in it, under the reserved id ``fiscal_dominance``. Until then this master carries the
+    # monetisation flag as the stand-in it has carried since WO-1.6.
     Master(
         master_id="fiscal_master",
         dial_id=MONETARY_DIAL_ID,
-        component_ids=("fiscal_dominance",),
+        component_ids=("monetisation_flag",),
         combine=MasterCombine.IDENTITY,
         warning_threshold=PROVISIONAL_WARNING,
         stress_threshold=PROVISIONAL_STRESS,
