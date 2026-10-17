@@ -834,6 +834,12 @@ def test_an_undeclared_kind_raises_before_a_single_date_is_touched(store, monkey
     made the same figure a FRED feed. The kind is gone from the catalog, not moved into
     ``VINTAGE_BACKFILLABLE_KINDS``, so there is nothing left here to refuse.
 
+    ``lbma`` LEFT IT THE SAME WAY AT WO-1.20. Its one row was ``gold_real_rate_cross``'s gold
+    leg — an endpoint that answered HTTP 403 to this host for the whole of its life — and it was
+    retired when the futures close ``yahoo.GC=F.history`` took the role the ratified row had
+    named all along. Catalog row, adapter and egress host are all gone, so again there is
+    nothing of that kind left to refuse; it was not moved into ``VINTAGE_BACKFILLABLE_KINDS``.
+
     WHAT THIS TEST NO LONGER COVERS, SO THE GAP IS NOT SILENT. ``yahoo`` has left this set,
     and its 51 ``adjclose`` rows are refused by a DIFFERENT mechanism at a different place —
     they are a backfillable KIND with an unbackfillable COLUMN, so they reach the label
@@ -845,7 +851,7 @@ def test_an_undeclared_kind_raises_before_a_single_date_is_touched(store, monkey
     """
     _no_adapter_may_be_built(monkeypatch)
     others = [ing for ing in INGREDIENTS if ing.kind not in VINTAGE_BACKFILLABLE_KINDS]
-    assert {ing.kind for ing in others} == {"multpl", "lbma", "hermes"}
+    assert {ing.kind for ing in others} == {"multpl", "hermes"}
 
     for ing in others:
         with pytest.raises(ValueError, match="point-in-time backfill is declared only for"):

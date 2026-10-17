@@ -413,8 +413,11 @@ services:
         condition: service_healthy
     x-uid: 10001
     x-egress:
-      # ALLOWLIST. Five public data hosts, each registered in deploy/egress-destinations.yaml
-      # and each the feed a Matt-ratified mapping row already declares (WO-1.2b; LBMA added WO-1.6). The
+      # ALLOWLIST. Four public data hosts, each registered in deploy/egress-destinations.yaml
+      # and each the feed a Matt-ratified mapping row already declares (WO-1.2b; LBMA was added at
+      # WO-1.6 and REMOVED at WO-1.20 with the ingredient and adapter that were its only caller —
+      # the fix answered HTTP 403 to this host for its whole life and gold_real_rate_cross's gold
+      # leg is now COMEX futures on query1.finance.yahoo.com, a host already allowlisted here). The
       # authority is the ratified mapping (2026-08-24), not an engineering choice of
       # ingredient: no host is here that a mapping row does not name.
       policy: ALLOWLIST
@@ -423,7 +426,6 @@ services:
         - cdn-api.cboe.com
         - query1.finance.yahoo.com
         - www.multpl.com
-        - prices.lbma.org.uk
       pending: []
       enforced_by:
         - "attached only to cd-net-private, which is internal: true — so the effective egress in WO-2 is none"

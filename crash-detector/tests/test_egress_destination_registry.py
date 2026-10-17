@@ -105,14 +105,21 @@ def test_the_destinations_field_is_a_list(registry: dict):
     assert isinstance(registry.get("destinations"), list)
 
 
-# --- WO-1.2b registers exactly the ratified data hosts (five since WO-1.6) ------------------------------ #
+# --- WO-1.2b registers exactly the ratified data hosts (four since WO-1.20) ----------------------------- #
+#
+# WO-1.20 DEREGISTERED ``DEST-LBMA-001``. It was registered at WO-1.6 for the LBMA daily gold
+# fix, whose edge answered HTTP 403 to this host for the whole of its life; the ingredient and
+# the adapter that were its only caller are retired, and ``gold_real_rate_cross``'s gold leg is
+# now the COMEX front-month close under ``DEST-YAHOO-001`` — a host already registered, so the
+# replacement adds NO destination and removes one. A registry entry for a host nothing can call
+# is an egress permission standing open for no caller, which is why this is a deletion and not
+# a note left beside a still-listed row.
 
 RATIFIED_DESTINATIONS = {
     "fred.stlouisfed.org": "DEST-FRED-001",
     "cdn-api.cboe.com": "DEST-CBOE-001",
     "query1.finance.yahoo.com": "DEST-YAHOO-001",
     "www.multpl.com": "DEST-MULTPL-001",
-    "prices.lbma.org.uk": "DEST-LBMA-001",
 }
 
 

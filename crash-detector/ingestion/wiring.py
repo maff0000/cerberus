@@ -95,7 +95,10 @@ DERIVED_FROM: dict = {
     "buffett_indicator": ("fred.NCBEILQ027S", "fred.GDP"),
     "monetisation_flag": ("fred.WALCL", "fred.CPILFESL"),   # WO-1.19 rename; was fiscal_dominance
     # WO-1.7 (gold_real_rate_cross and ism_manufacturing are SUBSTITUTED_FEEDS):
-    "gold_real_rate_cross": ("lbma.gold_fix_usd.history", "fred.DFII10.history"),
+    # WO-1.20: the gold role moves to COMEX gold futures (Owner-confirmed 2026-10-17); the 403ing LBMA fix
+    # is retired. ROLE ORDER IS LOAD-BEARING and unchanged — DERIVATIONS' roles are ("gold", "real_rate"),
+    # so the gold leg stays FIRST. The derivation itself is role-based and source-agnostic: no engine change.
+    "gold_real_rate_cross": ("yahoo.GC=F.history", "fred.DFII10.history"),
     "ism_manufacturing": ("fred.GACDFSA066MSFRBPHI", "fred.GACDISA066MSFRBNY", "fred.BACTSAMFRBDAL"),
     # WO-1.19: sloos' second leg was manual.sloos_ndfi; it is now the small-firm cut of the same FRED survey question.
     "sloos_bank_lending": ("fred.DRTSCILM", "fred.DRTSCIS"),
