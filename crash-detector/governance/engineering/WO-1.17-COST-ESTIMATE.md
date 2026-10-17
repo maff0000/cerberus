@@ -30,10 +30,18 @@ two of them are not about cost at all. Read them before the numbers.
    below reads on the assumption that it is still open; §3.1 carries the same note with the
    numbers. Whether this item is struck through or restated as RESOLVED is a later round's call,
    together with §6's arithmetic.
-3. **A dated backfill carries no `history` array** (§8.3), so the four COMPONENT ingredients
-   whose dials need history (`fred.DFII10.history` 2600 levels, `yahoo.^GSPC` 260, `fred.WALCL`
-   70, `fred.CPILFESL` 8) would be backfilled value-only. Whether R2D2's replay can run at all
-   on that is a question this estimate cannot answer and does not.
+3. **A dated backfill carries no `history` array** (§8), so the **seven** COMPONENT ingredients
+   whose dials need history (`fred.WALCL` 70, `fred.CPILFESL` 8, `fred.GACDFSA066MSFRBPHI` 1000,
+   `fred.GACDISA066MSFRBNY` 1000, `fred.BACTSAMFRBDAL` 1000, `fred.DFII10.history` 2600,
+   `yahoo.^GSPC` 260 — not the four originally named here; the three regional-Fed survey rows
+   behind `ism_manufacturing` were missed on first count and are corrected in §8.1) would be
+   backfilled value-only, across four indicators. §8.2 found this is BUILDABLE at zero extra
+   GETs, not attempted in this WO's scope. §8.3 answers the "can R2D2's replay run on that"
+   question §0 originally declined: necessary but not sufficient for `monetisation_flag` and
+   `ism_manufacturing` (both carry an independent floor of their own, in the sources and in
+   `wiring.py`), sufficient for `spx_vs_200dma`, and irrelevant on its own to
+   `gold_real_rate_cross` (its other leg, `lbma.gold_fix_usd.history`, has no backfill route at
+   all — §9's scope question, not §8's).
 
 **Headline cost, for the shape as specified:** 190,052 GETs over 50,459 fetches,
 ≈36 h sequential at a 0.5 s/GET assumption. **Tractable — not the "weeks" PID.md feared.**
@@ -864,3 +872,221 @@ instruments of three different kinds, an ETF, an index and a futures contract, a
 is why the behaviour is read as the endpoint's rather than any symbol's. The avoidance does not
 depend on it either way: `yahoo_observation_dates` never issues a `range` request for any of the 7,
 so a symbol that honoured `max` properly would change nothing about what the reader does.
+
+## 8. §0 finding 3: a dated backfill carries no `history` array — **7 rows, not 4** — and the fix is smaller than the finding
+
+**Verdict first, in three parts.**
+
+**(a) The gap is REAL and STRUCTURAL.** Every dated parser in `ingestion/adapters.py` can return
+at most the ONE named observation; none of them has a code path that could construct a `history`
+key, and `ing.history` is *passed* to the dated adapters and then discarded by the parser they
+dispatch to. It is not a missed parameter.
+
+**(b) §0's COUNT WAS WRONG and is corrected here. The population is SEVEN catalog rows, not four**
+— §0 named `fred.DFII10.history`, `yahoo.^GSPC`, `fred.WALCL` and `fred.CPILFESL` and missed the
+three regional-Fed surveys behind `ism_manufacturing` entirely. **FOUR INDICATORS** are affected,
+which is probably where the four came from.
+
+**(c) The fix is buildable, and this was found while writing this section rather than known in
+advance.** §0 said whether a replay can run on a value-only store "is a question this estimate
+cannot answer and does not". Part of it can now be answered: carrying `history` for all seven rows
+is **not new infrastructure**. It is *widen the window the dated fetch already asks for, and keep
+the trailing N rows instead of only the keyed one* — two functions this WO already built and
+proved, at **zero extra GETs on all seven rows**. What it is NOT is sufficient: on two of the four
+indicators a SECOND, INDEPENDENT floor stops the replay anyway, and one of those cannot be moved by
+any backfill at all (§8.3). **Nothing here is authorised, and no figure in §6 changes.**
+
+### 8.1 The gap, stated precisely, and the population counted
+
+**The seven rows.** Counted this round the way §5 counts: `history > 0` over
+`ingestion.catalog.INGREDIENTS`, intersected with §5's 35-row backfillable population by asking the
+routing predicates themselves (`requires_original_vintage`, `has_no_revision_mechanism`) rather than
+by reading §5's lists back.
+
+| row | route | `history` | `completes` | `serves` | what the derivation needs the window FOR |
+|---|---|---:|---|---|---|
+| `fred.WALCL` | 4.1 bisected | **70** | COMPONENT | `monetisation_flag` | a RATE OF CHANGE, not a level: the latest level against the last level on or before 365 days earlier (`FISCAL_BALANCE_SHEET_LOOKBACK_DAYS`, `derivations.py:77`) |
+| `fred.CPILFESL` | 4.1 bisected | **8** | COMPONENT | `monetisation_flag` | the level dated **exactly** 3 calendar months before the latest one, month-start (`FISCAL_CORE_CPI_MONTHS`, `:78`); a missing month is refused, never bridged |
+| `fred.GACDFSA066MSFRBPHI` | 4.1 bisected | **1000** | COMPONENT | `ism_manufacturing` | its OWN full published history, to z-score the latest point against (mean and population σ over every stored row) |
+| `fred.GACDISA066MSFRBNY` | 4.1 bisected | **1000** | COMPONENT | `ism_manufacturing` | same, independently per survey |
+| `fred.BACTSAMFRBDAL` | 4.1 bisected | **1000** | COMPONENT | `ism_manufacturing` | same, independently per survey |
+| `fred.DFII10.history` | 4.2 measured-stable | **2600** | COMPONENT | `gold_real_rate_cross` | ~2600 daily LEVELS: a 60-change rolling Pearson correlation, percentiled within every earlier rolling correlation the history yields |
+| `yahoo.^GSPC` | 4.4 Yahoo plain-close | **260** | COMPONENT | `spx_vs_200dma` | 200 trailing closes ENDING at the reading's own date, to average |
+
+**7 rows across 3 of the 4 routes; route 4.3 (CBOE) has none.** Out of scope and deliberately not
+counted, by §4.4/§5.4 and whatever §9 formalises: the **51** `yahoo`/`adjclose` rows (history 520 /
+210), `lbma.gold_fix_usd.history` (2600) and `multpl.shiller_pe_table` (2400). **7 + 53 = 60**, the
+whole of `history > 0` in the catalog, so the in-scope and out-of-scope halves account for it.
+
+**All seven are `completes == "COMPONENT"`**, which is what §0's wording claimed and is confirmed
+here, and **all seven have `transformation is None`**. That second fact closes a question §8.2 would
+otherwise have to answer: the three transformed FRED rows (`M2SL.pc1`, `CPIAUCSL.pc1`,
+`PCEPILFE.pc1`) all carry `history=0` and `completes == "DIRECT"`, so a `pc1` series' base period
+never enters this list and the fix below does not have to generalise across a server-side
+transformation. It is **not** asserted that it would.
+
+**The derivations, read rather than taken from the GUI's "why" text.** `ingestion/wiring.py:92-99`
+binds the roles and `src/crash_detector/engine/derivations.py` computes them. Four corrections to
+how this is usually described, each from the code:
+
+* **`monetisation_flag` and `fiscal_dominance` are ONE indicator, not two.** The row was renamed in
+  WO-1.19; `DerivationKind.FISCAL_CONJUNCTION`'s *value* deliberately did not move, because it
+  reaches the store as the indicator's `adapter_id` (`derivations.py:169-173`). The catalog's
+  `serves` for both rows says `monetisation_flag` and nothing else.
+* **The two `monetisation_flag` legs need DIFFERENT things from their windows.** WALCL's leg is a
+  365-day reach-back and takes whatever level sits on or before the cutoff (`derivations.py:313-317`);
+  CPILFESL's leg demands a level at an **exact** month-start key 3 months back and refuses if that
+  month is absent (`:324-329`). A slice that merely reaches far enough satisfies the first and can
+  still fail the second.
+* **`ism_manufacturing` z-scores each survey against its own full stored history**, not against a
+  shared window, and each survey independently needs `MINIMUM_SURVEY_HISTORY = 120` monthly points
+  (`derivations.py:86`, `:393-412`). The live GUI's "why" text says the same thing; it is confirmed
+  here against `_z_composite` rather than trusted.
+* **`spx_vs_200dma` requires the history to END at the reading's own date** and the reading's value
+  to BE that last close (`derivations.py:264-271`) — three refusals, not one. A trailing window
+  anchored anywhere else is rejected even if it is 200 rows long.
+
+**The structural proof, with lines.** `ingestion/backfill_adapters.py` already says it in its own
+docstring — *"`ing.history` is not carried by a dated fetch — a one-day window has no history in
+it"* (`:79`) and *"`ing.history` is passed for the same reason the FRED branch passes it and with
+the same effect: a dated read is one bar, so there is no history in it to carry"* (`:221`) — and the
+code around `build_backfill_adapter` confirms it is structural rather than an omission:
+
+1. **The parameter arrives.** `backfill_adapters.py:208` passes `ing.history` to `FredAdapter`;
+   `:222` passes it to `YahooChartAdapter`. Nothing withholds it.
+2. **The dated branch then dispatches to a parser that has no such parameter.**
+   `adapters.py:1147-1148` — `parse_fred_csv(body, column, unit, self._history)` when
+   `observation_date is None`, and `parse_fred_csv_for_date(body, column, unit, observation_date)`
+   when it is set. The second function's signature takes no `history` at all. `adapters.py:1577-1578`
+   is the identical pair for Yahoo; `:1441` is CBOE's dated parser, which has no history rows anyway.
+3. **Neither dated parser can construct the key.** `parse_fred_csv_for_date` returns one of
+   `{"unit"}`, `{"unit", "observation_date", "value"}` or `{"malformed": …}` and nothing else
+   (`adapters.py:440-456`); `parse_alfred_csv` returns the same three plus `vintage_date`
+   (`:377-394`). The only four places in the file that build a `history` array are
+   `adapters.py:228`, `:698`, `:811` and `:869` — `parse_fred_csv`, `parse_yahoo_chart`,
+   `parse_multpl_table` and `parse_lbma_gold`, every one of them an UNDATED latest-row parser.
+4. **And both dated parsers say so in their own docstrings**, with the reason: *"NO `history`. A
+   windowed request asks for one day, so there is no history in the body to carry, and a payload
+   that mixed one day's window with a history read out of some other body would be two different
+   questions under one key"* (`adapters.py:436-439`), naming `fred.DFII10.history` explicitly.
+
+**So the gap is this.** A store built by this WO's execution would hold a real, correctly-dated,
+point-in-time VALUE for each of these seven rows at every recovered date — and the ENGINE could not
+turn any of them into a number. `_history_of` raises `DerivationUnavailable("… stored reading
+carries no raw history")` (`derivations.py:239-241`) before any arithmetic happens, so
+`monetisation_flag`, `ism_manufacturing`, `gold_real_rate_cross` and `spx_vs_200dma` would each read
+as having **no usable input** at every backfilled historical date, while the raw observation sits in
+the store beside them. That is an absence, not a wrong number — `derive` emits no observation and
+the dial sees nothing (CD-AC-001) — which is the right failure direction and still a replay that
+cannot exercise four of its indicators.
+
+### 8.2 Is this unsolvable, or just not attempted here? — BUILDABLE, and the obvious version of the fix is wrong on five of the seven rows
+
+**The shape of the fix, stated once: keep the VALUES as well as the dates, and slice to the N
+trailing rows at or before date D.** Both halves already exist in this WO's own code.
+
+**The values are already in hand and thrown away.** `ingestion/backfill_calendar.py:178` is
+`if cells[1] in MISSING_VALUE_TOKENS: continue` — `cells[1]` *is* the FRED value column, read only
+to test it for `.` and then dropped; `:445` is `if close is None:` doing exactly the same to Yahoo's
+close. Neither reader would fetch a byte more to keep them. And the array-building half is not new
+either: `parse_fred_csv` (`adapters.py:218-229`) already walks the body in reverse, stops at
+`max(history, 1)` rows and emits `[[date, value], …]` oldest-first — the exact shape `_history_of`
+validates. The extension is to anchor that walk at a **keyed** row instead of at the body's last
+row.
+
+**But the obvious source for those values is the WRONG one for five of the seven rows, and that is
+the real finding of this subsection.** The tempting version is: `fred_observation_dates` already
+issues ONE **undated** whole-body GET per FRED row (`backfill_calendar.py:238` →
+`fred_graph_url(ing.ref, ing.transformation)`, undated on purpose, for the reason the docstring
+gives), and that body carries every historical value, not just every date. True — and for
+`fred.WALCL`, `fred.CPILFESL` and the three surveys those values are **TODAY'S RESTATED FIGURES**.
+Hanging a today-restated history behind an original-vintage point value would put two different
+vintages under one key: §0.1 and the WO-1.14 forgery class arriving through a third door. So for
+route 4.1 the undated body is **refused as the source**, and the right one is the vintage body
+itself:
+
+| route | rows | where the trailing window comes from | extra GETs |
+|---|---:|---|---:|
+| **4.1** bisected | 5 | `AlfredVintageAdapter._url_for` already pins `cosd=D&coed=D` (`adapters.py:1293`). Widen `cosd` to D − N observations. The history then comes from **the same vintage body the value came from** — the point-in-time-correct history, which the undated body could not give. | **0** |
+| **4.2** measured-stable | 1 (`fred.DFII10.history`) | `fred_graph_url` already takes `observation_date` and emits `cosd=D&coed=D` (`adapters.py:274-276`); widen `cosd`. The undated whole-body read is ALSO legitimate here, and only here, because `REVISION_STABLE` membership *is* the measured claim that today's body carries the figure a collector would have seen. | **0** |
+| **4.4** Yahoo plain-close | 1 (`yahoo.^GSPC`) | `yahoo_chart_url(symbol, start=…, end=…)` (`adapters.py:591`) — the absolute `period1`/`period2` window §7.3 measured to **24,815 daily bars at `dataGranularity == "1d"` back to 1927-12-30 in one 2.65 MB response**. A window ending at D and spanning 260 trading days back is a trivial case of a request already proved at 95× that depth. | **0** |
+
+**Why zero extra GETs on all three routes, which is the load-bearing claim.** Nothing above adds a
+request; each one *widens a window on a request already being issued*. On route 4.1 the bisection's
+GET count is `2 + ceil(log2(days))` and is a function of the observation date and the clock only —
+no series identity and no window width enters `_acquire` (`adapters.py:1303-1370`) — and widening
+cannot disturb the search, because `parse_alfred_csv` decides `_SERVED` vs `_ABSENT` by **exact-date
+match** and is explicitly written to be immune to a body carrying a span nobody asked for
+(`:373-376`). The bodies grow: a survey's whole vintage body is ~700 rows, ~14 KB, against
+`MAX_BODY_BYTES` of 4,000,000. (A cheaper-bytes variant — widen only the FINAL confirmed probe —
+costs **+1 GET per date** instead; it is noted so the choice is visible, not recommended.) So the
+only new cost is **CPU-side slicing, not network**, and §6's 70,196/190,052 GET figures stand
+unchanged either way.
+
+**Does it generalise cleanly across the seven?** Checked rather than assumed, and it does — with one
+honest qualifier and one inherited problem:
+
+* **All seven have `transformation is None`** (§8.1), so no `pc1` base period, no server-side
+  transform to re-derive. The fix is **not** claimed to generalise to "any FRED row"; it is claimed
+  for these seven, and the rows that would complicate it are measurably not among them.
+* **One qualifier:** `CPILFESL`'s leg needs an **exact** month-start key 3 months back, so the
+  slice must be taken over OBSERVATION dates and not over "the last 8 rows of whatever came back".
+  With `history=8` monthly rows ending at D the required row is the fourth from the end — present
+  by construction, and only by construction.
+* **One inherited problem, declared:** a trailing window sliced out of an ALFRED vintage is
+  point-in-time correct **exactly to the extent that vintage is a genuine first publication**. Where
+  §7.1's restatement band applies, the history would be a restatement history behind a restatement
+  value. §8's fix neither worsens nor repairs §7.1 — it inherits it unchanged, which is the honest
+  position and not a defence.
+
+**So: a real, buildable path, found while writing this section.** It was not reached in advance and
+§0 item 3 did not forecast it; §0 forecast only the gap.
+
+### 8.3 What it means — the fix is NECESSARY and on two indicators NOT SUFFICIENT
+
+The fix would make four indicators *computable in principle*. Whether each can actually produce a
+number at a backfilled date is a different question, and it is decided by floors that live in the
+SOURCES and in `wiring.py`, not in the backfill. Measured against §2's eight episode windows, using
+`evidence/wo114_alfred_probe.json`'s per-series observation spans (probed 2026-10-13/16, the same
+file §7.1 reads):
+
+| indicator | rows | the binding floor, and where it comes from | episodes it could compute in |
+|---|---|---|---:|
+| `spx_vs_200dma` | `yahoo.^GSPC` | none. 200 trailing closes ending at D; §7.3 measured daily bars to 1927-12-30, and the plan's oldest date is 1999-11-02. | **8 of 8** |
+| `monetisation_flag` | `WALCL`, `CPILFESL` | **WALCL's own first observation is 2002-12-18**, and its leg must reach 365 days further back → **earliest computable D ≈ 2003-12-18**. CPILFESL reaches 1957-01-01 and is one of §7.1's five clean rows (113 FIRST-PUB, 0 restatement, 0 EMPTY). | **7 of 8** (2000-02 dot-com out) |
+| `ism_manufacturing` | the 3 surveys | **`MINIMUM_SURVEY_HISTORY = 120` per survey against `BACTSAMFRBDAL`'s first observation 2004-06-01 → the composite is floored at 2014-05-01.** (PHI 1968-05-01 → 1978-04-01; NY 2001-07-01 → 2011-06-01; Dallas binds.) Independently, §7.1 already refuses or empties all three surveys' VALUES across the first three episodes. | **5 of 8** (2015-16 onward) |
+| `gold_real_rate_cross` | `fred.DFII10.history` | **not a history problem at all.** Its *gold* leg is `lbma.gold_fix_usd.history` (`wiring.py:98`), `kind == "lbma"`, and `VINTAGE_BACKFILLABLE_KINDS = ("fred", "cboe", "yahoo")` (`backfill_adapters.py:176`) — `build_backfill_adapter` **raises** on it. One of two legs cannot be backfilled at any date by any route in this plan. | **0 of 8** |
+
+**Read, in order:**
+
+1. **Carrying `history` is necessary for all four and sufficient for only two.** `spx_vs_200dma`
+   becomes fully available; `monetisation_flag` becomes available wherever WALCL itself exists.
+2. **`ism_manufacturing`'s floor is in the publisher and no mechanism moves it.** The Dallas survey
+   did not exist before 2004-06-01 and a 120-point z-score distribution cannot be assembled from
+   observations that were never published. The three earliest episodes — dot-com, GFC, 2011, the
+   three a crash replay most wants — are impossible for this indicator on two independent grounds,
+   and the history gap is the lesser of them.
+3. **Fixing `fred.DFII10.history` buys `gold_real_rate_cross` NOTHING on its own**, and this is the
+   one place §8's fix is not merely insufficient but irrelevant: the indicator needs 421 shared
+   dates across two legs (`CORRELATION_WINDOW` 60 + `MINIMUM_PERCENTILE_HISTORY` 360 + 1) and one
+   leg has no backfill route. Whether `lbma` should become backfillable is §9's scope question, not
+   §8's.
+4. **No number in this document moves.** No GET-count change, because the reads that would serve the
+   history are the SAME undated/dated reads already costed — §3.1's 24 FRED + 3 CBOE + 7 Yahoo
+   calendar GETs and §6's per-date grid are untouched. The only new cost is CPU-side slicing.
+
+**The recommendation, plainly.** A `history`-carrying backfill for these seven rows is **not a
+separate, harder problem requiring new infrastructure** — it is a small extension of functions this
+WO already built and proved, at no network cost, and the correctness trap in it (route 4.1's history
+must come from the vintage body, never from the undated one) is now identified rather than left for
+whoever builds it to discover. It was **not attempted in this WO's scope and is not estimated
+here**. Whether to build it is a scope decision for whoever picks up the real backfill execution
+next, together with §9's exclusions — **this estimate does not authorise it**, and §0's three
+findings remain the things to read before authorising anything.
+
+**Not claimed here.** That a replay with `history` carried would produce *correct* indicator
+readings: §7.1's restatement band is inherited unchanged (§8.2), and nothing here measures whether a
+recovered figure moves a DECISION-RULE threshold. That the fix generalises beyond these seven rows —
+the three transformed FRED rows and the 53 out-of-scope `history > 0` rows are untested by it. And
+that the per-episode column above is a schedule: it is an arithmetic floor on what could compute,
+not a prediction that it would.
