@@ -695,3 +695,172 @@ this section's change, and the first two match §6.5's own +37 and §6.3's own +
 rows is NOT asserted: `evidence/wo114_alfred_probe.json` measured `differing` per series at other
 vintage pairs, and whether a 1999 observation's 2013 restatement moves a DECISION-RULE threshold is
 a separate question from whether the row may claim it was first published. §7.1 is about the claim.
+
+### 7.2 CBOE's missing-value convention, MEASURED rather than inherited — and unlike §7.1 it is closed, with no number to revise
+
+**Verdict first: there is no gap here. The convention `ingestion/adapters.py` has asserted since
+WO-1.16 — CBOE publishes no missing-data marker, so a non-session is an ABSENT ROW and never a
+blank cell — is now attested across all three catalog bodies whole rather than across the one
+month the adapter docstring cites. `CBOE_MISSING_VALUE_TOKENS = ("",)` is a guard for a body that
+MIGHT one day carry a blank, not a condition ever observed. Nothing in §3.1, §4.3 or §6 changes.**
+
+§7.2 and §7.3 are **not** §0's findings 2 and 3 — those are still unwritten, and §7's preamble
+stands as the record of the round that wrote §7.1. These two come from elsewhere: they are what
+this WO's CBOE and Yahoo date-list rounds turned up while building the §3.1 readers, and they are
+recorded here for §6.6's reason — the finding belongs in the document whether or not it moves a
+figure in it. Both of these do not, and say so below rather than leaving the question open.
+
+**The measurement.** Building `cboe_body_dates` / `cboe_observation_dates`
+(`ingestion/backfill_calendar.py:257`, `:321`) required all three CBOE history bodies to be fetched
+whole, for real, on 2026-10-16 — not a fixture, not a month's excerpt. Read across every row of
+every column:
+
+| body | header | span | rows | empty cells | unreadable dates | duplicate dates | short rows |
+|---|---|---|---:|---:|---:|---:|---:|
+| `SKEW_History.csv` | `DATE,SKEW` | 1990-01-02 → | 9,249 | **0** | **0** | **0** | **0** |
+| `VIX_History.csv` | `DATE,OPEN,HIGH,LOW,CLOSE` | 1990-01-02 → | 9,295 | **0** | **0** | **0** | **0** |
+| `VIX3M_History.csv` | `DATE,OPEN,HIGH,LOW,CLOSE` | 2009-09-18 → | 4,295 | **0** | **0** | **0** | **0** |
+| **Total** | | | **22,839** | **0** | **0** | **0** | **0** |
+
+Every one of the 22,839 rows carries a figure in EVERY column. The four zero columns are the four
+`ValueError`/`continue` branches `cboe_body_dates` carries (`backfill_calendar.py:300-316`), and
+none of them fired on a real row.
+
+**What this confirms, and what it adds to what was already written.** `parse_cboe_csv_for_date`'s
+docstring (`ingestion/adapters.py:548-553`) already stated the rule — *"CBOE publishes no
+missing-data marker: every row of every probed body carries a figure in every column and
+non-sessions are simply ABSENT"* — but the evidence it names for it is
+`rows_for_month_verbatim` for **2015-06**, a single month, on which it observes that the 06/06 and
+06/07 weekend rows are absent. That is enough to show the absent-row mechanism; it is not enough to
+show the archive never blanks a cell. The measurement above is every row of all three archives —
+1990-01-02 onward for SKEW and VIX, 2009-09-18 for VIX3M, which is the whole of each — and it says
+the same thing. So `backfill_calendar.py` **confirms** its sibling's assertion
+on its own evidence rather than inheriting it, which is the standard §1 sets for every constant in
+this document.
+
+**The consequence for the guard, stated plainly.** The `continue` at `backfill_calendar.py:305` is
+**unreachable on every row of every body measured**, and that is deliberate rather than an
+oversight: the comment at `:249-253` and the test
+`test_cboe_publishes_no_blank_cell_today_and_the_guard_is_kept_anyway`
+(`tests/test_wo117_calendar.py:495`) both keep it for exactly the reason
+`parse_cboe_csv_for_date` keeps its identical one — if a body one day does carry a blank, that date
+must be ABSENT from the list rather than handed to the backfill as a recoverable publication date.
+The guard's one-token length is a measured claim in the same breath: FRED's `.` is **not** in it
+(`test_fred_s_dot_is_not_a_cboe_missing_marker_and_is_a_publication`), because importing FRED's
+convention into a body that has never used it would silently drop a real session.
+
+**Why the convention matters to the date list at all.** It is precisely *because* CBOE has no
+marker that the ABSENT ROW is the only signal of a non-session, and therefore that §3's table can
+record `✗ no generator — must be read off a body` for the NYSE trading calendar without
+qualification. There is no cell to inspect, no token to count: the body's row set **is** the
+calendar. Had the measurement found even one blank cell, §3's three CBOE rows would have needed a
+rule for distinguishing "session with no print" from "no session", and the 3-GET prerequisite would
+have become a 3-GET read plus a convention to settle. It did not.
+
+**And it costs nothing, which is the point of recording it here.** The per-date cost (§4.3: 1 GET
+per date per index, inherited `_BaseAdapter._acquire`, confirmed) and the calendar-build cost
+(§3.1: 3 GETs, one per index) were both already costed correctly, and neither moves. §7.2 is a
+confirmation of the BODY's shape, not a correction to a number — a **closed, no-revision finding**,
+where §7.1 is an open one whose figures §6 had to absorb.
+
+One sentence on the cost concern §4.3 *did* raise, so it is not read as applying here: the ≈3 GB of
+transfer to extract CBOE's rows comes entirely from the cacheless per-date loop re-downloading the
+whole history body on each of the route's dated fetches (§6.5 reconciles that figure to **7,548**),
+and the calendar-build step is **not** subject to it — it is 3 whole-body reads done ONCE each,
+one GET per row against route 4.3's 2,516 per row, which is four hundredths of one percent of the
+route and vanishing next to the thing §4.3 points at §7.4 to fix.
+
+(A reconciliation, since two different read dates of growing bodies appear in this document:
+`evidence/wo116_cboe_probe.json` measured 9,294 / 9,248 / 4,294 at 2026-10-14 — the 9,294 §3.1
+quotes — against 9,295 / 9,249 / 4,295 here at 2026-10-16. **Exactly +1 on each of the three**,
+which is what three bodies sharing one trading calendar and gaining a row per published session
+should do between two read dates, and a small cross-check that all three were read off the same
+calendar. Nothing in §3.1's 3-GET figure or in §6's grid turns on which read is cited.)
+
+### 7.3 Yahoo: the trap in the obvious deep-history request — found, measured, and avoided before it cost anything
+
+**Verdict first: `range=max&interval=1d` — the first request any reader of this endpoint reaches
+for, and a valid one by the server's own account — returns a COARSENED body with `interval=1d`
+silently ignored, and a date list built from it would have been month-start or quarter-start dates
+wearing the costume of a daily publication calendar. The absolute `period1`/`period2` window, which
+is what `yahoo_observation_dates` actually uses, keeps `dataGranularity == "1d"` at every depth
+measured. The risk was to CORRECTNESS and it is now closed; §4.4's and §6's cost model do not
+change.**
+
+**The measurement** (`evidence/wo117_yahoo_range_probe.json`, probed 2026-10-16 against
+`query1.finance.yahoo.com/v8/finance/chart/`, every absolute window pinned to a fixed
+`window_end = 2026-10-15` so a re-run reproduces the counts rather than drifting a bar a day). The
+deep ask was settled rather than assumed because the live loop's `range=10d` / `2y` reaches nowhere
+near a backfill episode in 2000, so *some* deep request had to be chosen:
+
+| request | HTTP | `meta.range` echo | `dataGranularity` | bars | oldest date |
+|---|---:|---|---|---:|---|
+| `SPY?range=max&interval=1d` | 200 | `"max"` | **`"1mo"`** | 406 | 1993-02-01 |
+| `SPY?range=max` (no `interval`) | 200 | `"max"` | `"1mo"` | 406 | 1993-02-01 |
+| `^GSPC?range=max&interval=1d` | 200 | `"max"` | **`"3mo"`** | 169 | 1984-12-01 |
+| `HG=F?range=max&interval=1d` | 200 | `"max"` | **`"1mo"`** | 269 | 2000-09-01 |
+| `SPY?range=1y&interval=1d` | 200 | `"1y"` | `"1d"` | 252 | 2025-10-16 |
+| `SPY?range=5y&interval=1d` | 200 | `"5y"` | `"1d"` | 1,255 | 2021-10-18 |
+| `SPY?range=10y&interval=1d` | 200 | `"10y"` | `"1d"` | 2,514 | 2016-10-17 |
+| `SPY?period1=…&period2=…&interval=1d` (whole listed life) | 200 | — | **`"1d"`** | **8,486** | 1993-01-29 |
+| `^GSPC?period1=…&period2=…&interval=1d` (1927 → window end) | 200 | — | **`"1d"`** | **24,815** | **1927-12-30** |
+| `^GSPC?period1=…&period2=…&interval=1d` (2000 → window end) | 200 | — | `"1d"` | 6,737 | 2000-01-03 |
+
+**Read, in order:**
+
+1. **`max` is honoured, not rejected — which is what makes it dangerous.** The server echoes
+   `meta.range == "max"` and lists `"max"` in every symbol's own `meta.validRanges`. There is no
+   `400`, no `chart.error`, no warning field. `interval=1d` is accepted into the URL and then
+   discarded: the `range=max` rows with and without `interval` are the same 406 bars at the same
+   `"1mo"`. A caller gets an ordinary `200` carrying a well-formed chart body.
+2. **The coarsening is per-symbol and not announced anywhere but `dataGranularity`.** `SPY` and
+   `HG=F` came back monthly; `^GSPC` came back **quarterly**. Nothing in the request distinguishes
+   them, so a reader that worked by inspection on one symbol would silently change meaning on
+   another.
+3. **It is also SHALLOWER than the absolute window, which the obvious reading of "max" would deny.**
+   `^GSPC?range=max` starts **1984-12-01**; the same symbol's absolute window reaches its real first
+   bar at **1927-12-30**, 57 years deeper. Even `SPY`, where the depth is nearly right, starts
+   1993-02-01 against a `meta.firstTradeDate` of 1993-01-29 — the stub of the first month, dropped
+   to the month boundary. So `max` is neither the maximum depth nor the asked-for granularity.
+4. **What a date list off that body would have been.** 406 month-start dates for `SPY`, 169
+   quarter-start dates for `^GSPC` — handed to `backfill_range` as the symbol's publication
+   calendar. Every one of them is a date the symbol did **not** necessarily print on, and the
+   ~8,000 and ~24,600 dates it *did* print on would never be mentioned. That is the exact failure
+   `ingestion/backfill_calendar.py`'s module docstring and §3 are written against: not a refusal,
+   not an EMPTY, but **a hole nothing downstream ever reports**, arriving as a `200` nobody would
+   think to question. It is the one shape a date-list reader cannot be allowed to produce, because
+   every check after it is a check on dates it was handed.
+5. **The window is clean at every depth that matters, and the ceiling has room.** The deepest ask
+   any of the 7 plain-close rows can make — `^GSPC` across 1927-12-30..2026-10-15 — came back as
+   **24,815 daily bars at `dataGranularity == "1d"` in ONE response of ≈2.65 MB**, which is 66% of
+   `MAX_BODY_BYTES` (4,000,000). So no chunked walk, no seam to get wrong, and a body that exceeded
+   the ceiling would raise `BODY_TOO_LARGE` in `http_get` and FAIL the calendar read rather than
+   return a truncated list — the correct direction for this module. The coarsening is specific to
+   `max`: `1y`, `5y` and `10y` all held `"1d"`.
+
+**What this says about §3.1's own prediction, stated honestly.** §3.1's table named the right
+mechanism from the start — *"one `period1`/`period2` chart request per symbol spanning the
+windows; the session timestamps are the calendar"* — and `yahoo_observation_dates`
+(`backfill_calendar.py:461`), built on `yahoo_chart_url` (`adapters.py:591`), is that request
+unchanged. But §3.1 chose it for a plain reason (the windows are known, so ask for them) and **not
+because this trap was foreseen**; nothing in §3.1 or §4.4 as written anticipates that the obvious
+alternative returns a coarsened 200. The prediction was correct and its reasoning was lucky. This
+round is where the alternative was actually probed, where the trap was found, and where the
+mechanism was independently re-confirmed as the safe one — which is worth recording precisely
+because a later reader reaching for `range=max` as an "obvious simplification" of a 7-GET read
+would be undoing a decision that now has evidence behind it rather than a preference.
+
+**And it costs nothing.** `yahoo_observation_dates`'s production cost is **1 GET per row — 7 GETs
+for the whole calendar build**, exactly what §3.1 costed, and the per-date route cost (§4.4: 1 GET
+per date per symbol) is untouched. The 7 GETs are one per row against route 4.4's 2,516 per row,
+the same four-hundredths-of-a-percent §7.2 arrives at for CBOE and for the same reason — both
+routes are NYSE-days × rows, so a one-GET-per-row prerequisite is the same fraction of either. What
+was real and is now closed is a risk to the CORRECTNESS of a date list a future reader might build
+the obvious way, not a risk to any number in §6.
+
+**Not claimed here.** That the four symbols not probed (`SPY`, `^GSPC` and `HG=F` were; the
+remaining 4 of the 7 plain-close rows were not) coarsen identically is **not** asserted — three
+instruments of three different kinds, an ETF, an index and a futures contract, all coarsened, which
+is why the behaviour is read as the endpoint's rather than any symbol's. The avoidance does not
+depend on it either way: `yahoo_observation_dates` never issues a `range` request for any of the 7,
+so a symbol that honoured `max` properly would change nothing about what the reader does.
