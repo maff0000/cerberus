@@ -1,8 +1,8 @@
 """WO-1.17 the date-list readers: they READ a calendar they do not model, and refuse bodies.
 
-``ingestion.backfill_calendar`` closes the gap ``WO-1.17-COST-ESTIMATE.md`` §3 names — the 23
+``ingestion.backfill_calendar`` closes the gap ``WO-1.17-COST-ESTIMATE.md`` §3 names — the 24
 ``obs_date`` ingredient rows with no date source in the tree — one SOURCE at a time: the FRED
-half (13 rows), the CBOE half (3) and the YAHOO half (7 plain-close rows), which is all of it.
+half (14 rows), the CBOE half (3) and the YAHOO half (7 plain-close rows), which is all of it.
 The thing worth testing is not that it can filter a list; it is that the list comes off the
 BODY. So every test here hands it a crafted body through a fake transport, and the
 bodies carry the shapes a modelled calendar gets wrong: a Good Friday the exchange closes for
@@ -49,7 +49,7 @@ from ingestion.catalog import INGREDIENTS
 
 NOW = datetime(2026, 10, 16, 12, 0, tzinfo=timezone.utc)
 
-#: The 13 rows §3 counts as having no date source. Named here rather than filtered silently so
+#: The 14 rows §3 counts as having no date source. Named here rather than filtered silently so
 #: the population this round claims to cover is visible in the test file.
 FRED_OBS_DATE_ROWS = tuple(i.source_id for i in INGREDIENTS
                            if i.kind == "fred" and i.as_of_rule == "obs_date")
@@ -80,8 +80,8 @@ def _serves(body: str):
 
 
 def test_the_thirteen_fred_obs_date_rows_are_the_rows_with_no_other_date_source():
-    """§3's arithmetic, re-derived from the catalog: 13 rows no formula can answer for."""
-    assert len(FRED_OBS_DATE_ROWS) == 13
+    """§3's arithmetic, re-derived from the catalog: 14 rows no formula can answer for."""
+    assert len(FRED_OBS_DATE_ROWS) == 14
     for source_id in FRED_OBS_DATE_ROWS:
         with pytest.raises(ValueError):
             observation_dates(_ing(source_id), "2020-01-01", "2020-12-31")
@@ -133,7 +133,7 @@ def test_the_dated_mode_url_is_unmoved_too_and_the_calendar_never_asks_for_it():
     fred_observation_dates(_ing("fred.T5YIE"), "2015-06-01", "2015-06-30",
                            timeout_seconds=45.0, getter=getter)
     url, timeout, headers = getter.calls[0]
-    assert len(getter.calls) == 1, "the calendar is ONE GET per series (§3 costs it as 13)"
+    assert len(getter.calls) == 1, "the calendar is ONE GET per series (§3 costs it as 14)"
     assert "cosd" not in url and "coed" not in url and url == fred_graph_url("T5YIE")
     assert (timeout, headers) == (45.0, None)
 
@@ -637,7 +637,7 @@ def test_a_conforming_cboe_body_with_no_rows_is_empty_and_not_an_error():
 # YAHOO: the same discipline, a third body — and the one window a server really applies        #
 # =========================================================================================== #
 
-#: The 7 PLAIN-CLOSE yahoo rows, which complete §3's 23 (13 + 3 + 7). Named here rather than
+#: The 7 PLAIN-CLOSE yahoo rows, which complete §3's 24 (14 + 3 + 7). Named here rather than
 #: filtered silently, for the reason :data:`FRED_OBS_DATE_ROWS` and :data:`CBOE_ROWS` are — and
 #: filtered on ``column`` as well as ``kind``, because the catalog's other 51 ``yahoo`` rows ask
 #: for ``adjclose`` and ``yahoo_observation_dates`` refuses those by name.
@@ -758,7 +758,7 @@ _YAHOO_SPY_NO_BAR_AT_ALL = (
 
 def test_the_seven_yahoo_plain_close_rows_have_no_other_date_source_either():
     """All 7 are ``obs_date``, so the formula sibling refuses every one of them — and with the
-    13 and the 3 above they are the 23 rows §3 counts as having no date source in the tree.
+    14 and the 3 above they are the 24 rows §3 counts as having no date source in the tree.
     Re-derived from the catalog rather than asserted."""
     assert YAHOO_PLAIN_CLOSE_ROWS == ("yahoo.HYG", "yahoo.LQD", "yahoo.RSP", "yahoo.SPY",
                                       "yahoo.^GSPC", "yahoo.HG=F", "yahoo.GC=F")
@@ -766,7 +766,7 @@ def test_the_seven_yahoo_plain_close_rows_have_no_other_date_source_either():
         assert _ing(source_id).as_of_rule == "obs_date"
         with pytest.raises(ValueError):
             observation_dates(_ing(source_id), "2015-06-08", "2015-06-19")
-    assert (len(FRED_OBS_DATE_ROWS) + len(CBOE_ROWS) + len(YAHOO_PLAIN_CLOSE_ROWS)) == 23
+    assert (len(FRED_OBS_DATE_ROWS) + len(CBOE_ROWS) + len(YAHOO_PLAIN_CLOSE_ROWS)) == 24
 
 
 def test_the_yahoo_calendar_asks_the_same_urls_the_live_adapter_has_always_asked():

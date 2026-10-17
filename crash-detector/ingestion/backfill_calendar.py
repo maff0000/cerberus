@@ -3,14 +3,14 @@
 WO-1.17. ``ingestion.backfill.backfill_range`` takes an EXPLICIT list of observation dates and
 derives nothing — its docstring says a driver that guessed at a publication calendar "would be
 inventing the very dates whose values it then claims to have recovered". So somebody has to
-supply the list, and for 23 of the 34 backfillable ingredient rows nothing in the tree could:
+supply the list, and for 24 of the 35 backfillable ingredient rows nothing in the tree could:
 ``ingestion.backfill_dates.observation_dates`` answers for the 11 rows whose dating is
 arithmetic (``quarter_end``, ``month_end``) and refuses the rest out loud. This module is the
 "separate, later piece of work" that module's docstring forecast rather than an extension of
-it, and it closes that gap one SOURCE at a time: the 13 FRED ``obs_date`` rows
+it, and it closes that gap one SOURCE at a time: the 14 FRED ``obs_date`` rows
 (:func:`fred_observation_dates`), the 3 CBOE rows (:func:`cboe_observation_dates`) and the 7
 Yahoo PLAIN-CLOSE rows (:func:`yahoo_observation_dates`) — the third and last source, which
-completes the 23.
+completes the 24.
 
 THE 51 ``adjclose`` YAHOO ROWS ARE NOT PART OF THAT COUNT AND ARE REFUSED BY NAME.
     ``ingestion/catalog.py`` carries 58 ``yahoo`` rows, of which 51 ask for ``column
@@ -97,7 +97,7 @@ WHAT THIS ASKS FOR, AND WHY IT IS THE SAME QUESTION THE BACKFILL WILL ASK
 
     THE CALENDAR BELONGS TO THE (ref, transformation) PAIR, NOT TO THE INGREDIENT ROW.
     ``fred.DFII10`` and ``fred.DFII10.history`` are two catalog rows over one FRED series, so a
-    caller walking the 13 rows one at a time pays 13 GETs for 12 distinct calendars. Caching
+    caller walking the 14 rows one at a time pays 14 GETs for 13 distinct calendars. Caching
     that is the CALLER's business — this function has no state and keeps none.
 
 A BODY WE CANNOT READ IS A RAISE AND NEVER AN EMPTY TUPLE
@@ -340,7 +340,7 @@ def cboe_observation_dates(ing: Ingredient, start: str, end: str, *,
     this index — live poll, per-date backfill, and this calendar read — gets the SAME whole
     static history and differs only in what it does with it. That makes the filter below the
     entire windowing mechanism, and the ONE GET is the whole cost: 3 GETs for all three rows,
-    with no (ref, transformation) pairing to deduplicate the way FRED's 13 rows have.
+    with no (ref, transformation) pairing to deduplicate the way FRED's 14 rows have.
 
     ``ing.column`` is carried and ``ing.history`` deliberately is not, for this module's stated
     reason. ``column`` matters more here than it does for FRED: the three rows read two
