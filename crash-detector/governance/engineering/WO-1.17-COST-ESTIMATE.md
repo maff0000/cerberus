@@ -43,10 +43,21 @@ two of them are not about cost at all. Read them before the numbers.
    `gold_real_rate_cross` (its other leg, `lbma.gold_fix_usd.history`, has no backfill route at
    all — §9's scope question, not §8's).
 
-**Headline cost, for the shape as specified:** 190,052 GETs over 50,459 fetches,
-≈36 h sequential at a 0.5 s/GET assumption. **Tractable — not the "weeks" PID.md feared.**
-**Recommended shape** (§7): 70,196 GETs / 41,779 fetches, ≈18 h sequential, ≈5 h for the
-longest leg if the four source types run as separate processes against separate store files.
+**Headline cost, for the shape as specified:** 190,391 GETs over 50,444 fetches (§6,
+corrected for `fred.DRTSCIS`), ≈36.25 h sequential at a 0.5 s/GET assumption, ≈9.8 h more of
+`BACKFILL_PACING_SECONDS` idling on top (§6.6). **Tractable — not the "weeks" PID.md feared.**
+
+**Shape: ALL EIGHT EPISODES, Owner-confirmed 2026-10-17.** The two oldest episodes (2000-02
+dot-com, 2007-09 GFC) are 61.6% of the cost (117,349 of 190,391 GETs, §6.4) and have the worst
+coverage — §8.3 found `ism_manufacturing` cannot compute before 2014-05-01 regardless of any
+fix, and `monetisation_flag` cannot compute before 2003-12-18, ruling out 2000-02 entirely — so a
+cheaper 6-episode shape (≈14 h) deferring them was presented as a real option. Matt chose the
+full 8-episode run: the store must cover the two biggest historical crashes a crash detector's own
+replay would most want validated against, even where §8.3 already shows two indicators cannot be
+computed there. **This replaces the earlier "Recommended shape: 70,196 GETs / 41,779 fetches"
+placeholder**, which predated the `fred.DRTSCIS` correction (§6) and whose own derivation was
+never written into this document — it is superseded here rather than reconciled with, because
+reconstructing a derivation nobody recorded would be inventing one.
 
 ---
 
