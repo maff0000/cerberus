@@ -364,84 +364,114 @@ catalog count, from two independent directions.
 
 ### 6.3 Route 4.1 cell arithmetic — it is 79% of the bill, so it is shown in full
 
-Each cell is `Σ over the route's 17 rows of (that row's dates × that date's GET cost)`, grouped by
+Each cell is `Σ over the route's 18 rows of (that row's dates × that date's GET cost)`, grouped by
 the four cadences of §5.1. `daily = 3 rows × FRED business days × mean cost`; `weekly = Σ cost over
 the Wednesdays + the Saturdays + the Fridays`; `monthly = 8 × Σ cost over month starts`;
-`quarterly = 3 × Σ cost over quarter starts`.
+`quarterly = 4 × Σ cost over quarter starts`.
 
-| Episode | 3 daily | 3 weekly | 8 monthly | 3 quarterly | **4.1 cell** |
+The quarterly multiplier is **4, not 3**: `fred.DRTSCIS` is the fourth quarterly bisected row (§5.1).
+Its per-date cost needs no separate column because §4.1's formula —
+`2 + ceil(log2((today − (observed − 1 day)).days))` — reads only the observation date and the clock;
+no series identity enters `_acquire`'s span. At every quarter-start date in every window DRTSCIS
+therefore costs exactly what `fred.DRTSCILM` costs, and the quarterly sub-total below is the old
+three-row figure × 4/3 exactly. Daily, weekly and monthly columns are untouched.
+
+| Episode | 3 daily | 3 weekly | 8 monthly | 4 quarterly | **4.1 cell** |
 |---|---:|---:|---:|---:|---:|
-| 2000-02 dot-com | 3 × 794 × 16 = 38112 | 2640+2640+2640 = 7920 | 8 × 592 = 4736 | 3 × 192 = 576 | **51344** |
-| 2007-09 GFC | 3 × 690 × 15 = 31050 | 2160+2145+2145 = 6450 | 8 × 480 = 3840 | 3 × 150 = 450 | **41790** |
-| 2011 downgrade/euro | 3 × 210 × 15 = 9450 | 660+660+660 = 1980 | 8 × 135 = 1080 | 3 × 45 = 135 | **12645** |
-| 2015-16 China/Feb low | 3 × 209 × 14.20 = 8902 | 625+610+610 = 1845 | 8 × 127 = 1016 | 3 × 43 = 129 | **11892** |
-| Q4 2018 | 3 × 104 × 14 = 4368 | 294+308+308 = 910 | 8 × 56 = 448 | 3 × 14 = 42 | **5768** |
-| March 2020 COVID | 3 × 103 × 14 = 4326 | 308+294+294 = 896 | 8 × 56 = 448 | 3 × 28 = 84 | **5754** |
-| 2022 (incl. gilt) | 3 × 292 × 13 = 11388 | 793+793+793 = 2379 | 8 × 169 = 1352 | 3 × 52 = 156 | **15275** |
-| April 2025 | 3 × 104 × 11.94 = 3727 | 263+262+262 = 787 | 8 × 60 = 480 | 3 × 24 = 72 | **5066** |
-| **Total** | **111323** | **23167** | **13400** | **1644** | **149534** |
+| 2000-02 dot-com | 3 × 794 × 16 = 38112 | 2640+2640+2640 = 7920 | 8 × 592 = 4736 | 4 × 192 = 768 | **51536** |
+| 2007-09 GFC | 3 × 690 × 15 = 31050 | 2160+2145+2145 = 6450 | 8 × 480 = 3840 | 4 × 150 = 600 | **41940** |
+| 2011 downgrade/euro | 3 × 210 × 15 = 9450 | 660+660+660 = 1980 | 8 × 135 = 1080 | 4 × 45 = 180 | **12690** |
+| 2015-16 China/Feb low | 3 × 209 × 14.20 = 8902 | 625+610+610 = 1845 | 8 × 127 = 1016 | 4 × 43 = 172 | **11935** |
+| Q4 2018 | 3 × 104 × 14 = 4368 | 294+308+308 = 910 | 8 × 56 = 448 | 4 × 14 = 56 | **5782** |
+| March 2020 COVID | 3 × 103 × 14 = 4326 | 308+294+294 = 896 | 8 × 56 = 448 | 4 × 28 = 112 | **5782** |
+| 2022 (incl. gilt) | 3 × 292 × 13 = 11388 | 793+793+793 = 2379 | 8 × 169 = 1352 | 4 × 52 = 208 | **15327** |
+| April 2025 | 3 × 104 × 11.94 = 3727 | 263+262+262 = 787 | 8 × 60 = 480 | 4 × 24 = 96 | **5090** |
+| **Total** | **111323** | **23167** | **13400** | **2192** | **150082** |
+
+The quarterly total moves 1644 → 2192 (= 1644 × 4/3, +548) and that +548 is the whole of the
+4.1 route's change, 149534 → 150082.
 
 ### 6.4 THE 32 CELLS — GETs, 8 episodes × 4 routes
 
-| Episode | 4.1 FRED bisected (17) | 4.2 FRED stable (7) | 4.3 CBOE (3) | 4.4 Yahoo close (7) | **Episode total** |
+| Episode | 4.1 FRED bisected (18) | 4.2 FRED stable (7) | 4.3 CBOE (3) | 4.4 Yahoo close (7) | **Episode total** |
 |---|---:|---:|---:|---:|---:|
-| 2000-02 dot-com | 51344 | 4801 | 2391 | 5579 | **64115** |
-| 2007-09 GFC | 41790 | 4172 | 2079 | 4851 | **52892** |
-| 2011 downgrade/euro | 12645 | 1269 | 630 | 1470 | **16014** |
-| 2015-16 China/Feb low | 11892 | 1263 | 630 | 1470 | **15255** |
-| Q4 2018 | 5768 | 628 | 315 | 735 | **7446** |
-| March 2020 COVID | 5754 | 622 | 309 | 721 | **7406** |
-| 2022 (incl. gilt) | 15275 | 1765 | 879 | 2051 | **19970** |
-| April 2025 | 5066 | 629 | 315 | 735 | **6745** |
-| **Route total** | **149534** | **15149** | **7548** | **17612** | **189843** |
+| 2000-02 dot-com | 51536 | 4801 | 2391 | 5579 | **64307** |
+| 2007-09 GFC | 41940 | 4172 | 2079 | 4851 | **53042** |
+| 2011 downgrade/euro | 12690 | 1269 | 630 | 1470 | **16059** |
+| 2015-16 China/Feb low | 11935 | 1263 | 630 | 1470 | **15298** |
+| Q4 2018 | 5782 | 628 | 315 | 735 | **7460** |
+| March 2020 COVID | 5782 | 622 | 309 | 721 | **7434** |
+| 2022 (incl. gilt) | 15327 | 1765 | 879 | 2051 | **20022** |
+| April 2025 | 5090 | 629 | 315 | 735 | **6769** |
+| **Route total** | **150082** | **15149** | **7548** | **17612** | **190391** |
 
 Routes 4.2–4.4 are each a plain product and can be re-derived by eye:
 `4.2 = 6 × FRED business days + 1 × month starts` (e.g. 2000-02: `6 × 794 + 37 = 4801`);
 `4.3 = 3 × NYSE days` (`3 × 797 = 2391`); `4.4 = 7 × NYSE days` (`7 × 797 = 5579`).
 
-**GRAND TOTAL: 189,843 GETs** = 149,534 (4.1) + 15,149 (4.2) + 7,548 (4.3) + 17,612 (4.4).
+**GRAND TOTAL: 190,391 GETs** = 150,082 (4.1) + 15,149 (4.2) + 7,548 (4.3) + 17,612 (4.4).
 
 ### 6.5 THE 32 CELLS — fetches (dates asked for), the same grid
 
-| Episode | 4.1 (17) | 4.2 (7) | 4.3 (3) | 4.4 (7) | **Episode total** |
+| Episode | 4.1 (18) | 4.2 (7) | 4.3 (3) | 4.4 (7) | **Episode total** |
 |---|---:|---:|---:|---:|---:|
-| 2000-02 dot-com | 3209 | 4801 | 2391 | 5579 | **15980** |
-| 2007-09 GFC | 2786 | 4172 | 2079 | 4851 | **13888** |
-| 2011 downgrade/euro | 843 | 1269 | 630 | 1470 | **4212** |
-| 2015-16 China/Feb low | 838 | 1263 | 630 | 1470 | **4201** |
-| Q4 2018 | 412 | 628 | 315 | 735 | **2090** |
-| March 2020 COVID | 411 | 622 | 309 | 721 | **2063** |
-| 2022 (incl. gilt) | 1175 | 1765 | 879 | 2051 | **5870** |
-| April 2025 | 424 | 629 | 315 | 735 | **2103** |
-| **Route total** | **10098** | **15149** | **7548** | **17612** | **50407** |
+| 2000-02 dot-com | 3221 | 4801 | 2391 | 5579 | **15992** |
+| 2007-09 GFC | 2796 | 4172 | 2079 | 4851 | **13898** |
+| 2011 downgrade/euro | 846 | 1269 | 630 | 1470 | **4215** |
+| 2015-16 China/Feb low | 841 | 1263 | 630 | 1470 | **4204** |
+| Q4 2018 | 413 | 628 | 315 | 735 | **2091** |
+| March 2020 COVID | 413 | 622 | 309 | 721 | **2065** |
+| 2022 (incl. gilt) | 1179 | 1765 | 879 | 2051 | **5874** |
+| April 2025 | 426 | 629 | 315 | 735 | **2105** |
+| **Route total** | **10135** | **15149** | **7548** | **17612** | **50444** |
 
-**GRAND TOTAL: 50,407 fetches.** Route 4.1's fetch count per episode is
-`3 × FRED business days + weekly dates + 8 × month starts + 3 × quarter starts`.
+**GRAND TOTAL: 50,444 fetches.** Route 4.1's fetch count per episode is
+`3 × FRED business days + weekly dates + 8 × month starts + 4 × quarter starts`.
+Only the last term changed: DRTSCIS asks for its episode's own quarter-start dates and nothing else,
+so route 4.1 gains exactly **+37 fetches** (10,098 → 10,135) — and 37 is §6.2's own Total "Qtr starts"
+column, which is the cross-check that this grid and §6.2 are counting the same dates.
 
-Two things this grid says that the GET grid hides. **Route 4.1 asks for only 10,098 of the 50,407
-dates (20%) and yet accounts for 149,534 of the 189,843 GETs (79%)** — bisection, not volume, is what
-it costs, and on dates alone it is the second-smallest route of the four, behind CBOE's 7,548: eleven
-of its seventeen rows are monthly or quarterly and ask for very few dates. And **route 4.4 alone is
-17,612 fetches (35% of all of them)** on 7 rows, because every one of those rows is daily.
+Two things this grid says that the GET grid hides. **Route 4.1 asks for only 10,135 of the 50,444
+dates (20.1%) and yet accounts for 150,082 of the 190,391 GETs (78.8%)** — bisection, not volume, is
+what it costs, and on dates alone it is still the second-smallest route of the four, behind CBOE's
+7,548: twelve of its eighteen rows are monthly or quarterly and ask for very few dates. Adding the
+fourth quarterly row does not move either share by a whole point (it was 10,098/50,407 = 20.0% and
+149,534/189,843 = 78.8%), because a quarterly row is the cheapest kind of row this route has.
+And **route 4.4 alone is 17,612 fetches (35% of all of them)** on 7 rows, because every one of those
+rows is daily.
 The CBOE figure, 7,548 fetches, is the one §4.3 already costed at ≈3 GB of transfer.
 
 ### 6.6 Against §0's placeholder
 
-§0 states **190,052 GETs over 50,459 fetches, ≈36 h sequential**. This section computes
-**189,843 GETs over 50,407 fetches** — **-209 GETs (-0.11%) and -52 fetches (-0.10%)**. They agree, and the
-residual is rounding in the daily-date approximation, not a difference of method: both are the same
-four routes over the same eight windows, and the gap is far inside the few-dates-per-window error
-§3.1 declares for the holiday model. **So the placeholder is not wrong, and §0 is not touched this
-round** — whether to swap 190,052/50,459 for the figures above is a later round's call, recorded here
-rather than applied there.
+§0 states **190,052 GETs over 50,459 fetches, ≈36 h sequential** — a placeholder written before
+`fred.DRTSCIS` was identified as the 18th bisected row and the 4th quarterly one (§5.1). This section
+now computes **190,391 GETs over 50,444 fetches** — **+339 GETs (+0.18%) and -15 fetches (-0.03%)**.
 
-The wall-clock line reconciles too, and the arithmetic behind it is worth stating because the sentence
-in §0 does not: at §0's own 0.5 s/GET, 189,843 GETs is 26.4 h of GET time, and
+**This is the real arithmetic after the DRTSCIS correction, not the earlier reconciliation restated,
+and the two counts no longer miss the placeholder in the same direction.** Before the fourth quarterly
+row, the computed figures were *both* smaller than §0's (-209 GETs, -52 fetches). Now the computed GET
+total is **larger** than §0's headline while the computed fetch total is still smaller, and both gaps
+are narrower than they were. The residual is still rounding in the daily-date approximation rather
+than a difference of method — both figures are the same four routes over the same eight windows, and
+±339 GETs over 190k is far inside the few-dates-per-window error §3.1 declares for the holiday model —
+so the placeholder is not *wrong*. But its direction has flipped: 190,052 is no longer a slight
+over-statement of the computed GET cost, it is an under-statement of it by 339.
+
+**§0 is not touched this round.** A reader comparing the headline at the top of this document against
+this section should therefore read §0's 190,052/50,459 as the pre-DRTSCIS placeholder and the
+190,391/50,444 here as the current computed total; whether to swap them is a later round's call,
+recorded here rather than applied there.
+
+The wall-clock line still reconciles, and the arithmetic behind it is worth stating because the
+sentence in §0 does not: at §0's own 0.5 s/GET, 190,391 GETs is 95,196 s = **26.4 h** of GET time, and
 `BACKFILL_PACING_SECONDS = 0.7` (§1) is charged **per FETCH, not per GET** — `ingestion/backfill.py:350`,
-`time.sleep(pace)` "between fetches only; a skip or a refusal paces nothing" — so 50,407 fetches add
-9.8 h of deliberate idling. **26.4 h + 9.8 h = 36.2 h**, which is §0's ≈36 h. The two constants are
-not alternatives; the estimate needs both, and a reader of §0 alone could reasonably have divided
-190,052 by 0.5 s and got 26 h.
+`time.sleep(pace)` "between fetches only; a skip or a refusal paces nothing" — so 50,444 fetches add
+35,311 s = **9.8 h** of deliberate idling. **26.44 h + 9.81 h = 36.25 h**, which is still §0's ≈36 h.
+Both components were recomputed from the new totals rather than carried over, and neither moved at
+one decimal place: the DRTSCIS row adds 274 s of GET time and 26 s of pacing, taking the total from
+36.17 h to 36.25 h — **+0.08 h, about five minutes**, so the ≈36 h headline holds even though the GET
+count it sits beside does not. The two constants are not alternatives; the estimate needs both, and a
+reader of §0 alone could reasonably have divided 190,052 by 0.5 s and got 26 h.
 
 **None of the above is an authorisation, and no part of it has been executed.** Zero network requests
 were issued to produce it: every figure is arithmetic over the frozen sets in `ingestion/vintage.py`,
