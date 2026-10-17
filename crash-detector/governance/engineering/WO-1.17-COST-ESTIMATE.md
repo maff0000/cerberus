@@ -493,8 +493,8 @@ not this round's work.
 
 **Verdict first: the gap is real, it is not closed by the `vintage_floor` check or by anything
 else in `ingestion/`, and on the evidence already in the tree it WOULD fire during WO-1.17's
-planned execution — on 10 of route 4.1's 17 rows, for 2,214 of its 10,099 fetches (33,350 GETs,
-22% of the route, 17.6% of the whole plan).** No fix is proposed here; §7.1 confirms the gap.
+planned execution — on 11 of route 4.1's 18 rows, for 2,236 of its 10,136 fetches (33,692 GETs,
+22.4% of the route, 17.7% of the whole plan).** No fix is proposed here; §7.1 confirms the gap.
 
 **The rule, as the code states it.** `AlfredVintageAdapter`'s docstring: *"the EARLIEST vintage
 date, within `[observation_date, today]`, at which ALFRED serves a non-empty value for this
@@ -569,7 +569,7 @@ measured behaviour is the 404 branch, which is the one that answers.
 
 **Nothing else in the tree catches it.** `grep -rn "vintage_depth\|earliest" ingestion/` returns
 only docstring prose — **no runtime code reads a per-series archive floor**, and the evidence file
-that holds all 17 of them is referenced by `ingestion/vintage.py:196` (`EVIDENCE_FILE`) solely to
+that holds all 18 of them is referenced by `ingestion/vintage.py:196` (`EVIDENCE_FILE`) solely to
 source the `REVISION_PRONE`/`REVISION_STABLE` membership. `STABILITY_MEASURED_FROM = 1999-01-01`
 gates the OTHER branch (`VINTAGE_CURRENT_ONLY`) and is one global date, not a per-series depth, so
 §1's "every `STABILITY_MEASURED_FROM` refusal is moot here" stays true and buys nothing on this
@@ -592,10 +592,10 @@ in case (b) — but no probe in `_acquire` asks the first question. Designing th
 stored whole, so every affected row will carry the 2013-06-06-style vintage inside its payload JSON
 next to the `original` label. The contradiction is recorded on the row; it is simply not acted on.
 
-#### Does it fire during WO-1.17's planned run? Measured against WO-1.14's evidence — yes, on 10 rows
+#### Does it fire during WO-1.17's planned run? Measured against WO-1.14's evidence — yes, on 11 rows
 
 `evidence/wo114_alfred_probe.json` (probed 2026-10-13) measured each bisected series' earliest
-ALFRED vintage. Comparing those 17 depths with §2's eight windows and §6.1's date model gives three
+ALFRED vintage. Comparing those 18 depths with §2's eight windows and §6.1's date model gives three
 outcomes per date, and all three are decided by measured facts:
 
 * **FIRST-PUB** — `observation_date ≥ floor_v`: the earliest serving vintage is a real publication
@@ -618,6 +618,7 @@ outcomes per date, and all three are decided by measured facts:
 | `fred.BACTSAMFRBDAL` | monthly | **2016-01-25** | 2004-06-01 | 2007-09, 2011, 2015-16 | **48** | 37 | 28 | **8.7 y** |
 | `fred.NCBEILQ027S` | quarterly | **2013-06-06** | 1945-10-01 | 2000-02, 2007-09, 2011 | **25** | 0 | 12 | **13.4 y** |
 | `fred.DRTSCILM` | quarterly | **2010-04-20** | 1990-04-01 | 2000-02, 2007-09 | **22** | 0 | 15 | **10.3 y** |
+| `fred.DRTSCIS` | quarterly | **2010-04-20** | 1990-04-01 | 2000-02, 2007-09 | **22** | 0 | 15 | **10.3 y** |
 | `fred.PCEPILFE.pc1` | monthly | **2000-08-01** | 1960-01-01 | 2000-02 (part) | **7** | 0 | 106 | 0.7 y |
 | `fred.BAMLH0A0HYM2` | bus-daily | **2023-10-16** | 2023-10-16 | — | 0 | **2402** | 104 | — |
 | `fred.BAMLC0A0CM` | bus-daily | **2023-10-16** | 2023-10-16 | — | 0 | **2402** | 104 | — |
@@ -626,20 +627,40 @@ outcomes per date, and all three are decided by measured facts:
 | `fred.CPIAUCSL.pc1` | monthly | 1990-01-01 | 1989-05-01 | — | 0 | 0 | 113 | — |
 | `fred.CPILFESL` | monthly | 1996-12-12 | 1957-01-01 | — | 0 | 0 | 113 | — |
 | `fred.GDP` | quarterly | 1991-12-04 | 1959-01-01 | — | 0 | 0 | 37 | — |
-| **Total — 17 rows** | | | | | **2,214** | **5,817** | **2,068** | |
+| **Total — 18 rows** | | | | | **2,236** | **5,817** | **2,083** | |
 
-The fetch total is **10,099** against §6.5's **10,098** for route 4.1 and the GET total is
-**149,549** against §6.4's **149,534** — the same method (§6.1) applied per row, so the split
-reconciles with the grid rather than replacing it.
+The fetch total is **10,136** against §6.5's **10,135** for route 4.1 and the GET total is
+**150,097** against §6.4's **150,082** — the same method (§6.1) applied per row, so the split
+reconciles with the grid rather than replacing it (the +1 fetch and +15 GETs are §6.1's daily-date
+rounding, unchanged in size by the new row).
+
+`fred.DRTSCIS`'s row is `fred.DRTSCILM`'s row repeated, and that was checked rather than assumed:
+same cadence, same measured archive floor (`vintage_depth.earliest = 2010-04-20` for both), same
+floor-vintage span, same `as_of_rule`, and §6.3's per-date cost
+`2 + ceil(log2((today − (observed − 1 day)).days))` reads only the observation date and the clock —
+no series identity enters `_acquire`'s span. So the two rows contribute **identical per-episode
+figures**: 37 fetches / 548 GETs each, split 22 restatement fetches (the 12 + 10 quarter starts of
+2000-02 and 2007-09, costing `12 × 16 + 10 × 15 = 342` GETs) and 15 FIRST-PUB fetches across the
+six later episodes, all of which begin after 2010-04-20. That **+37 / +548 / +342** is the whole of
+this section's change, and the first two match §6.5's own +37 and §6.3's own +548 exactly.
 
 **Read, in order:**
 
-1. **10 of 17 bisected rows have a restatement band inside WO-1.17's windows** — `DTWEXBGS`, `NFCI`,
+1. **11 of 18 bisected rows have a restatement band inside WO-1.17's windows** — `DTWEXBGS`, `NFCI`,
    `IC4WSA`, `WALCL`, `GACDFSA066MSFRBPHI`, `GACDISA066MSFRBNY`, `BACTSAMFRBDAL`, `NCBEILQ027S`,
-   `DRTSCILM`, `PCEPILFE.pc1`. **2,214 fetches / 33,350 GETs** would be stored as `VINTAGE_ORIGINAL`
-   while carrying a restatement: **22% of route 4.1's fetches, 22.3% of its GETs, 17.6% of the whole
-   plan's 189,843.** The lags are not marginal — **8.6 to 15.4 years** of revision between the
-   observation and the vintage that answers for it.
+   `DRTSCILM`, `DRTSCIS`, `PCEPILFE.pc1`. **2,236 fetches / 33,692 GETs** would be stored as
+   `VINTAGE_ORIGINAL` while carrying a restatement: **22.1% of route 4.1's fetches, 22.4% of its
+   GETs, 17.7% of the whole plan's 190,391.** The lags are not marginal — **8.6 to 15.4 years** of
+   revision between the observation and the vintage that answers for it. `DRTSCIS` is the eleventh,
+   and it qualifies on its own measured record rather than by analogy to its sibling:
+   `evidence/wo114_alfred_probe.json`'s DRTSCIS entry (probed 2026-10-16, added by WO-1.19's
+   `--merge`) gives `vintage_depth.earliest = 2010-04-20` and
+   `first_vintage_span = ["1990-04-01", "2010-04-01"]`, so the floor vintage is **attested** to
+   carry every quarter-start in the band — the criterion finding 5 turns on — while `shared_span`
+   back to 1990-04-01 confirms the current body reaches at least as deep, so the ceiling probe
+   serves and none of its dates go EMPTY. Both the criterion's inputs are identical to
+   `DRTSCILM`'s, which is what two legs of one SLOOS release printing on one vintage schedule
+   should look like.
 2. **The two `REVISION_UNDETERMINED` rows fail differently, and worse for coverage.** `BAMLH0A0HYM2`
    and `BAMLC0A0CM` have an ALFRED archive starting **2023-10-16** whose floor vintage holds exactly
    ONE observation (its own date), and the current body holds 784/783 — which is 2023-10-16 → the
@@ -647,17 +668,22 @@ reconciles with the grid rather than replacing it.
    **ceiling** probe returns ABSENT for every date in **seven of the eight episodes**: 4,804 fetches
    → EMPTY, no reading, no mislabel. Only April 2025 is inside their archive. *This is the one
    inferential step in §7.1* — the evidence measures the current body's observation COUNT, not its
-   first date — and **the verdict does not rest on it**: the 2,214-fetch restatement band is
+   first date — and **the verdict does not rest on it**: the 2,236-fetch restatement band is
    established from measured depths and measured floor-vintage spans alone, on rows where
    `shared_span` confirms the current body reaches at least as deep.
 3. **§0's "80% of the bisection budget buys a restatement" survives as a number and needs its
-   composition corrected.** Not-a-first-publication is **81.1%** of route 4.1's GETs — but that is
-   **22.3% restatement + 58.8% EMPTY**, and the EMPTY majority is three rows (the two BAML plus
-   `DTWEXBGS` before 2006) asking for data ALFRED does not hold at all. Per §6.6's convention this
+   composition corrected.** Not-a-first-publication is **81.0%** of route 4.1's GETs — but that is
+   **22.4% restatement + 58.6% EMPTY**, and the EMPTY majority is three rows (the two BAML plus
+   `DTWEXBGS` before 2006) asking for data ALFRED does not hold at all. Re-derived against §6's
+   larger route total: the restatement share rises a tenth of a point and the EMPTY share falls
+   two, because the 18th row adds 342 restatement GETs and **no** EMPTY ones to a denominator that
+   grew by 548. Per §6.6's convention this
    is recorded here, **not applied to §0**.
 4. **The 5 clean rows are clean for one reason: their archive predates 1999-11-02**, the oldest date
    in the plan — `UMCSENT` 1998-07-31, `M2SL.pc1` and `CPIAUCSL.pc1` at or before the probe's 1990
-   floor, `CPILFESL` 1996-12-12, `GDP` 1991-12-04. Nothing about those five rows is safer by
+   floor, `CPILFESL` 1996-12-12, `GDP` 1991-12-04. Still **five**, not six: the 18th row joined the
+   restatement band rather than this group, so the route partitions **11 restatement + 2
+   `REVISION_UNDETERMINED` + 5 clean = §5.1's 18**. Nothing about those five rows is safer by
    construction; they are on the right side of an accident of ALFRED's archive.
 5. **`PCEPILFE.pc1` is the near-miss that shows the band is an over-count at its right edge**: its
    7 affected dates sit within 0.7 y of its archive floor, and a date whose real first publication
@@ -665,7 +691,7 @@ reconciles with the grid rather than replacing it.
    when the floor vintage does not carry it). The band criterion above already requires the floor
    vintage to be attested as carrying the date, which is why the count is 7 and not 8.
 
-**Not claimed here.** That the restatement differs materially from first publication for these 10
+**Not claimed here.** That the restatement differs materially from first publication for these 11
 rows is NOT asserted: `evidence/wo114_alfred_probe.json` measured `differing` per series at other
 vintage pairs, and whether a 1999 observation's 2013 restatement moves a DECISION-RULE threshold is
 a separate question from whether the row may claim it was first published. §7.1 is about the claim.
