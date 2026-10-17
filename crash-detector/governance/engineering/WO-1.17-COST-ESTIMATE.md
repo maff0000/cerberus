@@ -1090,3 +1090,155 @@ recovered figure moves a DECISION-RULE threshold. That the fix generalises beyon
 the three transformed FRED rows and the 53 out-of-scope `history > 0` rows are untested by it. And
 that the per-episode column above is a schedule: it is an arithmetic floor on what could compute,
 not a prediction that it would.
+
+---
+
+## 9. The rows this plan does NOT backfill — **54 of 89**, and there are exactly TWO mechanisms
+
+**Verdict first.** §4.4 and §5.4 both forward-reference this section for an exclusion they state but
+do not explain. Here it is, counted off the catalog this round rather than carried forward.
+
+**The whole catalog, split once:**
+
+| | rows | where |
+|---|---:|---|
+| backfillable, routed in §5 | **35** | 25 FRED + 3 CBOE + 7 Yahoo plain-close |
+| excluded | **54** | 51 Yahoo `adjclose` + 3 single-row kinds |
+| **`len(INGREDIENTS)`** | **89** | 25 `fred` + 58 `yahoo` + 3 `cboe` + 1 `multpl` + 1 `lbma` + 1 `hermes` |
+
+**35 + 54 = 89.** The two halves are the whole catalog with nothing between them and nothing counted
+twice — and that is the useful form of the identity, because it says there is no third category of row
+that is neither routed nor explained. `manual` is **0 rows**, not an omission: WO-1.19 deleted
+`ingestion/manual.py` whole, and `kind == "manual"` survives only as a structural guard in
+`catalog.py:435` and `run.py:50` against a hand-entered row being added later.
+
+**And there are exactly TWO exclusion mechanisms, not one per excluded source.** This is the finding
+of the section, and it is a finding about the SHAPE of the refusals rather than about any row:
+
+| mechanism | rows | the check that refuses, and where |
+|---|---:|---|
+| **1. Structural** — the kind has no dated adapter at all | **3** | `ing.kind not in VINTAGE_BACKFILLABLE_KINDS` (`backfill_adapters.py:176`, `= ("fred", "cboe", "yahoo")`), raised by `build_backfill_adapter` before a URL exists |
+| **2. Disclosed** — the kind IS backfillable and the COLUMN is not | **51** | not the tuple: `yahoo_observation_dates`'s `ing.column != ""` and `YahooChartAdapter.__init__`'s `field != "close"`, each independently |
+
+**There are ZERO FRED and ZERO CBOE exclusions.** Every row of both kinds is routed in §5 — which is
+why `fred` and `cboe` appear in mechanism 1's tuple and never in its row count.
+
+### 9.1 Mechanism 1 — three rows, one check, three *different* reasons
+
+`build_backfill_adapter` was read end to end this round to confirm the refusal is an ABSENCE and not a
+policy laid over something that exists: there is no `multpl`-at-date branch, no `lbma`-at-date branch
+despite `LbmaGoldAdapter` existing and working for the current-value case, and no `hermes`-at-date
+branch. The function's `if ing.kind not in VINTAGE_BACKFILLABLE_KINDS` is reached first and all three
+rows stop there, with the same message naming the same tuple.
+
+**But one check is not one reason, and treating "not in the tuple" as the explanation would hide that
+the three are blocked at three different depths:**
+
+| row | serves | what a dated mode would have to read | the real reason there isn't one |
+|---|---|---|---|
+| `multpl.shiller_pe_table` | `shiller_cape` | `multpl.com/shiller-pe/table/by-month` — one static URL with **no date parameter** | **Granularity, not absence.** The page *is* a full dated table and `parse_multpl_table(with_history=True)` already returns every row oldest-first, so a keyed read is conceivable — but the table is **by-month**. An episode-windowed backfill asks for trading days; a monthly table has no row to key for 2008-10-09, so a dated mode would be answering a different question's resolution, not this one's. |
+| `lbma.gold_fix_usd.history` | `gold_real_rate_cross` (gold leg) | `gold_pm.json` / `gold_am.json` — whole-history bodies that `_lbma_usd_by_date` already turns into a `date → USD` map | **Reachability.** This is the most CBOE-shaped of the three and the most buildable in principle — the dated read is a dict lookup on a body the live adapter already parses. It is also the one that would buy nothing: the endpoint answers **HTTP 403** to this host's agent regardless of date (`adapters.py:815-817`, `LbmaGoldAdapter`'s own docstring, PID.md WO-1.19/WO-1.20). A dated mode would convert one refusal at construction into one `HTTP_ERROR` per date — 403 is not a function of the date asked for. |
+| `hermes.xau_usd.h4_close` | `gold_spot` | `hermes:candles:XAU_USD:H4:latest:v1` — **one key, the newest closed candle** | **There is no history to ask.** HERMES publishes a single latest-candle key under a **4-hour TTL** (`parse_hermes_candle`: a stopped HERMES empties it rather than leaving a stale body). There is no past date in the publication to key into, so a dated mode has nothing to read — and PID.md WO-1.19 records independently that HERMES retains only ~35 days against the ~2600 a deep-history gold row needs (tracked as **WO-1.20**, not this WO). |
+
+**Read, in order:**
+
+1. **Only one of the three is blocked by the missing branch itself.** `multpl` is blocked by its
+   source's resolution and `hermes` by its source having no history; for both, writing the branch
+   would not produce a dated answer. `lbma` alone is blocked by a *credential*, and its branch is the
+   one that would work the day the 403 does.
+2. **§8.3's question is answered, and the answer is "not here".** §8.3 asked whether `lbma` should
+   become backfillable and deferred it to this section. It should not become backfillable *in this
+   plan*: the shape is easy and the access is the blocker, so the work belongs with WO-1.20's
+   LBMA-free gold source, not with a dated adapter that 403s.
+3. **`gold_real_rate_cross` is the one indicator blocked by BOTH mechanisms' neighbourhood, and
+   §8.3 already counted it** — its `fred.DFII10.history` leg has §8's history gap AND its gold leg has
+   this section's structural exclusion, 0 of 8 episodes. Not re-derived here; see §8.3.
+
+### 9.2 Mechanism 2 — the 51 `adjclose` rows were excluded BEFORE the code was built
+
+`kind == "yahoo"` passes `VINTAGE_BACKFILLABLE_KINDS` — the tuple admits the kind, and
+`build_backfill_adapter` deliberately applies **no column check of its own** so the rule has one home.
+The refusal lives on the paths that act:
+
+| door | where | what it raises |
+|---|---|---|
+| the calendar | `yahoo_observation_dates`, `ing.column != ""` (`backfill_calendar.py`, **built this WO**) | `yahoo.BIZD.adj asks for column 'adjclose', and only the 7 plain-close yahoo rows are in scope…` |
+| the adapter | `YahooChartAdapter.__init__`, `field != "close"` when `observation_date is not None` | `a dated Yahoo fetch reads close only; adjclose has no point-in-time meaning` |
+| the label | `ingestion/backfill.py:302-322`, `has_no_revision_mechanism(ing.kind, ing.column)` | refuses to DERIVE a vintage label for a dated `adjclose` reading |
+
+**All three were exercised against the real catalog row this round and each fires on its own** — the
+calendar reader raises before any network call, the adapter raises before a URL exists, and the label
+dispatch raises before a reading could be written. PID.md's WO-1.16 note records the real-network
+proof that the latter two fire independently; the calendar reader is a **third** door this WO added,
+and §3.1 already records its one visible consequence — the 51 rows are now refused **by name** rather
+than being silently absent from the 24-GET count.
+
+**The original disclosure is PID.md's WO-1.16 scope correction, 2026-10-15, "before any build work."**
+It is worth naming as the earliest item in this document's own genre. The ratified note said WO-1.16
+would backfill "Yahoo unadjusted close… for `private_credit_stress` and `constituent_breadth_200dma`";
+the catalog wires both to `column="adjclose"`, each with its own measured justification (BIZD's
+printed-price drawdown counts every ex-dividend drop as stress, 19.7% printed vs 9.5% adjusted below
+the 252-day high; the breadth sample uses the adjusted close like the legacy tell). Fetching
+unadjusted close for them would have answered for a **different quantity than the live collector
+stores under the same ingredient** — and adjusted close has no vintage mechanism at all: it drifts
+retroactively with every later dividend and split, for every date before the event, forever. A
+backfilled `adjclose` for a historical date is **today's retroactive revision of it**, not what a
+contemporaneous collector would have recorded.
+
+**That is the same forgery shape §7.1 and §8 name for other rows, caught in the opposite order.**
+§7.1's restatement band and §8's history gap were both found by measuring code that already existed;
+this one was found by reading the ratified scope against the catalog before a line was written. The
+cheapest place this document finds a defect is still the scope note.
+
+**What the exclusion costs, stated as a counterfactual and not as a figure in this plan.** Every one
+of the 51 is a daily US-listed symbol on the same NYSE calendar as route 4.4, which bills 1 GET per
+date per symbol: route 4.4's 17,612 GETs over 7 rows is exactly **2,516 dates per row** (§6.4), so the
+51 rows would be **51 × 2,516 = 128,316 GETs**, plus 51 more calendar GETs in §3.1's prerequisite.
+The run would be **318,707 GETs rather than 190,391** — the exclusion is **40.3%** of what an
+all-Yahoo plan would cost. **None of that is added anywhere.** The three mechanism-1 rows are not
+costed even counterfactually, because there is no route to cost them with.
+
+### 9.3 What the 54 cost in COVERAGE — and for the 51, the loss is total, not partial
+
+The question worth asking of an exclusion is not how many rows it drops but whether anything
+downstream survives without them. Counted off `serves` and cross-checked against
+`wiring.DERIVED_FROM`, for all **31** indicators in the catalog:
+
+| | indicators | which |
+|---|---:|---|
+| every feeding row in scope | **26** | computable from the 35, subject to §7.1's restatement band and §8's history gap |
+| some legs in scope, some excluded | **1** | `gold_real_rate_cross` — §8.3's double block |
+| **no** feeding row in scope | **4** | `constituent_breadth_200dma`, `private_credit_stress`, `shiller_cape`, `gold_spot` |
+
+**26 + 1 + 4 = 31.**
+
+**For the 51 `adjclose` rows the answer is unambiguous: NOT ONE of them serves an indicator that has
+an alternative leg in scope.** `wiring.DERIVED_FROM` names `private_credit_stress` as
+`('yahoo.BIZD.adj',)` — one row, and it is excluded — and `constituent_breadth_200dma` as exactly the
+50 `yahoo.*.adj` tickers and nothing else. Neither indicator has a non-`adjclose` leg of any kind.
+**So losing the `adjclose` rows is a TOTAL LOSS of two indicators from any replay this plan's store
+could feed, not a degradation of them** — there is no partially-fed middle state to reason about, and
+no risk of a replay computing a thinner version of either and presenting it as the real one. The same
+is true of `shiller_cape` (one `multpl` row) and `gold_spot` (one `hermes` row). `gold_real_rate_cross`
+is the only straddling case in the catalog, and §8.3 has it.
+
+**This matches WO-1.17's own ratified charter rather than narrowing it.** PID.md's WO-1.17 note
+(2026-10-16) scopes the WO to the indicators where a point-in-time or stable-current fetch now exists
+and says `multpl.com`, `gold_spot` and the two `adjclose` ingredients "remain the disclosed, carried
+gaps WO-1.14/1.16 already named and are NOT attempted here." **One number in that note is now stale
+and is corrected here:** it says "all 24 indicators," and the count off the catalog this round is
+**26** fully-fed (27 if `gold_real_rate_cross` is counted for its one in-scope leg, which §8.3 says
+cannot compute). The note was written 2026-10-16, before WO-1.19 added `fred.DRTSCIS` and flipped
+`sloos_bank_lending` MISSING → LIVE — the same catalog movement §5.1/§5.5 corrected FRED's 24 → 25
+for. The charter's *exclusions* are unchanged; only its indicator count moved, and in the direction of
+more coverage, not less.
+
+**Not claimed here.** That any of the 54 SHOULD be made backfillable — §9.1 says what each would take
+and says plainly that only `lbma`'s is shaped like work this plan could do, and that one is blocked on
+access rather than code. That the counterfactual 128,316 GETs is an estimate of anything anyone
+intends to spend. That the four unfed indicators matter equally to a replay: nothing here measures
+what their absence does to DECISION-RULE.md's dials, which is a different document's question.
+
+**This round adds no finding to §0, changes no GET count, and authorises nothing.** §9 exists so that
+§4.4's and §5.4's "out of scope (§9)" resolve to something real — which is this document's own
+standard, applied to itself: a citation must resolve.
