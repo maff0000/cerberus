@@ -87,7 +87,9 @@ services:
     # a read-only bind cannot create the sidecar a reader needs, so the failure is the mount's and
     # not the reader's. This is not a concession; it is the finding.
     #
-    # cd-live-state is this service's alone. Neither the collector nor the GUI mounts it.
+    # cd-live-state is this service's TO WRITE. The GUI mounts it read-only-by-discipline as of
+    # WO-1.22 (see its own volumes block); the collector does not mount it at all. One WRITER per
+    # volume is the rule, not one mounter.
     volumes:
       - cd-live-data:/data
       - cd-live-state:/state
@@ -98,11 +100,31 @@ services:
     <<: *live
     depends_on:
       - cd-live-collector
+    # BOTH MOUNTS WRITTEN OUT, for cd-live-evaluator's reason above: `<<: *live` REPLACES the
+    # anchor's `volumes:` list rather than appending to it, so listing only /state here would have
+    # silently dropped the /data mount this GUI has always had and cannot render without.
+    #
+    # cd-live-state IS NEW IN WO-1.22 and is what makes the dial-history chart possible: the series
+    # it plots has been written to machine_state.sqlite once per evaluator pass since 2026-10-14,
+    # and this container had no mount through which to read it.
+    #
+    # READ-WRITE AT THE COMPOSE LEVEL, AND THAT IS THE ONLY MOUNT THAT WORKS — the evaluator's own
+    # block above states the measurement this follows: a genuine `:ro` bind was MEASURED to fail
+    # intermittently against this WAL database, whose -shm/-wal sidecars are created per connection
+    # and cannot be created on a read-only bind. So the read discipline is enforced at the PYTHON
+    # level instead, exactly as it already is for /data: gui/history.py opens the file through
+    # MachineStateHistoryStore(path, read_only=True) — `mode=ro`, which creates nothing, migrates
+    # nothing and can issue no write — the same shape ingestion/store.py's SqliteStore(read_only=True)
+    # has always given this service for /data. The mount is writable; the process does not write.
+    volumes:
+      - cd-live-data:/data
+      - cd-live-state:/state
     ports:
       - "${CD_GUI_BIND:-127.0.0.1}:${CD_GUI_PORT:-8710}:8710"
     environment:
       CD_BIND_HOST: "0.0.0.0"
       CD_BIND_PORT: "8710"
+      CD_STATE_PATH: "/state/machine_state.sqlite"
     healthcheck:
       test: ["CMD", "python3", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8710/healthz', timeout=5).status==200 else 1)"]
       interval: 30s
