@@ -3,6 +3,14 @@
 
     PYTHONPATH=src:. python3 tools/backfill/wo117_run.py --db <store.sqlite> [--out record.json]
 
+    The 18 revision-prone FRED rows (route 4.1) read their first-published figures through FRED's
+    keyed REST API, so a run that includes any of them needs the key in the ENVIRONMENT, supplied by
+    the caller (never on the command line, never written anywhere by this script):
+
+        FRED_API_KEY="$(cat /srv/cerberus-secrets/fred_api_key.secret)" PYTHONPATH=src:. python3 ...
+
+    It is required only when such a row is selected and the run is not ``--dates-only``.
+
 WHAT THIS IS AND WHAT IT IS NOT. It is the ORCHESTRATION driver the execution of
 ``WO-1.17-COST-ESTIMATE.md`` needs: it enumerates the population, obtains each row's real date
 list, and calls ``ingestion.backfill.backfill_range`` once per row. It is NOT a new backfill. It
@@ -113,6 +121,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import uuid
 from dataclasses import dataclass
@@ -213,7 +222,7 @@ EPISODES: Tuple[Episode, ...] = (
 #: its whole life is 24,815 bars in 2,654,167 bytes in one response
 #: (``evidence/wo117_yahoo_range_probe.json``), and the enclosing span here is a quarter of that
 #: depth. 120 s is that with generous room. It is deliberately NOT ``BACKFILL_POLICY``'s 45 s:
-#: that budget is sized for an ALFRED BISECTION of up to 17 small GETs, a different shape of
+#: that budget is sized for a vintage BISECTION of up to 17 small GETs, a different shape of
 #: request, and borrowing it here would be reusing a number rather than choosing one.
 CALENDAR_TIMEOUT_SECONDS = 120.0
 
@@ -483,7 +492,8 @@ def select_episodes(keys: Sequence[str]) -> Tuple[Episode, ...]:
 def run(rows: Sequence[Ingredient], episodes: Sequence[Episode], store: SqliteStore, *,
         run_id: str, dates_only: bool = False, cap: Union[int, None] = None,
         timeout_seconds: float = CALENDAR_TIMEOUT_SECONDS,
-        getter: Callable[..., str] = http_get) -> dict:
+        getter: Callable[..., str] = http_get,
+        api_key: Union[str, None] = None) -> dict:
     """Walk ``rows`` sorted by §5's route grouping: read each one's calendar, then hand it to ``backfill_range``.
 
     PROGRESS IS PRINTED AS EACH ROW FINISHES, NOT COLLECTED AND RETURNED AT THE END, and for a
@@ -542,7 +552,7 @@ def run(rows: Sequence[Ingredient], episodes: Sequence[Episode], store: SqliteSt
                   f"{record['first_date']}..{record['last_date']}", flush=True)
             records.append(record)
             continue
-        result = backfill_range(ing, dates, store, _clock, run_id=run_id)
+        result = backfill_range(ing, dates, store, _clock, run_id=run_id, api_key=api_key)
         record["vintage"] = result.vintage
         record["counts"] = result.counts
         record["admitted_dates"] = list(result.admitted)
@@ -614,11 +624,27 @@ def main(argv: list) -> int:
         print(f"-- STOP: {refusal}", flush=True)
         return 1
 
+    # The FRED REST key is read HERE, once, and handed down as an argument; nothing below this
+    # function consults the environment. It is required ONLY when the run will actually spend a
+    # route-4.1 GET: a dates-only run, or a selection with no revision-prone FRED row, never
+    # touches the vintage endpoint and must not be made to carry a credential it will not use.
+    api_key = None
+    if not args.dates_only and any(
+            ing.kind == "fred" and requires_original_vintage(ing.ref, ing.transformation)
+            for ing in rows):
+        api_key = (os.environ.get("FRED_API_KEY") or "").strip() or None
+        if api_key is None:
+            print("-- STOP: REFUSED: FRED_API_KEY is unset. The selected rows include revision-prone "
+                  "FRED series (route 4.1), whose first-published figures are read through FRED's "
+                  "keyed REST API.", flush=True)
+            return 1
+
     run_id = args.run_id or "wo117-" + uuid.uuid4().hex[:12]
     started = _now()
     with SqliteStore(args.db) as store:
         document = run(rows, episodes, store, run_id=run_id, dates_only=args.dates_only,
-                       cap=args.max_dates_per_episode, timeout_seconds=args.calendar_timeout)
+                       cap=args.max_dates_per_episode, timeout_seconds=args.calendar_timeout,
+                       api_key=api_key)
     document["ran_utc"] = started
     document["finished_utc"] = _now()
     document["database"] = args.db

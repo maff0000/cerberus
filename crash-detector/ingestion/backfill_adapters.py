@@ -1,9 +1,10 @@
-"""BACKFILL-ONLY adapter construction — the one door :class:`AlfredVintageAdapter` is behind.
+"""BACKFILL-ONLY adapter construction — the one door :class:`FredVintageAdapter` is behind.
 
 WO-1.14. ``ingestion.catalog.build_adapter`` is the LIVE collector's constructor: one call,
 one bounded GET, a few seconds of budget, called once per ingredient per pass by
-``ingestion.run``. :class:`~ingestion.adapters.AlfredVintageAdapter` cannot be that: ONE
-``fetch`` is a bisection over vintage dates costing ``2 + ceil(log2(days))`` GETs under a
+``ingestion.run``. :class:`~ingestion.adapters.FredVintageAdapter` cannot be that: ONE
+``fetch`` is a keyed REST read of the observation's whole vintage history (one GET, or for a
+transformed series a bisection over vintage dates costing ``2 + ceil(log2(days))`` GETs) under a
 TOTAL deadline, and it answers for ONE named observation date rather than for "the latest".
 Reaching it from the live loop would not be a slow poll, it would be a different question
 answered under a budget that cannot carry it.
@@ -17,7 +18,7 @@ direction that cannot be reopened by a later edit:
     * this module imports ``ingestion.catalog``; ``ingestion.catalog`` does not import this
       module, and cannot — the reverse import is an import cycle, so the live module cannot
       acquire a reference to the vintage adapter by accident;
-    * ``ingestion.catalog`` never names :class:`~ingestion.adapters.AlfredVintageAdapter` at
+    * ``ingestion.catalog`` never names :class:`~ingestion.adapters.FredVintageAdapter` at
       all. Not in ``build_adapter``, not in its imports, not in its ``__all__``. There is no
       argument, flag or ``kind`` string that makes ``build_adapter`` return one;
     * ``ingestion.run`` — the live loop — imports ``ingestion.catalog`` and NOT this module.
@@ -89,9 +90,9 @@ derives it the same way this module derives the adapter rather than reading it o
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Callable
+from typing import Callable, Union
 
-from ingestion.adapters import (ALFRED_HOST, AlfredVintageAdapter, CboeAdapter, FredAdapter,
+from ingestion.adapters import (FRED_API_HOST, CboeAdapter, FredAdapter, FredVintageAdapter,
                                 YahooChartAdapter)
 from ingestion.catalog import Ingredient
 from ingestion.vintage import requires_original_vintage
@@ -102,27 +103,30 @@ __all__ = ["BACKFILL_EGRESS_HOSTS", "VINTAGE_BACKFILLABLE_KINDS", "build_backfil
 #: :data:`~ingestion.catalog.EGRESS_HOSTS` for the same reason this module is separate from
 #: that one, and the separation is the point rather than a filing convenience.
 #:
-#: WHY ``alfred.stlouisfed.org`` IS NOT IN ``EGRESS_HOSTS``. That dict is DERIVED from what
+#: WHY ``api.stlouisfed.org`` IS NOT IN ``EGRESS_HOSTS``. That dict is DERIVED from what
 #: the LIVE collector's adapters resolve to — ``tests/test_ingestion.py`` asserts it equals
 #: the hostnames of ``build_adapter(i)._url()`` over :data:`~ingestion.catalog.INGREDIENTS`,
 #: by EQUALITY — and it is mirrored host-for-host by ``deploy/egress-destinations.yaml`` and
-#: by ``cd-collectors``' ``x-egress.hosts`` in ``deploy/compose.yaml``. Putting ALFRED there
-#: would be a false claim in the one place the system makes claims about egress: it would say
-#: the live collector service reaches this host, which it structurally does not and must not.
+#: by ``cd-collectors``' ``x-egress.hosts`` in ``deploy/compose.yaml``. Putting the REST host
+#: there would be a false claim in the one place the system makes claims about egress: it would
+#: say the live collector service reaches this host, which it structurally does not and must not.
 #:
-#: WHY IT IS NOT IN ``deploy/egress-destinations.yaml`` EITHER, AND WHAT THAT LEAVES OWED.
-#: A registered destination's ``services`` list must name compose services that exist and
-#: declare ``policy: ALLOWLIST`` (CD-EGRESS-004/006, closing CD-ASR-F04). The only such
-#: service that could carry ALFRED today is ``cd-collectors`` — the live collector — so
-#: registering it there would import the very claim the paragraph above refuses, in the file
-#: whose whole purpose is that an egress claim be true and attributable. The honest entry
-#: names a BACKFILL service, and ``deploy/compose.yaml`` declares no such service: the
-#: designed six-service stack is unchanged by this WO and adding a seventh is an architecture
-#: decision, not this round's. So what is OWED, named here so it is not invisible: when the
-#: backfill driver round lands, it owes a compose service with its own ``x-egress``
-#: ALLOWLIST and a ``DEST-ALFRED-001`` entry registered to THAT service. Until then this
-#: declaration is where the host is written down, and no allowlist anywhere permits it —
-#: fail-closed, which is the accurate description of a backfill that does not run yet.
+#: WHY IT IS NOT IN ``deploy/egress-destinations.yaml`` EITHER, AND WHAT IS (NOT) OWED. A registered
+#: destination's ``services`` list must name compose services that exist and declare
+#: ``policy: ALLOWLIST`` (CD-EGRESS-004/006, closing CD-ASR-F04), and that registry governs what a
+#: DEPLOYED container may reach. The backfill driver (``tools/backfill/wo117_run.py``) is a
+#: HOST-LEVEL script, run directly with ``python3`` and not inside any compose service, so there is
+#: no container allowlist for it to belong to and no registry entry is owed for the driver as it
+#: runs today. (WO-1.14 recorded a ``DEST-ALFRED-001`` registration as OWED to a future backfill
+#: service; WO-1.17 settled it the other way for the host-level driver, and the obligation returns,
+#: renamed ``DEST-FRED-API-001``, only if the backfill is ever containerised — a seventh compose
+#: service with its own ``x-egress`` ALLOWLIST, an architecture decision and not this round's.)
+#: Until then this declaration is where the host is written down; ``cd-collectors`` stays unable
+#: to reach it, fail-closed.
+#:
+#: THE REST HOST NEEDS A CREDENTIAL. It is threaded in as an explicit ``api_key`` argument below and
+#: never read from the environment in this module; see :data:`~ingestion.adapters.FRED_API_HOST`.
+#:
 #: ``cdn-api.cboe.com`` AND ``query1.finance.yahoo.com`` ARE DELIBERATELY ABSENT, though
 #: WO-1.16 backfills both. This dict is hosts reached ONLY by the backfill path, and neither
 #: of them is one: the live collector already reaches both
@@ -134,8 +138,8 @@ __all__ = ["BACKFILL_EGRESS_HOSTS", "VINTAGE_BACKFILLABLE_KINDS", "build_backfil
 #: backfill-only egress destination that does not exist and would owe a second allowlist
 #: entry for a host already allowlisted.
 BACKFILL_EGRESS_HOSTS: dict[str, str] = {
-    ALFRED_HOST: "Federal Reserve Bank of St. Louis (ALFRED vintage graph CSV; keyless, "
-                 "the same public door as fred.stlouisfed.org with a vintage_date parameter)",
+    FRED_API_HOST: "Federal Reserve Bank of St. Louis (FRED REST API, /fred/series/observations "
+                   "with a realtime window; requires an API key, supplied by the caller)",
 }
 
 #: The ingredient kinds a POINT-IN-TIME backfill has been reasoned about for, stated
@@ -154,7 +158,7 @@ BACKFILL_EGRESS_HOSTS: dict[str, str] = {
 #:
 #: THREE KINDS, FOR THREE DIFFERENT REASONS, AND THE REASONS DO NOT GENERALISE (WO-1.16):
 #:
-#: * ``fred`` — ALFRED serves vintages of FRED series, and where it does not have to,
+#: * ``fred`` — FRED's vintage store serves vintages of FRED series, and where it does not have to,
 #:   ``ingestion.vintage``'s evidence MEASURED that revision does not matter. Either way the
 #:   date asked for is answered on recorded authority.
 #: * ``cboe`` — the opposite warrant. There is no vintage endpoint and no stability
@@ -183,10 +187,11 @@ BACKFILL_EGRESS_HOSTS: dict[str, str] = {
 VINTAGE_BACKFILLABLE_KINDS = ("fred", "cboe", "yahoo")
 
 
-def build_backfill_adapter(ing: Ingredient, observation_date: str, clock: Callable[[], datetime]):
+def build_backfill_adapter(ing: Ingredient, observation_date: str, clock: Callable[[], datetime],
+                           *, api_key: Union[str, None] = None):
     """The adapter that answers for ``ing`` at ``observation_date`` — point-in-time where it must.
 
-    ON THE FRED BRANCH: :class:`~ingestion.adapters.AlfredVintageAdapter` when
+    ON THE FRED BRANCH: :class:`~ingestion.adapters.FredVintageAdapter` when
     ``ingestion.vintage.requires_original_vintage`` says this pair needs the figure as first
     published; :class:`~ingestion.adapters.FredAdapter` when stability was POSITIVELY
     measured. ON THE CBOE AND YAHOO BRANCHES: :class:`~ingestion.adapters.CboeAdapter` and
@@ -195,6 +200,10 @@ def build_backfill_adapter(ing: Ingredient, observation_date: str, clock: Callab
     wrong answer rather than an error. A kind outside :data:`VINTAGE_BACKFILLABLE_KINDS` is
     refused, and so is a ``yahoo`` ingredient asking for ``adjclose`` — by the adapter it
     would have to be built from, which is the same docstring's second section.
+
+    ``api_key`` is KEYWORD-ONLY and reaches ONLY :class:`~ingestion.adapters.FredVintageAdapter`: the
+    stable FRED, Cboe and Yahoo branches are keyless and never see it. It is optional here because only
+    the measured revision-prone rows need one.
 
     ``observation_date`` reaches EVERY adapter, and on the three current-body branches it is
     what makes the read a dated one rather than a read of the latest value (WO-1.15,
@@ -211,7 +220,15 @@ def build_backfill_adapter(ing: Ingredient, observation_date: str, clock: Callab
     common = dict(source_id=ing.source_id, as_of_rule=ing.as_of_rule, unit=ing.unit, clock=clock)
     if ing.kind == "fred":
         if requires_original_vintage(ing.ref, ing.transformation):
-            return AlfredVintageAdapter(ing.ref, ing.transformation, observation_date, **common)
+            if api_key is None:
+                # A refusal at construction, before a URL exists. The message names the missing
+                # argument and never a value; ``ingestion.backfill.backfill_range`` refuses the same
+                # case once for the whole range, before any date is touched.
+                raise ValueError(
+                    f"{ing.source_id} needs the figure as first published, which is read through "
+                    f"FRED's keyed REST API, and no api_key was given")
+            return FredVintageAdapter(ing.ref, ing.transformation, observation_date,
+                                      api_key=api_key, **common)
         return FredAdapter(ing.ref, ing.transformation, ing.history,
                           observation_date=observation_date, **common)
     if ing.kind == "cboe":

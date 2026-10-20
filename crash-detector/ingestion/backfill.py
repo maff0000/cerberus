@@ -78,7 +78,7 @@ THE VINTAGE LABEL IS DERIVED, NOT CONSTANT — AND THIS IS THE ONE PLACE IT IS W
     is the right answer for those rows and not merely a diagnostic — see the comment there.
 
     EACH LABEL IS ITS OWN STATED MEANING WORD FOR WORD, which is the test every one of them
-    has to pass here. A reading out of ``AlfredVintageAdapter`` carries the figure the source
+    has to pass here. A reading out of ``FredVintageAdapter`` carries the figure the source
     FIRST published and the vintage date the server itself named. A reading out of
     ``FredAdapter`` carries the figure TODAY's body holds for that past period — the right
     period, since WO-1.15, but today's revision of it — which is exactly what
@@ -120,11 +120,11 @@ THE DATE GATE IS A CHECK ON THE ANSWER, NOT A DESCRIPTION OF ONE ADAPTER'S LIMIT
     gap date with a 404, which ``FredAdapter`` translates for a dated request — see that
     class). Nothing is stored in either case, which is what a gap IS.
 
-    **NO EGRESS ALLOWLIST PERMITS ALFRED YET.** ``BACKFILL_EGRESS_HOSTS`` records the host
-    and records what is owed — a compose service of its own with its own ``x-egress``
-    ALLOWLIST and a registered destination. Until that lands, this driver runs where egress
-    is unrestricted (a seat's own shell) and is fail-closed inside the deployed stack, which
-    is the accurate description of a backfill that is not yet deployed.
+    **NO EGRESS ALLOWLIST PERMITS THE VINTAGE HOST.** ``BACKFILL_EGRESS_HOSTS`` records it
+    (``api.stlouisfed.org``, since WO-1.17) and why no container allowlist names it: this driver
+    runs where egress is unrestricted (a seat's own shell, as a host-level script) and is
+    fail-closed inside the deployed stack, which is the accurate description of a backfill that
+    is not deployed. The host needs an API key, which the caller passes in as ``api_key``.
 
 THE LOOP NEVER ABORTS, AND EVERY DATE IS ACCOUNTED FOR
     One date's failure is one date's failure. A transport error, a body we cannot read, an
@@ -177,9 +177,9 @@ __all__ = [
 BACKFILL_PACING_SECONDS = 0.7
 
 #: ``timeout_seconds`` is a TOTAL deadline per attempt, and for
-#: :class:`~ingestion.adapters.AlfredVintageAdapter` ONE attempt is a bisection of up to
-#: ``2 + ceil(log2(days))`` GETs — 17 for a 1960 observation asked today. 45 s is that search
-#: with room, and it is under the framework's 60 s ceiling. ``max_attempts=2`` because a
+#: :class:`~ingestion.adapters.FredVintageAdapter` ONE attempt is ONE GET for an untransformed
+#: row and, for the three transformed rows, a bisection of up to ``2 + ceil(log2(days))`` GETs —
+#: 17 for a 1960 observation asked today. 45 s is the longer search with room, and it is under the framework's 60 s ceiling. ``max_attempts=2`` because a
 #: backfill has no next pass to retry on the way the live loop does: it is this run or a
 #: reported gap.
 BACKFILL_POLICY = RetryPolicy(max_attempts=2, timeout_seconds=45.0, backoff_seconds=4.0)
@@ -270,7 +270,8 @@ class _VintageLedger:
 def backfill_range(ing: Ingredient, dates: Sequence[str], sink: SqliteStore,
                    clock: Callable[[], datetime], *,
                    pace: float = BACKFILL_PACING_SECONDS,
-                   run_id: Union[str, None] = None) -> BackfillResult:
+                   run_id: Union[str, None] = None,
+                   api_key: Union[str, None] = None) -> BackfillResult:
     """Backfill ``ing`` over exactly ``dates``, in the order given. Returns what happened.
 
     ``dates`` are observation dates as the SOURCE dates them (``YYYY-MM-DD``), pre-computed
@@ -282,6 +283,14 @@ def backfill_range(ing: Ingredient, dates: Sequence[str], sink: SqliteStore,
     ``pace`` exists for the same reason ``ingestion.run.run_once``'s does: so a test can
     measure this function's behaviour without waiting for its courtesy gaps. Production
     callers leave it alone.
+
+    ``api_key`` is the FRED REST credential, threaded to the one adapter that needs it
+    (:class:`~ingestion.adapters.FredVintageAdapter`) and read from nowhere else: this function
+    never consults the environment. A range whose label is ``original`` needs it, and a range that
+    is handed none RAISES before any date is touched, for the same reason a bad kind does — a
+    missing credential is a fact about the whole range, and reporting it once per date would bury
+    it under a thousand identical failures. It is never recorded: not in a result, a failure or a
+    log line.
 
     A kind outside :data:`~ingestion.backfill_adapters.VINTAGE_BACKFILLABLE_KINDS` RAISES,
     before any date is touched. That is a caller's error about the whole range rather than a
@@ -325,6 +334,12 @@ def backfill_range(ing: Ingredient, dates: Sequence[str], sink: SqliteStore,
             f"and NO_REVISION_MECHANISM_COLUMNS)"
         )
 
+    if vintage == VINTAGE_ORIGINAL and api_key is None:
+        raise ValueError(
+            f"{ing.source_id} is backfilled from original vintages, which are read through FRED's "
+            f"keyed REST API, and no api_key was given"
+        )
+
     admitted: list = []
     skipped: list = []
     refused: list = []
@@ -351,7 +366,7 @@ def backfill_range(ing: Ingredient, dates: Sequence[str], sink: SqliteStore,
             fetches += 1
             ledger = _VintageLedger(sink, key, vintage)
             result = collect(
-                build_backfill_adapter(ing, observation_date, clock),
+                build_backfill_adapter(ing, observation_date, clock, api_key=api_key),
                 policy=BACKFILL_POLICY, sink=sink, ledger=ledger, collector_run_id=run_id,
                 started_utc=clock(), delay=DelayKind.WALL_CLOCK,
             )
