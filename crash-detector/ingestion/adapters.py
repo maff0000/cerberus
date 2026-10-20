@@ -52,10 +52,9 @@ __all__ = [
     "CboeAdapter",
     "YahooChartAdapter",
     "MultplShillerAdapter",
-    "LbmaGoldAdapter",
     "HermesCandleAdapter",
     "ManualEntryAdapter",
-    "LBMA_USER_AGENT",
+    "YAHOO_SHORT_PAGE_MAX_ROWS",
     "ALFRED_HOST",
     "ALFRED_BASE",
     "MAX_VINTAGE_PROBES",
@@ -65,7 +64,6 @@ __all__ = [
     "HERMES_CANDLE_CONTRACT_VERSION",
     "hermes_latest_key",
     "parse_hermes_candle",
-    "parse_lbma_gold",
     "fred_column",
     "fred_graph_url",
     "parse_fred_csv",
@@ -812,64 +810,6 @@ def parse_multpl_table(text: str, unit: str, with_history: bool = False) -> dict
     return out
 
 
-#: The browser-prefixed agent legacy ARGUS ``gold_tells.py`` used. It no longer gets past LBMA's
-#: Cloudflare edge from the build host (HTTP 403), so it is not a working credential.
-LBMA_USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) argus-crash-engine/monetary-tells"
-LBMA_PM_URL = "https://prices.lbma.org.uk/json/gold_pm.json"
-LBMA_AM_URL = "https://prices.lbma.org.uk/json/gold_am.json"
-
-
-def _lbma_usd_by_date(text: str) -> Union[dict, None]:
-    """date -> USD fix of an LBMA ``gold_*.json`` body, or None if the body is not that shape.
-
-    The body is a list of ``{"d": "YYYY-MM-DD", "v": [USD, GBP, EUR], ...}``. A row with no USD
-    figure (a day with no fix, or a cancelled one) is skipped: that is the source saying there is
-    no fix, not a number we are discarding. A figure that is present but not a finite number is
-    passed through as a token so the closed schema rejects it (MALFORMED).
-    """
-    try:
-        rows = json.loads(text)
-    except ValueError:
-        return None
-    if type(rows) is not list:
-        return None
-    out: dict = {}
-    for row in rows:
-        if type(row) is not dict or type(row.get("d")) is not str:
-            return None
-        values = row.get("v")
-        if values is None or row.get("is_cancelled") is True:
-            continue
-        if type(values) is not list:
-            return None
-        if not values or values[0] is None:
-            continue
-        out[row["d"]] = values[0] if type(values[0]) in (int, float) and math.isfinite(values[0]) else str(values[0])
-    return out
-
-
-def parse_lbma_gold(pm_text: str, am_text: str, unit: str, history: int = 0) -> dict:
-    """The newest LBMA gold fix in USD per troy ounce: the PM fix of a date, else that date's AM fix.
-
-    Same selection as the legacy ARGUS gold tell: take the union of dates, prefer PM for a date
-    that has one, fall back to AM only for a date with no PM (today, before the PM fix is made).
-
-    ``history`` (WO-1.7): when positive, also carry the last ``history`` dates' fixes as raw
-    ``[date, usd]`` pairs, oldest first, chosen by the same PM-else-AM rule. Nothing is computed.
-    """
-    pm, am = _lbma_usd_by_date(pm_text), _lbma_usd_by_date(am_text)
-    if pm is None or am is None:
-        return {"malformed": "shape"}
-    dates = sorted(set(pm) | set(am))
-    if not dates:
-        return {"unit": unit}  # a conforming body with no fix: EMPTY
-    day = dates[-1]
-    out: dict = {"unit": unit, "observation_date": day, "value": pm[day] if day in pm else am[day]}
-    if history:
-        out["history"] = [[d, pm[d] if d in pm else am[d]] for d in dates[-history:]]
-    return out
-
-
 #: WO-1.12. HERMES is a SEPARATE SYSTEM in another seat's domain (Helm's), and this project is one
 #: READ-ONLY CONSUMER of a contract it publishes — the same relationship it has to FRED, Cboe, Yahoo
 #: and multpl.com, differing only in that the transport is a Redis GET on the LAN rather than HTTPS.
@@ -1441,6 +1381,34 @@ class CboeAdapter(_BaseAdapter):
         return parse_cboe_csv_for_date(body, self._column, self._unit, self._observation_date)
 
 
+#: WO-1.20. The relative page a LIVE history read asks for, keyed on the rows the ingredient
+#: declares. ``range=2y`` ANSWERS 503 DATED CLOSES AND ``range=10y`` ANSWERS 2515 (measured on
+#: ``GC=F``, 2026-10-17, ``evidence/wo120_yahoo_range_probe.json``), so the flat ``2y`` this
+#: adapter asked for from WO-1.2b until now CANNOT serve ``yahoo.GC=F.history``'s 2600 rows: it
+#: would answer a fifth of them, and the catalog would be declaring a depth nothing could
+#: deliver. ``gold_real_rate_cross`` would still have read a number — 503 shared dates clears the
+#: 421 its percentile needs — which is exactly why this is a declaration and not an incident: the
+#: dial would have gone on reporting a figure whose history base was two years while both its own
+#: catalog row and ``SUBSTITUTED_FEEDS`` said ten.
+#:
+#: THE BOUNDARY IS THE LARGEST REQUEST ``2y`` IS ALREADY TRUSTED WITH, NOT THE PAGE'S MEASURED
+#: SIZE, and the difference is deliberate. ``yahoo.BIZD.adj`` declares 520 rows against a page
+#: that answers ~503, because its 520 MEANS "the whole 2y page" (its catalog comment says so).
+#: Reading the boundary off the measurement instead would quietly escalate that row — and only
+#: that row — to a 10y request, changing a live ingredient's question for no reason this WO has.
+#: So every ingredient that existed before WO-1.20 keeps the page it has always asked for, and
+#: only a request a 2y page cannot cover AT ALL escalates.
+#:
+#: ``10y`` AND NOT ``max``, AND THAT IS MEASURED RATHER THAN PREFERRED. ``max`` is in the
+#: endpoint's own ``meta.validRanges`` and looks like the obvious way to ask for "everything",
+#: but asked with ``interval=1d`` it answered 269 BARS SPANNING 2000-09-01 to 2026-10-16 — i.e.
+#: it silently coarsened to MONTHLY and handed back FEWER rows than ``2y`` does, while reporting
+#: a 26-year span (same probe, case ``range=max``). A caller trusting the span would have built a
+#: ten-year correlation out of monthly prints. ``10y`` returns true daily bars, so it is what is
+#: asked for.
+YAHOO_SHORT_PAGE_MAX_ROWS = 520
+
+
 class YahooChartAdapter(_BaseAdapter):
     """Yahoo Finance public chart endpoint (the provider OpenBB's equity path wraps).
 
@@ -1450,8 +1418,9 @@ class YahooChartAdapter(_BaseAdapter):
     TWO QUESTIONS, ONE ENDPOINT, AND THE SECOND ONE IS OPT-IN (WO-1.16). With
     ``observation_date`` left at ``None`` — which is every live call, since
     ``ingestion.catalog.build_adapter`` has no argument that could set it — this asks "what is
-    this symbol at now?" and is the adapter it has always been: ``range=10d`` (``2y`` for a
-    history read), :func:`parse_yahoo_chart`, the last bar, the same failure handling. With
+    this symbol at now?" and is the adapter it has always been: ``range=10d`` (for a history read
+    the page :data:`YAHOO_SHORT_PAGE_MAX_ROWS` selects, ``2y`` or ``10y``),
+    :func:`parse_yahoo_chart`, the last bar, the same failure handling. With
     ``observation_date`` set it asks "what did this symbol close at on D?", and exactly two
     things change together:
 
@@ -1568,7 +1537,11 @@ class YahooChartAdapter(_BaseAdapter):
         # arithmetic and the one-mechanism-per-request refusal are argued. A dated fetch is the
         # single-day case of the absolute window: start == end == the date asked for.
         if self._observation_date is None:
-            return yahoo_chart_url(self._symbol, relative_range="2y" if self._history else "10d")
+            if not self._history:
+                rng = "10d"
+            else:
+                rng = "2y" if self._history <= YAHOO_SHORT_PAGE_MAX_ROWS else "10y"
+            return yahoo_chart_url(self._symbol, relative_range=rng)
         return yahoo_chart_url(self._symbol, start=self._observation_date,
                                end=self._observation_date)
 
@@ -1593,35 +1566,6 @@ class MultplShillerAdapter(_BaseAdapter):
 
     def _parse(self, body: str) -> dict:
         return parse_multpl_table(body, self._unit, self._history)
-
-
-class LbmaGoldAdapter(_BaseAdapter):
-    """LBMA daily gold fix (USD/oz), PM with AM fallback — the genuine spot-gold reference.
-
-    Two bounded GETs (``gold_pm.json`` and ``gold_am.json``); BOTH must succeed, so a half-fetched
-    answer is a recorded failure and never a silent choice. The legacy browser-prefixed User-Agent is
-    sent. If the edge refuses us (HTTP 403 from its bot protection; observed from the build host
-    with this and a plain curl agent), that is
-    recorded as ``HTTP_ERROR``/403 like any failure: this adapter does not try to get around it.
-    """
-
-    __slots__ = ("_history",)
-    adapter_id = "cd.ingest.lbma_gold_fix.v1"
-
-    def __init__(self, history: int = 0, **kw: Any) -> None:
-        super().__init__(**kw)
-        self._history = history
-
-    def _headers(self) -> Mapping[str, str]:
-        return {"User-Agent": LBMA_USER_AGENT}
-
-    def _url(self) -> str:
-        return LBMA_PM_URL
-
-    def _acquire(self, timeout_seconds: float) -> dict:
-        pm_body = self._getter(LBMA_PM_URL, timeout_seconds, self._headers())
-        am_body = self._getter(LBMA_AM_URL, timeout_seconds, self._headers())
-        return parse_lbma_gold(pm_body, am_body, self._unit, self._history)
 
 
 class HermesCandleAdapter(_BaseAdapter):

@@ -15,11 +15,10 @@ from datetime import date, datetime, timedelta, timezone
 import pytest
 
 from crash_detector.engine.derivations import DerivationUnavailable, derive
-from ingestion import adapters as A
 from ingestion.catalog import INGREDIENTS
 from ingestion.report import indicator_states
 from ingestion.store import SqliteStore
-from ingestion.wiring import build_wiring, observations_from_store
+from ingestion.wiring import DERIVED_FROM, build_wiring, observations_from_store
 from gui.state import build_state
 
 from test_wiring import NOW, _gold_rates_series, _independent_gold_figure, _put
@@ -82,42 +81,74 @@ def test_correlation_refuses_short_history_misaligned_dates_and_bad_prices_witho
         derive("gold_real_rate_cross", {"gold": [{"unit": "x", "observation_date": DAY, "value": 1.0}], "real_rate": [_payload(real)]})
 
 
-def test_lbma_history_is_raw_pm_else_am_pairs_and_off_by_default():
-    pm = '[{"d":"2026-10-08","v":[4000.0,1,1]},{"d":"2026-10-09","v":[4010.0,1,1]}]'
-    am = '[{"d":"2026-10-09","v":[4005.0,1,1]},{"d":"2026-10-10","v":[4020.0,1,1]}]'
-    out = A.parse_lbma_gold(pm, am, "usd_per_oz", history=2)
-    assert out["value"] == 4020.0 and out["history"] == [["2026-10-09", 4010.0], ["2026-10-10", 4020.0]]
-    assert "history" not in A.parse_lbma_gold(pm, am, "usd_per_oz")
+# WO-1.20 RETIRED ONE TEST FROM THIS SECTION AND INVERTED ANOTHER, the same two moves WO-1.19
+# made below and for the same reasons.
+#
+# RETIRED: ``test_lbma_history_is_raw_pm_else_am_pairs_and_off_by_default``, the test of the LBMA
+# PM-else-AM parse. ``parse_lbma_gold``, ``LbmaGoldAdapter``, ``LBMA_USER_AGENT`` and the ``lbma``
+# kind are DELETED, so it had no subject left. Removed rather than skipped or xfailed: a skip is a
+# claim that the behaviour still matters and is not being measured, and nothing here is owed a
+# future measurement of a parser for a feed that answered 403 to this host for its entire life.
+#
+# INVERTED, NOT DELETED: the row's own life, below. It used to be asserted FEED_FAILING with no
+# value and NO FUTURES SUBSTITUTE — the gap being that ``gold_real_rate_cross``'s gold leg was the
+# LBMA fix while the ratified row said ``market:GC``, so a live ``yahoo.GC=F`` sitting in the store
+# was deliberately NOT read for it. THAT GAP IS CLOSED (WO-1.20, Owner-confirmed 2026-10-17): the
+# futures close IS the gold leg now, so the same row is asserted LIVE with a real value. The old
+# test could not simply be re-pointed, because with the ``lbma`` kind and its ingredient gone there
+# is nothing left to be "blocked": a row that was never declared reads as un-configured (MISSING),
+# not as a failed fetch attempt, which is what made the inversion the honest move rather than a
+# tweak to the expected state. ``_fail_attempt``, which forged that 403 against the retired
+# adapter id, went with it.
 
 
-def test_gold_history_ingredients_are_new_ids_and_the_futures_close_does_not_feed_the_cross():
+def test_gold_history_ingredients_are_new_ids_and_the_futures_close_now_feeds_the_cross():
+    """The two legs are the history rows, and each is a NEW id beside an untouched sibling.
+
+    ROLE ORDER IS LOAD-BEARING: ``DERIVATIONS``' roles are ``("gold", "real_rate")`` and the legs
+    are consumed positionally, so the gold leg being FIRST is asserted and not incidental.
+    """
     by_id = {i.source_id: i for i in INGREDIENTS}
-    for sid in ("lbma.gold_fix_usd.history", "fred.DFII10.history"):
-        assert by_id[sid].serves == ("gold_real_rate_cross",) and by_id[sid].completes == "COMPONENT" and by_id[sid].history >= 2000
-    assert "gold_real_rate_cross" not in by_id["yahoo.GC=F"].serves
+    assert DERIVED_FROM["gold_real_rate_cross"] == ("yahoo.GC=F.history", "fred.DFII10.history")
+    gold_leg, real_leg = DERIVED_FROM["gold_real_rate_cross"]
+    for sid in (gold_leg, real_leg):
+        assert by_id[sid].serves == ("gold_real_rate_cross",) and by_id[sid].completes == "COMPONENT"
+    # The SAME declared depth on both, so neither leg silently narrows the correlation's base.
+    assert by_id[gold_leg].history == by_id[real_leg].history >= 2000
+    # NEW ids, not a reuse of the history-less rows: the store keeps the first payload admitted per
+    # source period, so each sibling must go on answering exactly as it did. Neither's own job,
+    # depth, nor the indicator it serves changed in this WO.
+    assert (gold_leg, real_leg) != ("yahoo.GC=F", "fred.DFII10")
+    assert by_id["yahoo.GC=F"].serves == ("copper_gold",) and by_id["yahoo.GC=F"].history == 0
     assert by_id["fred.DFII10"].serves == ("real_rate_10y_tips",) and by_id["fred.DFII10"].history == 0
+    # And the retired leg is GONE from the catalog, not merely unwired: no row, and no kind.
+    assert "lbma.gold_fix_usd.history" not in by_id
+    assert "lbma" not in {i.kind for i in INGREDIENTS}
 
 
-def _fail_attempt(store, source_id, when):
-    store._db.execute(
-        "INSERT INTO raw_observation (source_id, adapter_id, collector_run_id, attempt_number, requested_utc, observed_utc,"
-        " outcome, http_status, error_class) VALUES (?,?,?,?,?,?,?,?,?)",
-        (source_id, "cd.ingest.lbma_gold_fix.v1", "r", 1, when, when, "FETCH_FAILED", 403, "HTTP_ERROR"))
+def test_both_real_legs_present_gold_real_rate_cross_resolves_to_a_real_value(db_path):
+    """THE INVERSION of the old no-futures-substitute test (see the section note above).
 
+    Both legs are stored as the live collector would store them — the futures close under its OWN
+    new id, ``yahoo.GC=F.history``, and NOT under the ``yahoo.GC=F`` the old test put it in — and
+    the row reaches LIVE with the figure an independent stdlib derivation computes from the same
+    two series.
 
-def test_with_lbma_blocked_gold_real_rate_cross_is_feed_failing_with_no_value_and_no_futures_substitute(db_path):
-    """The honest-inheritance case: LBMA answers 403, TIPS history is fine, Yahoo gold futures are fine."""
-    _, real = _gold_rates_series(DAY)
+    THE ROW IS STILL A DISCLOSED SUBSTITUTE AND ``why`` MUST STILL SAY SO. Only the FEED stopped
+    being a substitution here; the CONSTRUCTION is unchanged and remains Trinity's provisional,
+    uncalibrated, not-Owner-ratified one, so the same two words are asserted as before. A reading
+    that arrived without that disclosure would be the failure this assertion exists to catch.
+    """
+    gold, real = _gold_rates_series(DAY)
     with SqliteStore(db_path) as w:
         _put(w, "fred.DFII10.history", _payload(real), DAY + "T00:00:00Z")
-        _put(w, "yahoo.GC=F", {"unit": "usd_per_oz", "observation_date": DAY, "value": 4216.0}, DAY + "T00:00:00Z")
-        _fail_attempt(w, "lbma.gold_fix_usd.history", DAY + "T06:00:00Z")
+        _put(w, "yahoo.GC=F.history", _payload(gold), DAY + "T00:00:00Z")
     with SqliteStore(db_path, read_only=True) as ro:
         row = next(i for i in build_state(ro, NOW)["indicators"] if i["id"] == "gold_real_rate_cross")
         wiring = build_wiring()
-        assert "gold_real_rate_cross" not in {o.source_id for o in observations_from_store(ro, wiring, NOW)}
-    assert row["state"] == "FEED_FAILING" and row["value"] is None
-    assert "lbma.gold_fix_usd.history" in row["why"] and "LBMA" in row["why"]
+        assert "gold_real_rate_cross" in {o.source_id for o in observations_from_store(ro, wiring, NOW)}
+    assert row["state"] == "LIVE"
+    assert row["value"] == pytest.approx(_independent_gold_figure(gold, real))
     assert "PROVISIONAL" in row["why"] and "NOT-OWNER-RATIFIED" in row["why"]
 
 

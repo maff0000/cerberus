@@ -415,6 +415,49 @@ class MachineStateHistoryStore:
         ).fetchall()
         return tuple(_as_row(record) for record in rows)
 
+    def breadth_series(self, dial_id: str) -> tuple:
+        """Every row this dial has, as ``(written_utc, breadth)``, OLDEST FIRST.
+
+        THE GUI'S DOOR onto this series (spec §8.2), and the whole of what the WO-1.22
+        chart reads. :meth:`recent` cannot answer it for two reasons: it takes a ``limit``,
+        and it does not return ``written_utc`` at all — :data:`_COLUMNS` omits it, because
+        every existing consumer is the state machine reading its own statistics and none of
+        them plots anything against a clock.
+
+        ``breadth`` IS RETURNED EXACTLY AS STORED, ``None`` AND ALL. An UNKNOWN row carries
+        no number (:data:`_STATE_FIELDS_COHERENT`), and deciding what to draw in place of a
+        reading that does not exist is the consumer's judgement, not this store's. A
+        ``WHERE breadth IS NOT NULL`` here would make "the evaluator could not resolve this
+        dial" indistinguishable from "no row was written", which is the one distinction
+        CD-AC-001 exists to keep.
+
+        ``written_utc`` and NOT ``as_of``: the x-axis of a track record is WHEN THIS
+        PRODUCT SAID SO. ``as_of`` is how old the inputs were, and a row written late is not
+        a reading that happened late (:meth:`append`'s own sentence).
+
+        Ordered by the row id, for :meth:`recent`'s reason — it is the order the evaluations
+        were appended in and cannot be reordered by a clock that moved. In this file that
+        order IS ``written_utc`` ascending, because ``written_utc`` is stamped AT the
+        append; the id is used anyway so that a file whose clock once jumped reads back in
+        the order it was actually written rather than silently re-sorted into a sequence
+        nobody recorded.
+
+        NO ``limit``, unlike :meth:`recent`, whose window is a rule of the state machine
+        (:data:`evaluator.resolve.PROVISIONAL_PERSISTENCE`,
+        :data:`~evaluator.resolve.BREADTH_LOOKBACK_ROWS`). "The history" has no natural
+        window, and a chart that quietly dropped its oldest points would be a track record
+        lying about its own length.
+
+        A read, through both doors: it creates nothing, writes nothing and is available on a
+        ``read_only=True`` handle.
+        """
+        rows = self._db.execute(
+            f"SELECT written_utc, breadth FROM {TABLE} WHERE dial_id = ?"
+            f" ORDER BY {TABLE}_id ASC",
+            (dial_id,),
+        ).fetchall()
+        return tuple((parse_utc(written_utc), breadth) for written_utc, breadth in rows)
+
     def state_since(self, dial_id: str):
         """The ``as_of`` OF THE ROW THAT STARTED this dial's current ``machine_state`` streak.
 

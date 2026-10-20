@@ -209,17 +209,23 @@ def test_the_three_allowlist_services_are_exactly_the_ones_blueprint_names(servi
 #: The ONLY hosts any allowlist may name (WO-1.2b). Each is the feed a Matt-ratified
 #: mapping row declares (governance/mapping/indicator_mapping.yaml, 2026-08-24). Widening
 #: this set is a decision with a record: change it here, deliberately, and cite the row.
+#:
+#: NARROWING IS ALSO A DECISION WITH A RECORD, and WO-1.20 is one: ``prices.lbma.org.uk`` was
+#: added at WO-1.6 for the LBMA gold fix and is REMOVED here with the ingredient and adapter
+#: that were its only caller (Owner-confirmed 2026-10-17). ``gold_real_rate_cross``'s gold leg
+#: is now the COMEX front-month close on ``query1.finance.yahoo.com``, which the ratified row
+#: declares as ``market:GC`` and which is already on this list — so the retirement takes a host
+#: AWAY and adds none, and the count goes from five back to four.
 RATIFIED_COLLECTOR_HOSTS = [
     "fred.stlouisfed.org",
     "cdn-api.cboe.com",
     "query1.finance.yahoo.com",
     "www.multpl.com",
-    "prices.lbma.org.uk",
 ]
 
 
 def test_only_cd_collectors_names_hosts_and_exactly_the_ratified_ones(services: dict):
-    """WO-1.2b state: cd-collectors carries the ratified data hosts (five since WO-1.6), nothing else.
+    """WO-1.2b state: cd-collectors carries the ratified data hosts (four since WO-1.20), nothing else.
 
     cd-witness and cd-review stay empty (their endpoints are still undecided). Any extra
     or missing host in cd-collectors fails here.

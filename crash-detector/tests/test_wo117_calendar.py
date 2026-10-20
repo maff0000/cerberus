@@ -39,8 +39,9 @@ from datetime import date, datetime, timezone
 import pytest
 
 from crash_detector.collectors.adapter import AdapterFetchError
-from ingestion.adapters import (YAHOO_USER_AGENT, CboeAdapter, FredAdapter, YahooChartAdapter,
-                                cboe_history_url, fred_column, fred_graph_url, yahoo_chart_url)
+from ingestion.adapters import (YAHOO_SHORT_PAGE_MAX_ROWS, YAHOO_USER_AGENT, CboeAdapter,
+                                FredAdapter, YahooChartAdapter, cboe_history_url, fred_column,
+                                fred_graph_url, yahoo_chart_url)
 from ingestion.backfill_calendar import (cboe_body_dates, cboe_observation_dates,
                                          fred_body_dates, fred_observation_dates,
                                          yahoo_chart_dates, yahoo_observation_dates)
@@ -756,17 +757,19 @@ _YAHOO_SPY_NO_BAR_AT_ALL = (
 # --- the population, and the URLs the live loop has always asked ------------------------- #
 
 
-def test_the_seven_yahoo_plain_close_rows_have_no_other_date_source_either():
-    """All 7 are ``obs_date``, so the formula sibling refuses every one of them — and with the
-    14 and the 3 above they are the 24 rows §3 counts as having no date source in the tree.
-    Re-derived from the catalog rather than asserted."""
-    assert YAHOO_PLAIN_CLOSE_ROWS == ("yahoo.HYG", "yahoo.LQD", "yahoo.RSP", "yahoo.SPY",
-                                      "yahoo.^GSPC", "yahoo.HG=F", "yahoo.GC=F")
+def test_the_eight_yahoo_plain_close_rows_have_no_other_date_source_either():
+    """All 8 are ``obs_date``, so the formula sibling refuses every one of them — and with the
+    14 and the 3 above they are the 25 rows §3 counts as having no date source in the tree.
+    Re-derived from the catalog rather than asserted. ``yahoo.GC=F.history`` (WO-1.20, the
+    gold_real_rate_cross futures leg) joined this round, routing the same way as its 7
+    history-less siblings because it shares their column tier (``column == ""``)."""
+    assert YAHOO_PLAIN_CLOSE_ROWS == ("yahoo.GC=F.history", "yahoo.HYG", "yahoo.LQD", "yahoo.RSP",
+                                      "yahoo.SPY", "yahoo.^GSPC", "yahoo.HG=F", "yahoo.GC=F")
     for source_id in YAHOO_PLAIN_CLOSE_ROWS:
         assert _ing(source_id).as_of_rule == "obs_date"
         with pytest.raises(ValueError):
             observation_dates(_ing(source_id), "2015-06-08", "2015-06-19")
-    assert (len(FRED_OBS_DATE_ROWS) + len(CBOE_ROWS) + len(YAHOO_PLAIN_CLOSE_ROWS)) == 24
+    assert (len(FRED_OBS_DATE_ROWS) + len(CBOE_ROWS) + len(YAHOO_PLAIN_CLOSE_ROWS)) == 25
 
 
 def test_the_yahoo_calendar_asks_the_same_urls_the_live_adapter_has_always_asked():
@@ -779,8 +782,11 @@ def test_the_yahoo_calendar_asks_the_same_urls_the_live_adapter_has_always_asked
         live = YahooChartAdapter(ing.ref, ing.history, field=ing.column or "close",
                                  source_id=ing.source_id, as_of_rule=ing.as_of_rule,
                                  unit=ing.unit, clock=lambda: NOW)
-        assert live._url() == yahoo_chart_url(
-            ing.ref, relative_range="2y" if ing.history else "10d")
+        if not ing.history:
+            expected_range = "10d"
+        else:
+            expected_range = "2y" if ing.history <= YAHOO_SHORT_PAGE_MAX_ROWS else "10y"
+        assert live._url() == yahoo_chart_url(ing.ref, relative_range=expected_range)
         # The agent string is one constant with two senders, which is the reason it is one.
         assert live._headers() == {"User-Agent": YAHOO_USER_AGENT}
     assert yahoo_chart_url("SPY", relative_range="10d") == (

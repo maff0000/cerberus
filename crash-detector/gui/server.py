@@ -4,8 +4,13 @@
     GET /api/state   the same view-model as JSON
     GET /healthz     200 with the build fingerprint if the store is readable, 503 otherwise
 
-Read-only: the store is opened ``mode=ro`` and nothing here writes. Configuration comes from the
-environment: ``CD_DB_PATH`` (required), ``CD_BIND_HOST`` / ``CD_BIND_PORT``, ``CD_BUILD_SHA``.
+WO-1.22 adds, underneath the dials, a chart of BOTH dials' past values. It reads a SECOND
+store — the evaluator's ``machine_state_history`` (``CD_STATE_PATH``, ``cd-live-state``) — which
+is a different file with a different writer from the collector's raw store. See ``gui/history.py``.
+
+Read-only: both stores are opened ``mode=ro`` and nothing here writes. Configuration comes from
+the environment: ``CD_DB_PATH`` (required), ``CD_STATE_PATH`` (optional: no chart without it),
+``CD_BIND_HOST`` / ``CD_BIND_PORT``, ``CD_BUILD_SHA``.
 
 This is not polish. The bar is: the two dials never blended, an absent dial says NO READING and
 why, and every indicator shows its value, LIVE/PENDING-and-why, and its age.
@@ -23,6 +28,7 @@ import threading
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
+from gui.history import history_panel_html, read_dial_series
 from gui.state import build_state
 from ingestion.store import SqliteStore
 
@@ -50,6 +56,9 @@ th,td{padding:5px 8px;border-bottom:1px solid #e4e8ef;text-align:left;vertical-a
 th{background:#e9edf3;position:sticky;top:0}
 td.n{text-align:right;font-variant-numeric:tabular-nums}
 h3{margin:26px 0 4px} footer{padding:16px 24px;color:#6a7488;font-size:12px}
+.histpanel{background:#fff;border:1px solid #cfd5df;border-radius:6px;padding:4px 20px 14px;margin-top:20px}
+.histpanel h3{margin:12px 0 2px;font-size:16px;text-transform:uppercase;letter-spacing:.05em;color:#46506a}
+.histchart{display:block;width:100%;max-width:720px;height:auto}
 """
 
 
@@ -132,7 +141,15 @@ def _row_html(e: dict) -> str:
     )
 
 
-def render_page(state: dict) -> str:
+def render_page(state: dict, history_html: str = "") -> str:
+    """The page. ``history_html`` is the WO-1.22 chart panel, already rendered.
+
+    A SECOND ARGUMENT rather than a key in ``state``, deliberately. ``build_state`` is the
+    view-model over the COLLECTOR's raw store and the chart comes from the EVALUATOR's — a
+    different file, writer and volume — so folding it in would put two stores behind one name
+    and widen a key set whose own test exists to pin that nothing there combines the dials.
+    Defaulting to "" keeps every caller that renders only the raw-store view working unchanged.
+    """
     esc = html.escape
     counts = ", ".join(f"{esc(k)}: {v}" for k, v in sorted(state["counts"].items()))
     order = {"LIVE": 0, "STALE": 1, "FEED_FAILING": 1, "MISSING": 1, "UNAVAILABLE": 1}
@@ -147,7 +164,8 @@ def render_page(state: dict) -> str:
         '<div class="dials">' + "".join(_dial_html(d) for d in state["dials"]) + "</div>"
         "<p class=\"why\">The two dials are separate quantities and are never combined. "
         "A dial with missing or stale required inputs shows NO READING, never a calm number.</p>"
-        f"<h3>Indicators ({esc(counts)})</h3>"
+        + history_html
+        + f"<h3>Indicators ({esc(counts)})</h3>"
         "<table><thead><tr><th>id</th><th>name</th><th>tier</th><th>scored in dial</th><th>state</th>"
         "<th>value</th><th>as of</th><th>age / window</th><th>why not live / detail</th></tr></thead><tbody>"
         + "".join(_row_html(e) for e in rows)
@@ -180,12 +198,26 @@ class Handler(BaseHTTPRequestHandler):
             self._send(503, f"store unreadable: {type(failure).__name__}\n".encode(), "text/plain; charset=utf-8")
             sys.stderr.write(f"state build failed: {type(failure).__name__}: {failure}\n")
             return
+        # The chart's store is a DIFFERENT file with a different writer, so its failure is
+        # contained here: an absent /state mount or an unreadable file costs the chart and says
+        # why, and does not take down dials that do not depend on it. Only "/" needs it.
+        history_html = ""
+        if path == "/":
+            state_path = getattr(self.server, "state_path", None)
+            if not state_path:
+                history_html = history_panel_html(None, unavailable="CD_STATE_PATH is unset: the evaluator's history store is not mounted into this container.")
+            else:
+                try:
+                    history_html = history_panel_html(read_dial_series(state_path))
+                except Exception as failure:
+                    history_html = history_panel_html(None, unavailable=f"{state_path} could not be read ({type(failure).__name__}).")
+                    sys.stderr.write(f"dial history unreadable: {type(failure).__name__}: {failure}\n")
         if path == "/healthz":
             self._send(200, json.dumps({"ok": True, "build": BUILD_SHA}).encode(), "application/json")
         elif path == "/api/state":
             self._send(200, json.dumps(state, indent=1).encode(), "application/json")
         else:
-            self._send(200, render_page(state).encode(), "text/html; charset=utf-8")
+            self._send(200, render_page(state, history_html).encode(), "text/html; charset=utf-8")
 
     def log_message(self, fmt: str, *args: object) -> None:
         sys.stdout.write("%s - %s\n" % (self.address_string(), fmt % args))
@@ -195,11 +227,20 @@ def main() -> int:
     db_path = os.environ.get("CD_DB_PATH")
     if not db_path:
         raise SystemExit("REFUSED: CD_DB_PATH is unset.")
+    # OPTIONAL, unlike CD_DB_PATH: without it the page renders with the chart panel saying why
+    # it is empty. The dials are this GUI's job and they do not read this file, so refusing to
+    # start over a missing history would take the working view down with the new one.
+    state_path = os.environ.get("CD_STATE_PATH")
     host = os.environ.get("CD_BIND_HOST", "127.0.0.1")
     port = int(os.environ.get("CD_BIND_PORT", "8710"))
     server = ThreadingHTTPServer((host, port), Handler)
     server.db_path = db_path  # type: ignore[attr-defined]
-    print(f"cd-gui build={BUILD_SHA} listening on {host}:{port} db={db_path}", flush=True)
+    server.state_path = state_path  # type: ignore[attr-defined]
+    print(
+        f"cd-gui build={BUILD_SHA} listening on {host}:{port} db={db_path} "
+        f"state={state_path or '(unset: no dial history)'}",
+        flush=True,
+    )
     # PID 1 in a container ignores SIGTERM unless a handler is installed; shutdown() must run off-thread.
     signal.signal(signal.SIGTERM, lambda *_: threading.Thread(target=server.shutdown).start())
     try:

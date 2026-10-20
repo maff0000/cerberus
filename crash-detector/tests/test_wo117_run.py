@@ -137,9 +137,9 @@ def test_no_date_in_this_plan_falls_before_the_stability_measurement_window():
 # --- §5: the population, re-derived rather than listed ---------------------------------- #
 
 
-def test_the_population_is_the_thirty_five_rows_section_5_counts():
+def test_the_population_is_the_thirty_six_rows_section_5_counts():
     population = backfillable_population()
-    assert len(population) == 35
+    assert len(population) == 36
     # And it is the SAME set the two filters describe, computed here a second way.
     expected = {i.source_id for i in INGREDIENTS
                 if i.kind in VINTAGE_BACKFILLABLE_KINDS
@@ -147,12 +147,12 @@ def test_the_population_is_the_thirty_five_rows_section_5_counts():
     assert {i.source_id for i in population} == expected
 
 
-def test_the_four_routes_are_section_5s_eighteen_seven_three_seven():
+def test_the_four_routes_are_section_5s_eighteen_seven_three_eight():
     counts = {}
     for ing in backfillable_population():
         counts[route(ing)] = counts.get(route(ing), 0) + 1
     assert counts == {"4.1-fred-bisected": 18, "4.2-fred-stable": 7,
-                      "4.3-cboe": 3, "4.4-yahoo-close": 7}
+                      "4.3-cboe": 3, "4.4-yahoo-close": 8}
     # §5.2 by name: six REVISION_STABLE pairs spending seven catalog rows, DFII10 twice.
     stable = {i.source_id for i in backfillable_population()
               if i.kind == "fred" and not requires_original_vintage(i.ref, i.transformation)}
@@ -172,12 +172,12 @@ def test_the_fifty_one_adjclose_rows_are_excluded_and_cannot_be_asked_for_by_nam
         select_rows(["yahoo.BIZD.adj"])
 
 
-def test_the_four_date_sources_split_the_population_eleven_fourteen_three_seven():
-    """§3.1's arithmetic: 11 rows a formula answers for, 24 that need a published calendar."""
+def test_the_four_date_sources_split_the_population_eleven_fourteen_three_eight():
+    """§3.1's arithmetic: 11 rows a formula answers for, 25 that need a published calendar."""
     counts = {}
     for ing in backfillable_population():
         counts[date_source(ing)] = counts.get(date_source(ing), 0) + 1
-    assert counts == {"formula": 11, "fred": 14, "cboe": 3, "yahoo": 7}
+    assert counts == {"formula": 11, "fred": 14, "cboe": 3, "yahoo": 8}
 
 
 def test_the_formula_is_preferred_exactly_where_it_can_answer_and_nowhere_else():
@@ -319,7 +319,7 @@ def test_the_cache_collapses_the_second_dfii10_row_to_zero_gets():
 
 
 def test_a_formula_row_reads_no_body_at_all_and_reports_no_fetch():
-    """11 of the 35 rows cost nothing to date, and the driver must not report a GET it never
+    """11 of the 36 rows cost nothing to date, and the driver must not report a GET it never
     issued — the per-row ``calendar_fetched`` flag is what the run's GET count is summed from."""
     getter = _serves("this body must never be read")
     dates, fetched = row_dates(_ing("fred.GDP"), EPISODES, getter=getter)
@@ -369,7 +369,7 @@ def test_an_unknown_row_or_episode_is_a_refusal_and_not_an_empty_run():
         select_rows(["fred.NOT_A_SERIES"])
     with pytest.raises(ValueError):
         select_episodes(["2008"])
-    assert len(select_rows([])) == 35
+    assert len(select_rows([])) == 36
     assert select_episodes([]) == EPISODES
 
 

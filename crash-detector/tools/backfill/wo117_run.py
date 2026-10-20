@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""THE REAL BACKFILL RUN — the 35 backfillable catalog rows over WO-1.17's 8 episode windows.
+"""THE REAL BACKFILL RUN — the 36 backfillable catalog rows over WO-1.17's 8 episode windows.
 
     PYTHONPATH=src:. python3 tools/backfill/wo117_run.py --db <store.sqlite> [--out record.json]
 
@@ -21,10 +21,10 @@ a production RUN whose output is data in a store, measured at ~190,391 GETs and 
 tree that spends real money, so it goes in the directory already named for what it does.
 
 THE FIVE THINGS IT DOES, IN ORDER
-    1.  **Enumerates the 35 rows by RE-DERIVING them** (:func:`backfillable_population`) from
+    1.  **Enumerates the 36 rows by RE-DERIVING them** (:func:`backfillable_population`) from
         ``ingestion.catalog.INGREDIENTS`` and the same three routing predicates §5 asks —
         ``VINTAGE_BACKFILLABLE_KINDS``, ``has_no_revision_mechanism`` for the yahoo column tier.
-        Not a transcribed list of 35 source ids: a list would let the driver and the cost
+        Not a transcribed list of 36 source ids: a list would let the driver and the cost
         estimate diverge silently the next time the catalog grows a row, which is exactly what
         happened to §5's own FRED sub-count when ``DRTSCIS`` arrived (24 → 25). Re-derived, the
         driver cannot be wrong about the population without the document being wrong too.
@@ -64,7 +64,7 @@ ONE WIDE SPAN PER ROW, NOT EIGHT WINDOWED CALLS — AND THE WINDOW IS APPLIED HE
       1999-11-02 episode would do exactly that on three of the seven rows.
     * **One call per row over the ENCLOSING span, then filtered to the eight windows here.**
       23 GETs, no redundancy, and no impossible window to ask for: the enclosing span
-      1999-11-02..2025-05-31 intersects every one of these 35 rows' real lifetime, so every
+      1999-11-02..2025-05-31 intersects every one of these 36 rows' real lifetime, so every
       request is answerable. The three readers return the same dates either way — each one's
       bound is already an exact arithmetic comparison over whatever body arrived, by their own
       design, *because* a server's windowing courtesy is not what any of them lean on.
@@ -223,7 +223,7 @@ DATE_SOURCES = ("formula", "fred", "cboe", "yahoo")
 
 
 def backfillable_population() -> Tuple[Ingredient, ...]:
-    """The 35 backfillable catalog rows, re-derived. §5's population, from §5's own predicates.
+    """The 36 backfillable catalog rows, re-derived. §5's population, from §5's own predicates.
 
     Two filters and no list:
 
@@ -276,7 +276,7 @@ def date_source(ing: Ingredient) -> str:
     A ``month_end`` or ``quarter_end`` FRED row could be answered either way — by
     ``observation_dates``, which states the dating convention ``as_of_rule`` was declared for, or
     by ``fred_observation_dates``, which reads the published body. The formula is preferred
-    because it costs no GET for 11 of the 35 rows, and it is SAFE to prefer because the two must
+    because it costs no GET for 11 of the 36 rows, and it is SAFE to prefer because the two must
     agree where both answer: ``tests/test_wo117_calendar.py`` holds that they do on the real
     catalog rows, and ``backfill_calendar``'s own docstring records the tie-break if they ever
     stop ("where they differ the body wins"). If that test ever fails, this preference is the
@@ -495,7 +495,7 @@ def run(rows: Sequence[Ingredient], episodes: Sequence[Episode], store: SqliteSt
     A CALENDAR FAILURE IS ONE ROW'S, NOT THE RUN'S. This mirrors ``backfill_range``'s own rule
     that "one date's failure is one date's failure" at the layer above it, and it is not a
     duplicate of that handling: ``backfill_range`` cannot report a failure that happened before
-    it was called, and a 503 on row 3's calendar GET must not cost rows 4 through 35. The row is
+    it was called, and a 503 on row 3's calendar GET must not cost rows 4 through 36. The row is
     recorded in ``calendar_failed`` with the error CLASS and nothing else (PBG-SEC-002: no
     message, no URL, no exception text) and the run continues. It is also the one thing that
     makes the exit code non-zero, because it is the one thing that makes the run INCOMPLETE as
@@ -583,7 +583,7 @@ def run(rows: Sequence[Ingredient], episodes: Sequence[Episode], store: SqliteSt
 
 def main(argv: list) -> int:
     parser = argparse.ArgumentParser(
-        description="WO-1.17: backfill the 35-row population over the 8 episode windows")
+        description="WO-1.17: backfill the 36-row population over the 8 episode windows")
     parser.add_argument("--db", required=True,
                         help="the SQLite store to write into. REQUIRED and never defaulted — "
                              "the caller owns the path, and a default could reach cd-live-data")
