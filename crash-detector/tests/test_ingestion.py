@@ -1251,380 +1251,864 @@ def test_wo_1_6_ingredients_poll_slowly_and_the_fred_history_ones_ask_for_histor
     assert by_id["yahoo.GC=F.history"].serves == ("gold_real_rate_cross",)
 
 
-# --- WO-1.14: the ALFRED vintage adapter ------------------------------------------------- #
+# --- WO-1.17: the FRED REST vintage adapter ----------------------------------------------- #
 #
-# ALFRED IS STOOD UP OFFLINE, not mocked at the function that answers. ``_Alfred`` below is a
-# model of the endpoint's THREE behaviours the vintage search turns on — a vintage trail that
-# begins somewhere (404 beneath it), vintages that exist but carry no row for the observation
-# yet, and vintages that carry the figure as it stood then. A fake that only returned bodies
-# could not distinguish the second from the first, which is the whole question being asked.
+# WHAT REPLACED WHAT. ``AlfredVintageAdapter`` read ``alfred.stlouisfed.org``'s graph CSV, which
+# failed for real from 2026-10-18 (it answered the CURRENT value under a label naming today's
+# date whatever vintage was asked for). ``FredVintageAdapter`` reads FRED's documented REST API,
+# ``api.stlouisfed.org/fred/series/observations``. The old ``_Alfred`` model, the ``parse_alfred_csv``
+# tests and the 404-as-absent tests went with the mechanism they described; what they pinned
+# that still applies (the rule, the floor, the ceiling and its boundary, EMPTY, the total deadline,
+# the probe cap, the closed schema) is re-pinned below against the new endpoint.
+#
+# THE BODIES BELOW ARE CAPTURED, NOT INVENTED. Every ``_CAPTURED_*`` constant is a literal JSON body
+# taken from a real response of the real API on 2026-10-20 (the key is not in a response, and none
+# appears here). Where a test needs a state the real API has not been seen to produce — a first
+# vintage that predates its observation, a ``.`` row — it DERIVES it from a capture by editing the
+# one field concerned (``_edited``), and says so. No test needs the key or the network.
 
-_OBS = "2008-09-01"  # a quarter-start-dated figure, published weeks after the quarter ended
+_REST_TODAY = datetime(2026, 10, 20, 12, 0, tzinfo=timezone.utc)
+_FAKE_KEY = "k" * 32  # shaped like a key, worth nothing; the real one is never in this tree
+
+#: ``fred.WALCL``, observation 2015-06-10 (the case the real WO-1.17 backfill failed on), wide window.
+_CAPTURED_WALCL_2015_06_10 = (
+    '{"realtime_start":"1900-01-01","realtime_end":"2026-10-20","observation_start":"2015-06-10",'
+    '"observation_end":"2015-06-10","units":"lin","output_type":1,"file_type":"json",'
+    '"order_by":"observation_date","sort_order":"asc","count":1,"offset":0,"limit":100000,'
+    '"observations":[{"realtime_start":"2015-06-11","realtime_end":"2026-10-20","date":"2015-06-10",'
+    '"value":"4468005"}]}')
+
+#: ``fred.GDP``, observation 2000-01-01: thirteen vintages, the first a genuine BEA advance estimate.
+_CAPTURED_GDP_2000_Q1 = (
+    '{"realtime_start":"1900-01-01","realtime_end":"2026-10-20","observation_start":"2000-01-01",'
+    '"observation_end":"2000-01-01","units":"lin","output_type":1,"file_type":"json",'
+    '"order_by":"observation_date","sort_order":"asc","count":13,"offset":0,"limit":100000,'
+    '"observations":[{"realtime_start":"2000-04-27","realtime_end":"2000-05-24","date":"2000-01-01","value":"9697.2"},'
+    '{"realtime_start":"2000-05-25","realtime_end":"2000-06-28","date":"2000-01-01","value":"9697.6"},'
+    '{"realtime_start":"2000-06-29","realtime_end":"2000-07-27","date":"2000-01-01","value":"9707.0"},'
+    '{"realtime_start":"2000-07-28","realtime_end":"2001-07-26","date":"2000-01-01","value":"9752.7"},'
+    '{"realtime_start":"2001-07-27","realtime_end":"2002-07-30","date":"2000-01-01","value":"9668.7"},'
+    '{"realtime_start":"2002-07-31","realtime_end":"2003-12-09","date":"2000-01-01","value":"9649.5"},'
+    '{"realtime_start":"2003-12-10","realtime_end":"2009-07-30","date":"2000-01-01","value":"9629.4"},'
+    '{"realtime_start":"2009-07-31","realtime_end":"2013-07-30","date":"2000-01-01","value":"9709.5"},'
+    '{"realtime_start":"2013-07-31","realtime_end":"2014-07-29","date":"2000-01-01","value":"10036.1"},'
+    '{"realtime_start":"2014-07-30","realtime_end":"2017-10-26","date":"2000-01-01","value":"10031.0"},'
+    '{"realtime_start":"2017-10-27","realtime_end":"2018-07-26","date":"2000-01-01","value":"10031.031"},'
+    '{"realtime_start":"2018-07-27","realtime_end":"2021-07-28","date":"2000-01-01","value":"10002.857"},'
+    '{"realtime_start":"2021-07-29","realtime_end":"2026-10-20","date":"2000-01-01","value":"10002.179"}]}')
+
+#: ``fred.WALCL``, observation 2002-12-18 — the series' first observation, which predates its own
+#: archive: the earliest vintage FRED holds is 2011-07-07, a restatement 3,123 days later.
+_CAPTURED_WALCL_2002_12_18 = (
+    '{"realtime_start":"1900-01-01","realtime_end":"2026-10-20","observation_start":"2002-12-18",'
+    '"observation_end":"2002-12-18","units":"lin","output_type":1,"file_type":"json",'
+    '"order_by":"observation_date","sort_order":"asc","count":2,"offset":0,"limit":100000,'
+    '"observations":[{"realtime_start":"2011-07-07","realtime_end":"2013-04-17","date":"2002-12-18","value":"720601"},'
+    '{"realtime_start":"2013-04-18","realtime_end":"2026-10-20","date":"2002-12-18","value":"719542"}]}')
+
+#: ``fred.WALCL`` on a Saturday: the series carries no such date at any vintage. ``count`` 0.
+_CAPTURED_WALCL_NEVER_PUBLISHED = (
+    '{"realtime_start":"1900-01-01","realtime_end":"2026-10-20","observation_start":"2015-06-13",'
+    '"observation_end":"2015-06-13","units":"lin","output_type":1,"file_type":"json",'
+    '"order_by":"observation_date","sort_order":"asc","count":0,"offset":0,"limit":100000,'
+    '"observations":[]}')
+
+#: ``fred.BAMLH0A0HYM2``, observation 2024-12-31: first served the SAME day (admitted by the old
+#: mechanism with this value, 2.92) — a same-day publication is neither a floor nor a ceiling case.
+_CAPTURED_BAML_2024_12_31 = (
+    '{"realtime_start":"1900-01-01","realtime_end":"2026-10-20","observation_start":"2024-12-31",'
+    '"observation_end":"2024-12-31","units":"lin","output_type":1,"file_type":"json",'
+    '"order_by":"observation_date","sort_order":"asc","count":1,"offset":0,"limit":100000,'
+    '"observations":[{"realtime_start":"2024-12-31","realtime_end":"2026-10-20","date":"2024-12-31",'
+    '"value":"2.92"}]}')
+
+#: ``fred.CPIAUCSL`` ``units=pc1``, observation 2015-06-01, ONE vintage (2015-07-20) that SERVES it.
+_CAPTURED_CPI_PC1_SERVED = (
+    '{"realtime_start":"2015-07-20","realtime_end":"2015-07-20","observation_start":"2015-06-01",'
+    '"observation_end":"2015-06-01","units":"pc1","output_type":1,"file_type":"json",'
+    '"order_by":"observation_date","sort_order":"asc","count":1,"offset":0,"limit":100000,'
+    '"observations":[{"realtime_start":"2015-07-20","realtime_end":"2015-07-20","date":"2015-06-01",'
+    '"value":"0.18454"}]}')
+
+#: The same request at vintage 2015-06-01, before the figure existed: ``200``, ``count`` 0 — NOT 404.
+_CAPTURED_CPI_PC1_ABSENT = (
+    '{"realtime_start":"2015-06-01","realtime_end":"2015-06-01","observation_start":"2015-06-01",'
+    '"observation_end":"2015-06-01","units":"pc1","output_type":1,"file_type":"json",'
+    '"order_by":"observation_date","sort_order":"asc","count":0,"offset":0,"limit":100000,'
+    '"observations":[]}')
+
+#: What the server answers a WIDE window with when ``units`` is not ``lin`` (HTTP 400; the body is
+#: served here as though it were a 200 to prove it is never read as a vintage).
+_CAPTURED_REST_400 = (
+    '{"error_code":400,"error_message":"Bad Request.  If output_type is \'1\' and units is not '
+    '\'lin\', then realtime_start must equal realtime_end or vintage_dates may set only 1 date."}')
 
 
-class _Alfred:
-    """The endpoint, offline. Records every URL asked and the headers it was asked with."""
+def _edited(body: str, edit) -> str:
+    """A captured body with ONE concern changed by ``edit(document)``. Used to DERIVE states."""
+    document = json.loads(body)
+    edit(document)
+    return json.dumps(document)
 
-    def __init__(self, *, trail_from: str = "1991-07-15", published: str = "2008-10-30",
-                 revisions=(("2008-10-30", "1.0"), ("2008-11-20", "1.5"), ("2009-07-31", "2.0")),
-                 column: str = "GDP", observation: str = _OBS, answers_vintage=None):
-        self.trail_from, self.published, self.revisions = trail_from, published, list(revisions)
-        self.column, self.observation = column, observation
-        #: when set, every body claims THIS vintage in its header whatever was asked for
-        self.answers_vintage = answers_vintage
-        self.asked: list[str] = []
-        self.headers: list = []
 
-    def vintages_asked(self) -> list[str]:
+class _FixedFloors:
+    """An archive floor that is simply KNOWN: stands in for ``FredArchiveFloors`` where a test is
+    about something else. The default floor, 1990-01-01, is older than every observation the older
+    tests ask for, so it can neither refuse nor move any of their searches; the tests that ARE about
+    the floor pass their own date. ``asked`` records each call so cost can be asserted."""
+
+    def __init__(self, floor=date(1990, 1, 1), vintage_list=None):
+        self.known, self.asked, self.vintage_list = floor, [], vintage_list
+
+    def floor(self, series, timeout_seconds, getter):
+        self.asked.append(series)
+        return self.known
+
+    def vintages(self, series, timeout_seconds, getter):
+        """The vintage dates a transformed scan walks. Untransformed paths never ask."""
+        return list(self.vintage_list or [])
+
+
+def _vintage_adapter(getter, observation="2015-06-10", series="WALCL", transformation=None,
+                     unit="usd_millions", as_of_rule="obs_date", today=_REST_TODAY,
+                     api_key=_FAKE_KEY, archive_floors=None):
+    archive_floors = archive_floors or _FixedFloors()
+    offered = getattr(getter, "vintage_dates", None)
+    if offered is not None and isinstance(archive_floors, _FixedFloors) and not archive_floors.vintage_list:
+        archive_floors.vintage_list = offered()
+    return A.FredVintageAdapter(
+        series=series, transformation=transformation, observation_date=observation,
+        api_key=api_key, archive_floors=archive_floors,
+        source_id=f"fred.{series}", as_of_rule=as_of_rule, unit=unit,
+        clock=lambda: today, getter=getter)
+
+
+class _Serves:
+    """A getter that answers every request with one literal body and records what was asked."""
+
+    def __init__(self, body: str):
+        self.body, self.asked, self.headers = body, [], []
+
+    def __call__(self, url, timeout, headers=None):
+        self.asked.append(url)
+        self.headers.append(headers)
+        return self.body
+
+    def queries(self) -> list:
         from urllib.parse import parse_qs, urlsplit
-        return [parse_qs(urlsplit(u).query)["vintage_date"][0] for u in self.asked]
+        return [parse_qs(urlsplit(u).query) for u in self.asked]
+
+
+class _RestPc1:
+    """The transformed-series endpoint, offline: SINGLE-DAY windows, SERVED vs ABSENT.
+
+    Its two answers are the two ``_CAPTURED_CPI_PC1_*`` bodies with the vintage date they echo
+    replaced by the one asked — the only field that varies between real probes. Which of the two a
+    vintage gets is the model's one decision: served from ``first_serving`` onward, absent before.
+    """
+
+    def __init__(self, first_serving: str, observation: str = "2015-06-01"):
+        self.first_serving, self.observation = first_serving, observation
+        self.asked: list = []
+
+    def vintages_asked(self) -> list:
+        from urllib.parse import parse_qs, urlsplit
+        return [parse_qs(urlsplit(u).query)["realtime_start"][0] for u in self.asked]
+
+    def vintage_dates(self) -> list:
+        """The archive's vintage dates: a monthly release on the 17th, 2010-2027, plus the one that
+        first serves the figure (a real archive lists every date it published on, served or not)."""
+        monthly = {date(y, m, 17) for y in range(2010, 2028) for m in range(1, 13)}
+        return sorted(monthly | {date.fromisoformat(self.first_serving)})
 
     def __call__(self, url, timeout, headers=None):
         from urllib.parse import parse_qs, urlsplit
         self.asked.append(url)
-        self.headers.append(headers)
-        asked = parse_qs(urlsplit(url).query)["vintage_date"][0]
-        if asked < self.trail_from:
-            raise AdapterFetchError("HTTP_ERROR", 404)  # ALFRED has no such vintage of this series
-        header = f"observation_date,{self.column}_{(self.answers_vintage or asked).replace('-', '')}"
-        if asked < self.published:
-            return header + "\n"  # the vintage exists; it had nothing to say about this date
-        value = [v for when, v in self.revisions if when <= asked][-1]
-        return f"{header}\n{self.observation},{value}\n"
+        query = parse_qs(urlsplit(url).query)
+        asked = query["realtime_start"][0]
+        assert query["realtime_end"] == [asked], "the server refuses a wide window for units != lin"
+        if asked < self.first_serving:  # ABSENT: 200, count 0, echoing the vintage asked
+            return _edited(_CAPTURED_CPI_PC1_ABSENT,
+                           lambda d: d.update(realtime_start=asked, realtime_end=asked))
+
+        def serve(document):  # SERVED: the captured row, its span moved to the vintage asked
+            document.update(realtime_start=asked, realtime_end=asked)
+            document["observations"][0].update(realtime_start=asked, realtime_end=asked)
+        return _edited(_CAPTURED_CPI_PC1_SERVED, serve)
 
 
-def _vintage_adapter(getter, observation=_OBS, series="GDP", transformation=None):
-    return A.AlfredVintageAdapter(
-        series=series, transformation=transformation, observation_date=observation,
-        source_id="alfred.GDP", as_of_rule="quarter_end", unit="usd_billions",
-        clock=lambda: NOW, getter=getter)
+def _cpi_adapter(getter, observation="2015-06-01", archive_floors=None):
+    return _vintage_adapter(getter, observation=observation, series="CPIAUCSL",
+                            transformation="pc1", unit="percent_yoy", as_of_rule="month_end",
+                            archive_floors=archive_floors)
+
+
+# --- the untransformed path: ONE GET ----------------------------------------------------- #
 
 
 def test_the_vintage_chosen_is_the_first_that_published_the_figure_not_the_latest_revision():
-    """THE RULE: the earliest vintage in [observation_date, today] that served a value."""
-    alfred = _Alfred()
-    payload = _vintage_adapter(alfred).fetch(timeout_seconds=30).payload
-    assert payload == {"unit": "usd_billions", "observation_date": _OBS,
-                       "value": 1.0, "vintage_date": "2008-10-30"}
-    # 1.5 and 2.0 are what the SAME observation says in later vintages, and are not chosen.
-    assert [v for _, v in alfred.revisions] == ["1.0", "1.5", "2.0"]
+    """THE RULE, on ``fred.GDP`` 2000-Q1 whose thirteen vintages run 9697.2 .. 10002.179."""
+    fake = _Serves(_CAPTURED_GDP_2000_Q1)
+    payload = _vintage_adapter(fake, observation="2000-01-01", series="GDP",
+                               unit="usd_billions", as_of_rule="quarter_end"
+                               ).fetch(timeout_seconds=30).payload
+    assert payload == {"unit": "usd_billions", "observation_date": "2000-01-01",
+                       "value": 9697.2, "vintage_date": "2000-04-27"}
+    assert payload["value"] != 10002.179  # what the SAME observation says today
+    assert len(fake.asked) == 1
 
 
-# WO-1.17: 2012-02-29 (gap 1,276 days) and 2026-10-11 (gap 6,614) were parameters of this test
-# until the first-publication ceiling landed. They are not bisection boundaries any more, they are
-# refusals, so they moved to
-# ``test_a_first_serving_vintage_too_distant_to_be_a_publication_event_is_refused`` below rather
-# than being deleted. What is left here is every gap the ceiling admits, which is what this test
-# is about: the bisection pins the serving day exactly.
-@pytest.mark.parametrize("published", ["2008-09-01", "2008-09-02", "2008-10-30"])
-def test_the_boundary_is_pinned_exactly_the_first_serving_day_and_never_the_day_before(published):
-    """Both arms of the bisection's answer: the day it picks served, the day before did not."""
-    alfred = _Alfred(published=published, revisions=((published, "7.25"),))
-    payload = _vintage_adapter(alfred).fetch(timeout_seconds=30).payload
-    assert payload["vintage_date"] == published and payload["value"] == 7.25
+def test_a_failed_real_backfill_date_now_resolves_to_the_real_first_published_value():
+    """``fred.WALCL`` 2015-06-10 failed every attempt of the real run (the CSV fault); the REST
+    API's earliest vintage for it is 2015-06-11, value 4,468,005 (USD millions — the catalog's
+    own unit for WALCL, so there is no scaling to apply)."""
+    payload = _vintage_adapter(_Serves(_CAPTURED_WALCL_2015_06_10)).fetch(
+        timeout_seconds=30).payload
+    assert payload == {"unit": "usd_millions", "observation_date": "2015-06-10",
+                       "value": 4468005.0, "vintage_date": "2015-06-11"}
 
 
-def test_no_vintage_that_predates_the_observation_can_be_the_answer_and_the_floor_is_measured():
-    """The search window starts AT the observation; the day before it is probed, not assumed."""
-    alfred = _Alfred()
-    payload = _vintage_adapter(alfred).fetch(timeout_seconds=30).payload
-    asked = alfred.vintages_asked()
-    assert payload["vintage_date"] >= _OBS
-    assert min(asked) == "2008-08-31"  # the floor: probed to VERIFY it carries nothing
-    assert [v for v in asked if v < "2008-08-31"] == []
-    # 2 ends + a bisection over 6,615 days. Logarithmic, and inside the declared ceiling.
-    assert len(asked) <= 2 + 13 and len(asked) <= A.MAX_VINTAGE_PROBES
+def test_a_same_day_publication_is_admitted_and_reproduces_the_value_the_old_mechanism_stored():
+    """BAMLH0A0HYM2 2024-12-31 was admitted by the CSV mechanism as 2.92, vintage 2024-12-31."""
+    payload = _vintage_adapter(_Serves(_CAPTURED_BAML_2024_12_31), observation="2024-12-31",
+                               series="BAMLH0A0HYM2", unit="percent").fetch(
+        timeout_seconds=30).payload
+    assert payload == {"unit": "percent", "observation_date": "2024-12-31",
+                       "value": 2.92, "vintage_date": "2024-12-31"}
+
+
+def test_an_untransformed_row_is_exactly_one_wide_get_to_the_rest_host_carrying_the_key():
+    fake = _Serves(_CAPTURED_WALCL_2015_06_10)
+    _vintage_adapter(fake).fetch(timeout_seconds=30)
+    from urllib.parse import urlsplit
+    assert len(fake.asked) == 1
+    parts, query = urlsplit(fake.asked[0]), fake.queries()[0]
+    assert parts.scheme == "https" and parts.hostname == A.FRED_API_HOST
+    assert parts.path == "/fred/series/observations"
+    assert query["series_id"] == ["WALCL"] and query["file_type"] == ["json"]
+    assert query["realtime_start"] == [A.FRED_REALTIME_FLOOR] == ["1900-01-01"]
+    assert query["realtime_end"] == ["2026-10-20"]  # the adapter's own clock, not a global
+    assert query["observation_start"] == query["observation_end"] == ["2015-06-10"]
+    assert "units" not in query  # the default is lin; only a transformed row names a unit
+    assert query["api_key"] == [_FAKE_KEY]
+    assert set(fake.headers) == {None}
+
+
+def test_a_date_the_series_never_carried_at_any_vintage_is_empty_not_an_error():
+    adapter = _vintage_adapter(_Serves(_CAPTURED_WALCL_NEVER_PUBLISHED), observation="2015-06-13")
+    payload = adapter.fetch(timeout_seconds=30).payload
+    assert payload == {"unit": "usd_millions"} and adapter.is_empty(payload)
+
+
+def test_an_observation_date_that_has_not_happened_yet_is_refused_rather_than_searched_for():
+    fake = _Serves(_CAPTURED_WALCL_NEVER_PUBLISHED)
+    payload = _vintage_adapter(fake, observation="2027-03-03").fetch(timeout_seconds=30).payload
+    assert payload == {"malformed": "observation_date"} and fake.asked == []
+
+
+def test_a_vintage_the_latest_body_no_longer_carries_is_empty():
+    """Today's vintage must still serve it — the old ceiling probe's meaning, kept on the new body."""
+    withdrawn = _edited(_CAPTURED_GDP_2000_Q1,
+                        lambda d: d["observations"][-1].update(realtime_end="2025-01-01"))
+    assert _vintage_adapter(_Serves(withdrawn), observation="2000-01-01", series="GDP",
+                            unit="usd_billions").fetch(timeout_seconds=30).payload == {
+        "unit": "usd_billions"}
+    dot = _edited(_CAPTURED_GDP_2000_Q1, lambda d: d["observations"][-1].update(value="."))
+    assert _vintage_adapter(_Serves(dot), observation="2000-01-01", series="GDP",
+                            unit="usd_billions").fetch(timeout_seconds=30).payload == {
+        "unit": "usd_billions"}
+
+
+def test_a_vintage_printing_the_dot_for_no_data_has_not_published_a_figure():
+    """DERIVED: the first vintage prints ``.``; the first one that carries a number is the answer."""
+    body = _edited(_CAPTURED_GDP_2000_Q1,
+                   lambda d: d["observations"][0].update(value="."))
+    payload = _vintage_adapter(_Serves(body), observation="2000-01-01", series="GDP",
+                               unit="usd_billions").fetch(timeout_seconds=30).payload
+    assert payload["vintage_date"] == "2000-05-25" and payload["value"] == 9697.6
+
+
+def test_rows_arriving_out_of_order_are_still_read_earliest_first():
+    body = _edited(_CAPTURED_GDP_2000_Q1, lambda d: d["observations"].reverse())
+    payload = _vintage_adapter(_Serves(body), observation="2000-01-01", series="GDP",
+                               unit="usd_billions").fetch(timeout_seconds=30).payload
+    assert payload["vintage_date"] == "2000-04-27"
+
+
+# --- the floor and the ceiling ----------------------------------------------------------- #
 
 
 def test_a_vintage_that_predates_the_observation_yet_already_serves_it_is_refused_not_answered():
-    """The premise broke (a projection series?), so the answer would not be the earliest."""
-    alfred = _Alfred(published="2008-08-01", revisions=(("2008-08-01", "1.0"),))
-    payload = _vintage_adapter(alfred).fetch(timeout_seconds=30).payload
-    assert payload == {"malformed": "vintage_floor"}
-    assert "value" not in payload  # refused, never approximated to 2008-09-01
+    """DERIVED: GDP's first vintage moved to the day BEFORE the observation. The premise broke
+    (a projection series?), so the answer would not be the earliest the window can hold."""
+    body = _edited(_CAPTURED_GDP_2000_Q1,
+                   lambda d: d["observations"][0].update(realtime_start="1999-12-31"))
+    payload = _vintage_adapter(_Serves(body), observation="2000-01-01", series="GDP",
+                               unit="usd_billions").fetch(timeout_seconds=30).payload
+    assert payload == {"malformed": "vintage_floor"} and "value" not in payload
 
 
-# --- WO-1.17: the first-publication CEILING, the mirror of the vintage_floor check above ---- #
-#
-# The floor asks "did a vintage serve this figure BEFORE the observation existed?". The ceiling
-# asks "is the vintage that first served it too LATE to be a publication event?". Both end in a
-# MALFORMED refusal and neither reaches the caller under its own name — the closed
-# ``response_schema`` rejects both reason strings identically, so ``ingestion.backfill`` records
-# the one class MALFORMED. These tests therefore assert the ADAPTER's payload, which is the only
-# place the two refusals are still distinguishable.
+def test_a_first_serving_vintage_too_distant_to_be_a_publication_event_is_refused():
+    """§7.1, on the real WALCL case: observation 2002-12-18 predates the series' archive, whose
+    first vintage is 2011-07-07 — a restatement 3,123 days (8.6 years) after the fact, which
+    ``ingestion.backfill`` would otherwise store as ``original``."""
+    payload = _vintage_adapter(_Serves(_CAPTURED_WALCL_2002_12_18),
+                               observation="2002-12-18").fetch(timeout_seconds=30).payload
+    assert payload == {"malformed": "vintage_too_distant"}
+    assert (date.fromisoformat("2011-07-07")
+            - date.fromisoformat("2002-12-18")).days == 3123 > A.MAX_FIRST_PUBLICATION_LAG_DAYS
+    assert payload != {"unit": "usd_millions"}  # not EMPTY: the series DOES carry the date
 
 
 def test_a_genuine_near_observation_first_publication_is_untouched_by_the_ceiling():
-    """NON-REGRESSION, on the real case MAX_FIRST_PUBLICATION_LAG_DAYS was derived against.
-
-    ``evidence/wo114_backfill_proof.json``'s own measurement: ``fred.GDP`` observation 2025-07-01
-    was first served by vintage 2025-12-23 — a 175-day gap, which is a real advance estimate and
-    the longest genuine publication lag this project has measured. 175 is well under 365 (it is
-    48% of it), and the derivation comment on the constant cites this exact pair as the reason the
-    threshold is not tighter: at a 180-day threshold this real first publication would have sat 5
-    days from refusal.
-    """
-    alfred = _Alfred(observation="2025-07-01", published="2025-12-23",
-                     revisions=(("2025-12-23", "30331.0"), ("2026-03-26", "30353.9")))
-    payload = _vintage_adapter(alfred, observation="2025-07-01").fetch(timeout_seconds=30).payload
+    """NON-REGRESSION on the case MAX_FIRST_PUBLICATION_LAG_DAYS was derived against: ``fred.GDP``
+    2025-07-01 first served 2025-12-23, a 175-day genuine advance estimate. DERIVED from the
+    captured GDP body with only the dates and value of its first vintage changed."""
+    def edit(document):
+        document["observation_start"] = document["observation_end"] = "2025-07-01"
+        for row in document["observations"]:
+            row["date"] = "2025-07-01"
+        document["observations"] = [
+            {"realtime_start": "2025-12-23", "realtime_end": "2026-03-25",
+             "date": "2025-07-01", "value": "30331.0"},
+            {"realtime_start": "2026-03-26", "realtime_end": "2026-10-20",
+             "date": "2025-07-01", "value": "30353.9"}]
+    payload = _vintage_adapter(_Serves(_edited(_CAPTURED_GDP_2000_Q1, edit)),
+                               observation="2025-07-01", series="GDP",
+                               unit="usd_billions").fetch(timeout_seconds=30).payload
     assert payload == {"unit": "usd_billions", "observation_date": "2025-07-01",
                        "value": 30331.0, "vintage_date": "2025-12-23"}
     assert (date.fromisoformat("2025-12-23")
             - date.fromisoformat("2025-07-01")).days == 175 <= A.MAX_FIRST_PUBLICATION_LAG_DAYS
-    # The later revision is what the SAME observation says today, and is still not chosen.
-    assert payload["value"] != 30353.9
 
 
-def test_a_first_serving_vintage_too_distant_to_be_a_publication_event_is_refused():
-    """§7.1's WORKED EXAMPLE, offline: ``fred.NCBEILQ027S``, archive floor 2013-06-06, an
-    observation inside episode 2000-02's window.
-
-    The shape that makes this the hard case, and the reason the bisection cannot see it: the
-    observation is 1999-12-01, ALFRED's archive for this series begins 2013-06-06, and EVERY
-    vintage beneath that floor answers 404. ``probe``'s ``absent_on_404=True`` turns each 404 into
-    the same ``_ABSENT`` an existing-but-silent vintage gives, so the search converges on the
-    FLOOR and the floor serves the date (the floor vintage's own span starts 1945-10-01 — the
-    archive began in 2013, the series did not). The payload would be well-formed, would carry
-    ``vintage_date = 2013-06-06``, and ``ingestion.backfill`` would store it as VINTAGE_ORIGINAL:
-    a figure restated 13.5 years later, claiming to be what was knowable in 1999.
-    """
-    alfred = _Alfred(column="NCBEILQ027S", observation="1999-12-01",
-                     trail_from="2013-06-06", published="2013-06-06",
-                     revisions=(("2013-06-06", "4000.0"),))
-    payload = _vintage_adapter(alfred, observation="1999-12-01",
-                               series="NCBEILQ027S").fetch(timeout_seconds=30).payload
-    # The EXACT refusal, not merely "it did not answer".
-    assert payload == {"malformed": "vintage_too_distant"}
-    # And specifically NOT the three other ways this fetch could have failed to answer: it is
-    # not EMPTY (today's vintage served the date), not an unreadable body, and not the floor.
-    assert payload != {"unit": "usd_billions"}
-    assert payload["malformed"] not in ("vintage", "header", "series", "vintage_floor")
-    # The search really did converge on the archive floor before the ceiling rejected it; the
-    # refusal is a judgement on a found answer, not a failure to find one.
-    assert "2013-06-06" in alfred.vintages_asked()
-    assert (date.fromisoformat("2013-06-06")
-            - date.fromisoformat("1999-12-01")).days == 4936 > A.MAX_FIRST_PUBLICATION_LAG_DAYS
-
-
-@pytest.mark.parametrize("published,gap,refused", [("2009-09-01", 365, False),
-                                                   ("2009-09-02", 366, True)])
-def test_the_ceiling_is_strictly_greater_than_the_threshold_and_not_off_by_one(published, gap,
+@pytest.mark.parametrize("first_vintage,gap,refused", [("2000-12-31", 365, False),
+                                                       ("2001-01-01", 366, True)])
+def test_the_ceiling_is_strictly_greater_than_the_threshold_and_not_off_by_one(first_vintage, gap,
                                                                               refused):
-    """The cutoff is a hard number, so both sides of it are pinned.
-
-    The check is ``> MAX_FIRST_PUBLICATION_LAG_DAYS``: a gap OF exactly 365 days is admitted, 366
-    is refused. Asserted from both directions because an off-by-one here is silent in either —
-    too tight and it discards real point-in-time data, too loose and it admits a restatement.
-    """
-    assert (date.fromisoformat(published) - date.fromisoformat(_OBS)).days == gap
-    alfred = _Alfred(published=published, revisions=((published, "7.25"),))
-    payload = _vintage_adapter(alfred).fetch(timeout_seconds=30).payload
+    """A gap OF exactly 365 days is admitted, 366 is refused. Both sides pinned because an
+    off-by-one is silent in either direction. DERIVED from the captured GDP body."""
+    assert (date.fromisoformat(first_vintage) - date.fromisoformat("2000-01-01")).days == gap
+    body = _edited(_CAPTURED_GDP_2000_Q1, lambda d: d["observations"][0].update(
+        realtime_start=first_vintage, realtime_end="2026-10-20"))
+    body = _edited(body, lambda d: d.update(observations=[d["observations"][0]]))
+    payload = _vintage_adapter(_Serves(body), observation="2000-01-01", series="GDP",
+                               unit="usd_billions").fetch(timeout_seconds=30).payload
     if refused:
         assert payload == {"malformed": "vintage_too_distant"}
     else:
-        assert payload["vintage_date"] == published and payload["value"] == 7.25
+        assert payload["vintage_date"] == first_vintage
 
 
-def test_the_floor_refusal_and_the_ceiling_refusal_cannot_both_fire_on_one_fetch():
-    """They are mutually exclusive by CONTROL FLOW, not by coincidence of the dates.
-
-    Both conditions are read off the SAME probe — the day before the observation. ``vintage_floor``
-    fires when that probe comes back _SERVED and returns immediately, before the bisection runs,
-    so the distance check is never reached. ``vintage_too_distant`` is only reachable when that
-    probe came back _ABSENT. One probe cannot be both, so no fetch can produce both refusals and
-    neither can shadow the other. Pinned here with a series whose trail is ancient (1991) and
-    whose floor probe serves: the distance arithmetic has nothing to measure because only two
-    probes were ever issued.
-    """
-    alfred = _Alfred(published="2008-08-01", revisions=(("2008-08-01", "1.0"),))
-    payload = _vintage_adapter(alfred).fetch(timeout_seconds=30).payload
-    assert payload == {"malformed": "vintage_floor"}
-    assert alfred.vintages_asked() == ["2026-10-11", "2008-08-31"]  # ceiling, floor, then out
+# --- the transformed path: bisection over single-day windows ------------------------------ #
 
 
-def test_a_series_whose_vintage_trail_begins_long_after_the_observation_is_refused_not_answered():
-    """The two ICE BofA OAS series' situation, and WHAT CHANGED ABOUT IT IN WO-1.17.
-
-    Until the ceiling landed this test asserted the opposite — that the adapter ANSWERS from the
-    trail's first vintage (``vintage_date == "2023-10-16"``, ``value == 3.5``). That answer was
-    well-formed and satisfied the vintage rule's words literally, and it was exactly the forgery
-    §7.1 of the cost estimate traced: the archive's own floor returned as though it were a
-    publication event, for ``ingestion.backfill`` to label ``VINTAGE_ORIGINAL``. A figure that no
-    vintage carried until 15.1 years after the observation is not what a collector running in 2008
-    would have SEEN, which is the only thing ``VINTAGE_ORIGINAL`` claims. So the expectation is
-    inverted deliberately, not relaxed.
-    """
-    alfred = _Alfred(trail_from="2023-10-16", published="2023-10-16",
-                     revisions=(("2023-10-16", "3.5"),))
-    payload = _vintage_adapter(alfred).fetch(timeout_seconds=30).payload
-    assert payload == {"malformed": "vintage_too_distant"}
-    assert "value" not in payload and "vintage_date" not in payload
+def test_the_transformed_rows_are_exactly_the_three_the_wide_window_cannot_serve():
+    """Verified against the REAL catalog, not asserted from the brief: of the 18 revision-prone FRED
+    rows, exactly these carry a server-side transformation — and the server refuses each of them a
+    wide ``realtime`` range."""
+    from ingestion.vintage import requires_original_vintage
+    prone = [i for i in INGREDIENTS if i.kind == "fred"
+             and requires_original_vintage(i.ref, i.transformation)]
+    assert len(prone) == 18
+    assert sorted(i.source_id for i in prone if i.transformation) == [
+        "fred.CPIAUCSL.pc1", "fred.M2SL.pc1", "fred.PCEPILFE.pc1"]
 
 
-def test_today_s_vintage_carrying_no_value_for_the_date_is_empty_and_never_an_invented_one():
-    alfred = _Alfred(published="2027-01-01")  # nothing has ever published this observation
-    adapter = _vintage_adapter(alfred)
+def test_the_scan_finds_the_first_serving_vintage_with_single_day_windows_only():
+    fake = _RestPc1(first_serving="2015-07-17")
+    payload = _cpi_adapter(fake).fetch(timeout_seconds=30).payload
+    assert payload == {"unit": "percent_yoy", "observation_date": "2015-06-01",
+                       "value": 0.18454, "vintage_date": "2015-07-17"}
+    asked = fake.vintages_asked()
+    # today first, then the day before the observation, then the archive's real vintage dates in order
+    # until one serves: three probes, where the bisection this replaced paid thirteen.
+    assert asked == ["2026-10-20", "2015-05-31", "2015-06-17", "2015-07-17"]
+    from urllib.parse import parse_qs, urlsplit
+    for url in fake.asked:
+        query = parse_qs(urlsplit(url).query)
+        assert query["realtime_start"] == query["realtime_end"]  # never a wide window
+        assert query["units"] == ["pc1"] and query["series_id"] == ["CPIAUCSL"]
+        assert query["api_key"] == [_FAKE_KEY]
+
+
+@pytest.mark.parametrize("first_serving", ["2015-06-01", "2015-06-02", "2015-07-17", "2016-05-31"])
+def test_the_boundary_is_pinned_exactly_the_first_serving_day_and_never_the_day_before(
+        first_serving):
+    payload = _cpi_adapter(_RestPc1(first_serving=first_serving)).fetch(timeout_seconds=30).payload
+    assert payload["vintage_date"] == first_serving
+
+
+def test_the_scan_reads_both_captured_answers_and_treats_a_200_with_no_rows_as_absent():
+    """The REST API answers a vintage that did not carry the figure ``200`` with ``count`` 0 —
+    there is no 404 for the search to lean on any more."""
+    fake = _RestPc1(first_serving="2015-07-17")
+    _cpi_adapter(fake).fetch(timeout_seconds=30)
+    served = [v for v in fake.vintages_asked() if v >= "2015-07-17"]
+    absent = [v for v in fake.vintages_asked() if v < "2015-07-17"]
+    assert served and absent
+
+
+def test_a_transformed_vintage_that_predates_the_observation_yet_serves_it_is_refused():
+    fake = _RestPc1(first_serving="2015-05-01")
+    assert _cpi_adapter(fake).fetch(timeout_seconds=30).payload == {"malformed": "vintage_floor"}
+    assert fake.vintages_asked() == ["2026-10-20", "2015-05-31"]  # ceiling, floor, then out
+
+
+def test_a_transformed_first_serving_vintage_too_distant_is_refused():
+    fake = _RestPc1(first_serving="2017-01-01")
+    assert _cpi_adapter(fake).fetch(timeout_seconds=30).payload == {
+        "malformed": "vintage_too_distant"}
+
+
+def test_a_transformed_observation_no_vintage_ever_served_is_empty_after_one_probe():
+    fake = _RestPc1(first_serving="2027-01-01")
+    adapter = _cpi_adapter(fake)
     payload = adapter.fetch(timeout_seconds=30).payload
-    assert payload == {"unit": "usd_billions"} and adapter.is_empty(payload)
-    assert alfred.vintages_asked() == ["2026-10-11"]  # one probe; no search over an empty window
+    assert payload == {"unit": "percent_yoy"} and adapter.is_empty(payload)
+    assert fake.vintages_asked() == ["2026-10-20"]
 
 
-def test_a_404_beneath_the_trail_is_an_answer_but_a_404_at_today_s_vintage_is_a_failure():
-    def gone(url, timeout, headers=None):
-        raise AdapterFetchError("HTTP_ERROR", 404)
-
-    with pytest.raises(AdapterFetchError) as refused:
-        _vintage_adapter(gone).fetch(timeout_seconds=30)
-    assert refused.value.error_class == "HTTP_ERROR" and refused.value.http_status == 404
-    # ...whereas beneath the ceiling the same 404 is read as "no such vintage" and the search
-    # completes. WO-1.17: the trail used here is 2008-10-01 rather than the 2023-10-16 the
-    # inverted test above now uses, because the point of THIS assertion is the 404-as-ABSENT
-    # branch and a 15-year trail would reach it and then be refused for distance, proving
-    # nothing about the 404. The trail still begins AFTER the observation, so every probe
-    # beneath 2008-10-01 is a real 404 and the search is driven entirely by them.
-    completed = _vintage_adapter(_Alfred(trail_from="2008-10-01", published="2008-10-01",
-                                         revisions=(("2008-10-01", "3.5"),))
-                                 ).fetch(timeout_seconds=30).payload
-    assert completed["value"] == 3.5 and completed["vintage_date"] == "2008-10-01"
+def test_a_wide_window_answer_for_a_transformed_row_is_never_read_as_a_vintage():
+    """The server's own 400 body, served as though it were a 200: ``malformed``, not a value."""
+    payload = _cpi_adapter(lambda *a, **k: _CAPTURED_REST_400).fetch(timeout_seconds=30).payload
+    assert payload == {"malformed": "body"}
 
 
-def test_any_other_transport_failure_is_never_read_as_an_absent_vintage():
-    for failure in (AdapterFetchError("TIMEOUT"), AdapterFetchError("HTTP_ERROR", 500),
-                    AdapterFetchError("CONNECTION_FAILED")):
-        def boom(url, timeout, headers=None, _f=failure):
-            raise _f
-
-        with pytest.raises(AdapterFetchError) as raised:
-            _vintage_adapter(boom).fetch(timeout_seconds=30)
-        assert raised.value.error_class == failure.error_class
+def test_the_probe_count_is_capped_and_exhausting_it_is_a_failure_never_a_partial_answer(
+        monkeypatch):
+    fake = _RestPc1(first_serving="2015-07-17")
+    monkeypatch.setattr(A, "MAX_VINTAGE_PROBES", 3)
+    with pytest.raises(AdapterFetchError) as raised:
+        _cpi_adapter(fake).fetch(timeout_seconds=30)
+    assert raised.value.error_class == "VINTAGE_SEARCH_EXHAUSTED" and len(fake.asked) == 3
 
 
-def test_a_body_answering_a_different_vintage_than_the_one_asked_is_malformed_and_stops_the_search():
-    alfred = _Alfred(answers_vintage="2015-01-01")
-    payload = _vintage_adapter(alfred).fetch(timeout_seconds=30).payload
-    assert payload == {"malformed": "vintage"}
-    assert len(alfred.asked) == 1  # refused on the first answer; not searched around
+# --- unreadable bodies, failures, the deadline ------------------------------------------- #
 
 
 @pytest.mark.parametrize("body,expected", [
-    ("", "header"),
-    ("nonsense", "header"),
-    ("observation_date,GDP_20261011,extra\n", "header"),
-    ("observation_date,OTHER_20261011\n2008-09-01,1.0\n", "series"),
+    ("[]", "body"),
+    ('{"observations": "x"}', "body"),
+    (_CAPTURED_REST_400, "body"),
+    (_edited(_CAPTURED_WALCL_2015_06_10, lambda d: d.update(realtime_end="2026-10-21")),
+     "realtime"),
+    (_edited(_CAPTURED_WALCL_2015_06_10, lambda d: d.update(realtime_start="2015-06-17")),
+     "realtime"),
+    (_edited(_CAPTURED_WALCL_2015_06_10, lambda d: d.update(units="pc1")), "units"),
+    (_edited(_CAPTURED_WALCL_2015_06_10, lambda d: d.update(observation_start="2015-06-01")),
+     "window"),
+    (_edited(_CAPTURED_WALCL_2015_06_10,
+             lambda d: d["observations"][0].update(realtime_start="1800-01-01")), "row"),
+    (_edited(_CAPTURED_WALCL_2015_06_10,
+             lambda d: d["observations"][0].update(value=4468005)), "row"),
+    (_edited(_CAPTURED_WALCL_2015_06_10, lambda d: d.update(observations=["x"])), "row"),
 ])
-def test_an_unreadable_body_is_malformed_never_an_absent_vintage(body, expected):
-    payload = _vintage_adapter(lambda *a, **k: body).fetch(timeout_seconds=30).payload
+def test_an_unreadable_or_substituted_body_is_malformed_never_an_empty_or_a_value(body, expected):
+    """THE PORT OF THE OLD HEADER CHECK. The CSV fault was a server answering a different question
+    than the one asked and saying so only in a header; the REST body echoes its question, so a body
+    that answers another one is refused rather than recorded as a point-in-time fact."""
+    payload = _vintage_adapter(_Serves(body)).fetch(timeout_seconds=30).payload
     assert payload == {"malformed": expected}
 
 
-def test_a_value_that_is_not_a_number_stops_the_search_and_is_passed_to_the_schema_to_reject():
-    alfred = _Alfred(revisions=(("2008-10-30", "n/a"),))
-    payload = _vintage_adapter(alfred).fetch(timeout_seconds=30).payload
+@pytest.mark.parametrize("body", ["", "<html>nope</html>"])
+def test_a_body_that_is_not_json_at_all_is_a_service_failure_never_malformed(body):
+    """WO-1.17: "we could not tell what FRED gave us" is not "FRED gave a well-formed answer that
+    failed validation". These two used to be recorded MALFORMED/body; see A.NON_DATA_RESPONSE."""
+    with pytest.raises(AdapterFetchError) as failed:
+        _vintage_adapter(_Serves(body)).fetch(timeout_seconds=30)
+    assert failed.value.error_class == A.NON_DATA_RESPONSE
+
+
+def test_a_value_that_is_not_a_number_is_passed_to_the_schema_to_reject():
+    body = _edited(_CAPTURED_WALCL_2015_06_10,
+                   lambda d: d["observations"][0].update(value="n/a"))
+    payload = _vintage_adapter(_Serves(body)).fetch(timeout_seconds=30).payload
     assert payload["value"] == "n/a"  # carried untouched, exactly as parse_fred_csv does
-    assert len(alfred.asked) == 1     # and the bisection did not step over it
     with pytest.raises(SchemaRejection):
-        JsonSchemaValidator().validate(payload, A.AlfredVintageAdapter.response_schema)
+        JsonSchemaValidator().validate(payload, A.FredVintageAdapter.response_schema)
 
 
-def test_the_dot_for_no_data_is_an_absent_vintage_not_a_value():
-    """FRED writes ``.`` for no data, and a vintage printing one has not published a figure."""
-    out = A.parse_alfred_csv("observation_date,GDP_20081030\n2008-09-01,.\n",
-                             "GDP", "u", _OBS, "2008-10-30")
-    assert out == {"unit": "u"}
+@pytest.mark.parametrize("failure", [AdapterFetchError("TIMEOUT"),
+                                     AdapterFetchError("HTTP_ERROR", 400),
+                                     AdapterFetchError("HTTP_ERROR", 404),
+                                     AdapterFetchError("HTTP_ERROR", 429),
+                                     AdapterFetchError("HTTP_ERROR", 500),
+                                     AdapterFetchError("CONNECTION_FAILED")])
+@pytest.mark.parametrize("transformed", [False, True])
+def test_every_transport_failure_propagates_and_none_is_read_as_an_absent_vintage(failure,
+                                                                                 transformed):
+    """No 404 carve-out any more: the REST API answers absence with a 200, so a 404 (or a 400
+    from a mistyped series id) is a real failure on EVERY probe, on BOTH paths."""
+    def boom(url, timeout, headers=None):
+        raise failure
 
-
-def test_the_observation_is_matched_by_date_and_a_clamped_window_cannot_substitute_another_row():
-    """ALFRED clamps an out-of-range window instead of refusing it, so 'the only row' is unsafe."""
-    body = ("observation_date,GDP_20081030\n1960-01-01,99.0\n1960-04-01,98.0\n")
-    assert A.parse_alfred_csv(body, "GDP", "u", _OBS, "2008-10-30") == {"unit": "u"}
-    assert A.parse_alfred_csv(body + f"{_OBS},1.0\n", "GDP", "u", _OBS,
-                              "2008-10-30")["value"] == 1.0
-
-
-def test_a_payload_may_not_state_a_value_without_the_vintage_that_produced_it():
-    """The point of the schema: a point-in-time value that does not say WHICH vintage is
-    indistinguishable from today's value for the same period."""
-    schema = A.AlfredVintageAdapter.response_schema
-    good = {"unit": "u", "observation_date": _OBS, "value": 1.0, "vintage_date": "2008-10-30"}
-    JsonSchemaValidator().validate(good, schema)
-    JsonSchemaValidator().validate({"unit": "u"}, schema)  # EMPTY conforms
-    for bad in ({k: v for k, v in good.items() if k != "vintage_date"},
-                {k: v for k, v in good.items() if k != "observation_date"},
-                {**good, "history": [["2008-09-01", 1.0]]},  # a vintage read carries no history
-                {**good, "vintage_date": "30/10/2008"}):
-        with pytest.raises(SchemaRejection):
-            JsonSchemaValidator().validate(bad, schema)
-
-
-def test_the_whole_search_is_bounded_by_the_timeout_it_was_given_not_each_request():
-    alfred = _Alfred()
+    adapter = _cpi_adapter(boom) if transformed else _vintage_adapter(boom)
     with pytest.raises(AdapterFetchError) as raised:
-        _vintage_adapter(alfred).fetch(timeout_seconds=0.0)
-    assert raised.value.error_class == "TIMEOUT" and alfred.asked == []
+        adapter.fetch(timeout_seconds=30)
+    assert raised.value.error_class == failure.error_class
+    assert raised.value.http_status == failure.http_status
+    leaked = repr(raised.value) + str(raised.value)
+    assert _FAKE_KEY not in leaked and "api_key" not in leaked and "stlouisfed" not in leaked
 
 
-def test_the_probe_count_is_capped_and_exhausting_it_is_a_failure_never_a_partial_answer(monkeypatch):
-    alfred = _Alfred()
-    monkeypatch.setattr(A, "MAX_VINTAGE_PROBES", 3)
+@pytest.mark.parametrize("transformed", [False, True])
+def test_the_whole_search_is_bounded_by_the_timeout_it_was_given_not_each_request(transformed):
+    fake = _RestPc1("2015-07-17") if transformed else _Serves(_CAPTURED_WALCL_2015_06_10)
+    adapter = _cpi_adapter(fake) if transformed else _vintage_adapter(fake)
     with pytest.raises(AdapterFetchError) as raised:
-        _vintage_adapter(alfred).fetch(timeout_seconds=30)
-    assert raised.value.error_class == "VINTAGE_SEARCH_EXHAUSTED"
-    assert len(alfred.asked) == 3
+        adapter.fetch(timeout_seconds=0.0)
+    assert raised.value.error_class == "TIMEOUT" and fake.asked == []
 
 
-def test_every_request_goes_to_the_keyless_alfred_door_naming_its_vintage_and_carries_no_credential():
-    from urllib.parse import parse_qs, urlsplit
+# --- the credential ---------------------------------------------------------------------- #
 
-    alfred = _Alfred(column="M2SL_PC1")
-    _vintage_adapter(alfred, series="M2SL", transformation="pc1").fetch(timeout_seconds=30)
-    for url in alfred.asked:
-        parts = urlsplit(url)
-        query = parse_qs(parts.query)
-        assert parts.hostname == A.ALFRED_HOST and parts.scheme == "https"
-        assert query["id"] == ["M2SL"] and query["transformation"] == ["pc1"]
-        assert query["cosd"] == [_OBS] and query["coed"] == [_OBS]
-        assert len(query["vintage_date"]) == 1
-        assert not {"api_key", "key", "token"} & set(query)
-    assert set(alfred.headers) == {None}  # FRED's edge resets on an unfamiliar agent
-    assert "api.stlouisfed.org" not in "".join(alfred.asked)
+
+def test_the_key_is_a_required_keyword_only_argument_and_is_never_read_from_the_environment():
+    import inspect
+
+    parameter = inspect.signature(A.FredVintageAdapter.__init__).parameters["api_key"]
+    assert parameter.kind is inspect.Parameter.KEYWORD_ONLY and parameter.default is parameter.empty
+    with pytest.raises(TypeError):
+        A.FredVintageAdapter("WALCL", None, "2015-06-10", source_id="s", as_of_rule="obs_date",
+                             unit="u", clock=lambda: _REST_TODAY)
+    source = inspect.getsource(A)
+    assert "environ" not in source and "getenv" not in source
+
+
+@pytest.mark.parametrize("bad", ["", "short", "k" * 15, "k" * 65, "k" * 31 + "\n", "k" * 31 + "&",
+                                 "k" * 31 + " ", None, 12345])
+def test_a_key_that_is_not_in_the_permitted_shape_is_refused_without_being_echoed(bad):
+    with pytest.raises(ValueError) as refused:
+        _vintage_adapter(_Serves(""), api_key=bad)
+    assert "permitted shape" in str(refused.value)
+    if isinstance(bad, str) and bad:
+        assert bad not in str(refused.value)
+
+
+def test_the_key_is_in_the_request_url_and_nowhere_else_the_adapter_exposes():
+    fake = _Serves(_CAPTURED_WALCL_2015_06_10)
+    adapter = _vintage_adapter(fake)
+    payload = adapter.fetch(timeout_seconds=30).payload
+    assert _FAKE_KEY in fake.asked[0] and fake.asked[0].count("api_key=") == 1
+    # The host-declaring URL carries no credential, so reading an egress host off it is safe.
+    from urllib.parse import urlsplit
+    assert _FAKE_KEY not in adapter._url() and "api_key" not in adapter._url()
+    assert urlsplit(adapter._url()).hostname == A.FRED_API_HOST
+    assert _FAKE_KEY not in json.dumps(payload) and _FAKE_KEY not in repr(adapter)
 
 
 def test_a_series_or_transformation_that_is_not_in_the_permitted_shape_is_refused_at_construction():
     for bad in ("GDP&id=OTHER", "GDP ", "", "../x", "GDP#"):
         with pytest.raises(ValueError):
-            _vintage_adapter(_Alfred(), series=bad)
-    for bad in ("pc1&vintage_date=2026-01-01", "PC1", " "):
+            _vintage_adapter(_Serves(""), series=bad)
+    for bad in ("pc1&units=lin", "PC1", " "):
         with pytest.raises(ValueError):
-            _vintage_adapter(_Alfred(), transformation=bad)
+            _vintage_adapter(_Serves(""), transformation=bad)
     with pytest.raises(ValueError):
-        _vintage_adapter(_Alfred(), observation="not-a-date")
+        _vintage_adapter(_Serves(""), observation="not-a-date")
 
 
-def test_an_observation_date_that_has_not_happened_yet_is_refused_rather_than_searched_for():
-    alfred = _Alfred()
-    payload = _vintage_adapter(alfred, observation="2027-03-01").fetch(timeout_seconds=30).payload
-    assert payload == {"malformed": "observation_date"} and alfred.asked == []
+# --- shape, schema, and what is gone ------------------------------------------------------ #
+
+
+def test_a_payload_may_not_state_a_value_without_the_vintage_that_produced_it():
+    """The point of the schema: a point-in-time value that does not say WHICH vintage is
+    indistinguishable from today's value for the same period."""
+    schema = A.FredVintageAdapter.response_schema
+    good = {"unit": "u", "observation_date": "2015-06-10", "value": 1.0,
+            "vintage_date": "2015-06-11"}
+    JsonSchemaValidator().validate(good, schema)
+    JsonSchemaValidator().validate({"unit": "u"}, schema)  # EMPTY conforms
+    for bad in ({k: v for k, v in good.items() if k != "vintage_date"},
+                {k: v for k, v in good.items() if k != "observation_date"},
+                {**good, "history": [["2015-06-10", 1.0]]},  # a vintage read carries no history
+                {**good, "vintage_date": "11/06/2015"}):
+        with pytest.raises(SchemaRejection):
+            JsonSchemaValidator().validate(bad, schema)
+
+
+def test_every_payload_the_adapter_produces_conforms_to_the_closed_schema_or_is_rejected_by_it():
+    validator, schema = JsonSchemaValidator(), A.FredVintageAdapter.response_schema
+    for body in (_CAPTURED_WALCL_2015_06_10, _CAPTURED_GDP_2000_Q1, _CAPTURED_BAML_2024_12_31,
+                 _CAPTURED_WALCL_NEVER_PUBLISHED):
+        validator.validate(_vintage_adapter(_Serves(body), observation=json.loads(body)[
+            "observation_start"]).fetch(timeout_seconds=30).payload, schema)
+    with pytest.raises(SchemaRejection):  # both refusals fail the closed schema identically
+        validator.validate({"malformed": "vintage_too_distant"}, schema)
 
 
 def test_the_vintage_adapter_is_a_structurally_conformant_source_adapter_and_ages_from_the_period():
     from crash_detector.collectors.adapter import missing_adapter_members
 
-    adapter = _vintage_adapter(_Alfred())
+    adapter = _vintage_adapter(_Serves(_CAPTURED_GDP_2000_Q1), observation="2000-01-01",
+                               series="GDP", unit="usd_billions", as_of_rule="quarter_end")
     assert missing_adapter_members(adapter) == ()
     fetched = adapter.fetch(timeout_seconds=30)
     # quarter_end on a quarter-start-dated figure, the same rule any other adapter gets.
-    assert fetched.source_as_of_utc == datetime(2008, 9, 30, tzinfo=timezone.utc)
+    assert fetched.source_as_of_utc == datetime(2000, 3, 31, tzinfo=timezone.utc)
+    assert adapter.adapter_id == "cd.ingest.fred_vintage_rest.v1"
+
+
+def test_the_graph_csv_mechanism_is_gone_whole_and_not_kept_beside_its_replacement():
+    for name in ("AlfredVintageAdapter", "parse_alfred_csv", "ALFRED_HOST", "ALFRED_BASE"):
+        assert not hasattr(A, name) and name not in A.__all__
 
 
 def test_the_vintage_adapter_is_not_a_live_ingredient_kind_nor_a_live_egress_host():
-    """NOT a "not yet" any more — WO-1.14's wiring round came past this and left it TRUE.
+    """It is constructible through ``ingestion.backfill_adapters.build_backfill_adapter`` and only
+    through it; the REST host is not in the LIVE collector's egress declaration, because that would
+    say ``cd-collectors`` reaches it. ``tests/test_wo114.py`` holds the whole boundary."""
+    assert not any(i.kind in ("alfred", "fred_vintage") for i in INGREDIENTS)
+    assert A.FRED_API_HOST not in EGRESS_HOSTS
 
-    The vintage adapter is now constructible, through
-    ``ingestion.backfill_adapters.build_backfill_adapter`` and only through it. It is still
-    not an ingredient ``kind`` the live catalog polls and ``alfred.stlouisfed.org`` is still
-    absent from the live egress declaration, because both of those would say the live
-    collector reaches it. ``tests/test_wo114.py`` holds the whole boundary; these two lines
-    stay here so the live catalog's own test module fails too if it is reopened.
-    """
-    assert not any(i.kind == "alfred" for i in INGREDIENTS)
-    assert A.ALFRED_HOST not in EGRESS_HOSTS
+
+# --- WO-1.17 follow-up: the ARCHIVE FLOOR (found by verifying the real re-run's admissions) ---- #
+#
+# The real re-run admitted 83 figures whose first serving vintage was the series' ARCHIVE FLOOR —
+# a restatement, however close to the observation — because ``MAX_FIRST_PUBLICATION_LAG_DAYS`` is
+# arithmetic and WO-1.18 had declared where arithmetic stops. The bodies below are CAPTURED from
+# the real API on 2026-10-21. ``_ArchiveRouter`` is the one transport double: it answers the
+# vintagedates URL and the observations URL from literal captures, by path, as the host does.
+
+#: ``/fred/series/vintagedates`` for ``fred.IC4WSA``, ``sort_order=asc&limit=1``: the archive floor, captured 2026-10-21.
+_CAPTURED_VD_IC4WSA = (
+    '{"realtime_start":"1900-01-01","realtime_end":"2026-10-20","order_by":"vintage_date","sort_order":"asc","count":902,"offset":0,"limit":1,"vintage_dates":["2009-05-28"]}')
+#: The same request for ``fred.WALCL``.
+_CAPTURED_VD_WALCL = (
+    '{"realtime_start":"1900-01-01","realtime_end":"2026-10-20","order_by":"vintage_date","sort_order":"asc","count":797,"offset":0,"limit":1,"vintage_dates":["2011-07-07"]}')
+#: The same request for ``fred.NFCI``.
+_CAPTURED_VD_NFCI = (
+    '{"realtime_start":"1900-01-01","realtime_end":"2026-10-20","order_by":"vintage_date","sort_order":"asc","count":800,"offset":0,"limit":1,"vintage_dates":["2011-05-25"]}')
+#: The same request for ``fred.PCEPILFE`` — whose floor is INSIDE the WO-1.17 backfill range.
+_CAPTURED_VD_PCEPILFE = (
+    '{"realtime_start":"1900-01-01","realtime_end":"2026-10-20","order_by":"vintage_date","sort_order":"asc","count":316,"offset":0,"limit":1,"vintage_dates":["2000-08-01"]}')
+#: ``fred.IC4WSA`` observation 2008-05-31, wide window: first row's vintage is 2009-05-28 — the ARCHIVE FLOOR, 362 days later, which the real re-run admitted as a first publication.
+_CAPTURED_IC4WSA_2008_05_31 = (
+    '{"realtime_start":"1900-01-01","realtime_end":"2026-10-20","observation_start":"2008-05-31","observation_end":"2008-05-31","units":"lin","output_type":1,"file_type":"json","order_by":"observation_date","sort_order":"asc","count":5,"offset":0,"limit":100000,"observations":[{"realtime_start":"2009-05-28","realtime_end":"2010-03-24","date":"2008-05-31","value":"374250"},'
+    '{"realtime_start":"2010-03-25","realtime_end":"2011-03-30","date":"2008-05-31","value":"367750"},'
+    '{"realtime_start":"2011-03-31","realtime_end":"2012-03-28","date":"2008-05-31","value":"368000"},'
+    '{"realtime_start":"2012-03-29","realtime_end":"2013-03-27","date":"2008-05-31","value":"367000"},'
+    '{"realtime_start":"2013-03-28","realtime_end":"2026-10-20","date":"2008-05-31","value":"366000"}]}')
+#: ``fred.WALCL`` observation 2011-03-02: first row 2011-07-07 (the archive floor), 127 days later.
+_CAPTURED_WALCL_2011_03_02 = (
+    '{"realtime_start":"1900-01-01","realtime_end":"2026-10-20","observation_start":"2011-03-02","observation_end":"2011-03-02","units":"lin","output_type":1,"file_type":"json","order_by":"observation_date","sort_order":"asc","count":2,"offset":0,"limit":100000,"observations":[{"realtime_start":"2011-07-07","realtime_end":"2013-04-17","date":"2011-03-02","value":"2549115"},'
+    '{"realtime_start":"2013-04-18","realtime_end":"2026-10-20","date":"2011-03-02","value":"2545119"}]}')
+#: ``fred.WALCL`` observation 2011-07-06: first row 2011-07-07, the floor — and ALSO the genuine release the next day. The exact rule cannot tell, and refuses (declared).
+_CAPTURED_WALCL_2011_07_06 = (
+    '{"realtime_start":"1900-01-01","realtime_end":"2026-10-20","observation_start":"2011-07-06","observation_end":"2011-07-06","units":"lin","output_type":1,"file_type":"json","order_by":"observation_date","sort_order":"asc","count":2,"offset":0,"limit":100000,"observations":[{"realtime_start":"2011-07-07","realtime_end":"2013-04-17","date":"2011-07-06","value":"2874049"},'
+    '{"realtime_start":"2013-04-18","realtime_end":"2026-10-20","date":"2011-07-06","value":"2870103"}]}')
+#: What ``units=pc1`` answers (HTTP 400) for a vintage BEFORE the series' ALFRED floor — here PCEPILFE at 2000-07-31, the day before its floor. ``http_get`` keeps only the status.
+_CAPTURED_ALFRED_400_BEFORE_FLOOR = (
+    '{"error_code":400,"error_message":"Bad Request.  The series does not exist in ALFRED but may exist in FRED.  Try setting realtime_start and realtime_end to today\'s date or removing the realtime_start and realtime_end variables."}')
+
+
+def _json_of(body: str) -> dict:
+    return json.loads(body)
+
+
+class _ArchiveRouter:
+    """One getter for both endpoints, answering each from a literal capture and recording the paths."""
+
+    def __init__(self, observations: str, vintagedates: str):
+        self.observations, self.vintagedates, self.paths = observations, vintagedates, []
+
+    def __call__(self, url, timeout, headers=None):
+        from urllib.parse import urlsplit
+        path = urlsplit(url).path
+        self.paths.append(path)
+        return self.vintagedates if path.endswith("/vintagedates") else self.observations
+
+
+def _real_floors():
+    return A.FredArchiveFloors(_FAKE_KEY, clock=lambda: _REST_TODAY)
+
+
+@pytest.mark.parametrize("body, floor", [
+    (_CAPTURED_VD_IC4WSA, date(2009, 5, 28)), (_CAPTURED_VD_WALCL, date(2011, 7, 7)),
+    (_CAPTURED_VD_NFCI, date(2011, 5, 25)), (_CAPTURED_VD_PCEPILFE, date(2000, 8, 1))],
+    ids=["IC4WSA", "WALCL", "NFCI", "PCEPILFE"])
+def test_the_archive_floor_is_the_first_vintage_of_each_real_vintagedates_body(body, floor):
+    assert A.parse_fred_vintagedates_floor(body, realtime_end="2026-10-20") == floor
+
+
+@pytest.mark.parametrize("body", [
+    "not json", "[]", "null", '{"realtime_start":"1900-01-01","realtime_end":"2026-10-20"}',
+    _edited(_CAPTURED_VD_WALCL, lambda d: d.update(vintage_dates=[])),
+    _edited(_CAPTURED_VD_WALCL, lambda d: d.update(vintage_dates=[20110707])),
+    _edited(_CAPTURED_VD_WALCL, lambda d: d.update(vintage_dates=["not-a-date"])),
+    _edited(_CAPTURED_VD_WALCL, lambda d: d.update(realtime_end="2026-10-19")),
+    _edited(_CAPTURED_VD_WALCL, lambda d: d.update(realtime_start="2000-01-01")),
+    _edited(_CAPTURED_VD_WALCL, lambda d: d.update(sort_order="desc")),
+    _CAPTURED_ALFRED_400_BEFORE_FLOOR],
+    ids=["not-json", "list", "null", "no-vintage-dates", "empty-list", "non-string", "bad-date",
+         "wrong-realtime-end", "wrong-realtime-start", "wrong-sort-order", "alfred-400-body"])
+def test_a_vintagedates_body_that_is_not_the_answer_asked_is_unreadable_never_a_floor(body):
+    assert A.parse_fred_vintagedates_floor(body, realtime_end="2026-10-20") is None
+
+
+def test_the_archive_floor_is_one_get_per_series_carries_the_key_and_is_cached():
+    getter = _Serves(_CAPTURED_VD_WALCL)
+    floors = _real_floors()
+    assert floors.floor("WALCL", 30.0, getter) == date(2011, 7, 7)
+    assert floors.floor("WALCL", 30.0, getter) == date(2011, 7, 7)
+    assert len(getter.asked) == 1, "a cached floor is not asked again"
+    (query,) = getter.queries()
+    assert getter.asked[0].startswith(A.FRED_VINTAGEDATES_BASE + "?")
+    assert query["series_id"] == ["WALCL"] and query["api_key"] == [_FAKE_KEY]
+    assert query["realtime_start"] == [A.FRED_REALTIME_FLOOR] and query["realtime_end"] == ["2026-10-20"]
+    assert query["sort_order"] == ["asc"] and query["limit"] == ["1"]
+    assert getter.headers == [None]
+    floors.floor("IC4WSA", 30.0, _Serves(_CAPTURED_VD_IC4WSA))
+    assert len(getter.asked) == 1, "a different series is its own question, asked on its own getter"
+
+
+def test_an_unreadable_floor_is_not_cached_and_a_transport_failure_propagates_uncached():
+    floors = _real_floors()
+    bad = _Serves(_CAPTURED_ALFRED_400_BEFORE_FLOOR)
+    assert floors.floor("WALCL", 30.0, bad) is None and floors.floor("WALCL", 30.0, bad) is None
+    assert len(bad.asked) == 2, "an unreadable answer must be asked again, not remembered"
+
+    def down(url, timeout, headers=None):
+        raise AdapterFetchError("CONNECTION_FAILED")
+    with pytest.raises(AdapterFetchError) as failed:
+        floors.floor("WALCL", 30.0, down)
+    assert failed.value.error_class == "CONNECTION_FAILED"
+    assert floors.floor("WALCL", 30.0, _Serves(_CAPTURED_VD_WALCL)) == date(2011, 7, 7)
+
+
+def test_the_floor_object_validates_its_key_and_series_without_echoing_either():
+    with pytest.raises(ValueError) as bad_key:
+        A.FredArchiveFloors("short-secret", clock=lambda: _REST_TODAY)
+    assert "short-secret" not in str(bad_key.value)
+    with pytest.raises(ValueError):
+        _real_floors().floor("WALCL&api_key=x", 30.0, _Serves(_CAPTURED_VD_WALCL))
+
+
+@pytest.mark.parametrize("observations, floors_body, observation, series", [
+    (_CAPTURED_IC4WSA_2008_05_31, _CAPTURED_VD_IC4WSA, "2008-05-31", "IC4WSA"),
+    (_CAPTURED_WALCL_2011_03_02, _CAPTURED_VD_WALCL, "2011-03-02", "WALCL"),
+    # genuinely released on the floor date, and refused with the restatements: DECLARED, see the class
+    (_CAPTURED_WALCL_2011_07_06, _CAPTURED_VD_WALCL, "2011-07-06", "WALCL"),
+    # a decade-late restatement is BOTH over the ceiling and at the floor: the cause is named
+    (_CAPTURED_WALCL_2002_12_18, _CAPTURED_VD_WALCL, "2002-12-18", "WALCL")],
+    ids=["IC4WSA-2008-05-31", "WALCL-2011-03-02", "WALCL-2011-07-06-genuine-but-refused",
+         "WALCL-2002-12-18-also-too-distant"])
+def test_a_figure_first_served_at_the_archive_floor_is_refused_not_admitted(
+        observations, floors_body, observation, series):
+    router = _ArchiveRouter(observations, floors_body)
+    adapter = _vintage_adapter(router, observation=observation, series=series,
+                               archive_floors=_real_floors())
+    assert adapter.fetch(timeout_seconds=30).payload == {"malformed": "vintage_archive_floor"}
+    assert [path.rsplit("/", 1)[1] for path in router.paths] == ["vintagedates", "observations"]
+
+
+def test_a_figure_first_served_AFTER_the_archive_floor_is_still_admitted():
+    """The negative control, on the same series: WALCL's floor is 2011-07-07; 2015-06-10 was first
+    served 2015-06-11, four years later, and is a real first publication."""
+    adapter = _vintage_adapter(_ArchiveRouter(_CAPTURED_WALCL_2015_06_10, _CAPTURED_VD_WALCL),
+                               archive_floors=_real_floors())
+    payload = adapter.fetch(timeout_seconds=30).payload
+    assert payload["value"] == 4468005.0 and payload["vintage_date"] == "2015-06-11"
+
+
+def test_the_ceiling_still_refuses_what_the_floor_does_not_cover():
+    """Served too late to be a publication, but NOT at the floor: only ``vintage_too_distant`` fits."""
+    far = _edited(_CAPTURED_WALCL_2015_06_10, lambda d: d["observations"][0].update(
+        realtime_start="2017-01-01"))
+    adapter = _vintage_adapter(_ArchiveRouter(far, _CAPTURED_VD_WALCL), archive_floors=_real_floors())
+    assert adapter.fetch(timeout_seconds=30).payload == {"malformed": "vintage_too_distant"}
+
+
+def test_a_floor_that_cannot_be_read_answers_nothing_and_asks_no_observation():
+    # a WELL-FORMED answer that is not a floor (here: valid JSON, wrong shape) stays MALFORMED
+    router = _ArchiveRouter(_CAPTURED_WALCL_2015_06_10, "[]")
+    adapter = _vintage_adapter(router, archive_floors=_real_floors())
+    assert adapter.fetch(timeout_seconds=30).payload == {"malformed": "archive_floor_unreadable"}
+    assert [path.rsplit("/", 1)[1] for path in router.paths] == ["vintagedates"]
+
+
+def test_a_floor_body_that_is_not_json_is_a_service_failure_and_asks_no_observation():
+    # WO-1.17: this used to be recorded MALFORMED; a maintenance page is not an answer about a floor
+    router = _ArchiveRouter(_CAPTURED_WALCL_2015_06_10, "not json")
+    adapter = _vintage_adapter(router, archive_floors=_real_floors())
+    with pytest.raises(AdapterFetchError) as failed:
+        adapter.fetch(timeout_seconds=30)
+    assert failed.value.error_class == A.NON_DATA_RESPONSE
+    assert [path.rsplit("/", 1)[1] for path in router.paths] == ["vintagedates"]
+
+
+def test_a_floor_lookup_that_fails_in_transport_fails_the_fetch_with_its_class():
+    def down(url, timeout, headers=None):
+        raise AdapterFetchError("HTTP_ERROR", 503)
+    with pytest.raises(AdapterFetchError) as failed:
+        _vintage_adapter(down, archive_floors=_real_floors()).fetch(timeout_seconds=30)
+    assert (failed.value.error_class, failed.value.http_status) == ("HTTP_ERROR", 503)
+
+
+def test_the_archive_floors_argument_is_required_and_must_be_able_to_answer():
+    with pytest.raises(TypeError):
+        A.FredVintageAdapter("WALCL", None, "2015-06-10", api_key=_FAKE_KEY, source_id="s",
+                             as_of_rule="obs_date", unit="u", clock=lambda: _REST_TODAY)
+    with pytest.raises(ValueError):
+        A.FredVintageAdapter("WALCL", None, "2015-06-10", api_key=_FAKE_KEY, archive_floors=object(),
+                             source_id="s", as_of_rule="obs_date", unit="u", clock=lambda: _REST_TODAY)
+
+
+class _RestPc1Archive(_RestPc1):
+    """``_RestPc1`` with the ALFRED floor modelled: a vintage BEFORE ``floor`` is HTTP 400, as the
+    real API answers it (``_CAPTURED_ALFRED_400_BEFORE_FLOOR``), and each such ask is recorded."""
+
+    def __init__(self, floor: str, first_serving: str):
+        super().__init__(first_serving=first_serving)
+        self.floor, self.pre_floor = floor, []
+
+    def __call__(self, url, timeout, headers=None):
+        from urllib.parse import parse_qs, urlsplit
+        asked = parse_qs(urlsplit(url).query)["realtime_start"][0]
+        if asked < self.floor:
+            self.pre_floor.append(asked)
+            raise AdapterFetchError("HTTP_ERROR", 400)
+        return super().__call__(url, timeout, headers)
+
+
+def test_the_captured_pre_floor_400_is_what_the_model_stands_in_for():
+    document = json.loads(_CAPTURED_ALFRED_400_BEFORE_FLOOR)
+    assert document["error_code"] == 400 and "does not exist in ALFRED" in document["error_message"]
+
+
+def test_without_the_floor_a_transformed_pre_archive_observation_dies_on_the_400():
+    """The defect as it ran: PCEPILFE.pc1 for 1999-12 probed the day before the observation, which is
+    beneath the ALFRED floor, and the 400 surfaced as a failed date (9 of them in the real re-run)."""
+    fake = _RestPc1Archive(floor="2015-07-17", first_serving="2015-07-17")
+    with pytest.raises(AdapterFetchError) as failed:
+        _cpi_adapter(fake, archive_floors=_FixedFloors(date(1990, 1, 1))).fetch(timeout_seconds=30)
+    assert (failed.value.error_class, failed.value.http_status) == ("HTTP_ERROR", 400)
+
+
+def test_a_transformed_pre_archive_observation_is_refused_as_the_archive_floor_and_never_probes_below_it():
+    fake = _RestPc1Archive(floor="2015-07-17", first_serving="2015-07-17")
+    payload = _cpi_adapter(fake, archive_floors=_FixedFloors(date(2015, 7, 17))).fetch(
+        timeout_seconds=30).payload
+    assert payload == {"malformed": "vintage_archive_floor"}
+    assert fake.pre_floor == [] and min(fake.vintages_asked()) >= "2015-07-17"
+    # Decided by TWO probes (today, then the floor), not a bisection to the same answer.
+    assert fake.vintages_asked() == ["2026-10-20", "2015-07-17"]
+
+
+def test_a_transformed_observation_published_after_a_late_archive_floor_is_found_above_it():
+    fake = _RestPc1Archive(floor="2015-06-20", first_serving="2015-07-17")
+    payload = _cpi_adapter(fake, archive_floors=_FixedFloors(date(2015, 6, 20))).fetch(
+        timeout_seconds=30).payload
+    assert payload["vintage_date"] == "2015-07-17" and payload["value"] == 0.18454
+    assert fake.pre_floor == [] and min(fake.vintages_asked()) >= "2015-06-20"
+
+
+def test_a_transformed_search_under_an_old_floor_is_the_search_it_always_was():
+    """A floor older than the observation changes nothing: the day before it is still probed."""
+    fake = _RestPc1Archive(floor="2000-01-01", first_serving="2015-07-17")
+    payload = _cpi_adapter(fake, archive_floors=_FixedFloors(date(2000, 1, 1))).fetch(
+        timeout_seconds=30).payload
+    assert payload["vintage_date"] == "2015-07-17"
+    assert "2015-05-31" in fake.vintages_asked()

@@ -1,0 +1,550 @@
+{
+  "archive_floors_read": {
+    "IC4WSA": "2009-05-28",
+    "NFCI": "2011-05-25",
+    "PCEPILFE": "2000-08-01",
+    "WALCL": "2011-07-07"
+  },
+  "case_1_failed_date_untransformed": {
+    "bisection_budget": 1,
+    "expected_from_manual_probe": 4468005.0,
+    "gets": 2,
+    "independent_csv_read": {
+      "observation_date": "2015-06-10",
+      "unit": "usd_millions",
+      "value": 4468005.0
+    },
+    "observation_date": "2015-06-10",
+    "path": "one_get",
+    "payload": {
+      "observation_date": "2015-06-10",
+      "unit": "usd_millions",
+      "value": 4468005.0,
+      "vintage_date": "2015-06-11"
+    },
+    "seconds": 0.86,
+    "source_id": "fred.WALCL",
+    "store_holds_any_walcl": 214,
+    "unit": "usd_millions"
+  },
+  "case_2_cross_check_untransformed": [
+    {
+      "bisection_budget": 1,
+      "gets": 2,
+      "observation_date": "2024-12-31",
+      "path": "one_get",
+      "payload": {
+        "observation_date": "2024-12-31",
+        "unit": "percent",
+        "value": 2.92,
+        "vintage_date": "2024-12-31"
+      },
+      "seconds": 0.69,
+      "source_id": "fred.BAMLH0A0HYM2",
+      "store_value": 2.92,
+      "store_vintage_date": "2024-12-31",
+      "value_matches_store": true,
+      "vintage_matches_store": true
+    },
+    {
+      "bisection_budget": 1,
+      "gets": 1,
+      "observation_date": "2025-01-22",
+      "path": "one_get",
+      "payload": {
+        "observation_date": "2025-01-22",
+        "unit": "percent",
+        "value": 2.59,
+        "vintage_date": "2025-01-22"
+      },
+      "seconds": 0.61,
+      "source_id": "fred.BAMLH0A0HYM2",
+      "store_value": 2.59,
+      "store_vintage_date": "2025-01-22",
+      "value_matches_store": true,
+      "vintage_matches_store": true
+    },
+    {
+      "bisection_budget": 1,
+      "gets": 1,
+      "observation_date": "2025-02-13",
+      "path": "one_get",
+      "payload": {
+        "observation_date": "2025-02-13",
+        "unit": "percent",
+        "value": 2.65,
+        "vintage_date": "2025-02-13"
+      },
+      "seconds": 0.49,
+      "source_id": "fred.BAMLH0A0HYM2",
+      "store_value": 2.65,
+      "store_vintage_date": "2025-02-13",
+      "value_matches_store": true,
+      "vintage_matches_store": true
+    },
+    {
+      "bisection_budget": 1,
+      "gets": 1,
+      "observation_date": "2025-03-06",
+      "path": "one_get",
+      "payload": {
+        "observation_date": "2025-03-06",
+        "unit": "percent",
+        "value": 2.99,
+        "vintage_date": "2025-03-06"
+      },
+      "seconds": 0.35,
+      "source_id": "fred.BAMLH0A0HYM2",
+      "store_value": 2.99,
+      "store_vintage_date": "2025-03-06",
+      "value_matches_store": true,
+      "vintage_matches_store": true
+    },
+    {
+      "bisection_budget": 1,
+      "gets": 1,
+      "observation_date": "2025-03-27",
+      "path": "one_get",
+      "payload": {
+        "observation_date": "2025-03-27",
+        "unit": "percent",
+        "value": 3.27,
+        "vintage_date": "2025-03-27"
+      },
+      "seconds": 0.33,
+      "source_id": "fred.BAMLH0A0HYM2",
+      "store_value": 3.27,
+      "store_vintage_date": "2025-03-27",
+      "value_matches_store": true,
+      "vintage_matches_store": true
+    },
+    {
+      "bisection_budget": 1,
+      "gets": 1,
+      "observation_date": "2025-04-17",
+      "path": "one_get",
+      "payload": {
+        "observation_date": "2025-04-17",
+        "unit": "percent",
+        "value": 4.02,
+        "vintage_date": "2025-04-17"
+      },
+      "seconds": 0.32,
+      "source_id": "fred.BAMLH0A0HYM2",
+      "store_value": 4.02,
+      "store_vintage_date": "2025-04-17",
+      "value_matches_store": true,
+      "vintage_matches_store": true
+    },
+    {
+      "bisection_budget": 1,
+      "gets": 1,
+      "observation_date": "2025-05-12",
+      "path": "one_get",
+      "payload": {
+        "observation_date": "2025-05-12",
+        "unit": "percent",
+        "value": 3.15,
+        "vintage_date": "2025-05-12"
+      },
+      "seconds": 0.34,
+      "source_id": "fred.BAMLH0A0HYM2",
+      "store_value": 3.15,
+      "store_vintage_date": "2025-05-12",
+      "value_matches_store": true,
+      "vintage_matches_store": true
+    },
+    {
+      "bisection_budget": 1,
+      "gets": 1,
+      "observation_date": "2025-05-31",
+      "path": "one_get",
+      "payload": {
+        "observation_date": "2025-05-31",
+        "unit": "percent",
+        "value": 3.32,
+        "vintage_date": "2025-05-31"
+      },
+      "seconds": 0.33,
+      "source_id": "fred.BAMLH0A0HYM2",
+      "store_value": 3.32,
+      "store_vintage_date": "2025-05-31",
+      "value_matches_store": true,
+      "vintage_matches_store": true
+    }
+  ],
+  "case_3_bisection_transformed": [
+    {
+      "bisection_budget": 16,
+      "gets": 16,
+      "observation_date": "1999-12-01",
+      "path": "bisection",
+      "payload": {
+        "observation_date": "1999-12-01",
+        "unit": "percent_yoy",
+        "value": 2.6764,
+        "vintage_date": "2000-01-14"
+      },
+      "seconds": 5.67,
+      "source_id": "fred.CPIAUCSL.pc1",
+      "store_value": 2.6764,
+      "store_vintage_date": "2000-01-14",
+      "value_matches_store": true,
+      "vintage_matches_store": true
+    },
+    {
+      "bisection_budget": 15,
+      "gets": 15,
+      "observation_date": "2007-05-01",
+      "path": "bisection",
+      "payload": {
+        "observation_date": "2007-05-01",
+        "unit": "percent_yoy",
+        "value": 2.71768,
+        "vintage_date": "2007-06-15"
+      },
+      "seconds": 5.75,
+      "source_id": "fred.CPIAUCSL.pc1",
+      "store_value": 2.71768,
+      "store_vintage_date": "2007-06-15",
+      "value_matches_store": true,
+      "vintage_matches_store": true
+    },
+    {
+      "bisection_budget": 15,
+      "gets": 15,
+      "observation_date": "2011-10-01",
+      "path": "bisection",
+      "payload": {
+        "observation_date": "2011-10-01",
+        "unit": "percent_yoy",
+        "value": 3.55894,
+        "vintage_date": "2011-11-16"
+      },
+      "seconds": 5.89,
+      "source_id": "fred.CPIAUCSL.pc1",
+      "store_value": 3.55894,
+      "store_vintage_date": "2011-11-16",
+      "value_matches_store": true,
+      "vintage_matches_store": true
+    },
+    {
+      "bisection_budget": 12,
+      "gets": 11,
+      "observation_date": "2025-05-01",
+      "path": "bisection",
+      "payload": {
+        "observation_date": "2025-05-01",
+        "unit": "percent_yoy",
+        "value": 2.37593,
+        "vintage_date": "2025-06-11"
+      },
+      "seconds": 3.83,
+      "source_id": "fred.CPIAUCSL.pc1",
+      "store_value": 2.37593,
+      "store_vintage_date": "2025-06-11",
+      "value_matches_store": true,
+      "vintage_matches_store": true
+    }
+  ],
+  "case_3_other_transformed_rows": [
+    {
+      "bisection_budget": 14,
+      "gets": 14,
+      "observation_date": "2020-02-01",
+      "path": "bisection",
+      "payload": {
+        "observation_date": "2020-02-01",
+        "unit": "percent_yoy",
+        "value": 7.40439,
+        "vintage_date": "2020-03-12"
+      },
+      "seconds": 5.0,
+      "source_id": "fred.M2SL.pc1"
+    },
+    {
+      "bisection_budget": 14,
+      "gets": 15,
+      "observation_date": "2020-02-01",
+      "path": "bisection",
+      "payload": {
+        "observation_date": "2020-02-01",
+        "unit": "percent_yoy",
+        "value": 1.82426,
+        "vintage_date": "2020-03-27"
+      },
+      "seconds": 5.98,
+      "source_id": "fred.PCEPILFE.pc1"
+    }
+  ],
+  "case_4_ceiling": [
+    {
+      "bisection_budget": 1,
+      "gets": 1,
+      "observation_date": "2002-12-18",
+      "path": "one_get",
+      "payload": {
+        "malformed": "vintage_archive_floor"
+      },
+      "seconds": 0.35,
+      "source_id": "fred.WALCL"
+    },
+    {
+      "bisection_budget": 1,
+      "gets": 1,
+      "observation_date": "2000-01-05",
+      "path": "one_get",
+      "payload": {
+        "unit": "usd_millions"
+      },
+      "seconds": 0.44,
+      "source_id": "fred.WALCL"
+    },
+    {
+      "bisection_budget": 1,
+      "gets": 2,
+      "observation_date": "1999-10-01",
+      "path": "one_get",
+      "payload": {
+        "malformed": "vintage_archive_floor"
+      },
+      "seconds": 0.71,
+      "source_id": "fred.NCBEILQ027S"
+    }
+  ],
+  "case_4_non_ceiling_controls": [
+    {
+      "bisection_budget": 1,
+      "gets": 1,
+      "observation_date": "1999-12-01",
+      "path": "one_get",
+      "payload": {
+        "unit": "usd_millions"
+      },
+      "seconds": 0.54,
+      "source_id": "fred.NCBEILQ027S"
+    },
+    {
+      "bisection_budget": 1,
+      "gets": 2,
+      "observation_date": "2000-01-01",
+      "path": "one_get",
+      "payload": {
+        "observation_date": "2000-01-01",
+        "unit": "usd_billions",
+        "value": 9697.2,
+        "vintage_date": "2000-04-27"
+      },
+      "seconds": 1.02,
+      "source_id": "fred.GDP"
+    },
+    {
+      "bisection_budget": 1,
+      "gets": 1,
+      "observation_date": "2013-04-01",
+      "path": "one_get",
+      "payload": {
+        "observation_date": "2013-04-01",
+        "unit": "usd_millions",
+        "value": 18077852.0,
+        "vintage_date": "2013-09-25"
+      },
+      "seconds": 0.73,
+      "source_id": "fred.NCBEILQ027S"
+    }
+  ],
+  "case_5_empty": [
+    {
+      "bisection_budget": 1,
+      "gets": 1,
+      "observation_date": "2015-06-13",
+      "path": "one_get",
+      "payload": {
+        "unit": "usd_millions"
+      },
+      "seconds": 0.35,
+      "source_id": "fred.WALCL"
+    },
+    {
+      "bisection_budget": 15,
+      "gets": 1,
+      "observation_date": "2015-06-15",
+      "path": "bisection",
+      "payload": {
+        "unit": "percent_yoy"
+      },
+      "seconds": 0.34,
+      "source_id": "fred.CPIAUCSL.pc1"
+    },
+    {
+      "bisection_budget": 1,
+      "gets": 0,
+      "observation_date": "2099-01-01",
+      "path": "one_get",
+      "payload": {
+        "malformed": "observation_date"
+      },
+      "seconds": 0.0,
+      "source_id": "fred.WALCL"
+    }
+  ],
+  "case_6_archive_floor_refusals": [
+    {
+      "bisection_budget": 1,
+      "gets": 2,
+      "observation_date": "2008-05-31",
+      "path": "one_get",
+      "payload": {
+        "malformed": "vintage_archive_floor"
+      },
+      "seconds": 1.07,
+      "source_id": "fred.IC4WSA"
+    },
+    {
+      "bisection_budget": 1,
+      "gets": 1,
+      "observation_date": "2011-03-02",
+      "path": "one_get",
+      "payload": {
+        "malformed": "vintage_archive_floor"
+      },
+      "seconds": 0.39,
+      "source_id": "fred.WALCL"
+    },
+    {
+      "bisection_budget": 1,
+      "gets": 2,
+      "observation_date": "2011-03-04",
+      "path": "one_get",
+      "payload": {
+        "malformed": "vintage_archive_floor"
+      },
+      "seconds": 0.95,
+      "source_id": "fred.NFCI"
+    },
+    {
+      "bisection_budget": 16,
+      "gets": 14,
+      "observation_date": "1999-12-01",
+      "path": "bisection",
+      "payload": {
+        "malformed": "vintage_archive_floor"
+      },
+      "seconds": 5.25,
+      "source_id": "fred.PCEPILFE.pc1"
+    },
+    {
+      "bisection_budget": 1,
+      "gets": 1,
+      "observation_date": "2011-07-06",
+      "path": "one_get",
+      "payload": {
+        "malformed": "vintage_archive_floor"
+      },
+      "seconds": 0.35,
+      "source_id": "fred.WALCL"
+    }
+  ],
+  "case_6_controls_admitted_after_the_floor": [
+    {
+      "bisection_budget": 1,
+      "gets": 1,
+      "observation_date": "2009-05-30",
+      "path": "one_get",
+      "payload": {
+        "observation_date": "2009-05-30",
+        "unit": "claims",
+        "value": 631250.0,
+        "vintage_date": "2009-06-04"
+      },
+      "seconds": 0.41,
+      "source_id": "fred.IC4WSA"
+    },
+    {
+      "bisection_budget": 1,
+      "gets": 1,
+      "observation_date": "2011-07-13",
+      "path": "one_get",
+      "payload": {
+        "observation_date": "2011-07-13",
+        "unit": "usd_millions",
+        "value": 2882004.0,
+        "vintage_date": "2011-07-14"
+      },
+      "seconds": 0.38,
+      "source_id": "fred.WALCL"
+    },
+    {
+      "bisection_budget": 1,
+      "gets": 1,
+      "observation_date": "2011-05-27",
+      "path": "one_get",
+      "payload": {
+        "observation_date": "2011-05-27",
+        "unit": "index",
+        "value": -0.54,
+        "vintage_date": "2011-06-02"
+      },
+      "seconds": 0.48,
+      "source_id": "fred.NFCI"
+    },
+    {
+      "bisection_budget": 16,
+      "gets": 15,
+      "observation_date": "2000-09-01",
+      "path": "bisection",
+      "payload": {
+        "observation_date": "2000-09-01",
+        "unit": "percent_yoy",
+        "value": 1.70681,
+        "vintage_date": "2000-10-30"
+      },
+      "seconds": 6.0,
+      "source_id": "fred.PCEPILFE.pc1"
+    }
+  ],
+  "credential": "read from FRED_API_KEY; never recorded",
+  "endpoint": "https://api.stlouisfed.org/fred/series/observations",
+  "probed_utc": "2026-10-21T08:55:04.333123+00:00",
+  "purpose": "WO-1.17: prove ``FredVintageAdapter`` against the REAL FRED REST API, with the real key.",
+  "rate_limit_probe": {
+    "single_day": {
+      "header_names": [
+        "alt-svc",
+        "cache-control",
+        "connection",
+        "content-length",
+        "content-type",
+        "date",
+        "expires",
+        "last-modified",
+        "pragma",
+        "server",
+        "strict-transport-security",
+        "vary",
+        "x-location"
+      ],
+      "rate_limit_like_headers": {},
+      "status": 200
+    },
+    "wide_window": {
+      "header_names": [
+        "alt-svc",
+        "cache-control",
+        "connection",
+        "content-length",
+        "content-type",
+        "date",
+        "expires",
+        "last-modified",
+        "pragma",
+        "server",
+        "strict-transport-security",
+        "vary",
+        "x-location"
+      ],
+      "rate_limit_like_headers": {},
+      "status": 200
+    }
+  }
+}

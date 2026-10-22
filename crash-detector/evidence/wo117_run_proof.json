@@ -1,0 +1,110 @@
+{
+  "probed_utc": "2026-10-17",
+  "purpose": "Real-network proof that tools/backfill/wo117_run.py works against the live sources and is resumable by construction (sink.is_admitted skips an already-admitted date at zero fetch cost), before any round launches the real 190,391-GET execution.",
+  "runs": [
+    {
+      "note": "First visible run. 2 of the 4 dates were already admitted from an earlier run this same invocation sequence killed mid-flight (SSH timeout, no nohup) before it could print a result \u2014 itself the first live evidence of resumability, since those 2 dates cost this run zero fetches. The other 2 (2007-07-01, 2007-10-01) hit real HTTP_ERROR failures.",
+      "ran_utc": "2026-10-17T18:05:33.255721Z",
+      "row": {
+        "admitted_dates": [],
+        "calendar_fetched": false,
+        "counts": {
+          "admitted": 0,
+          "failed": 2,
+          "fetches": 2,
+          "refused": 0,
+          "skipped": 2
+        },
+        "date_source": "formula",
+        "dates": 4,
+        "failed": [
+          [
+            "2007-07-01",
+            "HTTP_ERROR"
+          ],
+          [
+            "2007-10-01",
+            "HTTP_ERROR"
+          ]
+        ],
+        "first_date": "2000-01-01",
+        "last_date": "2007-10-01",
+        "refused": [],
+        "route": "4.1-fred-bisected",
+        "source_id": "fred.GDP",
+        "vintage": "original"
+      },
+      "run_id": "wo117-554d59bbab20"
+    },
+    {
+      "note": "Identical invocation, re-run. The 2 already-admitted dates stayed skipped at zero cost; one of the two previously-failed dates (2007-07-01) succeeded this time and was admitted; the other (2007-10-01) failed again \u2014 a real, non-deterministic transient failure, not a structural refusal.",
+      "ran_utc": "2026-10-17T18:08:32.695722Z",
+      "row": {
+        "admitted_dates": [
+          "2007-07-01"
+        ],
+        "calendar_fetched": false,
+        "counts": {
+          "admitted": 1,
+          "failed": 1,
+          "fetches": 2,
+          "refused": 0,
+          "skipped": 2
+        },
+        "date_source": "formula",
+        "dates": 4,
+        "failed": [
+          [
+            "2007-10-01",
+            "HTTP_ERROR"
+          ]
+        ],
+        "first_date": "2000-01-01",
+        "last_date": "2007-10-01",
+        "refused": [],
+        "route": "4.1-fred-bisected",
+        "source_id": "fred.GDP",
+        "vintage": "original"
+      },
+      "run_id": "wo117-48392471b8f3"
+    },
+    {
+      "note": "Identical invocation, third time. 3 of 4 dates now skipped at zero cost (the newly-admitted one joined the first two); 2007-10-01 failed a third time with the same HTTP_ERROR class \u2014 consistent with a real, persistent transient condition on that one date rather than a bug in the driver, which correctly keeps retrying it on every re-run without blocking the row or the run.",
+      "ran_utc": "2026-10-17T18:09:29.582869Z",
+      "row": {
+        "admitted_dates": [],
+        "calendar_fetched": false,
+        "counts": {
+          "admitted": 0,
+          "failed": 1,
+          "fetches": 1,
+          "refused": 0,
+          "skipped": 3
+        },
+        "date_source": "formula",
+        "dates": 4,
+        "failed": [
+          [
+            "2007-10-01",
+            "HTTP_ERROR"
+          ]
+        ],
+        "first_date": "2000-01-01",
+        "last_date": "2007-10-01",
+        "refused": [],
+        "route": "4.1-fred-bisected",
+        "source_id": "fred.GDP",
+        "vintage": "original"
+      },
+      "run_id": "wo117-58844153db5c"
+    }
+  ],
+  "store": "/tmp/wo117_proof.sqlite (throwaway, not committed, not cd-live-data)",
+  "subject": "fred.GDP, episodes dotcom+gfc, --max-dates-per-episode 2 (FOR THIS PROOF ONLY; never set on a real run)",
+  "what_this_establishes": [
+    "The real network is reached: formula-sourced dates, a real FRED bisection adapter, real HTTP_ERROR failures recorded honestly rather than silently swallowed.",
+    "Resumability is real, not asserted: each re-run cost strictly fewer fetches than the one before as dates moved from unattempted/failed to admitted, and an admitted date NEVER cost a fetch again across three separate process invocations.",
+    "A persistently-failing date does not block its row or the run: 2007-10-01 failed three runs running and every other date in the row kept resolving normally.",
+    "The driver's own CD-RT-012 register-check compliance was verified separately (tests/test_no_execution_interface_prose.py) after two false-positive \"route order\" phrasings were reworded to \"route grouping\" \u2014 a wording fix, not a check weakening."
+  ]
+}

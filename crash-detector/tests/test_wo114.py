@@ -4,14 +4,14 @@ Two claims, and the second is the load-bearing one.
 
 ONE — the ROUTE IS THE EVIDENCE'S. A FRED ingredient whose (series, transformation) pair
 ``ingestion.vintage.requires_original_vintage`` answers YES for is backfilled through
-``AlfredVintageAdapter`` (the figure as FIRST published); a pair measured stable is
+``FredVintageAdapter`` (the figure as FIRST published); a pair measured stable is
 backfilled from FRED's current body through the ordinary ``FredAdapter``. Nothing in
 ``ingestion.backfill_adapters`` decides that — the declaration does, and these tests sweep
 every FRED ingredient in the catalog so the two cannot drift apart for 16 of 24 series while
 looking right for the one a hand-written test happened to name.
 
-TWO — the LIVE LOOP CANNOT REACH THE VINTAGE ADAPTER, STRUCTURALLY. ``AlfredVintageAdapter``
-spends ``2 + ceil(log2(days))`` GETs per ``fetch`` under a total deadline and answers for one
+TWO — the LIVE LOOP CANNOT REACH THE VINTAGE ADAPTER, STRUCTURALLY. ``FredVintageAdapter``
+spends one GET (or, for a transformed series, ``2 + ceil(log2(days))``) per ``fetch`` under a total deadline and answers for one
 named observation date. In ``ingestion.run``'s loop — a few seconds per attempt, "the latest
 value", every ingredient every pass — it would be wrong twice over. So the tests below hold
 the SHAPE that makes it unreachable rather than the habit of not reaching it:
@@ -19,7 +19,7 @@ the SHAPE that makes it unreachable rather than the habit of not reaching it:
 or expose it, ``ingestion.run`` does not import the module that does, and the dependency runs
 one way only (backfill -> catalog), so the reverse is an import cycle rather than an edit.
 
-THREE — THE HOST IS DECLARED WHERE IT IS TRUE. ``alfred.stlouisfed.org`` is reached by the
+THREE — THE HOST IS DECLARED WHERE IT IS TRUE. ``api.stlouisfed.org`` is reached by the
 backfill path and by nothing else, so it is declared in ``BACKFILL_EGRESS_HOSTS`` and is
 absent from ``EGRESS_HOSTS``, from ``deploy/egress-destinations.yaml`` and from
 ``cd-collectors``' compose allowlist — all three of which are claims about what the LIVE
@@ -58,6 +58,8 @@ CLOCK = lambda: NOW  # noqa: E731
 OBS = "2008-09-01"
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
+#: Key-shaped and worth nothing; the real credential is never in this tree.
+KEY = "k" * 32
 FRED = tuple(i for i in INGREDIENTS if i.kind == "fred")
 
 
@@ -68,7 +70,7 @@ def _ing(source_id: str):
 def _imported_names(module_path: str) -> set:
     """Every module and name a file IMPORTS, read from its AST rather than from its text.
 
-    AST and not ``in source``: a prose mention of ``AlfredVintageAdapter`` in a comment that
+    AST and not ``in source``: a prose mention of ``FredVintageAdapter`` in a comment that
     explains why the module does not import it must not read as the import itself.
     """
     tree = ast.parse((ROOT / module_path).read_text())
@@ -87,24 +89,25 @@ def _imported_names(module_path: str) -> set:
 
 def test_a_revision_prone_fred_ingredient_backfills_through_the_vintage_adapter():
     """GDP is revised; the figure a 2008 collector saw is not the figure GDP carries now."""
-    adapter = build_backfill_adapter(_ing("fred.GDP"), OBS, CLOCK)
-    assert type(adapter) is A.AlfredVintageAdapter
-    assert adapter.adapter_id == "cd.ingest.alfred_vintage_csv.v1"
+    adapter = build_backfill_adapter(_ing("fred.GDP"), OBS, CLOCK, api_key=KEY)
+    assert type(adapter) is A.FredVintageAdapter
+    assert adapter.adapter_id == "cd.ingest.fred_vintage_rest.v1"
     assert adapter.source_id == "fred.GDP"
     parts = urlsplit(adapter._url())
-    assert parts.hostname == A.ALFRED_HOST and f"id=GDP" in parts.query and OBS in parts.query
+    assert parts.hostname == A.FRED_API_HOST and "series_id=GDP" in parts.query and OBS in parts.query
+    assert "api_key" not in parts.query  # the host-declaring URL never carries the credential
 
 
 def test_a_revision_prone_transformed_pair_carries_its_transformation_into_the_vintage_fetch():
     """The pair is (series, transformation): M2SL's pc1 is what was declared revision-prone."""
-    adapter = build_backfill_adapter(_ing("fred.M2SL.pc1"), OBS, CLOCK)
-    assert type(adapter) is A.AlfredVintageAdapter
-    assert "transformation=pc1" in urlsplit(adapter._url()).query
+    adapter = build_backfill_adapter(_ing("fred.M2SL.pc1"), OBS, CLOCK, api_key=KEY)
+    assert type(adapter) is A.FredVintageAdapter
+    assert "units=pc1" in urlsplit(adapter._url()).query
 
 
 def test_a_measured_stable_fred_ingredient_backfills_from_freds_current_body():
     """DFF differs in ZERO of 2,369 shared observations over the replay window (ingestion.vintage)."""
-    adapter = build_backfill_adapter(_ing("fred.DFF"), OBS, CLOCK)
+    adapter = build_backfill_adapter(_ing("fred.DFF"), OBS, CLOCK, api_key=KEY)
     assert type(adapter) is A.FredAdapter
     assert urlsplit(adapter._url()).hostname == "fred.stlouisfed.org"
 
@@ -113,9 +116,9 @@ def test_every_fred_ingredient_routes_exactly_as_the_vintage_declaration_says():
     """The sweep. Not one named series each way — all 24, against the declaration itself."""
     prone, stable = [], []
     for ing in FRED:
-        adapter = build_backfill_adapter(ing, OBS, CLOCK)
+        adapter = build_backfill_adapter(ing, OBS, CLOCK, api_key=KEY)
         if requires_original_vintage(ing.ref, ing.transformation):
-            assert type(adapter) is A.AlfredVintageAdapter, ing.source_id
+            assert type(adapter) is A.FredVintageAdapter, ing.source_id
             prone.append(ing.source_id)
         else:
             assert type(adapter) is A.FredAdapter, ing.source_id
@@ -176,7 +179,7 @@ def test_a_kind_nobody_has_reasoned_about_is_refused_rather_than_backfilled():
     assert {i.kind for i in others} == {"multpl", "hermes"}
     for ing in others:
         with pytest.raises(ValueError):
-            build_backfill_adapter(ing, OBS, CLOCK)
+            build_backfill_adapter(ing, OBS, CLOCK, api_key=KEY)
 
 
 def test_a_cboe_ingredient_routes_to_a_dated_cboe_adapter_and_is_asked_no_vintage_question(
@@ -184,7 +187,7 @@ def test_a_cboe_ingredient_routes_to_a_dated_cboe_adapter_and_is_asked_no_vintag
     """The other half of the boundary above: the kind that was added actually goes somewhere.
 
     ``requires_original_vintage`` must not be CONSULTED — it answers about a FRED pair, and
-    its fail-safe ``True`` would point a Cboe index id at the ALFRED adapter. Asserting the
+    its fail-safe ``True`` would point a Cboe index id at the vintage adapter. Asserting the
     returned type alone would not catch that: a dispatch that asked the question and then
     ignored the answer would still hand back a ``CboeAdapter``. So the function is replaced
     with one that fails the test by name if it is reached at all.
@@ -196,7 +199,7 @@ def test_a_cboe_ingredient_routes_to_a_dated_cboe_adapter_and_is_asked_no_vintag
     cboe = [i for i in INGREDIENTS if i.kind == "cboe"]
     assert {i.source_id for i in cboe} == {"cboe.VIX", "cboe.VIX3M", "cboe.SKEW"}
     for ing in cboe:
-        adapter = build_backfill_adapter(ing, OBS, CLOCK)
+        adapter = build_backfill_adapter(ing, OBS, CLOCK, api_key=KEY)
         assert type(adapter) is A.CboeAdapter, ing.source_id
         # The date reached it, and reaching it is the whole difference between a backfill
         # and a re-read of this week's close.
@@ -213,7 +216,7 @@ def test_a_plain_close_yahoo_ingredient_routes_to_a_dated_yahoo_adapter_and_is_a
     ``requires_original_vintage`` must not be CONSULTED, for the reason it must not be for
     Cboe: it answers about a FRED (series, transformation) pair, a Yahoo symbol is not in
     :data:`~ingestion.vintage.REVISION_STABLE` and never could be, and its fail-safe ``True``
-    would point ``yahoo.SPY`` at the ALFRED adapter. Asserting the returned TYPE would not
+    would point ``yahoo.SPY`` at the vintage adapter. Asserting the returned TYPE would not
     catch a dispatch that asked the question and ignored the answer, so the function is
     replaced with one that fails this test by name if it is reached at all.
 
@@ -246,7 +249,7 @@ def test_a_plain_close_yahoo_ingredient_routes_to_a_dated_yahoo_adapter_and_is_a
                                             "yahoo.^GSPC", "yahoo.HG=F", "yahoo.GC=F",
                                             "yahoo.GC=F.history"}
     for ing in plain:
-        adapter = build_backfill_adapter(ing, OBS, CLOCK)
+        adapter = build_backfill_adapter(ing, OBS, CLOCK, api_key=KEY)
         assert type(adapter) is A.YahooChartAdapter, ing.source_id
         # The date reached it, and reaching it is the whole difference between a backfill and
         # a re-read of this week's close.
@@ -264,7 +267,7 @@ def test_a_plain_close_yahoo_ingredient_routes_to_a_dated_yahoo_adapter_and_is_a
     # The window is the UTC day of OBS and not merely a window: 2008-09-01T00:00:00Z and the
     # last second of that day, which is the bound the probe measured (a zero-width window at
     # midnight returns no bars for a real trading session).
-    spy = urlsplit(build_backfill_adapter(_ing("yahoo.SPY"), OBS, CLOCK)._url()).query
+    spy = urlsplit(build_backfill_adapter(_ing("yahoo.SPY"), OBS, CLOCK, api_key=KEY)._url()).query
     assert "period1=1220227200" in spy and "period2=1220313599" in spy, spy
 
 
@@ -302,7 +305,7 @@ def test_an_adjclose_yahoo_ingredient_is_refused_rather_than_handed_a_working_ad
     )
     for ing in adj:
         with pytest.raises(ValueError, match="adjclose has no"):
-            build_backfill_adapter(ing, OBS, CLOCK)
+            build_backfill_adapter(ing, OBS, CLOCK, api_key=KEY)
         live = build_adapter(ing, CLOCK)
         assert type(live) is A.YahooChartAdapter and live._field == "adjclose", ing.source_id
         assert live._observation_date is None, ing.source_id
@@ -323,7 +326,7 @@ def test_the_live_path_never_returns_the_vintage_adapter_for_anything():
     """Including the revision-prone series: the LIVE question is "the latest value", and the
     answer to it is a FredAdapter whether or not the series gets revised."""
     live = [build_adapter(i, CLOCK) for i in INGREDIENTS if i.kind != "manual"]
-    assert not any(isinstance(a, A.AlfredVintageAdapter) for a in live)
+    assert not any(isinstance(a, A.FredVintageAdapter) for a in live)
     prone = [i for i in FRED if requires_original_vintage(i.ref, i.transformation)]
     assert len(prone) == 18 and all(type(build_adapter(i, CLOCK)) is A.FredAdapter for i in prone)
 
@@ -332,14 +335,14 @@ def test_the_live_constructor_has_no_argument_that_could_select_a_vintage_adapte
     """Unchanged signature, and that is the point: not a flag a future caller passes wrong."""
     assert list(inspect.signature(build_adapter).parameters) == ["ing", "clock"]
     assert list(inspect.signature(build_backfill_adapter).parameters) == [
-        "ing", "observation_date", "clock"]
+        "ing", "observation_date", "clock", "api_key", "archive_floors"]
 
 
 def test_the_live_catalog_module_neither_imports_nor_exposes_the_vintage_adapter():
-    assert not hasattr(C, "AlfredVintageAdapter")
-    assert "AlfredVintageAdapter" not in C.__all__
+    assert not hasattr(C, "FredVintageAdapter")
+    assert "FredVintageAdapter" not in C.__all__
     imported = _imported_names("ingestion/catalog.py")
-    assert not any("Alfred" in name or "backfill" in name for name in imported), imported
+    assert not any("Vintage" in name or "backfill" in name for name in imported), imported
 
 
 def test_the_live_collector_loop_does_not_import_the_backfill_module():
@@ -347,7 +350,7 @@ def test_the_live_collector_loop_does_not_import_the_backfill_module():
     assert not hasattr(live_run, "build_backfill_adapter")
     imported = _imported_names("ingestion/run.py")
     assert "ingestion.catalog.build_adapter" in imported
-    assert not any("Alfred" in name or "backfill" in name for name in imported), imported
+    assert not any("Vintage" in name or "backfill" in name for name in imported), imported
 
 
 def test_the_dependency_runs_one_way_so_the_reverse_would_be_an_import_cycle():
@@ -360,14 +363,14 @@ def test_the_dependency_runs_one_way_so_the_reverse_would_be_an_import_cycle():
 
 
 def test_the_vintage_host_is_declared_for_the_backfill_path_and_only_there():
-    assert set(BACKFILL_EGRESS_HOSTS) == {A.ALFRED_HOST}
-    assert BACKFILL_EGRESS_HOSTS[A.ALFRED_HOST].startswith("Federal Reserve Bank of St. Louis")
+    assert set(BACKFILL_EGRESS_HOSTS) == {A.FRED_API_HOST}
+    assert BACKFILL_EGRESS_HOSTS[A.FRED_API_HOST].startswith("Federal Reserve Bank of St. Louis")
     # The three declarations of what the LIVE collector reaches, each asserted ABSENT.
-    assert A.ALFRED_HOST not in EGRESS_HOSTS and A.ALFRED_HOST not in NON_HTTP_PEERS
+    assert A.FRED_API_HOST not in EGRESS_HOSTS and A.FRED_API_HOST not in NON_HTTP_PEERS
     registry = load_compose(ROOT / "deploy/egress-destinations.yaml")["destinations"]
-    assert A.ALFRED_HOST not in {d["host"] for d in registry}
+    assert A.FRED_API_HOST not in {d["host"] for d in registry}
     collectors = load_compose(ROOT / "deploy/compose.yaml")["services"]["cd-collectors"]
-    assert A.ALFRED_HOST not in collectors["x-egress"]["hosts"]
+    assert A.FRED_API_HOST not in collectors["x-egress"]["hosts"]
     assert set(collectors["x-egress"]["hosts"]) == {d["host"] for d in registry}
     # ...and the two Python declarations are disjoint, so neither can be read as the other.
     assert not set(EGRESS_HOSTS) & set(BACKFILL_EGRESS_HOSTS)
@@ -380,22 +383,46 @@ def test_the_live_egress_declaration_is_still_exactly_what_the_live_adapters_rea
     assert hosts == set(EGRESS_HOSTS)
 
 
-def test_every_backfill_url_reaches_a_declared_host_and_only_the_prone_ones_reach_alfred():
+def test_every_backfill_url_reaches_a_declared_host_and_only_the_prone_ones_reach_the_rest_api():
     reached = {}
     for ing in FRED:
-        host = urlsplit(build_backfill_adapter(ing, OBS, CLOCK)._url()).hostname
+        host = urlsplit(build_backfill_adapter(ing, OBS, CLOCK, api_key=KEY)._url()).hostname
         reached.setdefault(host, []).append(ing.source_id)
     assert set(reached) <= set(EGRESS_HOSTS) | set(BACKFILL_EGRESS_HOSTS)
-    assert set(reached) == {A.ALFRED_HOST, "fred.stlouisfed.org"}
+    assert set(reached) == {A.FRED_API_HOST, "fred.stlouisfed.org"}
     assert all(requires_original_vintage(_ing(s).ref, _ing(s).transformation)
-               for s in reached[A.ALFRED_HOST])
+               for s in reached[A.FRED_API_HOST])
 
 
 def test_the_backfill_module_records_what_the_driver_round_still_owes():
-    """The compose service and the DEST-ALFRED-001 registration are OWED, not forgotten: a
+    """WO-1.17: no registration is owed while the driver is a host-level script, and the module
+    says so, naming the obligation that returns (DEST-FRED-API-001) if it is ever containerised. The old text: a
     backfill that cannot be permitted anywhere is fail-closed, and saying so is the deal."""
     import ingestion.backfill_adapters as B
 
     doc = B.__doc__ + inspect.getsource(B)
-    assert "DEST-ALFRED-001" in doc and "OWED" in doc
+    assert "DEST-FRED-API-001" in doc and "host-level" in doc
     assert "cd-collectors" in doc
+
+
+# --- FOUR: the credential ------------------------------------------------------------------ #
+
+
+def test_a_revision_prone_row_is_refused_at_construction_without_a_key_and_a_stable_one_is_not():
+    """Only the rows that read the keyed endpoint need a key; nothing is built around a missing one."""
+    with pytest.raises(ValueError) as refused:
+        build_backfill_adapter(_ing("fred.GDP"), OBS, CLOCK)
+    assert "api_key" in str(refused.value)
+    assert type(build_backfill_adapter(_ing("fred.DFF"), OBS, CLOCK)) is A.FredAdapter
+    assert type(build_backfill_adapter(_ing("cboe.VIX"), OBS, CLOCK)) is A.CboeAdapter
+
+
+def test_the_key_is_handed_to_the_vintage_adapter_and_to_no_other_adapter():
+    """The keyless branches never receive it — they take no such argument — so it cannot be
+    appended to a Cboe, Yahoo or plain-FRED request by accident."""
+    for ing in FRED:
+        adapter = build_backfill_adapter(ing, OBS, CLOCK, api_key=KEY)
+        if type(adapter) is A.FredVintageAdapter:
+            assert adapter._api_key == KEY and KEY not in adapter._url()
+        else:
+            assert not hasattr(adapter, "_api_key") and KEY not in adapter._url()
