@@ -1,0 +1,8 @@
+5055 days 2006-07-17..2026-10-20 (20.3y); 7 declines >=15%.  (control lacks hy_oas, ig_oas, copper_gold: ALARM/FA are LOWER bounds)
+N  no count in rule 3 (C2: lock+trend, vol .70)         ALARM 17.3% DENY 47.4% | FA 0.64/yr (13) | caught 7/7 | longest deny 718d
+P  PR as written: k=2 over all 10 ids                   ALARM 26.3% DENY 48.2% | FA 0.94/yr (19) | caught 7/7 | longest deny 943d
+A  k=2, curves out                                      ALARM 18.4% DENY 48.2% | FA 0.69/yr (14) | caught 7/7 | longest deny 943d
+B  k=2, curves + TIPS out                               ALARM 17.3% DENY 47.4% | FA 0.64/yr (13) | caught 7/7 | longest deny 718d
+C  k=2 over {vix_level, vix_term, spx_vs_200dma, skew}  ALARM 17.3% DENY 47.4% | FA 0.64/yr (13) | caught 7/7 | longest deny 718d
+D  k=3 over all 10 ids                                  ALARM 18.2% DENY 47.4% | FA 0.84/yr (17) | caught 7/7 | longest deny 718d
+E  k=3, curves out                                      ALARM 17.3% DENY 47.4% | FA 0.64/yr (13) | caught 7/7 | longest deny 718d

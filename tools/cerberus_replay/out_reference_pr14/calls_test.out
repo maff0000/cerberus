@@ -1,0 +1,31 @@
+=== CALL 1: breadth unset -> rising-WATCH limb off ===
+B_mid, B_high: None None
+  breadth 0.9 vs 20-ago 0.1, masters calm -> State.CALM
+  breadth 0.5 vs 20-ago 0.0, masters calm -> State.CALM
+  breadth 0.489 vs 20-ago 0.3, masters calm -> State.CALM
+  breadth 1.0 vs 20-ago 0.0, masters calm -> State.CALM
+  master 0.65 -> State.WATCH
+
+=== CALL 4: monetary count can never reach k ===
+  equity_crash: scaled indicators 24, in COUNT_INDICATOR_IDS: ['cboe_skew', 'copper_gold', 'hy_oas', 'ig_oas', 'real_rate_10y_tips', 'spx_vs_200dma', 'vix_level', 'vix_term_structure', 'yield_curve_10y2y', 'yield_curve_10y3m']
+  monetary_debasement: scaled indicators 10, in COUNT_INDICATOR_IDS: ['real_rate_10y_tips']
+  equity_crash: EVERY indicator pinned at 1.0 -> count=10 considered=('cboe_skew', 'copper_gold', 'hy_oas', 'ig_oas', 'real_rate_10y_tips', 'spx_vs_200dma', 'vix_level', 'vix_term_structure', 'yield_curve_10y2y', 'yield_curve_10y3m')
+  monetary_debasement: EVERY indicator pinned at 1.0 -> count=1 considered=('real_rate_10y_tips',)
+  K = 2
+
+=== curve pair through the count (curve_master is alarm_eligible=False) ===
+  curve_master alarm_eligible: False
+  only both curve indicators at 0.80 -> count 2 ('yield_curve_10y2y', 'yield_curve_10y3m')
+  candidate state with curve_master 0.80, vol 0.10, count 2 -> State.ALARM
+
+=== CALL 3: armed semantics -- SQL alarm_lock_armed vs the harness rule (eval_lock.py/_armed_span) ===
+  exhaustive over all histories up to length 5: 3905 sequences, 490 disagree
+  every disagreement is a CALM row following an ALARM with no RECOVERY between: True
+  example: [['ALARM', 'CALM'], ['CALM', 'ALARM', 'CALM'], ['WATCH', 'ALARM', 'CALM']]
+
+  --- is that disagreement reachable under the lock?  property test driving the REAL resolver + REAL lock query ---
+  120000 resolver steps over 400 random histories: violations {}; RECOVERY rows reached 69; histories where SQL lock != harness rule at the end: 0
+
+=== CALL 2: equity-only scope -- what the monetary dial can still do (lock off, trend off) ===
+  monetary: 6 days stress then quiet -> ALARMx10 WATCHx5 CALMx5
+  (ALARM -> WATCH -> CALM with no RECOVERY and no trend: the back door is still open on the monetary dial)

@@ -1,0 +1,9 @@
+Case 1: dial in ALARM (lock armed) -> data outage (UNKNOWN rows) -> FIRST resolvable reading is fully quiet and trend is confirmed
+   armed=True; first reading after outage -> official RECOVERY, candidate RECOVERY, counter 0
+   (RECOVERY needs 5 consecutive RECOVERY candidates when it comes from ALARM/WATCH; here it took ONE reading)
+Case 2: same, but WITHOUT an outage (control): dial ALARM, quiet + trend, 5 readings needed
+    ALARM(1) ALARM(2) ALARM(3) ALARM(4) RECOVERY(0) RECOVERY(1) RECOVERY(2)
+Case 3: dial WATCH under lock (ALARM weeks ago) -> outage -> one quiet reading
+   armed=True; first reading after outage -> official RECOVERY
+Case 4: pre-PR behaviour for the same outage (lock not armed) for contrast
+   alarm_lock_armed=False -> official WATCH

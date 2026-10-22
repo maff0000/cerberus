@@ -1,0 +1,12 @@
+9193 days 1990-01-02..2026-10-21 (36.8y); 10 declines >=15% (EM.EPIS)
+config | ALARM% DENY% | FA spans/yr (n) | declines with ALARM at/before trough | longest continuous deny | premature re-opens (mean further fall) | re-entry median d / off-low (max d)
+C0 vol.70, no count, no lock   (pre-PR + vol fix)
+    ALARM 12.2%  DENY 28.9% | FA 0.52/yr (19) | caught 10/10 | longest deny 630d 2022-06-17..2024-12-26 | reopens 7 (-32%) | re-entry 80d / +18% (max 807d)
+C1 + count k=2 (curves in)     (no lock)
+    ALARM 15.4%  DENY 28.9% | FA 0.63/yr (23) | caught 10/10 | longest deny 630d 2022-06-17..2024-12-26 | reopens 8 (-34%) | re-entry 80d / +18% (max 807d)
+C2 + lock/trend, no count
+    ALARM 13.3%  DENY 38.2% | FA 0.52/yr (19) | caught 10/10 | longest deny 719d 2022-02-22..2025-01-08 | reopens 2 (-38%) | re-entry 201d / +33% (max 821d)
+C3 PR AS WRITTEN: lock + count k=2 (curves in)
+    ALARM 16.5%  DENY 38.6% | FA 0.63/yr (23) | caught 10/10 | longest deny 805d 2000-02-18..2003-05-13 | reopens 2 (-38%) | re-entry 201d / +33% (max 821d)
+C4 lock + count k=2, curves OUT of count
+    ALARM 13.3%  DENY 38.2% | FA 0.52/yr (19) | caught 10/10 | longest deny 719d 2022-02-22..2025-01-08 | reopens 2 (-38%) | re-entry 201d / +33% (max 821d)

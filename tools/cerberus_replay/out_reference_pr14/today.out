@@ -1,0 +1,10 @@
+trend_confirmed (PR) on today's live feed: True
+equity_crash CALM cand CALM breadth 0.335 acute 0.389 curve_master masters {'credit_master': 0.09, 'curve_master': 0.39, 'volatility_master': 0.21, 'financial_conditions_master': 0.0} count 1 ('real_rate_10y_tips',)
+monetary_debasement CALM cand CALM breadth 0.298 acute 0.18 currency_master masters {'fiscal_master': 0.0, 'real_rate_master': 0.0, 'currency_master': 0.18} count 0 ()
+
+live DEPLOYED evaluator (build a56bfc2, pre-PR) last rows:
+Traceback (most recent call last):
+  File "/tmp/claude-0/-srv/4b8975a1-1c46-4d23-923e-bdcb333b762f/scratchpad/live/today.py", line 21, in <module>
+    for r in c.execute("select as_of_utc, machine_state, candidate_state, breadth, acute, acute_from_master_id, indicator_count, count_at_or_beyond from machine_state_history where dial_id=? order by 1 desc limit 4", (dial,)):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: as_of_utc

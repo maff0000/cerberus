@@ -1,0 +1,19 @@
+control 2006-07-17..2026-10-20 (20.3y, 5055 days). Unconditional P(63d fwd-min <= -10%) = 15.4%
+count>=2 with the vol master BELOW its 0.70 stress (count-only candidate days): 489 = 9.7% of days, 21 separate runs = 1.04/yr
+
+by indicator combination at/beyond 0.80 (days; runs; P(63d fwd-min<=-10%) ; median S&P dd from 252d high):
+   218d   6 runs  P(hit)=   1%  dd-med -4.8%  ['yield_curve_10y2y', 'yield_curve_10y3m']
+    98d  15 runs  P(hit)=   0%  dd-med -1.6%  ['real_rate_10y_tips', 'yield_curve_10y3m']
+    65d   8 runs  P(hit)=  59%  dd-med -1.3%  ['cboe_skew', 'real_rate_10y_tips']
+    42d   9 runs  P(hit)=   0%  dd-med -0.9%  ['real_rate_10y_tips', 'yield_curve_10y2y', 'yield_curve_10y3m']
+    40d   5 runs  P(hit)=   0%  dd-med -0.2%  ['cboe_skew', 'yield_curve_10y3m']
+     9d   4 runs  P(hit)=   0%  dd-med -0.0%  ['cboe_skew', 'yield_curve_10y2y', 'yield_curve_10y3m']
+     8d   2 runs  P(hit)=   0%  dd-med -21.5%  ['spx_vs_200dma', 'yield_curve_10y2y']
+     5d   2 runs  P(hit)=   0%  dd-med -0.0%  ['cboe_skew', 'real_rate_10y_tips', 'yield_curve_10y2y', 'yield_curve_10y3m']
+     4d   4 runs  P(hit)=   0%  dd-med -0.9%  ['cboe_skew', 'real_rate_10y_tips', 'yield_curve_10y3m']
+
+count-only days containing BOTH curve indicators: 274 (8 runs); containing BOTH cboe_skew and real_rate_10y_tips: 74 (13 runs)
+   curve pair: P(63d fwd-min<=-10%) = 1% over 274 observable days  (unconditional 15%)
+   by year: {2022: 32, 2023: 210, 2024: 32}
+   skew+tips: P(63d fwd-min<=-10%) = 51% over 65 observable days  (unconditional 15%)
+   by year: {2023: 1, 2024: 23, 2025: 39, 2026: 11}

@@ -1,0 +1,138 @@
+rows per config: {'A_strict_asis': 2514, 'B_strict_liveshaped': 2514, 'C_avail_liveshaped': 2514, 'D_avail_asis': 2514} pass errors: {'A_strict_asis': 0, 'B_strict_liveshaped': 0, 'C_avail_liveshaped': 0, 'D_avail_asis': 0}
+
+=== T1 COVERAGE MAP: share of days per official state, equity dial, config A (store as-is) and B (live-shaped S&P) ===
+A_strict_asis
+  equity_c 2000-02   n= 794 UNKNOWN 100.0%
+  equity_c 2007-09   n= 695 UNKNOWN 100.0%
+  equity_c 2011      n= 212 UNKNOWN 100.0%
+  equity_c 2015-16   n= 210 UNKNOWN 100.0%
+  equity_c Q4-2018   n= 104 UNKNOWN 100.0%
+  equity_c Mar-2020  n= 103 UNKNOWN 100.0%
+  equity_c 2022      n= 293 UNKNOWN 100.0%
+  equity_c Apr-2025  n= 103 ALARM 65.0%  UNKNOWN  4.9%  WATCH 30.1%
+  monetary 2000-02   n= 794 UNKNOWN 100.0%
+  monetary 2007-09   n= 695 UNKNOWN 100.0%
+  monetary 2011      n= 212 UNKNOWN 100.0%
+  monetary 2015-16   n= 210 UNKNOWN 100.0%
+  monetary Q4-2018   n= 104 UNKNOWN 100.0%
+  monetary Mar-2020  n= 103 UNKNOWN 100.0%
+  monetary 2022      n= 293 UNKNOWN 100.0%
+  monetary Apr-2025  n= 103 UNKNOWN 100.0%
+B_strict_liveshaped
+  equity_c 2000-02   n= 794 UNKNOWN 100.0%
+  equity_c 2007-09   n= 695 UNKNOWN 100.0%
+  equity_c 2011      n= 212 UNKNOWN 100.0%
+  equity_c 2015-16   n= 210 UNKNOWN 100.0%
+  equity_c Q4-2018   n= 104 UNKNOWN 100.0%
+  equity_c Mar-2020  n= 103 UNKNOWN 100.0%
+  equity_c 2022      n= 293 UNKNOWN 100.0%
+  equity_c Apr-2025  n= 103 ALARM 65.0%  UNKNOWN  4.9%  WATCH 30.1%
+  monetary 2000-02   n= 794 UNKNOWN 100.0%
+  monetary 2007-09   n= 695 UNKNOWN 100.0%
+  monetary 2011      n= 212 UNKNOWN 100.0%
+  monetary 2015-16   n= 210 UNKNOWN 100.0%
+  monetary Q4-2018   n= 104 UNKNOWN 100.0%
+  monetary Mar-2020  n= 103 UNKNOWN 100.0%
+  monetary 2022      n= 293 UNKNOWN 100.0%
+  monetary Apr-2025  n= 103 UNKNOWN 100.0%
+
+=== T1b: which equity masters SCORE per episode (config C: real contributions, hy_oas requirement relaxed) ===
+  2000-02   n= 794 credit   0%  curve 100%  volatility   0%  financial_conditions   0%  none   0%
+  2007-09   n= 695 credit   0%  curve 100%  volatility  10%  financial_conditions   0%  none   0%
+  2011      n= 212 credit   0%  curve 100%  volatility 100%  financial_conditions  70%  none   0%
+  2015-16   n= 210 credit   0%  curve 100%  volatility 100%  financial_conditions  97%  none   0%
+  Q4-2018   n= 104 credit   0%  curve  99%  volatility  99%  financial_conditions  96%  none   1%
+  Mar-2020  n= 103 credit   0%  curve  99%  volatility  99%  financial_conditions  92%  none   1%
+  2022      n= 293 credit   0%  curve 100%  volatility 100%  financial_conditions  97%  none   0%
+  Apr-2025  n= 103 credit  99%  curve  99%  volatility  99%  financial_conditions  95%  none   1%
+
+=== T2 PROTECTION (config C, equity): share of the peak->trough decline still ahead at the FIRST signal ===
+ALARM
+   episode   peak->trough DD | first sig. | DD at signal | share of decline still ahead
+   2000-02   -49.1%      | 2000-08-28 | -0.9%      |   98%
+   2007-09   -56.8%      | 2008-09-29 | -29.3%      |   48%
+   2011      -19.4%      | 2011-08-03 | -7.6%      |   61%
+   2015-16   -14.1%      | 2015-08-27 | -6.6%      |   53%
+   Q4-2018   -19.8%      | 2018-10-25 | -7.7%      |   61%
+   Mar-2020  -33.9%      | 2020-03-02 | -8.7%      |   74%
+   2022      -25.4%      | 2022-01-28 | -7.6%      |   70%
+   Apr-2025  -18.9%      | 2025-02-19 | +0.0%      |  100%
+   mean share ahead — primary(>=20%) events: 73% ; all 8: 71%
+DENY (WATCH|ALARM)
+   episode   peak->trough DD | first sig. | DD at signal | share of decline still ahead
+   2000-02   -49.1%      | 2000-03-24 | +0.0%      |  100%
+   2007-09   -56.8%      | 2008-09-29 | -29.3%      |   48%
+   2011      -19.4%      | 2011-08-03 | -7.6%      |   61%
+   2015-16   -14.1%      | 2015-08-27 | -6.6%      |   53%
+   Q4-2018   -19.8%      | 2018-10-25 | -7.7%      |   61%
+   Mar-2020  -33.9%      | 2020-03-02 | -8.7%      |   74%
+   2022      -25.4%      | 2022-01-28 | -7.6%      |   70%
+   Apr-2025  -18.9%      | 2025-02-19 | +0.0%      |  100%
+   mean share ahead — primary(>=20%) events: 73% ; all 8: 71%
+D (store as-is, no S&P history) ALARM
+   episode   peak->trough DD | first sig. | DD at signal | share of decline still ahead
+   2000-02   -49.1%      | 2000-08-28 | -0.9%      |   98%
+   2007-09   -56.8%      | 2008-10-01 | -25.8%      |   55%
+   2011      -19.4%      | 2011-08-03 | -7.6%      |   61%
+   2015-16   -14.1%      | 2015-08-27 | -6.6%      |   53%
+   Q4-2018   -19.8%      | 2018-10-25 | -7.7%      |   61%
+   Mar-2020  -33.9%      | 2020-03-02 | -8.7%      |   74%
+   2022      -25.4%      | 2022-01-28 | -7.6%      |   70%
+   Apr-2025  -18.9%      | 2025-02-19 | +0.0%      |  100%
+   mean share ahead — primary(>=20%) events: 74% ; all 8: 72%
+
+=== T3 state shares, equity, config C, per episode ===
+  2000-02   ALARM 16.0%  WATCH 75.1%  RECOVERY  0.0%  CALM  8.8%  UNKNOWN  0.1%
+  2007-09   ALARM 22.2%  WATCH 19.3%  RECOVERY  0.7%  CALM 57.7%  UNKNOWN  0.1%
+  2011      ALARM 41.5%  WATCH 10.4%  RECOVERY  0.0%  CALM 47.6%  UNKNOWN  0.5%
+  2015-16   ALARM 13.3%  WATCH 11.0%  RECOVERY  2.4%  CALM 72.9%  UNKNOWN  0.5%
+  Q4-2018   ALARM 35.6%  WATCH 12.5%  RECOVERY  0.0%  CALM 51.0%  UNKNOWN  1.0%
+  Mar-2020  ALARM 41.7%  WATCH  4.9%  RECOVERY  0.0%  CALM 52.4%  UNKNOWN  1.0%
+  2022      ALARM 41.0%  WATCH 36.9%  RECOVERY  3.4%  CALM 18.4%  UNKNOWN  0.3%
+  Apr-2025  ALARM 68.9%  WATCH 30.1%  RECOVERY  0.0%  CALM  0.0%  UNKNOWN  1.0%
+
+=== T4 what drove ALARM (config C): masters >= stress vs count-only ===
+  2000-02   ALARM-candidate days  144; of which count-only (no eligible master at stress): 144  e.g. 2000-04-17..2002-11-14
+       sample: ['spx_vs_200dma', 'vix_level'] {'curve_master': 0.0}
+  2007-09   ALARM-candidate days  167; of which count-only (no eligible master at stress): 161  e.g. 2007-08-17..2009-05-04
+       sample: ['real_rate_10y_tips', 'spx_vs_200dma', 'vix_level'] {'curve_master': 0.0}
+  2011      ALARM-candidate days   91; of which count-only (no eligible master at stress): 0
+  2015-16   ALARM-candidate days   32; of which count-only (no eligible master at stress): 0
+  Q4-2018   ALARM-candidate days   33; of which count-only (no eligible master at stress): 0
+  Mar-2020  ALARM-candidate days   50; of which count-only (no eligible master at stress): 0
+  2022      ALARM-candidate days  108; of which count-only (no eligible master at stress): 39  e.g. 2022-09-16..2022-12-30
+       sample: ['yield_curve_10y2y', 'yield_curve_10y3m'] {'curve_master': 0.98, 'volatility_master': 0.28, 'financial_conditions_master': 0.23}
+  Apr-2025  ALARM-candidate days   62; of which count-only (no eligible master at stress): 34  e.g. 2025-01-02..2025-02-24
+       sample: ['cboe_skew', 'real_rate_10y_tips'] {'credit_master': 0.0, 'curve_master': 0.5, 'volatility_master': 0.31, 'financial_conditions_master': 0.0}
+
+=== T5 the lock in the replay: trend flag availability & lock behaviour ===
+  A_strict_asis: trend True on 0 of 2514 days; days armed 97
+  B_strict_liveshaped: trend True on 902 of 2514 days; days armed 97
+  C_avail_liveshaped: trend True on 902 of 2514 days; days armed 1369
+  D_avail_asis: trend True on 0 of 2514 days; days armed 1572
+  2000-02   C: first ALARM 2000-08-28; later RECOVERY days 0 (first -); CALM days after ALARM 0 (first -); last day state WATCH
+  2000-02   D: first ALARM 2000-08-28; later RECOVERY days 0 (first -); CALM days after ALARM 0 (first -); last day state WATCH
+  2007-09   C: first ALARM 2008-09-29; later RECOVERY days 5 (first 2009-08-19); CALM days after ALARM 89 (first 2009-08-26); last day state CALM
+  2007-09   D: first ALARM 2008-10-01; later RECOVERY days 0 (first -); CALM days after ALARM 0 (first -); last day state WATCH
+  2011      C: first ALARM 2011-08-03; later RECOVERY days 0 (first -); CALM days after ALARM 0 (first -); last day state WATCH
+  2011      D: first ALARM 2011-08-03; later RECOVERY days 0 (first -); CALM days after ALARM 0 (first -); last day state WATCH
+  2015-16   C: first ALARM 2015-08-27; later RECOVERY days 5 (first 2015-11-02); CALM days after ALARM 98 (first 2015-11-09); last day state CALM
+  2015-16   D: first ALARM 2015-08-27; later RECOVERY days 0 (first -); CALM days after ALARM 0 (first -); last day state WATCH
+  Q4-2018   C: first ALARM 2018-10-25; later RECOVERY days 0 (first -); CALM days after ALARM 0 (first -); last day state ALARM
+  Q4-2018   D: first ALARM 2018-10-25; later RECOVERY days 0 (first -); CALM days after ALARM 0 (first -); last day state ALARM
+  Mar-2020  C: first ALARM 2020-03-02; later RECOVERY days 0 (first -); CALM days after ALARM 0 (first -); last day state ALARM
+  Mar-2020  D: first ALARM 2020-03-02; later RECOVERY days 0 (first -); CALM days after ALARM 0 (first -); last day state ALARM
+  2022      C: first ALARM 2022-01-28; later RECOVERY days 10 (first 2022-02-08); CALM days after ALARM 0 (first -); last day state ALARM
+  2022      D: first ALARM 2022-01-28; later RECOVERY days 0 (first -); CALM days after ALARM 0 (first -); last day state ALARM
+  Apr-2025  C: first ALARM 2025-01-02; later RECOVERY days 0 (first -); CALM days after ALARM 0 (first -); last day state WATCH
+  Apr-2025  D: first ALARM 2025-01-02; later RECOVERY days 0 (first -); CALM days after ALARM 0 (first -); last day state WATCH
+
+=== T6 monetary dial (real pass, config A strict, store as-is) ===
+  2000-02   UNKNOWNx794
+  2007-09   UNKNOWNx695
+  2011      UNKNOWNx212
+  2015-16   UNKNOWNx210
+  Q4-2018   UNKNOWNx104
+  Mar-2020  UNKNOWNx103
+  2022      UNKNOWNx293
+  Apr-2025  UNKNOWNx103
