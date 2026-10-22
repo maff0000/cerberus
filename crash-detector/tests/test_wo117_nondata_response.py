@@ -36,6 +36,9 @@ class _KnownFloor:
     def floor(self, series, timeout_seconds, getter):
         return date(1990, 1, 1)
 
+    def vintages(self, series, timeout_seconds, getter):
+        return [date(2015, 7, 17)]
+
 
 def _serves(body):
     return lambda url, timeout, headers=None: body

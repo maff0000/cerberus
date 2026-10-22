@@ -1357,20 +1357,28 @@ class _FixedFloors:
     tests ask for, so it can neither refuse nor move any of their searches; the tests that ARE about
     the floor pass their own date. ``asked`` records each call so cost can be asserted."""
 
-    def __init__(self, floor=date(1990, 1, 1)):
-        self.known, self.asked = floor, []
+    def __init__(self, floor=date(1990, 1, 1), vintage_list=None):
+        self.known, self.asked, self.vintage_list = floor, [], vintage_list
 
     def floor(self, series, timeout_seconds, getter):
         self.asked.append(series)
         return self.known
 
+    def vintages(self, series, timeout_seconds, getter):
+        """The vintage dates a transformed scan walks. Untransformed paths never ask."""
+        return list(self.vintage_list or [])
+
 
 def _vintage_adapter(getter, observation="2015-06-10", series="WALCL", transformation=None,
                      unit="usd_millions", as_of_rule="obs_date", today=_REST_TODAY,
                      api_key=_FAKE_KEY, archive_floors=None):
+    archive_floors = archive_floors or _FixedFloors()
+    offered = getattr(getter, "vintage_dates", None)
+    if offered is not None and isinstance(archive_floors, _FixedFloors) and not archive_floors.vintage_list:
+        archive_floors.vintage_list = offered()
     return A.FredVintageAdapter(
         series=series, transformation=transformation, observation_date=observation,
-        api_key=api_key, archive_floors=archive_floors or _FixedFloors(),
+        api_key=api_key, archive_floors=archive_floors,
         source_id=f"fred.{series}", as_of_rule=as_of_rule, unit=unit,
         clock=lambda: today, getter=getter)
 
@@ -1406,6 +1414,12 @@ class _RestPc1:
     def vintages_asked(self) -> list:
         from urllib.parse import parse_qs, urlsplit
         return [parse_qs(urlsplit(u).query)["realtime_start"][0] for u in self.asked]
+
+    def vintage_dates(self) -> list:
+        """The archive's vintage dates: a monthly release on the 17th, 2010-2027, plus the one that
+        first serves the figure (a real archive lists every date it published on, served or not)."""
+        monthly = {date(y, m, 17) for y in range(2010, 2028) for m in range(1, 13)}
+        return sorted(monthly | {date.fromisoformat(self.first_serving)})
 
     def __call__(self, url, timeout, headers=None):
         from urllib.parse import parse_qs, urlsplit
@@ -1601,16 +1615,15 @@ def test_the_transformed_rows_are_exactly_the_three_the_wide_window_cannot_serve
         "fred.CPIAUCSL.pc1", "fred.M2SL.pc1", "fred.PCEPILFE.pc1"]
 
 
-def test_the_bisection_finds_the_first_serving_vintage_with_single_day_windows_only():
+def test_the_scan_finds_the_first_serving_vintage_with_single_day_windows_only():
     fake = _RestPc1(first_serving="2015-07-17")
     payload = _cpi_adapter(fake).fetch(timeout_seconds=30).payload
     assert payload == {"unit": "percent_yoy", "observation_date": "2015-06-01",
                        "value": 0.18454, "vintage_date": "2015-07-17"}
     asked = fake.vintages_asked()
-    assert asked[0] == "2026-10-20" and asked[1] == "2015-05-31"  # today first, then the floor
-    # 2 ends + a bisection over 4,161 days. Logarithmic, and inside the declared cap.
-    assert len(asked) <= 2 + 13 and len(asked) <= A.MAX_VINTAGE_PROBES
-    assert "2015-07-16" in asked and "2015-07-17" in asked  # both sides of the boundary probed
+    # today first, then the day before the observation, then the archive's real vintage dates in order
+    # until one serves: three probes, where the bisection this replaced paid thirteen.
+    assert asked == ["2026-10-20", "2015-05-31", "2015-06-17", "2015-07-17"]
     from urllib.parse import parse_qs, urlsplit
     for url in fake.asked:
         query = parse_qs(urlsplit(url).query)
@@ -1626,7 +1639,7 @@ def test_the_boundary_is_pinned_exactly_the_first_serving_day_and_never_the_day_
     assert payload["vintage_date"] == first_serving
 
 
-def test_the_bisection_reads_both_captured_answers_and_treats_a_200_with_no_rows_as_absent():
+def test_the_scan_reads_both_captured_answers_and_treats_a_200_with_no_rows_as_absent():
     """The REST API answers a vintage that did not carry the figure ``200`` with ``count`` 0 —
     there is no 404 for the search to lean on any more."""
     fake = _RestPc1(first_serving="2015-07-17")

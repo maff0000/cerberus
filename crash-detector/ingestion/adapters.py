@@ -66,6 +66,7 @@ __all__ = [
     "require_json_body",
     "require_csv_body",
     "parse_fred_vintagedates_floor",
+    "parse_fred_vintagedates_all",
     "MAX_VINTAGE_PROBES",
     "MAX_FIRST_PUBLICATION_LAG_DAYS",
     "HERMES_PEER",
@@ -318,12 +319,15 @@ FRED_REALTIME_FLOOR = "1900-01-01"
 #: :class:`FredArchiveFloors`, never once per date.
 FRED_VINTAGEDATES_BASE = f"https://{FRED_API_HOST}/fred/series/vintagedates"
 
-#: Hard ceiling on the GETs ONE :meth:`FredVintageAdapter.fetch` may issue. An untransformed row costs
-#: ONE. A transformed row (the server refuses a wide ``realtime`` range for any ``units`` other than
-#: ``lin``) is bisected and needs ``2 + ceil(log2(days))`` — 17 for an observation in 1960 asked
-#: today — so this is a guard against a broken invariant looping, not a budget the search is
-#: expected to approach. Reaching it is a recorded failure and never a partial answer.
-MAX_VINTAGE_PROBES = 24
+#: Hard ceiling on the observation GETs ONE :meth:`FredVintageAdapter.fetch` may issue. An
+#: untransformed row costs ONE. A transformed row (the server refuses a wide ``realtime`` range for
+#: any ``units`` other than ``lin``) is SCANNED: today's vintage, the vintage before the observation
+#: (or the floor), then the real vintage dates inside the 365-day window in order until one serves a
+#: value. A genuine first publication is found in a handful (PCEPILFE: 2-3; a weekly series
+#: ~8-9), but the window can hold up to 53 weekly vintages, so the ceiling is 60: it guards a
+#: broken invariant looping, not a budget the search approaches. Reaching it is a recorded failure
+#: and never a partial answer.
+MAX_VINTAGE_PROBES = 60
 
 #: The widest gap, in CALENDAR DAYS, between an observation date and the vintage that first
 #: serves it that may still be read as a FIRST PUBLICATION. Past it,
@@ -478,7 +482,7 @@ def parse_fred_rest_at_vintage(text: str, unit: str, observation_date: str, unit
     """ONE observation as ONE named vintage served it, out of a SINGLE-DAY-window body.
 
     The transformed-series reader (``units`` other than ``lin``), where the server refuses a wide
-    window. Three outcomes, kept apart because the bisection in :class:`FredVintageAdapter` turns on
+    window. Three outcomes, kept apart because the scan in :class:`FredVintageAdapter` turns on
     exactly this distinction: a value (``_SERVED``); ``{"unit": ...}`` (``_ABSENT`` — the vintage
     carried no figure for the date, which the REST API answers as ``200`` with ``count`` 0 and not
     as an HTTP error); ``{"malformed": ...}`` (never read as either of the other two, because
@@ -550,7 +554,7 @@ class FredArchiveFloors:
     held in no attribute but the request URL's.
     """
 
-    __slots__ = ("_api_key", "_clock", "_floors")
+    __slots__ = ("_api_key", "_clock", "_floors", "_vintages")
 
     def __init__(self, api_key: str, *, clock: Callable[[], datetime]) -> None:
         if not isinstance(api_key, str) or not _API_KEY.match(api_key):
@@ -558,6 +562,7 @@ class FredArchiveFloors:
         self._api_key = api_key
         self._clock = clock
         self._floors: dict = {}
+        self._vintages: dict = {}
 
     def floor(self, series: str, timeout_seconds: float,
               getter: Callable[..., str]) -> Union[date, None]:
@@ -576,6 +581,33 @@ class FredArchiveFloors:
             realtime_end=today)
         if found is not None:
             self._floors[series] = found
+        return found
+
+    def vintages(self, series: str, timeout_seconds: float,
+                 getter: Callable[..., str]) -> Union[list, None]:
+        """EVERY vintage date of ``series``, ascending, asked ONCE per series and kept.
+
+        The transformed path SCANS these instead of bisecting (see :class:`FredVintageAdapter`):
+        one GET per series buys the exact set of dates a probe can usefully be made at, where a
+        bisection pays 13-15 probes per DATE and was unsound wherever the archive is not monotone.
+        Same failure discipline as :meth:`floor`: a failure is never cached, an unreadable or
+        truncated answer is ``None``, transport failures propagate as the getter's error.
+        """
+        if not isinstance(series, str) or not _SERIES_ID.match(series):
+            raise ValueError("series id is not in the permitted shape")
+        known = self._vintages.get(series)
+        if known is not None:
+            return known
+        today = self._clock().date().isoformat()
+        query = urllib.parse.urlencode([
+            ("series_id", series), ("realtime_start", FRED_REALTIME_FLOOR), ("realtime_end", today),
+            ("sort_order", "asc"), ("limit", "10000"), ("file_type", "json"),
+            ("api_key", self._api_key)])
+        found = parse_fred_vintagedates_all(
+            require_json_body(getter(FRED_VINTAGEDATES_BASE + "?" + query, timeout_seconds, None)),
+            realtime_end=today)
+        if found is not None:
+            self._vintages[series] = found
         return found
 
 
@@ -648,7 +680,7 @@ def _vintage_state(payload: Mapping[str, Any]) -> str:
     A value that is not a finite number is ``_UNREADABLE``, NOT ``_SERVED``. The token is
     still carried out of the search untouched so the closed schema is the thing that rejects
     it (the convention :func:`parse_fred_csv` follows), but the search stops on it: a
-    bisection cannot step over an answer it could not read without guessing which way to go.
+    scan cannot step over an answer it could not read without guessing what the vintage said.
     """
     if "malformed" in payload:
         return _UNREADABLE
@@ -1131,6 +1163,37 @@ def require_csv_body(text: str) -> str:
     return text
 
 
+def parse_fred_vintagedates_all(text: str, *, realtime_end: str) -> Union[list, None]:
+    """EVERY vintage date out of a ``/fred/series/vintagedates`` body, ascending, or ``None``.
+
+    Same discipline as :func:`parse_fred_vintagedates_floor`: ``None`` is "I could not read this" and
+    never "the series has no vintages". The echo is checked (window and order), the dates must be
+    strictly ascending, and a body whose ``count`` exceeds what it lists is TRUNCATED and therefore
+    unreadable: a scan over a partial list would skip vintages and could call a served date absent.
+    """
+    try:
+        document = json.loads(text)
+    except ValueError:
+        return None
+    if not isinstance(document, dict):
+        return None
+    if (document.get("realtime_start") != FRED_REALTIME_FLOOR
+            or document.get("realtime_end") != realtime_end or document.get("sort_order") != "asc"):
+        return None
+    listed = document.get("vintage_dates")
+    if not isinstance(listed, list) or not listed or not all(isinstance(x, str) for x in listed):
+        return None
+    if document.get("count") != len(listed):
+        return None
+    try:
+        parsed = [date.fromisoformat(x) for x in listed]
+    except ValueError:
+        return None
+    if any(a >= b for a, b in zip(parsed, parsed[1:])):
+        return None
+    return parsed
+
+
 def http_get(url: str, timeout_seconds: float, headers: Union[Mapping[str, str], None] = None) -> str:
     """One bounded GET. Raises :class:`AdapterFetchError` with a stable class only.
 
@@ -1362,13 +1425,14 @@ class FredVintageAdapter(_BaseAdapter):
       vintage of the observation, each row with its own validity span, so the earliest row IS the
       first publication — read, not searched for. That needs no monotonicity assumption (the whole
       history is in the body) and costs one GET where the CSV bisection cost ``2 + ceil(log2(days))``.
-    * **Transformed — bisection over single-day windows.** Same search, same
-      ``2 + ceil(log2(days))`` budget and :data:`MAX_VINTAGE_PROBES` ceiling, same probe order as
-      before (today's vintage first, then the day before the observation, then the bisection), with
-      each probe now a single-point ``realtime_start = realtime_end = X`` request. The search
-      algorithm was never what broke; only the endpoint it was pointed at. Bisection IS sound only if
-      "serves a value at D" never goes true-then-false as the vintage advances — the declared limit
-      the CSV version carried, and it carries here for these rows alone.
+    * **Transformed — a SCAN over the series' real vintage dates, single-day windows.** Today's
+      vintage first (absent there: EMPTY), then the vintage before the observation (or the floor),
+      then the series' own vintage dates from the observation up to
+      :data:`MAX_FIRST_PUBLICATION_LAG_DAYS` later, in order, until one serves a value. It replaced a
+      bisection (WO-1.17 Fault 4): a bisection is sound only if "serves a value at D" never goes
+      true-then-false as the vintage advances, and FRED's archive does not promise that
+      (``PCEPILFE`` ``pc1`` 2000-10-01: served from 2000-11-30, ``.`` again at 2004-01-02/04). The
+      vintage list is one GET per series (:meth:`FredArchiveFloors.vintages`).
 
     WHAT AN ABSENT VINTAGE LOOKS LIKE CHANGED. ALFRED answered ``404`` for a vintage beneath its
     archive. The REST API answers ``200`` with ``count`` 0 — for a vintage before publication AND for
@@ -1441,10 +1505,11 @@ class FredVintageAdapter(_BaseAdapter):
             raise ValueError("transformation is not in the permitted shape")
         if not isinstance(api_key, str) or not _API_KEY.fullmatch(api_key):
             raise ValueError("api key is not in the permitted shape")  # never echo what was given
-        if not callable(getattr(archive_floors, "floor", None)):
+        if not (callable(getattr(archive_floors, "floor", None))
+                and callable(getattr(archive_floors, "vintages", None))):
             # Required, with no default: an adapter that can be built without the archive-floor
             # test is the 83-values defect waiting to be rebuilt. See :class:`FredArchiveFloors`.
-            raise ValueError("archive_floors must provide .floor(series, timeout, getter)")
+            raise ValueError("archive_floors must provide .floor and .vintages(series, timeout, getter)")
         date.fromisoformat(observation_date)  # a date we cannot read is not one we may ask for
         self._floors = archive_floors
         self._series = series
@@ -1507,7 +1572,13 @@ class FredVintageAdapter(_BaseAdapter):
 
         if self._transformation is None:
             return self._first_publication_in_one_get(get, observed, today, floor)
-        return self._first_publication_by_bisection(get, observed, today, floor)
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise AdapterFetchError("TIMEOUT")
+        vintages = self._floors.vintages(self._series, remaining, self._getter)
+        if vintages is None:
+            return {"malformed": "vintage_list_unreadable"}
+        return self._first_publication_by_scan(get, observed, today, floor, vintages)
 
     def _first_publication_in_one_get(self, get: Callable[..., str], observed: date,
                                       today: date, floor: date) -> dict:
@@ -1529,67 +1600,77 @@ class FredVintageAdapter(_BaseAdapter):
             return {"malformed": "vintage_too_distant"}
         return found
 
-    def _first_publication_by_bisection(self, get: Callable[..., str], observed: date,
-                                        today: date, floor: date) -> dict:
+    def _first_publication_by_scan(self, get: Callable[..., str], observed: date, today: date,
+                                   floor: date, vintages: list) -> dict:
+        """The transformed path: the EARLIEST vintage that serves a value, found by SCANNING.
+
+        WO-1.17 Fault 4. This used to bisect, which is sound only if "serves a value" never goes
+        true-then-false as the vintage advances. It does: ``PCEPILFE`` ``pc1`` for 2000-10-01 is
+        served from vintage 2000-11-30 and is ``.`` again at 2004-01-02 and 2004-01-04, so the
+        bisection landed in a gap, converged on 2004-01-05 and refused a genuine first publication
+        as ``vintage_too_distant``. A scan walks the series' REAL vintage dates in order from the
+        observation (asked once per series, :meth:`FredArchiveFloors.vintages`) and stops at the first
+        that serves, so a later gap cannot be mistaken for the answer. It is also cheaper: a first
+        publication is found in a few probes, where the bisection paid 13-15 per date.
+
+        The window is the ceiling made literal: only vintages within
+        :data:`MAX_FIRST_PUBLICATION_LAG_DAYS` of the observation are probed, so a value first served
+        later is exactly the ``vintage_too_distant`` the arithmetic ceiling refused. Today's vintage is
+        probed first, as before: absent there means no vintage ever served it (EMPTY), served there
+        but nowhere in the window means served too late.
+        """
         units = self._transformation
+        memo: dict = {}
 
         def probe(vintage: date) -> dict:
-            return parse_fred_rest_at_vintage(get(vintage, vintage), self._unit,
-                                              self._observation_date, units, vintage.isoformat())
+            if vintage not in memo:
+                memo[vintage] = parse_fred_rest_at_vintage(
+                    get(vintage, vintage), self._unit, self._observation_date, units,
+                    vintage.isoformat())
+            return memo[vintage]
 
-        # The ceiling. If TODAY's vintage has no value for this date, no vintage does: the
-        # observation was never published and there is nothing here to backfill. EMPTY.
-        high, found = today, probe(today)
-        state = _vintage_state(found)
+        state = _vintage_state(probe(today))
         if state == _UNREADABLE:
-            return found
+            return probe(today)
         if state == _ABSENT:
-            return {"unit": self._unit}
+            return {"unit": self._unit}  # no vintage ever served it: EMPTY
 
-        # The floor, VERIFIED rather than assumed: the day before the observation existed. When the
-        # series' ARCHIVE starts later than that, nothing before the archive can be asked (ALFRED
-        # answers HTTP 400 there) and nothing before it can have served the figure: the lower bound
-        # is the day before the archive, ABSENT by definition and not probed.
-        low = observed - timedelta(days=1)
-        if low >= floor:
-            beneath = probe(low)
-            state = _vintage_state(beneath)
+        # The floor, VERIFIED rather than assumed: the day before the observation existed.
+        # Archive start later than that: nothing before the archive can be asked (HTTP 400) and
+        # nothing before it can have served the figure, so the scan begins after the floor.
+        earliest = observed
+        beneath = observed - timedelta(days=1)
+        if beneath >= floor:
+            state = _vintage_state(probe(beneath))
             if state == _UNREADABLE:
-                return beneath
+                return probe(beneath)
             if state == _SERVED:
                 return {"malformed": "vintage_floor"}
         else:
             # Served AT the floor means the first serving vintage IS the floor (nothing earlier
-            # exists): a restatement, decided in this one probe instead of a whole bisection to
-            # the same answer. Absent at the floor: the floor itself is the proven-absent bound.
-            at_floor = probe(floor)
-            state = _vintage_state(at_floor)
+            # exists): a restatement, decided in this one probe.
+            state = _vintage_state(probe(floor))
             if state == _UNREADABLE:
-                return at_floor
+                return probe(floor)
             if state == _SERVED:
                 return {"malformed": "vintage_archive_floor"}
-            low = floor
+            earliest = floor + timedelta(days=1)
 
-        # Invariant: ``low`` is ABSENT, ``high`` is SERVED. Narrow to adjacent days.
-        while (high - low).days > 1:
-            middle = low + timedelta(days=(high - low).days // 2)
-            payload = probe(middle)
+        ceiling = observed + timedelta(days=MAX_FIRST_PUBLICATION_LAG_DAYS)
+        for vintage in vintages:
+            if vintage < earliest or vintage == floor:
+                continue
+            if vintage > ceiling:
+                break
+            payload = probe(vintage)
             state = _vintage_state(payload)
             if state == _UNREADABLE:
                 return payload
             if state == _SERVED:
-                high, found = middle, payload
-            else:
-                low = middle
-
-        # The ARCHIVE FLOOR: the search converged on the first vintage FRED keeps at all.
-        if found["vintage_date"] == floor.isoformat():
-            return {"malformed": "vintage_archive_floor"}
-        # The CEILING on the answer: a vintage dated too LATE to be a first publication. See
-        # :class:`FredVintageAdapter` and :data:`MAX_FIRST_PUBLICATION_LAG_DAYS`.
-        if (date.fromisoformat(found["vintage_date"]) - observed).days > MAX_FIRST_PUBLICATION_LAG_DAYS:
-            return {"malformed": "vintage_too_distant"}
-        return found
+                return payload
+        # Served today, but at no vintage inside the window: first served too LATE to be a
+        # publication event.
+        return {"malformed": "vintage_too_distant"}
 
 
 class CboeAdapter(_BaseAdapter):
