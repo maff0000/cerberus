@@ -415,6 +415,36 @@ class MachineStateHistoryStore:
         ).fetchall()
         return tuple(_as_row(record) for record in rows)
 
+    def alarm_lock_armed(self, dial_id: str) -> bool:
+        """WO-1.3b-II: IS THIS DIAL UNDER THE POST-ALARM LOCK? True when its most recent ``ALARM`` row is NEWER than
+        its most recent ``CALM`` or ``RECOVERY`` row (or no such row exists at all).
+
+        R2D2's F1 (``eval_lock.py``): "once ALARM has fired, re-entry to CALM must pass through RECOVERY's gate". The
+        harness arms the lock when an ALARM sits in the rows since the most recent RECOVERY. Under the lock a CALM row
+        can only follow a RECOVERY row, so for any history the lock has governed, "newer than the latest RECOVERY" and
+        "newer than the latest CALM-or-RECOVERY" are the SAME answer - which is why the second is used. They differ in
+        exactly one place, and it is the reason for the choice: a history that PREDATES the lock. A dial that is CALM
+        today after an ALARM that resolved through the old back door months ago is not re-armed by a rule that did not
+        exist when it happened; the lock holds ALARMs that no CALM has yet followed, and the first ALARM after the lock
+        ships arms it as the harness does.
+
+        A QUERY OVER THE WHOLE HISTORY and not over :meth:`recent`'s window, for :meth:`state_since`'s reason: the lock
+        must outlive any 20-row window (a dial can sit in WATCH for months waiting on RECOVERY), and a window that
+        forgot an ALARM would silently lift it. UNKNOWN rows do not clear it: an outage in the middle of a halt is not
+        a recovery.
+
+        A read, through both doors: it creates nothing, writes nothing and is available on a ``read_only=True`` handle.
+        """
+        # State values are namespaced strings ("state.alarm", see _ADMISSIBLE_IN_DDL), so they are bound from the enum
+        # and never written out as literals here.
+        armed = self._db.execute(
+            f"SELECT COALESCE((SELECT MAX({TABLE}_id) FROM {TABLE} WHERE dial_id = ? AND machine_state = ?), 0)"
+            f" > COALESCE((SELECT MAX({TABLE}_id) FROM {TABLE} WHERE dial_id = ?"
+            f" AND machine_state IN (?, ?)), 0)",
+            (dial_id, State.ALARM.value, dial_id, State.CALM.value, State.RECOVERY.value),
+        ).fetchone()[0]
+        return bool(armed)
+
     def breadth_series(self, dial_id: str) -> tuple:
         """Every row this dial has, as ``(written_utc, breadth)``, OLDEST FIRST.
 

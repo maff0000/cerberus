@@ -6,6 +6,13 @@
 # STALENESS WINDOW is per-indicator RELEVANCE (how old its data may be for ITS cadence) — a DIFFERENT
 # quantity from the assurance/publish liveness budget (Q32). A quarterly survey is not dead at 16 minutes.
 # DIALS ARE NEVER BLENDED. A "both" indicator scores into each dial with its own polarity.
+# WO-1.3b-II (R2D2 verdict fabric key r2d2:wo:cerberus_wo13b2:verdict; DECISION-RULE.md section 10):
+#   * B_mid and B_high are NOT mapping parameters and are UNSET - rule 3 (breadth alone) is dead at the current store
+#     composition (max breadth 0.489 in 2,514 replayed days) and the breadth-rising WATCH limb is off. No value is
+#     recorded here and none may be fabricated; breadth stays a published statistic.
+#   * breadth_rsp_spy and credit_stress_hyg_lqd stay REGISTERED here (the ratified rows are not edited) but are
+#     EXCLUDED FROM SCORING by ingestion/wiring.py EXCLUDED_FROM_SCORING: reported missing, never scored 0, so they feed
+#     neither breadth nor count. See each row's note.
 schema_version: "1.0.0"
 provisional_weights_pending_backtest: true
 dials: [equity_crash, monetary_debasement]
@@ -63,6 +70,7 @@ indicators:
     staleness_window_seconds: 604800    # 7 days (WO-1.9): market-day series, worst-case ~6d gap + 1d grace
     source: {feed: "market:HYG,LQD", provenance: "ETF prices"}
     calculation: "HYG/LQD price ratio; falling = HY underperforming"
+    note: "WO-1.3b-II: EXCLUDED FROM SCORING (ingestion/wiring.py EXCLUDED_FROM_SCORING). The ratio drifts 1.017 -> 0.599 on unadjusted-close dividend decay (2007 median 0.976, 2019-22 0.65-0.69), not credit stress; no stress signal (R2D2 REPORT.md F3). Reported missing, never scored 0. Re-spec (returns-based or dividend-adjusted) before it returns."
   - id: private_credit_stress
     name: "Private credit stress"
     dial: equity_crash
@@ -166,6 +174,7 @@ indicators:
     staleness_window_seconds: 604800    # 7 days (WO-1.9): market-day series, worst-case ~6d gap + 1d grace
     source: {feed: "market:RSP,SPY", provenance: "ETF prices"}
     calculation: "Equal- vs cap-weight S&P; falling = narrow leadership precedes tops"
+    note: "WO-1.3b-II: EXCLUDED FROM SCORING (ingestion/wiring.py EXCLUDED_FROM_SCORING). Scores 0.00 on all 1,713 replayed days: an absolute RSP/SPY price ratio is not stationary (0.294-0.389 observed vs a 0.29 -> 0.25 band), so it only dilutes the breadth denominator at x3 (R2D2 REPORT.md F2). Reported missing, never scored 0. Re-spec before it returns."
   - id: constituent_breadth_200dma
     name: "Constituent breadth (% of 50 large-caps above 200dma)"
     dial: equity_crash

@@ -189,10 +189,13 @@ def test_fifty_dividend_adjusted_components_with_enough_history_serve_only_this_
     assert DERIVED_FROM[IND] == tuple(i.source_id for i in ings)
 
 
-def test_breadth_rsp_spy_is_untouched_and_both_are_live_and_distinct():
+def test_breadth_rsp_spy_is_untouched_but_no_longer_scored_and_the_new_breadth_is_live_and_distinct():
+    # WO-1.3b-II: breadth_rsp_spy's derivation, ingredients and band are untouched, but it is EXCLUDED FROM SCORING
+    # (dead: 0.00 on every replayed day), so it is not live; the constituent breadth is.
     wiring = build_wiring()
     assert DERIVED_FROM["breadth_rsp_spy"] == ("yahoo.RSP", "yahoo.SPY")
-    assert "breadth_rsp_spy" in wiring.derived_for and IND in wiring.derived_for
+    assert "breadth_rsp_spy" not in wiring.derived_for and "breadth_rsp_spy" in wiring.pending
+    assert IND in wiring.derived_for
     scaling = json.loads(SCALING_JSON.read_text())["equity_crash"]
     assert scaling["breadth_rsp_spy"] == {"calm": 0.29, "stress": 0.25, "required": False}
     assert scaling[IND] == {"calm": 70.0, "stress": 30.0, "required": False}

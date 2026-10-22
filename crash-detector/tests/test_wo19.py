@@ -102,7 +102,7 @@ def test_classification_is_untouched_by_the_calibration():
     equity, monetary = w.snapshot.spec_for("equity_crash"), w.snapshot.spec_for("monetary_debasement")
     assert sorted(equity.required_input_ids) == ["hy_oas", "yield_curve_10y2y", "yield_curve_10y3m"]
     assert sorted(monetary.required_input_ids) == ["breakeven_5y", "broad_dollar"]
-    assert len(equity.contributing_input_ids) == 21 and len(monetary.contributing_input_ids) == 8
+    assert len(equity.contributing_input_ids) == 19 and len(monetary.contributing_input_ids) == 8  # 21 less the WO-1.3b-II exclusions
 
 
 @pytest.fixture

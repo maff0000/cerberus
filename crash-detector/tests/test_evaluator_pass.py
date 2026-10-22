@@ -41,6 +41,7 @@ from evaluator.pass_once import (
     one_pass_for_dial,
 )
 from evaluator.resolve import BREADTH_LOOKBACK_ROWS
+from evaluator.trend import equity_trend_confirmed
 from gui.state import build_state
 from ingestion.store import SqliteStore
 from ingestion.wiring import build_wiring
@@ -113,6 +114,9 @@ class _RecordingHistory:
     def recent(self, dial_id: str, *, limit: int) -> tuple:
         self.asked.append((dial_id, limit))
         return self._store.recent(dial_id, limit=limit)
+
+    def alarm_lock_armed(self, dial_id: str) -> bool:
+        return self._store.alarm_lock_armed(dial_id)
 
     def append(self, row, *, written_utc) -> None:
         self._store.append(row, written_utc=written_utc)
@@ -316,35 +320,37 @@ def test_the_pass_does_not_write_to_the_raw_store(raw_path, history):
 # --- trend_confirmed: the disclosed placeholder ------------------------------------------ #
 
 
-def test_trend_confirmed_is_the_disclosed_placeholder_and_is_False(raw_path, history, monkeypatch):
-    """The value the pass hands the resolver is ``False``, and it is named as uncomputed.
+def test_trend_confirmed_is_computed_for_the_equity_dial_and_the_monetary_dial_keeps_the_placeholder(
+        raw_path, history, monkeypatch):
+    """WO-1.3b-II: the EQUITY dial gets R2D2's S&P trend and the lock; the MONETARY dial keeps the disclosed placeholder.
 
-    Asserted BEHAVIOURALLY — the resolver is replaced and the keyword it actually received
-    is captured — rather than by reading the call site, so this cannot pass against a pass
-    that computed something and discarded it.
-
-    Spec §7 cut the trend computation from WO-1.3a. ``False`` is the conservative answer:
-    rule 5 NEEDS ``trend_confirmed`` to reach RECOVERY, so a hardcoded ``False`` can only
-    keep a dial in ALARM longer and can never manufacture a recovery. When a real indicator
-    is wired, :data:`~evaluator.pass_once.TREND_NOT_COMPUTED` is deleted and this test is
-    the one that has to be rewritten.
+    Asserted BEHAVIOURALLY - the resolver is replaced and the keywords it actually received are captured - so this cannot
+    pass against a pass that computed something and discarded it. The equity value is compared with
+    :func:`evaluator.trend.equity_trend_confirmed` run independently over the same raw store (a rising seeded S&P history
+    is above a rising 200-day mean, so it is True here); the monetary dial is :data:`TREND_NOT_COMPUTED` (False) and
+    ``alarm_lock_armed`` False, because there is no trend measure that could ever release a lock on it and a lock
+    nothing can release halts the dial for ever.
     """
     assert TREND_NOT_COMPUTED is False
+    with _raw_reader(raw_path) as raw:
+        expected_equity_trend = equity_trend_confirmed(raw, NOW)
 
-    seen = {}
+    seen: dict = {}
     real = pass_once.official_state_for_dial
 
     def spy(**kwargs):
-        seen.update(kwargs)
+        seen[kwargs["acute"].dial_id] = dict(kwargs)
         return real(**kwargs)
 
     monkeypatch.setattr(pass_once, "official_state_for_dial", spy)
-    one_pass_for_dial("equity_crash", raw_store_path=raw_path, history=history, now_utc=NOW)
+    one_pass_for_both_dials(raw_store_path=raw_path, history=history, now_utc=NOW)
 
-    assert seen["trend_confirmed"] is False
-    assert seen["trend_confirmed"] is TREND_NOT_COMPUTED
+    assert seen["equity_crash"]["trend_confirmed"] is expected_equity_trend
+    assert seen["monetary_debasement"]["trend_confirmed"] is TREND_NOT_COMPUTED
+    assert seen["equity_crash"]["alarm_lock_armed"] is False  # a young history holds no ALARM
+    assert seen["monetary_debasement"]["alarm_lock_armed"] is False
     # The window asked for is the one rule 4's lookback needs (spec §7).
-    assert len(seen["history"]) <= BREADTH_LOOKBACK_ROWS
+    assert len(seen["equity_crash"]["history"]) <= BREADTH_LOOKBACK_ROWS
 
 
 def test_the_pass_asks_for_the_full_breadth_lookback_window(raw_path, history):

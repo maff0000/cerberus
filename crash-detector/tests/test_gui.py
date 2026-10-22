@@ -47,7 +47,10 @@ def test_empty_store_shows_no_reading_on_both_dials_and_pending_reasons(db_path)
     page = gui_server.render_page(state)
     assert page.count("NO READING") >= 2
     pending = [i for i in state["indicators"] if i["state"] == "PENDING"]
-    assert not pending  # WO-1.8: nothing is PENDING any more; an unfed indicator reads MISSING, never calm
+    # WO-1.8: nothing is PENDING for want of a feed; an unfed indicator reads MISSING, never calm. WO-1.3b-II: the two
+    # EXCLUDED indicators are the only PENDING rows, each carrying its reason, and neither is ever shown as a value.
+    assert sorted(i["id"] for i in pending) == ["breadth_rsp_spy", "credit_stress_hyg_lqd"]
+    assert all(i["why"].startswith("EXCLUDED (WO-1.3b-II)") and i["value"] is None for i in pending)
     assert all(i["state"] != "LIVE" for i in state["indicators"])
 
 
@@ -58,7 +61,7 @@ def test_full_store_shows_two_separate_values_and_live_indicators(db_path, wirin
     eq, mo = _dial(state, "equity_crash"), _dial(state, "monetary_debasement")
     assert eq["status"] == "VALUE" and mo["status"] == "VALUE"
     assert 0.0 <= eq["value"] <= 1.0 and 0.0 <= mo["value"] <= 1.0
-    assert state["counts"] == {"LIVE": 31}  # WO-1.10: + constituent_breadth_200dma
+    assert state["counts"] == {"LIVE": 29, "PENDING": 2}  # WO-1.10: + constituent_breadth_200dma; WO-1.3b-II: 31 less the two EXCLUDED, which read PENDING
     # No key anywhere in the view-model combines the dials.
     assert set(state) == {"generated_utc", "provisional", "dials", "indicators", "counts"}
     live = {i["id"]: i for i in state["indicators"] if i["state"] == "LIVE"}
