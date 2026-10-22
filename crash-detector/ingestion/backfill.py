@@ -149,7 +149,7 @@ from crash_detector.collectors import DelayKind, ReadingKey, RetryPolicy, collec
 from crash_detector.observations import OK, FetchFailed, outcome_class
 from crash_detector.time_utc import format_utc
 
-from ingestion.adapters import as_of_for
+from ingestion.adapters import FredArchiveFloors, as_of_for
 from ingestion.backfill_adapters import VINTAGE_BACKFILLABLE_KINDS, build_backfill_adapter
 from ingestion.catalog import Ingredient
 from ingestion.store import SqliteStore
@@ -340,6 +340,11 @@ def backfill_range(ing: Ingredient, dates: Sequence[str], sink: SqliteStore,
             f"keyed REST API, and no api_key was given"
         )
 
+    # ONE archive-floor cache for the whole range: the series' earliest vintage is a property of the
+    # series, so a range of a thousand dates asks for it once (``FredArchiveFloors``). Built only
+    # where a vintage question is asked at all.
+    floors = FredArchiveFloors(api_key, clock=clock) if vintage == VINTAGE_ORIGINAL else None
+
     admitted: list = []
     skipped: list = []
     refused: list = []
@@ -366,7 +371,8 @@ def backfill_range(ing: Ingredient, dates: Sequence[str], sink: SqliteStore,
             fetches += 1
             ledger = _VintageLedger(sink, key, vintage)
             result = collect(
-                build_backfill_adapter(ing, observation_date, clock, api_key=api_key),
+                build_backfill_adapter(ing, observation_date, clock, api_key=api_key,
+                                       archive_floors=floors),
                 policy=BACKFILL_POLICY, sink=sink, ledger=ledger, collector_run_id=run_id,
                 started_utc=clock(), delay=DelayKind.WALL_CLOCK,
             )

@@ -537,8 +537,10 @@ def run(rows: Sequence[Ingredient], episodes: Sequence[Episode], store: SqliteSt
             calendar_fetches += 1  # it reached the network and came back wrong; still a GET
             calendar_failed.append({"source_id": ing.source_id,
                                     "date_source": date_source(ing),
-                                    "error_class": type(failure).__name__})
-            print(f"{head} CALENDAR UNREADABLE {type(failure).__name__} — row skipped, run "
+                                    "error_class": getattr(failure, "error_class",
+                                                           type(failure).__name__)})
+            print(f"{head} CALENDAR UNREADABLE "
+                  f"{getattr(failure, 'error_class', type(failure).__name__)} — row skipped, run "
                   f"continues", flush=True)
             continue
         calendar_fetches += int(fetched)

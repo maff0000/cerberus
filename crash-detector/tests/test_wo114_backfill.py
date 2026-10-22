@@ -116,8 +116,9 @@ def _ing(source_id: str):
 def _offline(monkeypatch, getter):
     """Give the driver the REAL adapter for each date, with ``getter`` as its only transport."""
 
-    def build(ing, observation_date, clock, api_key=None):
-        adapter = _real_build_backfill_adapter(ing, observation_date, clock, api_key=api_key)
+    def build(ing, observation_date, clock, api_key=None, archive_floors=None):
+        adapter = _real_build_backfill_adapter(ing, observation_date, clock, api_key=api_key,
+                                               archive_floors=archive_floors)
         adapter._getter = getter
         return adapter
 
@@ -192,8 +193,11 @@ class _FredRest:
     tested against its own model in ``tests/test_ingestion.py``.
     """
 
-    def __init__(self, observations, *, fails=()):
+    def __init__(self, observations, *, fails=(), floor="1990-01-01"):
         self.observations = {obs: list(revisions) for obs, revisions in observations.items()}
+        #: The series' ARCHIVE FLOOR as ``/fred/series/vintagedates`` would report it, and how
+        #: often it was asked: the driver must ask once per range, not once per date.
+        self.floor, self.floor_asked = floor, 0
         #: observation date -> the error class every request about it raises
         self.fails = dict(fails)
         self.asked: list[str] = []
@@ -202,6 +206,13 @@ class _FredRest:
         return [parse_qs(urlsplit(url).query)["observation_start"][0] for url in self.asked]
 
     def __call__(self, url, timeout, headers=None):
+        if urlsplit(url).path.endswith("/vintagedates"):
+            self.floor_asked += 1
+            asked = parse_qs(urlsplit(url).query)
+            return json.dumps({
+                "realtime_start": asked["realtime_start"][0], "realtime_end": asked["realtime_end"][0],
+                "order_by": "vintage_date", "sort_order": "asc", "count": 1, "offset": 0,
+                "limit": 1, "vintage_dates": [self.floor]})
         self.asked.append(url)
         query = parse_qs(urlsplit(url).query)
         observation = query["observation_start"][0]
@@ -560,6 +571,20 @@ def test_a_revision_prone_series_backfills_the_figure_as_first_published_across_
     # One fetch per date, each a bisection; every date this fake was asked about was asked for.
     assert sorted(set(rest.observations_asked())) == sorted(_GDP_DATES)
     _partitions(result, _GDP_DATES)
+
+
+def test_a_range_asks_the_archive_floor_once_and_the_date_first_kept_at_it_is_not_admitted(
+        store, monkeypatch):
+    """WO-1.17 follow-up. 2008-09-01's first vintage (2008-10-30) is declared the series' archive
+    floor: that figure was first KEPT there, not first published there. The other two dates are
+    admitted untouched, and the floor is ONE request for the range, not one per date."""
+    rest = _offline(monkeypatch, _FredRest(_GDP, floor="2008-10-30"))
+    result = backfill_range(_ing("fred.GDP"), _GDP_DATES, store, CLOCK, pace=0, api_key=_FAKE_KEY)
+    assert result.admitted == ("2008-12-01", "2009-03-01")
+    assert result.failed == (("2008-09-01", "MALFORMED"),)
+    assert [payload["value"] for _, payload, _ in _readings(store)] == [14200.2, 14075.5]
+    assert rest.floor_asked == 1, "the floor is a property of the series: asked once per range"
+    assert sorted(set(rest.observations_asked())) == sorted(_GDP_DATES)
 
 
 def test_the_later_revision_is_present_in_the_fake_and_is_the_answer_nobody_stored(

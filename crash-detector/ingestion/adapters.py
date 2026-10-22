@@ -60,6 +60,12 @@ __all__ = [
     "FRED_API_HOST",
     "FRED_API_BASE",
     "FRED_REALTIME_FLOOR",
+    "FRED_VINTAGEDATES_BASE",
+    "FredArchiveFloors",
+    "NON_DATA_RESPONSE",
+    "require_json_body",
+    "require_csv_body",
+    "parse_fred_vintagedates_floor",
     "MAX_VINTAGE_PROBES",
     "MAX_FIRST_PUBLICATION_LAG_DAYS",
     "HERMES_PEER",
@@ -305,6 +311,13 @@ FRED_API_BASE = f"https://{FRED_API_HOST}/fred/series/observations"
 #: any series' real archive floor, so the first row returned is the earliest vintage FRED holds.
 FRED_REALTIME_FLOOR = "1900-01-01"
 
+#: ``/fred/series/vintagedates``: every date on which a series' data changed, ascending. Its FIRST
+#: entry is the series' ARCHIVE FLOOR — the earliest vintage FRED/ALFRED holds for it at all — which
+#: is the one fact ``MAX_FIRST_PUBLICATION_LAG_DAYS`` could not supply (WO-1.17 §6, below). Same host
+#: and key as :data:`FRED_API_BASE`, so no new egress. Asked ONCE per series by
+#: :class:`FredArchiveFloors`, never once per date.
+FRED_VINTAGEDATES_BASE = f"https://{FRED_API_HOST}/fred/series/vintagedates"
+
 #: Hard ceiling on the GETs ONE :meth:`FredVintageAdapter.fetch` may issue. An untransformed row costs
 #: ONE. A transformed row (the server refuses a wide ``realtime`` range for any ``units`` other than
 #: ``lin``) is bisected and needs ``2 + ceil(log2(days))`` — 17 for an observation in 1960 asked
@@ -345,12 +358,18 @@ MAX_VINTAGE_PROBES = 24
 #: affected fetches where 180 would refuse 2,093 — 36 fetches, 1.6%, for a 5-day margin
 #: against a publication this project has already seen.
 #:
-#: WHAT IT CANNOT CATCH, DECLARED. The ~208 it misses are observations within a year of their
+#: WHAT IT CANNOT CATCH, DECLARED — AND, SINCE WO-1.17, CAUGHT ELSEWHERE. The ~208 it misses are observations within a year of their
 #: OWN series' archive floor, whose gaps (1 to 244 days) overlap genuine publication lags. No
 #: threshold separates those at any value: a restatement served a month after the observation
 #: is arithmetically identical to a first publication served a month after it. Closing that
 #: needs a probe this adapter does not make — "does any vintage of this series exist on date
 #: V", a different question from the one the bisection asks.
+#:
+#: THAT PROBE NOW EXISTS, and this constant alone was NOT sufficient: the real WO-1.17 re-run admitted
+#: 83 near-floor restatements through it (IC4WSA 52 with lags to 362 days, WALCL 19, NFCI 12), found
+#: by verifying the admissions rather than the exit code. :class:`FredArchiveFloors` answers the
+#: question exactly and ``vintage_archive_floor`` refuses on it. This ceiling stays: it still refuses
+#: a restatement served AFTER the floor (e.g. a late-added observation), which the floor test cannot.
 MAX_FIRST_PUBLICATION_LAG_DAYS = 365
 
 #: A series id and a transformation are interpolated into a URL, so what may appear there is
@@ -475,6 +494,89 @@ def parse_fred_rest_at_vintage(text: str, unit: str, observation_date: str, unit
         return {"unit": unit}
     return {"unit": unit, "observation_date": observation_date,
             "value": _number_or_token(rows[0][2]), "vintage_date": vintage_date}
+
+
+def parse_fred_vintagedates_floor(text: str, *, realtime_end: str) -> Union[date, None]:
+    """The EARLIEST vintage date out of a ``/fred/series/vintagedates`` body, or ``None``.
+
+    ``None`` is "I could not read this" — never "the series has no floor". Every way a body can
+    fail to be the answer to the question asked is ``None``, and no body text leaves this function:
+    not JSON, not an object, a window or order other than the one requested (the echo is checked,
+    as :func:`_rest_rows` checks its own), an empty or non-string list, an unparseable date. A
+    series with NO vintage at all cannot have been asked about by a caller that already holds a
+    figure for it, so empty is unreadable too and not a floor of "never".
+    """
+    try:
+        document = json.loads(text)
+    except ValueError:
+        return None
+    if not isinstance(document, dict):
+        return None
+    if (document.get("realtime_start") != FRED_REALTIME_FLOOR
+            or document.get("realtime_end") != realtime_end or document.get("sort_order") != "asc"):
+        return None
+    listed = document.get("vintage_dates")
+    if not isinstance(listed, list) or not listed or not isinstance(listed[0], str):
+        return None
+    try:
+        return date.fromisoformat(listed[0])
+    except ValueError:
+        return None
+
+
+class FredArchiveFloors:
+    """One series' ARCHIVE FLOOR — the earliest vintage FRED holds for it — asked once and kept.
+
+    WHY THIS EXISTS (WO-1.17, found by verifying the real re-run's 1,135 admissions). FRED's archive
+    starts on a different date for every series, and every observation OLDER than that start is
+    answered with the archive's own first vintage: a restatement, however recent the observation.
+    ``MAX_FIRST_PUBLICATION_LAG_DAYS`` refuses such an answer only when it is more than a year late;
+    WO-1.18 declared the remainder ("a near-floor restatement cannot be told from a lagged
+    publication by arithmetic at any threshold") and said what closing it needed — "does any vintage
+    of this series exist on date V". This is that probe, and it is exact where the ceiling was
+    approximate: a figure whose first serving vintage IS the archive floor was not observed to be
+    first published there, only first KEPT there. 83 such values were admitted before this class
+    existed (IC4WSA 52 at 2009-05-28, WALCL 19 at 2011-07-07, NFCI 12 at 2011-05-25).
+
+    ONE GET PER SERIES, NOT PER DATE. :meth:`floor` caches a success for the life of the object, so
+    a backfill range that builds one adapter per date asks the endpoint once. The cache is
+    per-instance and never module state, and a failure is never cached: an unreadable answer is
+    returned as ``None`` and asked again next time. HTTP and network failures propagate as the
+    getter's :class:`AdapterFetchError`, with no message (PBG-SEC-002).
+
+    THE GETTER IS THE CALLER'S, passed per call, so the transport that answers the observation
+    requests is the one that answers this — a test that substitutes the one cannot leave the other
+    on the network. The key is a required constructor argument validated like the adapter's, and is
+    held in no attribute but the request URL's.
+    """
+
+    __slots__ = ("_api_key", "_clock", "_floors")
+
+    def __init__(self, api_key: str, *, clock: Callable[[], datetime]) -> None:
+        if not isinstance(api_key, str) or not _API_KEY.match(api_key):
+            raise ValueError("api key is not in the permitted shape")  # never echo what was given
+        self._api_key = api_key
+        self._clock = clock
+        self._floors: dict = {}
+
+    def floor(self, series: str, timeout_seconds: float,
+              getter: Callable[..., str]) -> Union[date, None]:
+        if not isinstance(series, str) or not _SERIES_ID.match(series):
+            raise ValueError("series id is not in the permitted shape")
+        known = self._floors.get(series)
+        if known is not None:
+            return known
+        today = self._clock().date().isoformat()
+        query = urllib.parse.urlencode([
+            ("series_id", series), ("realtime_start", FRED_REALTIME_FLOOR), ("realtime_end", today),
+            ("sort_order", "asc"), ("limit", "1"), ("file_type", "json"),
+            ("api_key", self._api_key)])
+        found = parse_fred_vintagedates_floor(
+            require_json_body(getter(FRED_VINTAGEDATES_BASE + "?" + query, timeout_seconds, None)),
+            realtime_end=today)
+        if found is not None:
+            self._floors[series] = found
+        return found
 
 
 def parse_fred_csv_for_date(text: str, column: str, unit: str, observation_date: str) -> dict:
@@ -983,6 +1085,52 @@ def parse_hermes_candle(text: Union[str, None], instrument: str, timeframe: str,
 # --- transport ------------------------------------------------------------------------ #
 
 
+#: The ``error_class`` of a fetch that got an HTTP answer which is not DATA in the shape asked for.
+#:
+#: FOUND 2026-10-21, DURING WO-1.17's OWN VERIFICATION. FRED went into a site-wide maintenance
+#: window and answered EVERY endpoint - ``fredgraph.csv``, ``/fred/series/observations``,
+#: ``/fred/series/vintagedates`` - ``200`` with an HTML "Site Maintenance" page. A ``200`` is not
+#: an ``HTTP_ERROR``, so ``http_get`` passed it through, every parser saw a body it could not read,
+#: and the store recorded the attempts as ``MALFORMED``: the class that means "FRED gave a
+#: well-formed answer and the answer itself failed validation". It was nothing of the kind, and
+#: from the store alone an outage was indistinguishable from a refusal.
+#:
+#: THE RULE: ``MALFORMED`` means a WELL-FORMED answer failed validation. "We could not tell what
+#: FRED gave us" - JSON asked for and not JSON, CSV asked for and not CSV - is a SERVICE failure
+#: and is raised here, before any parser, so it is recorded ``FETCH_FAILED`` under this class,
+#: which is not ``MALFORMED``, ``vintage_archive_floor`` or ``vintage_too_distant``. A body that
+#: IS the right shape and says the wrong thing (a substituted header, a window or units echo that
+#: differs, an unreadable value) is untouched and stays ``MALFORMED``.
+NON_DATA_RESPONSE = "NON_DATA_RESPONSE"
+
+
+def require_json_body(text: str) -> str:
+    """``text`` unchanged if it parses as JSON; otherwise ``AdapterFetchError(NON_DATA_RESPONSE)``.
+
+    Used where ``file_type=json`` was asked. It checks that the body IS JSON and nothing about what
+    the JSON says: that is the parser's validation, and failing it is a ``MALFORMED``, not this.
+    No body text is carried (PBG-SEC-002).
+    """
+    try:
+        json.loads(text)
+    except ValueError:
+        raise AdapterFetchError(NON_DATA_RESPONSE) from None
+    return text
+
+
+def require_csv_body(text: str) -> str:
+    """``text`` unchanged if it looks like CSV; otherwise ``AdapterFetchError(NON_DATA_RESPONSE)``.
+
+    Used where ``fredgraph.csv`` was asked. "Looks like CSV" is deliberately minimal - a non-empty
+    body that is not markup - because everything stricter (the header, its columns, the series
+    asked for) is the parser's validation and a failure of it is ``MALFORMED``.
+    """
+    lines = text.strip().splitlines()
+    if not lines or lines[0].lstrip().startswith("<"):
+        raise AdapterFetchError(NON_DATA_RESPONSE)
+    return text
+
+
 def http_get(url: str, timeout_seconds: float, headers: Union[Mapping[str, str], None] = None) -> str:
     """One bounded GET. Raises :class:`AdapterFetchError` with a stable class only.
 
@@ -1168,6 +1316,7 @@ class FredAdapter(_BaseAdapter):
                               observation_date=self._observation_date)
 
     def _parse(self, body: str) -> dict:
+        require_csv_body(body)
         column = fred_column(self._series, self._transformation)
         if self._observation_date is None:
             return parse_fred_csv(body, column, self._unit, self._history)
@@ -1244,6 +1393,26 @@ class FredVintageAdapter(_BaseAdapter):
     closed ``response_schema`` identically and ``ingestion.backfill`` records the single class
     ``MALFORMED`` against the date (PBG-SEC-002).
 
+    THE ARCHIVE FLOOR, ON BOTH PATHS (WO-1.17, added after the real re-run). The ceiling above is
+    arithmetic and WO-1.18 declared where arithmetic stops: an observation within a year of its own
+    series' archive start gets the archive's first vintage as a small, plausible-looking lag. The
+    real re-run admitted 83 such figures as ``original`` (IC4WSA, WALCL, NFCI — each a run of
+    consecutive weeks all stamped with ONE vintage date). The exact test is a fact, not a threshold:
+    the series' earliest vintage, from :class:`FredArchiveFloors`, asked once per series. A figure
+    whose first serving vintage EQUALS it is refused as ``{"malformed": "vintage_archive_floor"}``.
+    A floor that cannot be read is ``{"malformed": "archive_floor_unreadable"}`` and the date is not
+    answered on a guess. COST OF THE EXACT RULE, DECLARED: a figure genuinely first published ON the
+    floor date (e.g. WALCL 2011-07-06, released 2011-07-07) is refused with the restatements, because
+    the archive cannot distinguish them. One such date per series, refused rather than guessed.
+    ON THE TRANSFORMED PATH the floor also removes a probe that cannot be asked: ALFRED answers HTTP
+    400 ("the series does not exist in ALFRED") for any ``units`` request dated BEFORE the floor —
+    measured 2026-10-21 for CPIAUCSL (1972-07-21), M2SL (1980-02-08) and PCEPILFE (2000-08-01); only
+    PCEPILFE's floor is inside the backfill's range, which is why only it failed (9 dates as
+    ``HTTP_ERROR``). Knowing the floor, no vintage beneath it is probed — it is absent by definition
+    — so the 400 is never provoked and a pre-floor observation reaches its true classification,
+    ``vintage_archive_floor``. A 400 that DOES arrive remains a genuine ``HTTP_ERROR``: telling this
+    one from another would take reading the body's message, which the failure discipline forbids.
+
     EMPTY IS AN ANSWER. No row for the date at any vintage — a weekend, a holiday, a date the series
     never carried, or one that has not happened yet — is ``{"unit": ...}``.
 
@@ -1257,12 +1426,12 @@ class FredVintageAdapter(_BaseAdapter):
     Courtesy pacing between observations is the backfill driver's call and is not done here.
     """
 
-    __slots__ = ("_series", "_transformation", "_observation_date", "_api_key")
+    __slots__ = ("_series", "_transformation", "_observation_date", "_api_key", "_floors")
     adapter_id = "cd.ingest.fred_vintage_rest.v1"
     response_schema = VINTAGE_RESPONSE_SCHEMA
 
     def __init__(self, series: str, transformation: Union[str, None], observation_date: str, *,
-                 api_key: str, **kw: Any) -> None:
+                 api_key: str, archive_floors: Any, **kw: Any) -> None:
         super().__init__(**kw)
         if not isinstance(series, str) or not _SERIES_ID.match(series):
             raise ValueError("series id is not in the permitted shape")
@@ -1272,7 +1441,12 @@ class FredVintageAdapter(_BaseAdapter):
             raise ValueError("transformation is not in the permitted shape")
         if not isinstance(api_key, str) or not _API_KEY.fullmatch(api_key):
             raise ValueError("api key is not in the permitted shape")  # never echo what was given
+        if not callable(getattr(archive_floors, "floor", None)):
+            # Required, with no default: an adapter that can be built without the archive-floor
+            # test is the 83-values defect waiting to be rebuilt. See :class:`FredArchiveFloors`.
+            raise ValueError("archive_floors must provide .floor(series, timeout, getter)")
         date.fromisoformat(observation_date)  # a date we cannot read is not one we may ask for
+        self._floors = archive_floors
         self._series = series
         self._transformation = transformation
         self._observation_date = observation_date
@@ -1319,14 +1493,24 @@ class FredVintageAdapter(_BaseAdapter):
             if spent[0] > MAX_VINTAGE_PROBES:
                 raise AdapterFetchError("VINTAGE_SEARCH_EXHAUSTED")
             url = self._request_url(realtime_start.isoformat(), realtime_end.isoformat())
-            return self._getter(url, remaining, self._headers())
+            return require_json_body(self._getter(url, remaining, self._headers()))
+
+        # The series' archive floor, asked BEFORE any observation GET: the transformed path needs it
+        # to know which vintages it may not probe, and both paths need it to know which answer is a
+        # restatement. One GET per series for the life of ``self._floors`` (see FredArchiveFloors).
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise AdapterFetchError("TIMEOUT")
+        floor = self._floors.floor(self._series, remaining, self._getter)
+        if floor is None:
+            return {"malformed": "archive_floor_unreadable"}
 
         if self._transformation is None:
-            return self._first_publication_in_one_get(get, observed, today)
-        return self._first_publication_by_bisection(get, observed, today)
+            return self._first_publication_in_one_get(get, observed, today, floor)
+        return self._first_publication_by_bisection(get, observed, today, floor)
 
     def _first_publication_in_one_get(self, get: Callable[..., str], observed: date,
-                                      today: date) -> dict:
+                                      today: date, floor: date) -> dict:
         body = get(date.fromisoformat(FRED_REALTIME_FLOOR), today)
         found = parse_fred_rest_first_publication(
             body, self._unit, self._observation_date, realtime_end=today.isoformat())
@@ -1337,12 +1521,16 @@ class FredVintageAdapter(_BaseAdapter):
             # The earliest vintage FRED holds for this observation predates the observation: the
             # premise of the search window is false for this series. Refused, never approximated.
             return {"malformed": "vintage_floor"}
+        if vintage == floor:
+            # First KEPT here, not first published here: see FredArchiveFloors. Named before the
+            # ceiling because it is the cause; a restatement a decade late is both, and this is why.
+            return {"malformed": "vintage_archive_floor"}
         if (vintage - observed).days > MAX_FIRST_PUBLICATION_LAG_DAYS:
             return {"malformed": "vintage_too_distant"}
         return found
 
     def _first_publication_by_bisection(self, get: Callable[..., str], observed: date,
-                                        today: date) -> dict:
+                                        today: date, floor: date) -> dict:
         units = self._transformation
 
         def probe(vintage: date) -> dict:
@@ -1358,14 +1546,29 @@ class FredVintageAdapter(_BaseAdapter):
         if state == _ABSENT:
             return {"unit": self._unit}
 
-        # The floor, VERIFIED rather than assumed: the day before the observation existed.
+        # The floor, VERIFIED rather than assumed: the day before the observation existed. When the
+        # series' ARCHIVE starts later than that, nothing before the archive can be asked (ALFRED
+        # answers HTTP 400 there) and nothing before it can have served the figure: the lower bound
+        # is the day before the archive, ABSENT by definition and not probed.
         low = observed - timedelta(days=1)
-        beneath = probe(low)
-        state = _vintage_state(beneath)
-        if state == _UNREADABLE:
-            return beneath
-        if state == _SERVED:
-            return {"malformed": "vintage_floor"}
+        if low >= floor:
+            beneath = probe(low)
+            state = _vintage_state(beneath)
+            if state == _UNREADABLE:
+                return beneath
+            if state == _SERVED:
+                return {"malformed": "vintage_floor"}
+        else:
+            # Served AT the floor means the first serving vintage IS the floor (nothing earlier
+            # exists): a restatement, decided in this one probe instead of a whole bisection to
+            # the same answer. Absent at the floor: the floor itself is the proven-absent bound.
+            at_floor = probe(floor)
+            state = _vintage_state(at_floor)
+            if state == _UNREADABLE:
+                return at_floor
+            if state == _SERVED:
+                return {"malformed": "vintage_archive_floor"}
+            low = floor
 
         # Invariant: ``low`` is ABSENT, ``high`` is SERVED. Narrow to adjacent days.
         while (high - low).days > 1:
@@ -1379,9 +1582,11 @@ class FredVintageAdapter(_BaseAdapter):
             else:
                 low = middle
 
-        # The CEILING on the answer: a vintage dated too LATE to be a first publication is the
-        # archive's own floor, a restatement. See :class:`FredVintageAdapter` and
-        # :data:`MAX_FIRST_PUBLICATION_LAG_DAYS`.
+        # The ARCHIVE FLOOR: the search converged on the first vintage FRED keeps at all.
+        if found["vintage_date"] == floor.isoformat():
+            return {"malformed": "vintage_archive_floor"}
+        # The CEILING on the answer: a vintage dated too LATE to be a first publication. See
+        # :class:`FredVintageAdapter` and :data:`MAX_FIRST_PUBLICATION_LAG_DAYS`.
         if (date.fromisoformat(found["vintage_date"]) - observed).days > MAX_FIRST_PUBLICATION_LAG_DAYS:
             return {"malformed": "vintage_too_distant"}
         return found

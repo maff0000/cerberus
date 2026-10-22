@@ -92,8 +92,8 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Callable, Union
 
-from ingestion.adapters import (FRED_API_HOST, CboeAdapter, FredAdapter, FredVintageAdapter,
-                                YahooChartAdapter)
+from ingestion.adapters import (FRED_API_HOST, CboeAdapter, FredAdapter, FredArchiveFloors,
+                                FredVintageAdapter, YahooChartAdapter)
 from ingestion.catalog import Ingredient
 from ingestion.vintage import requires_original_vintage
 
@@ -188,7 +188,8 @@ VINTAGE_BACKFILLABLE_KINDS = ("fred", "cboe", "yahoo")
 
 
 def build_backfill_adapter(ing: Ingredient, observation_date: str, clock: Callable[[], datetime],
-                           *, api_key: Union[str, None] = None):
+                           *, api_key: Union[str, None] = None,
+                           archive_floors: Union[FredArchiveFloors, None] = None):
     """The adapter that answers for ``ing`` at ``observation_date`` — point-in-time where it must.
 
     ON THE FRED BRANCH: :class:`~ingestion.adapters.FredVintageAdapter` when
@@ -204,6 +205,12 @@ def build_backfill_adapter(ing: Ingredient, observation_date: str, clock: Callab
     ``api_key`` is KEYWORD-ONLY and reaches ONLY :class:`~ingestion.adapters.FredVintageAdapter`: the
     stable FRED, Cboe and Yahoo branches are keyless and never see it. It is optional here because only
     the measured revision-prone rows need one.
+
+    ``archive_floors`` is the per-row :class:`~ingestion.adapters.FredArchiveFloors` that
+    ``ingestion.backfill.backfill_range`` builds ONCE for the range, so the series' archive floor is
+    asked once and not once per date. A caller that passes none gets a private one built here from
+    ``api_key`` — correct, and one extra GET per date: the archive-floor test is never skipped, only
+    cached or not.
 
     ``observation_date`` reaches EVERY adapter, and on the three current-body branches it is
     what makes the read a dated one rather than a read of the latest value (WO-1.15,
@@ -227,8 +234,9 @@ def build_backfill_adapter(ing: Ingredient, observation_date: str, clock: Callab
                 raise ValueError(
                     f"{ing.source_id} needs the figure as first published, which is read through "
                     f"FRED's keyed REST API, and no api_key was given")
-            return FredVintageAdapter(ing.ref, ing.transformation, observation_date,
-                                      api_key=api_key, **common)
+            return FredVintageAdapter(
+                ing.ref, ing.transformation, observation_date, api_key=api_key,
+                archive_floors=archive_floors or FredArchiveFloors(api_key, clock=clock), **common)
         return FredAdapter(ing.ref, ing.transformation, ing.history,
                           observation_date=observation_date, **common)
     if ing.kind == "cboe":

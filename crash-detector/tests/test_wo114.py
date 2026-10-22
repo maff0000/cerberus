@@ -335,7 +335,7 @@ def test_the_live_constructor_has_no_argument_that_could_select_a_vintage_adapte
     """Unchanged signature, and that is the point: not a flag a future caller passes wrong."""
     assert list(inspect.signature(build_adapter).parameters) == ["ing", "clock"]
     assert list(inspect.signature(build_backfill_adapter).parameters) == [
-        "ing", "observation_date", "clock", "api_key"]
+        "ing", "observation_date", "clock", "api_key", "archive_floors"]
 
 
 def test_the_live_catalog_module_neither_imports_nor_exposes_the_vintage_adapter():

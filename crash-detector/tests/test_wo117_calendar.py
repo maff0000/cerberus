@@ -309,14 +309,22 @@ def test_a_body_that_is_not_this_series_is_refused_rather_than_read():
 
 
 @pytest.mark.parametrize("body", [
-    "",
-    "<!DOCTYPE html><html>FRED error page</html>",
     "observation_date\n2015-07-01\n",
     "observation_date,DFF,extra\n2015-07-01,0.12,x\n",
 ])
 def test_a_body_that_is_not_a_fredgraph_csv_at_all_is_refused(body):
     with pytest.raises(ValueError, match="not a fredgraph.csv body"):
         fred_body_dates(body, "DFF")
+
+
+@pytest.mark.parametrize("body", ["", "<!DOCTYPE html><html>FRED error page</html>"])
+def test_a_body_that_is_not_data_at_all_is_a_service_failure_not_a_value_error(body):
+    """WO-1.17: an empty body or a markup page (FRED's maintenance window) is not a CSV with a wrong
+    header; it is a SERVICE failure, raised as the fetch error so a caller can tell it apart."""
+    from crash_detector.collectors.adapter import AdapterFetchError
+    with pytest.raises(AdapterFetchError) as failed:
+        fred_body_dates(body, "DFF")
+    assert failed.value.error_class == "NON_DATA_RESPONSE"
 
 
 def test_a_malformed_row_raises_where_the_sibling_parsers_would_skip_it():

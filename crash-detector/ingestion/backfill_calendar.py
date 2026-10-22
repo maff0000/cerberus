@@ -126,7 +126,7 @@ from datetime import date, datetime, timezone
 from typing import Callable, Tuple, Union
 
 from ingestion.adapters import (YAHOO_USER_AGENT, cboe_history_url, fred_column, fred_graph_url,
-                                http_get, yahoo_chart_url)
+                                http_get, require_csv_body, yahoo_chart_url)
 from ingestion.catalog import Ingredient
 
 __all__ = ["MISSING_VALUE_TOKENS", "CBOE_MISSING_VALUE_TOKENS",
@@ -158,6 +158,7 @@ def fred_body_dates(text: str, column: str) -> Tuple[str, ...]:
     row first and this does not need to rely on that, the same way every reader of this body
     matches on the date KEY rather than on position.
     """
+    require_csv_body(text)  # a maintenance page is a SERVICE failure, not "a different body"
     lines = text.strip().splitlines()
     header = lines[0].split(",") if lines else []
     if len(header) != 2 or header[0] != "observation_date":

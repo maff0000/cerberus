@@ -9,7 +9,7 @@
 IT IS A PROBE, NOT A GATE — the same standing as ``wo114_backfill_proof.py``. It opens ``--store``
 READ-ONLY (``mode=ro``) and never writes it; it writes only the JSON record a human reads.
 
-WHAT IT SETTLES, in five cases, each run through the production adapter and the production
+WHAT IT SETTLES, in six cases, each run through the production adapter and the production
 ``http_get`` and nothing else:
 
 1. an UNTRANSFORMED row at a date the real backfill FAILED on (the CSV fault), resolved by one GET;
@@ -18,7 +18,8 @@ WHAT IT SETTLES, in five cases, each run through the production adapter and the 
    to what the store holds;
 3. the TRANSFORMED path (the single-day bisection) at real in-scope dates, again compared to the store;
 4. the first-publication CEILING, on dates older than their series' archive;
-5. EMPTY, on dates the series never carried.
+5. EMPTY, on dates the series never carried;
+6. the ARCHIVE FLOOR: the figures a series' archive start restates, refused, and their neighbours past it admitted.
 
 THE KEY. Read from ``FRED_API_KEY`` once, in ``main``, and passed to the adapter as an argument. It is
 never printed, never written to the record, and never placed on a command line. The record does carry
@@ -42,7 +43,8 @@ import urllib.request
 from datetime import datetime, timezone
 
 from crash_detector.collectors.adapter import AdapterFetchError
-from ingestion.adapters import FRED_API_BASE, FredAdapter, FredVintageAdapter, http_get
+from ingestion.adapters import (FRED_API_BASE, FredAdapter, FredArchiveFloors, FredVintageAdapter,
+                                http_get)
 from ingestion.catalog import INGREDIENTS
 
 
@@ -70,10 +72,16 @@ class _CountingGetter:
             self.seconds += time.monotonic() - started
 
 
+#: One archive-floor cache for the whole probe, as the real driver keeps one per range: every case on
+#: a series after the first reuses its floor. Set once in ``main``, where the key is read.
+_FLOORS: list = []
+
+
 def _adapter(source_id: str, observation: str, key: str, getter):
     ing = _ing(source_id)
     return FredVintageAdapter(
-        ing.ref, ing.transformation, observation, api_key=key, source_id=ing.source_id,
+        ing.ref, ing.transformation, observation, api_key=key, archive_floors=_FLOORS[0],
+        source_id=ing.source_id,
         as_of_rule=ing.as_of_rule, unit=ing.unit, clock=_clock, getter=getter)
 
 
@@ -172,6 +180,7 @@ def main(argv: list) -> int:
         print("-- STOP: REFUSED: FRED_API_KEY is unset.")
         return 1
 
+    _FLOORS.append(FredArchiveFloors(key, clock=_clock))
     record: dict = {"probed_utc": _clock().isoformat(), "purpose": __doc__.split("\n\n")[0],
                     "endpoint": FRED_API_BASE, "credential": "read from FRED_API_KEY; never recorded"}
 
@@ -220,6 +229,24 @@ def main(argv: list) -> int:
         run_case("fred.CPIAUCSL.pc1", "2015-06-15", key, args.pause),
         run_case("fred.WALCL", "2099-01-01", key, args.pause),
     ]
+
+    print("-- 6. archive floor (the 83 contaminated figures' fingerprint)", flush=True)
+    record["case_6_archive_floor_refusals"] = [
+        run_case("fred.IC4WSA", "2008-05-31", key, args.pause),    # admitted by the real re-run
+        run_case("fred.WALCL", "2011-03-02", key, args.pause),     # admitted by the real re-run
+        run_case("fred.NFCI", "2011-03-04", key, args.pause),      # admitted by the real re-run
+        run_case("fred.PCEPILFE.pc1", "1999-12-01", key, args.pause),  # was HTTP 400, now classified
+        run_case("fred.WALCL", "2011-07-06", key, args.pause),     # genuine release ON the floor: refused (declared)
+    ]
+    record["case_6_controls_admitted_after_the_floor"] = [
+        run_case("fred.IC4WSA", "2009-05-30", key, args.pause),
+        run_case("fred.WALCL", "2011-07-13", key, args.pause),
+        run_case("fred.NFCI", "2011-05-27", key, args.pause),
+        run_case("fred.PCEPILFE.pc1", "2000-09-01", key, args.pause),
+    ]
+    record["archive_floors_read"] = {
+        series: _FLOORS[0].floor(series, 60.0, http_get).isoformat()
+        for series in ("IC4WSA", "WALCL", "NFCI", "PCEPILFE")}
 
     print("-- rate-limit headers", flush=True)
     record["rate_limit_probe"] = rate_limit_probe(key)
