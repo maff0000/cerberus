@@ -521,3 +521,44 @@ def test_stored_readings_of_the_excluded_inputs_feed_neither_breadth_nor_count_n
     assert not ids & set(EXCLUDED_FROM_SCORING)
     # and what is left is the same set that is live, with nothing of the excluded pair in it
     assert ids <= wiring.live_ids
+
+
+# --- item 8: HY/IG OAS request window widened to the FRED floor ------------------------- #
+def _oas_serves(column, dates):
+    body = "\n".join([f"observation_date,{column}"] + [f"{d},1.5" for d in dates]) + "\n"
+
+    def getter(url, timeout_seconds, headers=None):
+        return body
+
+    return getter
+
+
+def test_oas_rows_take_dates_from_the_fred_floor_not_just_the_apr_2025_window():
+    from tools.backfill.wo117_run import EPISODES, OAS_FRED_FLOOR, row_dates
+    from ingestion.catalog import INGREDIENTS
+
+    assert OAS_FRED_FLOOR == "2023-10-23"
+    ing = next(i for i in INGREDIENTS if i.source_id == "fred.BAMLH0A0HYM2")
+    published = ["2023-10-20", "2023-10-23", "2024-06-03", "2024-12-30", "2024-12-31", "2025-03-03"]
+    dates, _ = row_dates(ing, EPISODES, getter=_oas_serves("BAMLH0A0HYM2", published))
+    assert dates == ("2023-10-23", "2024-06-03", "2024-12-30", "2024-12-31", "2025-03-03")
+
+
+def test_ig_oas_is_widened_too_and_other_rows_are_not():
+    from tools.backfill.wo117_run import EPISODES, row_dates
+    from ingestion.catalog import INGREDIENTS
+
+    published = ["2023-10-23", "2024-06-03", "2025-03-03"]
+    ig = next(i for i in INGREDIENTS if i.source_id == "fred.BAMLC0A0CM")
+    assert row_dates(ig, EPISODES, getter=_oas_serves("BAMLC0A0CM", published))[0] == tuple(published)
+    dff = next(i for i in INGREDIENTS if i.source_id == "fred.DFF")
+    assert row_dates(dff, EPISODES, getter=_oas_serves("DFF", published))[0] == ("2025-03-03",)
+
+
+def test_oas_widening_needs_the_apr_2025_episode_selected():
+    from tools.backfill.wo117_run import EPISODES, row_dates
+    from ingestion.catalog import INGREDIENTS
+
+    ing = next(i for i in INGREDIENTS if i.source_id == "fred.BAMLH0A0HYM2")
+    others = tuple(e for e in EPISODES if e.key != "apr-2025")
+    assert row_dates(ing, others, getter=_oas_serves("BAMLH0A0HYM2", ["2023-10-23", "2024-06-03"]))[0] == ()
