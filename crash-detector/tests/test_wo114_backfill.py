@@ -65,7 +65,7 @@ WHAT EACH SECTION MEASURES
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from urllib.parse import parse_qs, urlsplit
 
 import pytest
@@ -81,6 +81,9 @@ from ingestion.catalog import INGREDIENTS
 from ingestion.store import SqliteStore
 from ingestion.vintage import (STABILITY_MEASURED_FROM, VINTAGE_CURRENT_ONLY,
                                VINTAGE_NO_REVISION_MECHANISM, VINTAGE_ORIGINAL)
+
+#: A key-shaped string worth nothing; the real one is never in this tree.
+_FAKE_KEY = "k" * 32
 
 #: The instant every clock in this file reads. The ALFRED probe's own date, for no reason
 #: other than that it is the date this work order's evidence was gathered on.
@@ -113,8 +116,9 @@ def _ing(source_id: str):
 def _offline(monkeypatch, getter):
     """Give the driver the REAL adapter for each date, with ``getter`` as its only transport."""
 
-    def build(ing, observation_date, clock):
-        adapter = _real_build_backfill_adapter(ing, observation_date, clock)
+    def build(ing, observation_date, clock, api_key=None, archive_floors=None):
+        adapter = _real_build_backfill_adapter(ing, observation_date, clock, api_key=api_key,
+                                               archive_floors=archive_floors)
         adapter._getter = getter
         return adapter
 
@@ -176,43 +180,59 @@ def _partitions(result, dates) -> None:
 # recorded it, rather than a guess at how an HTTP API ought to behave.
 
 
-class _Alfred:
-    """ALFRED's vintage endpoint, offline: a trail that begins somewhere, and per observation
-    the vintages that served it.
+class _FredRest:
+    """FRED's REST observations endpoint, offline, for the UNTRANSFORMED vintage rows.
 
     ``observations`` maps an observation date to its revision history as
-    ``((vintage_date, value), ...)``, oldest first — so a vintage asked for serves the newest
-    revision at or before it, and a vintage older than the first one serves the row not at
-    all. Those are the three states the bisection in
-    ``ingestion.adapters.AlfredVintageAdapter`` turns on: 404 beneath the trail, served-but-
-    empty, and served. An observation this fake has never heard of is served-but-empty at
-    every vintage, which is "no vintage ever published this figure".
+    ``((vintage_date, value), ...)``, oldest first. A request asks for one observation over a
+    ``realtime_start``..``realtime_end`` window and is answered the way the real API answers it
+    (``/fred/series/observations``, probed 2026-10-20): one row per DISTINCT vintage, each with the
+    validity span of that value clipped to the window, oldest first; an observation this fake has
+    never heard of is ``count`` 0 at every vintage, which is "no vintage ever published this figure".
+    Only the untransformed shape is modelled here — the transformed rows' single-day bisection is
+    tested against its own model in ``tests/test_ingestion.py``.
     """
 
-    def __init__(self, observations, *, column: str = "GDP", trail_from: str = "1991-07-15",
-                 fails=()):
+    def __init__(self, observations, *, fails=(), floor="1990-01-01"):
         self.observations = {obs: list(revisions) for obs, revisions in observations.items()}
-        self.column, self.trail_from = column, trail_from
+        #: The series' ARCHIVE FLOOR as ``/fred/series/vintagedates`` would report it, and how
+        #: often it was asked: the driver must ask once per range, not once per date.
+        self.floor, self.floor_asked = floor, 0
         #: observation date -> the error class every request about it raises
         self.fails = dict(fails)
         self.asked: list[str] = []
 
     def observations_asked(self) -> list:
-        return [parse_qs(urlsplit(url).query)["cosd"][0] for url in self.asked]
+        return [parse_qs(urlsplit(url).query)["observation_start"][0] for url in self.asked]
 
     def __call__(self, url, timeout, headers=None):
+        if urlsplit(url).path.endswith("/vintagedates"):
+            self.floor_asked += 1
+            asked = parse_qs(urlsplit(url).query)
+            return json.dumps({
+                "realtime_start": asked["realtime_start"][0], "realtime_end": asked["realtime_end"][0],
+                "order_by": "vintage_date", "sort_order": "asc", "count": 1, "offset": 0,
+                "limit": 1, "vintage_dates": [self.floor]})
         self.asked.append(url)
         query = parse_qs(urlsplit(url).query)
-        vintage, observation = query["vintage_date"][0], query["cosd"][0]
+        observation = query["observation_start"][0]
+        opens, closes = query["realtime_start"][0], query["realtime_end"][0]
         if observation in self.fails:
             raise AdapterFetchError(self.fails[observation])
-        if vintage < self.trail_from:
-            raise AdapterFetchError("HTTP_ERROR", 404)  # no such vintage of this series
-        header = f"observation_date,{self.column}_{vintage.replace('-', '')}"
-        served = [value for when, value in self.observations.get(observation, ()) if when <= vintage]
-        if not served:
-            return header + "\n"  # the vintage exists and had nothing to say about this date
-        return f"{header}\n{observation},{served[-1]}\n"
+        history = self.observations.get(observation, ())
+        rows = []
+        for position, (when, value) in enumerate(history):
+            until = (date.fromisoformat(history[position + 1][0]) - timedelta(days=1)).isoformat() \
+                if position + 1 < len(history) else closes
+            start, end = max(when, opens), min(until, closes)
+            if start <= end:
+                rows.append({"realtime_start": start, "realtime_end": end,
+                             "date": observation, "value": value})
+        return json.dumps({
+            "realtime_start": opens, "realtime_end": closes, "observation_start": observation,
+            "observation_end": observation, "units": "lin", "output_type": 1, "file_type": "json",
+            "order_by": "observation_date", "sort_order": "asc", "count": len(rows), "offset": 0,
+            "limit": 100000, "observations": rows})
 
 
 class _Fred:
@@ -527,14 +547,14 @@ _SATURDAY_WINDOW = (1434153600, 1434239999)
 
 def test_a_revision_prone_series_backfills_the_figure_as_first_published_across_several_dates(
         store, monkeypatch):
-    """GDP is measured revision-prone, so each date is fetched from ALFRED vintage by vintage.
+    """GDP is measured revision-prone, so each date's first-published figure is read from FRED's REST vintage history.
 
     The assertion that matters is the VALUE: 14412.8 is what the 2008 Q3 figure said when it
     was first published and 14200.2 is what it says now, and a backfill that stored the
     second has committed the forgery this work order exists to prevent.
     """
-    alfred = _offline(monkeypatch, _Alfred(_GDP))
-    result = backfill_range(_ing("fred.GDP"), _GDP_DATES, store, CLOCK, pace=0)
+    rest = _offline(monkeypatch, _FredRest(_GDP))
+    result = backfill_range(_ing("fred.GDP"), _GDP_DATES, store, CLOCK, pace=0, api_key=_FAKE_KEY)
 
     assert result.source_id == "fred.GDP" and result.vintage == VINTAGE_ORIGINAL
     assert result.admitted == _GDP_DATES
@@ -549,18 +569,65 @@ def test_a_revision_prone_series_backfills_the_figure_as_first_published_across_
     # really read: these are the figures the source itself first published.
     assert {vintage for _, _, vintage in readings} == {VINTAGE_ORIGINAL}
     # One fetch per date, each a bisection; every date this fake was asked about was asked for.
-    assert sorted(set(alfred.observations_asked())) == sorted(_GDP_DATES)
+    assert sorted(set(rest.observations_asked())) == sorted(_GDP_DATES)
     _partitions(result, _GDP_DATES)
+
+
+def test_a_range_asks_the_archive_floor_once_and_the_date_first_kept_at_it_is_not_admitted(
+        store, monkeypatch):
+    """WO-1.17 follow-up. 2008-09-01's first vintage (2008-10-30) is declared the series' archive
+    floor: that figure was first KEPT there, not first published there. The other two dates are
+    admitted untouched, and the floor is ONE request for the range, not one per date."""
+    rest = _offline(monkeypatch, _FredRest(_GDP, floor="2008-10-30"))
+    result = backfill_range(_ing("fred.GDP"), _GDP_DATES, store, CLOCK, pace=0, api_key=_FAKE_KEY)
+    assert result.admitted == ("2008-12-01", "2009-03-01")
+    assert result.failed == (("2008-09-01", "MALFORMED"),)
+    assert [payload["value"] for _, payload, _ in _readings(store)] == [14200.2, 14075.5]
+    assert rest.floor_asked == 1, "the floor is a property of the series: asked once per range"
+    assert sorted(set(rest.observations_asked())) == sorted(_GDP_DATES)
 
 
 def test_the_later_revision_is_present_in_the_fake_and_is_the_answer_nobody_stored(
         store, monkeypatch):
     """The negative half of the test above: the wrong answer was AVAILABLE and was not taken."""
-    alfred = _offline(monkeypatch, _Alfred(_GDP))
-    backfill_range(_ing("fred.GDP"), ("2008-09-01",), store, CLOCK, pace=0)
-    today_s_body = alfred("https://x/?id=GDP&vintage_date=2026-10-13&cosd=2008-09-01", 1.0)
+    rest = _offline(monkeypatch, _FredRest(_GDP))
+    backfill_range(_ing("fred.GDP"), ("2008-09-01",), store, CLOCK, pace=0, api_key=_FAKE_KEY)
+    today_s_body = rest("https://x/?series_id=GDP&realtime_start=2026-10-13&realtime_end=2026-10-13"
+                        "&observation_start=2008-09-01", 1.0)
     assert "14200.2" in today_s_body  # what GDP says about 2008 Q3 NOW
     assert _readings(store)[0][1]["value"] == 14412.8  # what it said THEN
+
+
+def test_a_vintage_range_handed_no_key_raises_before_any_date_is_touched(store, monkeypatch):
+    """A missing credential is a fact about the WHOLE range: one raise, not a thousand identical
+    failed dates. No adapter is built, nothing is fetched, nothing is written."""
+    _no_adapter_may_be_built(monkeypatch)
+    with pytest.raises(ValueError) as refused:
+        backfill_range(_ing("fred.GDP"), _GDP_DATES, store, CLOCK, pace=0)
+    assert "api_key" in str(refused.value)
+    assert _readings(store) == [] and _attempts(store) == []
+
+
+def test_the_key_reaches_the_request_and_is_recorded_nowhere_in_the_store(store, monkeypatch):
+    """The credential travels in the URL the transport is handed and in NOTHING the run writes:
+    not a payload, not an attempt row, not a failure class (PBG-SEC-002)."""
+    monkeypatch.setattr(B, "BACKFILL_POLICY", ONE_ATTEMPT)
+    rest = _offline(monkeypatch, _FredRest(_GDP, fails={"2008-12-01": "CONNECTION_FAILED"}))
+    result = backfill_range(_ing("fred.GDP"), _GDP_DATES, store, CLOCK, pace=0, api_key=_FAKE_KEY)
+    assert all(parse_qs(urlsplit(url).query)["api_key"] == [_FAKE_KEY] for url in rest.asked)
+    dump = json.dumps([list(row) for row in store._db.execute(
+        "SELECT * FROM raw_observation")] + [list(row) for row in store._db.execute(
+            "SELECT * FROM raw_reading")]) + repr(result)
+    assert _FAKE_KEY not in dump and "api_key" not in dump
+
+
+def test_a_stable_or_keyless_range_needs_no_key_and_is_not_asked_for_one(store, monkeypatch):
+    """Only the revision-prone FRED rows read the keyed endpoint; DFF (measured stable) runs
+    exactly as before with ``api_key`` left at its default."""
+    fred = _Fred([(TODAY, "3.64")], column="DFF")
+    _offline(monkeypatch, fred)
+    result = backfill_range(_ing("fred.DFF"), (TODAY,), store, CLOCK, pace=0)
+    assert result.vintage == VINTAGE_CURRENT_ONLY and result.admitted == (TODAY,)
 
 
 # --- TWO: the stable branch, answering for the date asked -------------------------------- #
@@ -669,16 +736,16 @@ def test_re_running_an_admitted_range_skips_every_date_and_issues_no_request_at_
     """``fetches == 0``, counted on the transport as well as reported. This is the property
     that makes a 6,000-date backfill resumable: a range already half-done costs GETs only for
     the half that is missing."""
-    alfred = _offline(monkeypatch, _Alfred(_GDP))
-    first = backfill_range(_ing("fred.GDP"), _GDP_DATES, store, CLOCK, pace=0)
+    rest = _offline(monkeypatch, _FredRest(_GDP))
+    first = backfill_range(_ing("fred.GDP"), _GDP_DATES, store, CLOCK, pace=0, api_key=_FAKE_KEY)
     assert first.admitted == _GDP_DATES
-    probes, attempts = len(alfred.asked), len(_attempts(store))
+    probes, attempts = len(rest.asked), len(_attempts(store))
 
-    again = backfill_range(_ing("fred.GDP"), _GDP_DATES, store, CLOCK, pace=0)
+    again = backfill_range(_ing("fred.GDP"), _GDP_DATES, store, CLOCK, pace=0, api_key=_FAKE_KEY)
 
     assert again.skipped == _GDP_DATES
     assert again.counts == {"admitted": 0, "skipped": 3, "refused": 0, "failed": 0, "fetches": 0}
-    assert len(alfred.asked) == probes      # not one more GET
+    assert len(rest.asked) == probes      # not one more GET
     assert len(_attempts(store)) == attempts  # and not one more attempt row
     assert [as_of for as_of, _, _ in _readings(store)] == _GDP_PERIODS  # still three readings
     _partitions(again, _GDP_DATES)
@@ -691,15 +758,15 @@ def test_a_transport_failure_on_one_date_carries_its_class_and_stops_nothing(sto
     """The middle date's fetch fails; the first and last are admitted, and the class recorded
     is the adapter's own ``error_class`` — no message, no URL, no exception text."""
     monkeypatch.setattr(B, "BACKFILL_POLICY", ONE_ATTEMPT)
-    alfred = _offline(monkeypatch, _Alfred(_GDP, fails={"2008-12-01": "CONNECTION_FAILED"}))
-    result = backfill_range(_ing("fred.GDP"), _GDP_DATES, store, CLOCK, pace=0)
+    rest = _offline(monkeypatch, _FredRest(_GDP, fails={"2008-12-01": "CONNECTION_FAILED"}))
+    result = backfill_range(_ing("fred.GDP"), _GDP_DATES, store, CLOCK, pace=0, api_key=_FAKE_KEY)
 
     assert result.admitted == ("2008-09-01", "2009-03-01")
     assert result.failed == (("2008-12-01", "CONNECTION_FAILED"),)
     assert result.fetches == 3  # the failure was a fetch, and the range continued past it
     assert [as_of for as_of, _, _ in _readings(store)] == [_GDP_PERIODS[0], _GDP_PERIODS[2]]
     assert ("FETCH_FAILED", None, "CONNECTION_FAILED") in _attempts(store)
-    assert "2009-03-01" in alfred.observations_asked()  # the date AFTER the failure was asked
+    assert "2009-03-01" in rest.observations_asked()  # the date AFTER the failure was asked
     _partitions(result, _GDP_DATES)
 
 
@@ -710,21 +777,21 @@ def test_an_answer_that_is_not_a_reading_is_a_failed_date_with_the_stores_own_cl
 
     * ``2009-06-01`` — ALFRED served every vintage and none carried this figure. EMPTY is a
       real ANSWER (the observation was never published), and it still leaves a gap.
-    * ``2030-06-01`` — an observation that HAS NOT HAPPENED. ``AlfredVintageAdapter`` refuses
+    * ``2030-06-01`` — an observation that HAS NOT HAPPENED. ``FredVintageAdapter`` refuses
       it as MALFORMED without probing anything, rather than searching an empty window; the
       driver reports the refusal under that date and carries on.
     """
     dates = ("2008-09-01", "2009-06-01", "2030-06-01")
-    alfred = _offline(monkeypatch, _Alfred(_GDP))
-    result = backfill_range(_ing("fred.GDP"), dates, store, CLOCK, pace=0)
+    rest = _offline(monkeypatch, _FredRest(_GDP))
+    result = backfill_range(_ing("fred.GDP"), dates, store, CLOCK, pace=0, api_key=_FAKE_KEY)
 
     assert result.admitted == ("2008-09-01",)
     assert result.failed == (("2009-06-01", "EMPTY"), ("2030-06-01", "MALFORMED"))
     outcomes = [outcome for outcome, _, _ in _attempts(store)]
     assert outcomes == ["OK", "EMPTY", "MALFORMED"]
     assert len(_readings(store)) == 1
-    assert "2009-06-01" in alfred.observations_asked()        # really searched for
-    assert "2030-06-01" not in alfred.observations_asked()    # and this one never asked at all
+    assert "2009-06-01" in rest.observations_asked()        # really searched for
+    assert "2030-06-01" not in rest.observations_asked()    # and this one never asked at all
     _partitions(result, dates)
 
 
