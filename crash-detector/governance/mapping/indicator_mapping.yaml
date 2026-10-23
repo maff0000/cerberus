@@ -13,6 +13,10 @@
 #   * breadth_rsp_spy and credit_stress_hyg_lqd stay REGISTERED here (the ratified rows are not edited) but are
 #     EXCLUDED FROM SCORING by ingestion/wiring.py EXCLUDED_FROM_SCORING: reported missing, never scored 0, so they feed
 #     neither breadth nor count. See each row's note.
+# R2D2 PR #14 live re-audit (D1-D3), 2026-10-23: the count rule (rule 3) is REMOVED, PROVISIONALLY - k is unset, so ALARM
+#   fires via rule 2 (an alarm-eligible master past its stress threshold) only until count is recalibrated; the count is
+#   still published as context. Its indicator set no longer includes yield_curve_10y2y / yield_curve_10y3m
+#   (curve_master is WATCH-only). DECISION-RULE.md section 10 row k.
 schema_version: "1.0.0"
 provisional_weights_pending_backtest: true
 dials: [equity_crash, monetary_debasement]

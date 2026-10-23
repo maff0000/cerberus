@@ -180,7 +180,6 @@ def test_rule_1_beats_an_alarm_the_breadth_count_and_masters_would_otherwise_fir
     """
     breadth = 0.90
     count = count_of(4)
-    assert count.count >= PROVISIONAL_COUNT_K
 
     with_every_master_scored = candidate_state_for_one_reading(
         breadth=breadth,
@@ -373,33 +372,23 @@ def test_a_watch_only_master_is_still_required_back_under_exit_before_recovery()
     assert recovering is State.RECOVERY
 
 
-def test_rule_3_k_fast_indicators_at_their_band_alarm_with_breadth_calm_and_every_master_quiet():
-    """Rule 3 SINCE WO-1.3b-II: ``count >= k`` (count v2, k = 2) is ``ALARM`` on its own.
-
-    R2D2's ``eval_count.py`` adds a pseudo-master scoring 1.0 when the count reaches k, which fires the same stress rule
-    2 reads; this is that, measured. Isolation, term by term:
-
-    * Rule 2 false - both masters sit at 0.55, under STRESS (and both are eligible, so it is the SCORE that fails the
-      rule here).
-    * Rule 4 false - 0.55 is under WARNING, and the breadth limb is off (B_mid unset).
-    * Rule 5 false - 0.55 is above the exit threshold.
-    * Breadth is 0.20, nowhere near any band: the count is what fires, not breadth.
-
-    The pair is the point: ONE below k, same everything, is CALM (next test).
-    """
+def test_rule_3_the_count_rule_is_removed_so_a_count_at_or_above_any_k_never_alarms_on_its_own():
+    """R2D2 PR #14 live re-audit, D3: count v2 is withdrawn. ``PROVISIONAL_COUNT_K`` is unset, so a reading with every
+    master quiet (0.55: above exit, under warning, under stress) and a count of 4 is CALM, not ALARM. This reading was
+    ALARM under k = 2. PROVISIONAL removal: restoring the rule is assigning an integer to ``PROVISIONAL_COUNT_K``."""
     quiet = 0.55
     assert PROVISIONAL_EXIT < quiet < PROVISIONAL_WARNING
-    assert PROVISIONAL_COUNT_K == 2
+    assert PROVISIONAL_COUNT_K is None
 
     state = candidate_state_for_one_reading(
         breadth=0.20,
         acute=acute_of(quiet, quiet),
-        count=count_of(PROVISIONAL_COUNT_K),
+        count=count_of(4),
         breadth_20_rows_ago=None,
         trend_confirmed=False,
     )
 
-    assert state is State.ALARM
+    assert state is State.CALM
 
 
 def test_rule_3_one_below_k_does_not_alarm_and_a_saturated_breadth_alone_does_not_either():
@@ -417,7 +406,7 @@ def test_rule_3_one_below_k_does_not_alarm_and_a_saturated_breadth_alone_does_no
     one_below = candidate_state_for_one_reading(
         breadth=0.20,
         acute=acute_of(quiet, quiet),
-        count=count_of(PROVISIONAL_COUNT_K - 1),
+        count=count_of(1),
         breadth_20_rows_ago=None,
         trend_confirmed=False,
     )

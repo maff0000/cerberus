@@ -445,7 +445,7 @@ def official_state_for_dial(
     window). **IT HAS NO DEFAULT, AND THAT IS THE POINT:** a caller that forgot it would silently run without the
     lock, which is the back door. A caller whose dial has no lock - today, the monetary dial, see
     :func:`evaluator.pass_once.one_pass_for_dial` - says ``False`` in words. While True: a ``RECOVERY`` candidate
-    is valid whatever the previous state (RECOVERY is the ONLY way out), and a ``CALM`` candidate is floored at
+    is valid whatever the previous state EXCEPT UNKNOWN (RECOVERY is the ONLY way out; a dial leaving UNKNOWN still floors at WATCH, R2D2 PR #14 D2), and a ``CALM`` candidate is floored at
     ``WATCH``. The lock never makes a state MORE permissive.
 
     ``breadth``, ``acute``, ``count`` and ``trend_confirmed`` are this reading's statistics,
@@ -493,8 +493,12 @@ def official_state_for_dial(
     # `run_machine` (engine_run.py) gates it on `armed` and not on `prev == ALARM`: the exit from ALARM runs
     # ALARM -> WATCH on the way, and a dial in WATCH that has genuinely quietened AND confirmed its trend is
     # exactly what RECOVERY is for. Without this a dial would have to sit in ALARM, officially, to recover.
+    #
+    # R2D2 PR #14 live re-audit, D2: THE LOCK DOES NOT OVERRIDE THE UNKNOWN-EXIT FLOOR. A dial whose last official state
+    # is UNKNOWN still floors at WATCH for one reading, armed or not: the armed term is False when `previous` is
+    # UNKNOWN, so the RECOVERY candidate is corrected to CALM here and the floor below then makes it WATCH.
     if candidate is State.RECOVERY and not (
-        alarm_lock_armed
+        (alarm_lock_armed and not (previous is not None and previous.machine_state is State.UNKNOWN))
         or (previous is not None and previous.machine_state is State.ALARM)
     ):
         candidate = State.CALM

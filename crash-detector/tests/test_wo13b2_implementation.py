@@ -137,7 +137,10 @@ def _r2d2_run_machine(scores, trends, *, lock: bool, persistence=5):
         cand = _r2d2_candidate(score, trend)
         prev = hist[0] if hist else None
         armed = lock and any(h["state"] == "ALARM" for h in hist[: _r2d2_armed_span(hist)])
-        if cand == "RECOVERY" and not armed and (prev is None or prev["state"] != "ALARM"):
+        # DELIBERATE DEVIATION FROM HER HARNESS (R2D2 PR #14 live re-audit, D2): the lock does not override the
+        # UNKNOWN-exit floor, so a previous UNKNOWN row makes `armed` irrelevant to the RECOVERY gate.
+        armed_for_gate = armed and not (prev is not None and prev["state"] == "UNKNOWN")
+        if cand == "RECOVERY" and not armed_for_gate and (prev is None or prev["state"] != "ALARM"):
             cand = "CALM"
         if lock and armed and cand == "CALM":
             cand = "WATCH"
@@ -264,6 +267,24 @@ def test_an_unknown_outage_in_the_middle_of_a_halt_does_not_lift_the_lock(store)
     states = _walk(scores, [False] * len(scores), lock=True, store=store)
     assert State.UNKNOWN in states and State.CALM not in states
     assert store.alarm_lock_armed(EQUITY_DIAL_ID)
+
+
+def test_leaving_unknown_with_the_lock_armed_still_reports_watch_for_that_reading_even_on_a_recovery_candidate(store):
+    """D2 regression: the lock must not override the UNKNOWN-exit floor."""
+    scores = [0.9, 0.3, 0.3, None, 0.3, 0.3]
+    trends = [False, True, True, True, True, True]
+    states = _walk(scores, trends, lock=True, store=store)
+    assert states[3] is State.UNKNOWN
+    assert store.alarm_lock_armed(EQUITY_DIAL_ID)
+    assert states[4] is State.WATCH  # first reading out of UNKNOWN: candidate is RECOVERY, floor wins
+    # The same reading directly through the resolver, armed, previous UNKNOWN.
+    history = store.recent(EQUITY_DIAL_ID, limit=20)
+    assert history[0].machine_state is State.WATCH
+    from test_resolve_official_state import _row
+    unknown_prev = _row(State.UNKNOWN, dial_id=EQUITY_DIAL_ID, as_of=WALK_START + timedelta(days=50))
+    row = official_state_for_dial(history=[unknown_prev], as_of=WALK_START + timedelta(days=51), breadth=0.2,
+                                  acute=_vol_acute(0.3), count=_count0(), trend_confirmed=True, alarm_lock_armed=True)
+    assert row.candidate_state is State.WATCH and row.machine_state is State.WATCH
 
 
 # --------------------------------------------------------------- the store's armed question
@@ -435,10 +456,11 @@ R2D2_FAST2 = {"yield_curve_10y3m", "yield_curve_10y2y", "hy_oas", "ig_oas", "cop
               "vix_term_structure", "spx_vs_200dma", "real_rate_10y_tips"}  # eval_count.FAST2, verbatim
 
 
-def test_count_v2_is_r2d2s_fast_set_at_0_8_with_k_2_and_excludes_the_two_defective_ratios():
-    assert set(COUNT_INDICATOR_IDS) == R2D2_FAST2
+def test_count_set_is_r2d2s_fast_set_minus_the_curve_pair_at_0_8_and_excludes_the_two_defective_ratios():
+    assert set(COUNT_INDICATOR_IDS) == R2D2_FAST2 - {"yield_curve_10y3m", "yield_curve_10y2y"}
     assert not set(COUNT_INDICATOR_IDS) & set(EXCLUDED_FROM_SCORING)
-    assert (COUNT_THRESHOLD, PROVISIONAL_COUNT_K) == (0.8, 2)
+    assert COUNT_THRESHOLD == 0.8
+    assert PROVISIONAL_COUNT_K is None  # D3: rule 3 removed, provisionally
 
 
 def test_count_v2_ignores_the_slow_indicators_that_saturated_v1_and_counts_threshold_inclusively():
@@ -450,21 +472,42 @@ def test_count_v2_ignores_the_slow_indicators_that_saturated_v1_and_counts_thres
     assert count.considered == ("hy_oas", "real_rate_10y_tips", "vix_level")
 
 
-def test_two_fast_indicators_at_their_band_alarm_through_the_real_pipeline_and_one_does_not():
+def test_two_fast_indicators_at_their_band_no_longer_alarm_on_count_alone():
+    """D3 regression: this reading fired ALARM on count alone under k=2. Rule 3 is removed, so it must not."""
     two = _equity_reading(vix_level=0.8, hy_oas=0.8)
-    assert candidate_state_for_one_reading(
-        0.2, equity_crash_acute(two), count_for_one_dial(two), None, False) is State.ALARM
-    one = _equity_reading(vix_level=0.62)
-    one = contributions_of({c.source_id: c.contribution for c in one} | {"hy_oas": 0.8})
-    assert count_for_one_dial(one).count == 1
-    assert candidate_state_for_one_reading(
-        0.2, equity_crash_acute(one), count_for_one_dial(one), None, False) is State.WATCH  # the vix is at warning only
+    count = count_for_one_dial(two)
+    assert count.count >= 2  # the count is still computed and published
+    # Masters held quiet (the two readings also drive volatility_master; this isolates the COUNT rule).
+    assert candidate_state_for_one_reading(0.2, _vol_acute(0.3), count, None, False) is State.CALM
+
+
+def test_a_huge_count_alone_cannot_alarm_a_dial_whose_masters_are_calm():
+    big = Count(at_or_beyond=tuple(sorted(COUNT_INDICATOR_IDS)), considered=tuple(sorted(COUNT_INDICATOR_IDS)))
+    assert big.count == len(COUNT_INDICATOR_IDS)
+    assert candidate_state_for_one_reading(0.2, _vol_acute(0.3), big, None, False) is State.CALM
+
+
+def test_rule_2_still_alarms_so_alarm_is_not_lost():
+    assert candidate_state_for_one_reading(0.2, _vol_acute(0.70), _count0(), None, False) is State.ALARM
+
+
+def test_a_watch_only_masters_components_are_not_countable_so_cannot_push_count_past_any_k():
+    """D1 regression: curve_master is alarm_eligible=False; its components must not be in the count at all."""
+    watch_only = {m.master_id: m for m in EQUITY_CRASH_MASTERS}
+    assert watch_only["curve_master"].alarm_eligible is False
+    curve = {"yield_curve_10y3m", "yield_curve_10y2y"}
+    assert not curve & set(COUNT_INDICATOR_IDS)
+    count = count_for_one_dial(contributions_of({"yield_curve_10y3m": 1.0, "yield_curve_10y2y": 1.0, "vix_level": 0.9}))
+    assert count.count == 1 and not curve & set(count.considered) and not curve & set(count.at_or_beyond)
+    for master in EQUITY_CRASH_MASTERS + MONETARY_DEBASEMENT_MASTERS:
+        if not master.alarm_eligible:
+            assert not set(master.component_ids) & set(COUNT_INDICATOR_IDS), master.master_id
 
 
 def test_the_monetary_dials_count_can_never_reach_k():
     """Disclosed: of the monetary dial's indicators only real_rate_10y_tips is in R2D2's measured set."""
     reading = contributions_of({"monetisation_flag": 1.0, "real_rate_10y_tips": 1.0, "broad_dollar": 1.0})
-    assert count_for_one_dial(reading).count == 1 < PROVISIONAL_COUNT_K
+    assert count_for_one_dial(reading).count == 1
 
 
 # ========================================================== item 6: B_mid / B_high unset and documented

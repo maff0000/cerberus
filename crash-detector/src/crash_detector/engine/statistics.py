@@ -298,6 +298,11 @@ COUNT_THRESHOLD = 0.8
 #: indicator on a dial that is not named here is not counted, however high it scores: slow monthly/quarterly surveys
 #: and flags move with the calendar, not the tape, and counting them is what saturated v1. Sorted so the tuple is
 #: comparable; membership is by exact indicator id.
+#:
+#: **THE TWO YIELD-CURVE INDICATORS ARE NOT IN THIS SET (R2D2 PR #14 live re-audit, D1).** R2D2's measured FAST2 set
+#: carried ``yield_curve_10y2y`` and ``yield_curve_10y3m``, but ``curve_master`` is ``alarm_eligible=False`` (WO-1.3e):
+#: a count rule that lets a WATCH-only master's own components vote ALARM defeats that demotion. The set is therefore
+#: FAST2 minus the curve pair, so that no component of any WATCH-only master can ever be counted.
 COUNT_INDICATOR_IDS = (
     "copper_gold",
     "cboe_skew",
@@ -307,20 +312,17 @@ COUNT_INDICATOR_IDS = (
     "spx_vs_200dma",
     "vix_level",
     "vix_term_structure",
-    "yield_curve_10y2y",
-    "yield_curve_10y3m",
 )
 
-#: WO-1.3b-II (spec §3, ``k``): 3 -> 2, count v2. How many of :data:`COUNT_INDICATOR_IDS` must be at or beyond
-#: :data:`COUNT_THRESHOLD` for ``ALARM`` on count alone (:func:`candidate_state_for_one_reading` rule 3). R2D2
-#: measured k=3, 4 and 5 as never changing the result (the maximum count observed is 3); k=2 adds 3.8 points of
-#: ALARM days and lifts the share of the primary (>= 20%) declines still ahead at first ALARM from 63% to 76%
-#: (60% to 72% across all eight episodes). PROVISIONAL, and R2D2's own wording is "provisional".
-#:
-#: **THIS NUMBER IS READ AGAIN, BY THE STATE MACHINE, FOR THE FIRST TIME SINCE WO-1.3e** - the count conjunct
-#: of rule 3 was dropped then because v1 was saturated; v2 is not, so rule 3 is now a count rule and not a breadth
-#: rule (see :data:`PROVISIONAL_BREADTH_HIGH`).
-PROVISIONAL_COUNT_K = 2
+#: **UNSET, ON PURPOSE - RULE 3 (THE COUNT RULE) IS REMOVED, PROVISIONALLY (R2D2 PR #14 live re-audit, D3).** WO-1.3b-II
+#: first set ``k`` 3 -> 2 on R2D2's count v2 recommendation. R2D2 has WITHDRAWN that recommendation: count v2 added no
+#: measured detection over the masters alone, and came within one bad day of a live false ALARM off
+#: ``real_rate_10y_tips`` alone. ``ALARM`` therefore fires through rule 2 (an ``alarm_eligible`` master at or beyond its
+#: own stress threshold) ONLY, until count is properly recalibrated. **This is a provisional removal, not a permanent
+#: one**: ``None`` means "no value; the rule does not exist" (as :data:`PROVISIONAL_BREADTH_MID` and
+#: :data:`PROVISIONAL_BREADTH_HIGH`), and restoring the rule is assigning an integer here after that recalibration, and
+#: nothing else. The count is still COMPUTED and PUBLISHED as context.
+PROVISIONAL_COUNT_K = None
 
 #: **UNSET, ON PURPOSE (WO-1.3b-II; DECISION-RULE.md §10).** ``B_mid`` is the breadth at which breadth ALONE, when
 #: also rising, would say WATCH under rule 4. R2D2 could find no value for it that the store supports: day-level AUC
@@ -1373,13 +1375,14 @@ def candidate_state_for_one_reading(
     ):
         return State.ALARM
 
-    # RULE 3. THE COUNT RULE (WO-1.3b-II, COUNT V2). `PROVISIONAL_COUNT_K` or more of the fast, market-priced
+    # RULE 3. THE COUNT RULE - OFF WHILE PROVISIONAL_COUNT_K IS UNSET (R2D2 PR #14 live re-audit, D3: count v2 is
+    # withdrawn; ALARM fires through rule 2 only). When set: `PROVISIONAL_COUNT_K` or more of the fast, market-priced
     # indicators of COUNT_INDICATOR_IDS at or beyond COUNT_THRESHOLD fires ALARM on its own. This is R2D2's
     # `eval_count.py` semantics exactly: her harness adds a pseudo-master scoring 1.0 when the count reaches k,
     # which fires the same stress rule 2 reads. It REPLACES the breadth rule that stood here from WO-1.3a (breadth
     # >= B_high, with count; breadth alone since WO-1.3e): B_high is unset and that rule was never reached in
     # 2,514 replayed days (see PROVISIONAL_BREADTH_HIGH). `breadth` is still validated above and still published.
-    if count.count >= PROVISIONAL_COUNT_K:
+    if PROVISIONAL_COUNT_K is not None and count.count >= PROVISIONAL_COUNT_K:
         return State.ALARM
 
     # RULE 4. A master at ITS OWN warning threshold fires WATCH. WO-1.3b-II: THE BREADTH LIMB IS OFF while

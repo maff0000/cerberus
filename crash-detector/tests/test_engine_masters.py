@@ -113,8 +113,6 @@ def test_a_clean_equity_reading_names_the_master_that_is_extreme():
         "hy_oas",
         "vix_level",
         "vix_term_structure",
-        "yield_curve_10y2y",
-        "yield_curve_10y3m",
     )
 
 
