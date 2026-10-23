@@ -57,9 +57,9 @@ import pytest
 
 from crash_detector.dials.dialset import DIAL_IDS
 from crash_detector.dials.scores import EQUITY_DIAL_ID
+from crash_detector.engine import statistics as engine_statistics
 from crash_detector.engine.statistics import (
-    PROVISIONAL_BREADTH_HIGH,
-    PROVISIONAL_BREADTH_MID,
+    PROVISIONAL_ACUTE_RISE_DEADBAND,
     PROVISIONAL_BREADTH_RISE_DEADBAND,
     PROVISIONAL_EXIT,
     PROVISIONAL_STRESS,
@@ -132,6 +132,9 @@ def _acute_of(*scores: float) -> Acute:
             master_id=f"master_{position}",
             dial_id=DIAL,
             score=score,
+            warning_threshold=PROVISIONAL_WARNING,
+            stress_threshold=PROVISIONAL_STRESS,
+            exit_threshold=PROVISIONAL_EXIT,
             alarm_eligible=True,
         )
         for position, score in enumerate(scores, start=1)
@@ -160,6 +163,12 @@ def _unknown_acute(dial_id: str = DIAL) -> AcuteUnknown:
     )
 
 
+def _candidate(reading: dict) -> State:
+    """The CANDIDATE a reading calls for. ``alarm_lock_armed`` is the wrapper's argument, not the candidate function's."""
+    stats = {k: v for k, v in reading.items() if k != "alarm_lock_armed"}
+    return candidate_state_for_one_reading(breadth_20_rows_ago=None, **stats)
+
+
 def calm_reading(**overrides) -> dict:
     """RULE 6. Masters parked in the hysteresis gap, breadth low, nothing counted."""
     return {
@@ -167,6 +176,7 @@ def calm_reading(**overrides) -> dict:
         "acute": _acute_of(QUIET, QUIET),
         "count": _count_of(0),
         "trend_confirmed": False,
+        "alarm_lock_armed": False,
         **overrides,
     }
 
@@ -178,6 +188,7 @@ def watch_reading(**overrides) -> dict:
         "acute": _acute_of(AT_WARNING, 0.10),
         "count": _count_of(0),
         "trend_confirmed": False,
+        "alarm_lock_armed": False,
         **overrides,
     }
 
@@ -189,6 +200,7 @@ def alarm_reading(**overrides) -> dict:
         "acute": _acute_of(AT_STRESS, 0.10),
         "count": _count_of(0),
         "trend_confirmed": False,
+        "alarm_lock_armed": False,
         **overrides,
     }
 
@@ -204,6 +216,7 @@ def recovering_reading(**overrides) -> dict:
         "acute": _acute_of(*UNDER_EXIT),
         "count": _count_of(0),
         "trend_confirmed": True,
+        "alarm_lock_armed": False,
         **overrides,
     }
 
@@ -215,6 +228,7 @@ def unknown_reading(**overrides) -> dict:
         "acute": _unknown_acute(),
         "count": _count_of(0),
         "trend_confirmed": False,
+        "alarm_lock_armed": False,
         **overrides,
     }
 
@@ -308,7 +322,9 @@ def test_the_readings_in_this_file_compute_the_candidates_they_are_named_for():
     assert all(score <= PROVISIONAL_EXIT for score in UNDER_EXIT)
 
     def candidate(reading: dict) -> State:
-        return candidate_state_for_one_reading(breadth_20_rows_ago=None, **reading)
+        # alarm_lock_armed is the WRAPPER's parameter, not the candidate function's.
+        stats = {k: v for k, v in reading.items() if k != "alarm_lock_armed"}
+        return candidate_state_for_one_reading(breadth_20_rows_ago=None, **stats)
 
     assert candidate(calm_reading()) is State.CALM
     assert candidate(watch_reading()) is State.WATCH
@@ -519,7 +535,7 @@ def test_rule_5s_previous_state_gate_corrects_the_candidate_before_persistence()
     RECOVERY — asserted last, because it is the same rule with the history empty.
     """
     reading = recovering_reading()
-    assert candidate_state_for_one_reading(breadth_20_rows_ago=None, **reading) is State.RECOVERY
+    assert _candidate(reading) is State.RECOVERY
 
     from_calm = official_state_for_dial(
         history=(_row(State.CALM, as_of=AS_OF - A_CADENCE),), as_of=AS_OF, **reading
@@ -589,7 +605,7 @@ def test_alarm_never_exits_straight_to_calm_the_candidate_is_corrected_to_watch(
     and not a blanket ban on CALM candidates.
     """
     reading = calm_reading()
-    assert candidate_state_for_one_reading(breadth_20_rows_ago=None, **reading) is State.CALM
+    assert _candidate(reading) is State.CALM
 
     from_alarm = official_state_for_dial(
         history=(_row(State.ALARM, as_of=AS_OF - A_CADENCE),), as_of=AS_OF, **reading
@@ -800,7 +816,7 @@ def test_a_dial_leaving_unknown_is_floored_at_watch_and_never_resolves_straight_
     keyed on the previous state and is not a blanket ban on CALM candidates.
     """
     reading = calm_reading()
-    assert candidate_state_for_one_reading(breadth_20_rows_ago=None, **reading) is State.CALM
+    assert _candidate(reading) is State.CALM
 
     from_unknown = official_state_for_dial(
         history=(_row(State.UNKNOWN, as_of=AS_OF - A_CADENCE),), as_of=AS_OF, **reading
@@ -867,7 +883,7 @@ def test_a_recovery_reading_out_of_unknown_is_floored_because_rule_5s_gate_runs_
     """
     reading = recovering_reading()
     assert (
-        candidate_state_for_one_reading(breadth_20_rows_ago=None, **reading) is State.RECOVERY
+        _candidate(reading) is State.RECOVERY
     )
 
     row = official_state_for_dial(
@@ -1004,6 +1020,12 @@ def test_acute_rising_reads_the_previous_rows_acute_and_claims_nothing_without_o
     assert _acute_rising(_acute_of(0.55, 0.10), previous) is True
     assert _acute_rising(_acute_of(0.30, 0.10), previous) is False
     assert _acute_rising(_acute_of(0.40, 0.10), previous) is False
+    # WO-1.3b-II: THE DEADBAND. A rise has to clear PROVISIONAL_ACUTE_RISE_DEADBAND (0.02) over the previous row's
+    # acute: a bare uptick is band arithmetic, and a move of exactly the deadband is not a rise either (strict).
+    assert PROVISIONAL_ACUTE_RISE_DEADBAND == 0.02 == PROVISIONAL_BREADTH_RISE_DEADBAND
+    assert _acute_rising(_acute_of(0.41, 0.10), previous) is False
+    assert _acute_rising(_acute_of(0.40 + PROVISIONAL_ACUTE_RISE_DEADBAND, 0.10), previous) is False
+    assert _acute_rising(_acute_of(0.43, 0.10), previous) is True
     assert _acute_rising(_acute_of(0.55), None) is False
     assert _acute_rising(_acute_of(0.55), _row(State.UNKNOWN)) is False
 
@@ -1018,7 +1040,7 @@ def test_acute_rising_reads_the_previous_rows_acute_and_claims_nothing_without_o
     assert falling.acute_rising is False
 
 
-def test_the_breadth_lookback_needs_20_rows_and_reads_the_20th_one_specifically():
+def test_the_breadth_lookback_needs_20_rows_and_reads_the_20th_one_specifically(monkeypatch):
     """``_breadth_rows_ago``: ``None`` under 20 rows, and the row 20 back once there are.
 
     Spec §7's provisional reading of "breadth rising over the last 20 readings" is a LOOKBACK
@@ -1049,13 +1071,23 @@ def test_the_breadth_lookback_needs_20_rows_and_reads_the_20th_one_specifically(
     assert _breadth_rows_ago(tuple(interrupted)) is None
 
     here = 0.40
-    assert PROVISIONAL_BREADTH_MID <= here < PROVISIONAL_BREADTH_HIGH
+    # WO-1.3b-II: B_mid IS UNSET, so the breadth-rising limb is off and the lookback number is derived and handed to
+    # rule 4 but read by NOTHING. The first pair below proves that; the second pair sets a B_mid (the day-one calibration
+    # path, the only thing that has to change) and shows the same derivation is still wired through the resolver, which is
+    # what this test was written to establish.
+    assert engine_statistics.PROVISIONAL_BREADTH_MID is None
+    assert engine_statistics.PROVISIONAL_BREADTH_HIGH is None
     # CLEAR OF THE DEADBAND, NOT MERELY ABOVE THE EARLIER NUMBER (WO-1.3e): rule 4's limb
     # wants a rise bigger than PROVISIONAL_BREADTH_RISE_DEADBAND, so a fixture that only
-    # just cleared 0.30 would now fail here for a reason that has nothing to do with the
+    # just cleared 0.30 would fail here for a reason that has nothing to do with the
     # lookback this test is about.
     assert here > 0.30 + PROVISIONAL_BREADTH_RISE_DEADBAND
 
+    off_with_the_lookback = official_state_for_dial(
+        history=_history_of(BREADTH_LOOKBACK_ROWS), as_of=AS_OF, **calm_reading(breadth=here))
+    assert off_with_the_lookback.candidate_state is State.CALM  # breadth rose 0.30 -> 0.40 and nothing reads it
+
+    monkeypatch.setattr(engine_statistics, "PROVISIONAL_BREADTH_MID", 0.35)
     with_the_lookback = official_state_for_dial(
         history=_history_of(BREADTH_LOOKBACK_ROWS),
         as_of=AS_OF,

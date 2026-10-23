@@ -188,6 +188,7 @@ Stated plainly, not softened.
 8. **ARCHITECTURAL GAP — no override for one extreme signal (R-1).** The dial can never be dominated by a single input. Illustration, current inputs: if the three REQUIRED tier-1 indicators (`hy_oas`, `yield_curve_10y3m`, `yield_curve_10y2y`) all went to full stress (s = 1), the numerator would rise by 3·(1−0.05)+3·(1−0.204)+3·(1−0.32) = 7.278, giving (15.663413+7.278)/46 = **0.4987** — a dial still below one half after the credit market and the curve have both fully signalled. There is no worst-of, no breach flag and no escalation path. Conversely, a 0.34 reading is compatible with a single input already at maximum stress.
 9. **Absence is renormalised, not zero-filled (R-5).** With `sloos_bank_lending` (×2) MISSING the dial is 15.663413/46 = 0.3405. Had sloos been present and at 0 the dial would be 15.663413/48 = 0.3263; at 1, 17.663413/48 = 0.3680. Separately, `buffett_indicator` (as-of 2026-06-30, window 120 d) ages out on or about 2026-10-28; until the next Z.1 release the dial would read (15.663413−2.325697)/(46−3) = **0.3102** purely because an input went stale.
 10. **Coverage is overstated (R-10).** The GUI's `coverage.fraction` is 1.0 and `pending` is empty for this dial, although `sloos_bank_lending` is MISSING. The figure (`wiring.coverage`) counts every *wired* indicator as covered, whether or not it currently has a value.
+   *WO-1.3b-II update:* `breadth_rsp_spy` and `credit_stress_hyg_lqd` are EXCLUDED from scoring (reported pending, not 0). Current figures: coverage **43/48**, and with `sloos_bank_lending` MISSING scored weight **41/48**. The §1.2 table is recomputed to this (Σw 41, Σw·s 13.531722, M = 0.330042) from the same 2026-10-12 snapshot values; items 9 and 11's sloos arithmetic below still quotes the pre-exclusion 46-weight figures and is a historical illustration.
 11. **Dial freshness.** The dial's as-of (`2026-06-30`) is the oldest used input (`buffett_indicator`). The status is **Degraded**, not Value, while `sloos_bank_lending` is missing. (The GUI's `inputs_used` list is empty for a Degraded reading, which is a display property, not a computation one.)
 
 ## 1.5 Worked example — live readings at `2026-10-13T08:37:58.298991Z`
@@ -210,8 +211,8 @@ Raw values are the GUI's `value` fields (full double precision used; table shows
 | `fed_funds_rate` | 3.88 | 2 → 5.5 | 0.537143 | 0.537143 | 2 | 1.074286 |
 | `m2_yoy` | 5.65891 | 6 → -2 | 0.042636 | 0.042636 | 2 | 0.085273 |
 | `shiller_cape` | 99.1439 | 50 → 99 | 1.002937 | 1.000000 ◀ clamped | 3 | 3.000000 |
-| `breadth_rsp_spy` | 0.273988 | 0.29 → 0.25 | 0.400302 | 0.400302 | 3 | 1.200905 |
-| `credit_stress_hyg_lqd` | 0.753461 | 0.8 → 0.7 | 0.465393 | 0.465393 | 2 | 0.930786 |
+| `breadth_rsp_spy` | 0.273988 | 0.29 → 0.25 | 0.400302 | EXCLUDED (WO-1.3b-II) | (3, not in Σw) | — |
+| `credit_stress_hyg_lqd` | 0.753461 | 0.8 → 0.7 | 0.465393 | EXCLUDED (WO-1.3b-II) | (2, not in Σw) | — |
 | `copper_gold` | 1.59846 | 2 → 1.2 | 0.501927 | 0.501927 | 2 | 1.003854 |
 | `vix_term_structure` | 0.848299 | 0.85 → 1.05 | -0.008505 | 0.000000 ◀ clamped | 2 | 0.000000 |
 | `spx_vs_200dma` | 7.61013 | 5 → -10 | -0.174009 | 0.000000 ◀ clamped | 1 | 0.000000 |
@@ -220,10 +221,10 @@ Raw values are the GUI's `value` fields (full double precision used; table shows
 | `sloos_bank_lending` | **none — MISSING** | 0 → 40 | EXCLUDED | EXCLUDED | (2, not in Σw) | — |
 | `private_credit_stress` | 9.34993 | 5 → 30 | 0.173997 | 0.173997 | 2 | 0.347994 |
 | `constituent_breadth_200dma` | 64 | 70 → 30 | 0.150000 | 0.150000 | 1 | 0.150000 |
-| **Σ** | | | | | **46** | **15.663413** |
+| **Σ** | | | | | **41** | **13.531722** |
 
 ```
- M_equity = Σ w·s / Σ w = 15.663413 / 46 = 0.340509        (GUI: 0.3405089786134545)      status: DEGRADED (sloos_bank_lending missing)
+ M_equity = Σ w·s / Σ w = 13.531722 / 41 = 0.330042        (same 2026-10-12 snapshot, recomputed after WO-1.3b-II; was 15.663413 / 46 = 0.340509)      status: DEGRADED (sloos_bank_lending missing)
 ```
 
 Raw components of the derived inputs (read from the ingestion store, same instant):

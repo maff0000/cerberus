@@ -676,20 +676,23 @@ def test_scored_coverage_is_math_mds_worked_monetary_figure(wiring):
 
 
 def test_scored_coverage_is_math_mds_worked_equity_figure(wiring):
-    """MATH.md §1.4 item 10: ``coverage.fraction`` is 1.0 for the equity dial while
-    ``sloos_bank_lending`` is MISSING. By scored weight the dial is a mean over 46 of 48."""
+    """MATH.md §1.4 item 10: ``coverage.fraction`` ignores a wired indicator whose feed is MISSING (here
+    ``sloos_bank_lending``); by scored weight the dial is a mean over fewer. WO-1.3b-II moved both numbers: the two
+    EXCLUDED indicators (``breadth_rsp_spy`` x3, ``credit_stress_hyg_lqd`` x2) are bound but not wired, so
+    ``coverage.fraction`` is 43/48 and the reading with ``sloos`` missing as well is a mean over 41 of 48."""
+    excluded = {"breadth_rsp_spy", "credit_stress_hyg_lqd"}
     scored = tuple(
         source_id for source_id in _bound_weights(EQUITY_DIAL_ID)
-        if source_id != "sloos_bank_lending"
+        if source_id != "sloos_bank_lending" and source_id not in excluded
     )
 
     answer = scored_coverage(wiring, EQUITY_DIAL_ID, _contributions(EQUITY_DIAL_ID, scored))
 
-    assert answer["scored_weight"] == 46.0
+    assert answer["scored_weight"] == 41.0
     assert answer["nominal_weight"] == 48.0
-    assert answer["fraction"] == pytest.approx(46.0 / 48.0)
-    assert answer["not_scored"] == ["sloos_bank_lending"]
-    assert coverage(wiring)[EQUITY_DIAL_ID]["fraction"] == 1.0
+    assert answer["fraction"] == pytest.approx(41.0 / 48.0)
+    assert sorted(answer["not_scored"]) == sorted(excluded | {"sloos_bank_lending"})
+    assert coverage(wiring)[EQUITY_DIAL_ID]["fraction"] == pytest.approx(43.0 / 48.0)
 
 
 def test_scored_coverage_refuses_another_dials_contribution(wiring):

@@ -65,7 +65,7 @@ from ingestion.catalog import INGREDIENTS, NOT_TRACTABLE, PARTIAL, Ingredient, w
 from ingestion.store import SqliteStore
 
 __all__ = ["Wiring", "build_wiring", "coverage", "scored_coverage", "observations_from_store", "evaluate_from_store",
-           "DERIVED_FROM", "HELD_BINDINGS", "WIRED_DESPITE_PENDING_STATUS", "derive_from_store", "derived_as_of"]
+           "DERIVED_FROM", "HELD_BINDINGS", "EXCLUDED_FROM_SCORING", "WIRED_DESPITE_PENDING_STATUS", "derive_from_store", "derived_as_of"]
 
 ROOT = Path(__file__).resolve().parents[1]
 MAPPING_YAML = ROOT / "governance" / "mapping" / "indicator_mapping.yaml"
@@ -126,6 +126,32 @@ HELD_BINDINGS: dict = {
     "copper/gold is gold outperforming, which is debasement, so the ratified row now declares `low_is_worse` on "
     "both dials. What is still missing is the band, and declaring one puts a x2 weight on the monetary dial on "
     "numbers nobody has calibrated - a band decision, not a wiring one.",
+}
+
+#: WO-1.3b-II (R2D2 verdict ``r2d2:wo:cerberus_wo13b2:verdict``; REPORT.md §6 F2/F3, ``out_reference/saturation.md``).
+#: Indicators the ratified mapping binds and the feeds still COLLECT, that are NOT SCORED because the figure is
+#: measurably not a stress measure. They are reported MISSING (``wiring.pending``, so ``coverage`` and the scored-weight
+#: fraction name them as unscored) and NEVER scored 0.0 - a zero here would be the loudest CALM reading on the board
+#: and the very CD-AC-001 failure this product refuses. Because they are not in the dial's model they feed neither
+#: ``breadth`` nor ``count`` nor ``acute``, which is "mark them missing/Degraded wherever they currently feed breadth or
+#: count" done at the one place that decides what a dial is made of.
+#:
+#: The data is still collected (the catalog is untouched) so a re-spec has history to be tested against.
+#:
+#: * ``breadth_rsp_spy`` (tier 1, x3): R2D2 measured it as 0.00 on every one of 1,713 days. An absolute RSP/SPY price
+#:   ratio is not stationary (0.294-0.389 observed against a band of 0.29 -> 0.25), so it can never reach its own
+#:   band and does nothing but dilute the breadth denominator by its x3 weight. DEAD.
+#: * ``credit_stress_hyg_lqd`` (tier 2, x2): runs 1.017 -> 0.599 (median 0.976 in 2007, 0.65-0.69 in 2019-22), which is
+#:   unadjusted-close dividend drift and not credit stress (the HYG first print, 104.35 on 2007-04-11, is consistent
+#:   with unadjusted closes; 28% of days score >= 0.9 from decay alone). It saturated count v1. NO STRESS SIGNAL.
+#:
+#: Each comes back by a re-spec that fixes the construction (a returns-based or dividend-adjusted ratio), not by
+#: deleting this entry.
+EXCLUDED_FROM_SCORING: dict = {
+    "breadth_rsp_spy": "EXCLUDED (WO-1.3b-II): scores 0.00 on every day R2D2 replayed (1,713 of 1,713) because an "
+    "absolute RSP/SPY price ratio is not stationary; it only dilutes the breadth denominator. Dead, not scored.",
+    "credit_stress_hyg_lqd": "EXCLUDED (WO-1.3b-II): the HYG/LQD price ratio decays from ~1.0 (2007) to ~0.65-0.75 "
+    "(2016+) on unadjusted-close drift, not credit stress. Carries no stress signal, not scored.",
 }
 
 #: The as-of rule for a DERIVED figure whose date is the quarter START (the engine returns the components' own
@@ -215,9 +241,11 @@ def build_wiring(config_snapshot_id: str = "cfg-wo-1.3-live") -> Wiring:
     serving = {i for ing in INGREDIENTS for i in ing.serves}
     live = [r for r in rows
             if (r["id"] in direct or r["id"] in derived)
-            and (r.get("status") != "registration_pending" or r["id"] in WIRED_DESPITE_PENDING_STATUS)]
+            and (r.get("status") != "registration_pending" or r["id"] in WIRED_DESPITE_PENDING_STATUS)
+            and r["id"] not in EXCLUDED_FROM_SCORING]
     live_ids = {r["id"] for r in live}
-    pending = {r["id"]: _pending_reason(r, serving) for r in rows if r["id"] not in live_ids}
+    pending = {r["id"]: EXCLUDED_FROM_SCORING.get(r["id"]) or _pending_reason(r, serving)
+               for r in rows if r["id"] not in live_ids}
 
     mappings, sources, cache = [], [], {}
     for r in live:

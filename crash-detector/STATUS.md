@@ -203,6 +203,9 @@ python3 -m pytest -q                            # 2,129 tests, ~70 s, no network
 
 There is intentionally no install step (see `crash-detector/README.md`). Do not read a green test run as "the detector works": it means the *machinery that refuses to render absence as calm* is intact. Raw data can now be ingested (§4a) but no dial consumes it yet.
 
+**WO-1.3b-II (2026-10-22):** decision-rule changes from R2D2's replay verdict implemented (stress 0.70, post-ALARM lock + S&P trend, two indicators excluded, count k=2, acute deadband); B_mid/B_high unset; OAS request window widened to 2023-10-23 (backfill not re-run); not deployed, awaiting R2D2 live re-audit. See PID.md.
+**WO-1.3b-II follow-up (2026-10-23):** R2D2's PR #14 live re-audit, D1-D3: curve indicators out of the count set; lock yields to the UNKNOWN-exit floor; count rule (rule 3) removed provisionally (k unset). Still not deployed, not AMBER.
+
 ## 7. Map of this directory
 
 | Path | Contents |

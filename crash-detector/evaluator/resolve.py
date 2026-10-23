@@ -22,6 +22,14 @@ STANDS and the schema is untouched (item 1 below is unchanged); what is new is t
 outage can no longer say deploy. A second candidate correction, in the same place and style
 as round 1's and chained off the same previous state — its own section below.
 
+AMENDED A FOURTH TIME BY WO-1.3b-II for R2D2's F1 (the re-entry back door), her ``eval_lock.py``, and her
+``acute_rising`` finding: **THE POST-ALARM LOCK**. ``ALARM -> WATCH -> CALM`` re-opened the dial on two persistence
+counts and no trend test, so RECOVERY's "both conditions" gate was walked around: in R2D2's control history there were
+nine premature re-opens, eight of which still had >= 10% to fall (mean further fall -27.6%). The lock is the
+:func:`official_state_for_dial` parameter ``alarm_lock_armed`` - "an ALARM row exists that no CALM or RECOVERY row has
+followed" - and what it does is in its own section below. ``acute_rising`` also gained a deadband
+(:data:`~crash_detector.engine.statistics.PROVISIONAL_ACUTE_RISE_DEADBAND`, 0.02).
+
 Nothing else in R2D2's RED verdict is addressed in THIS module. Rule 3's breadth-only fix
 (B3) and the ``curve_master``/``fiscal_master`` demotion were round 2's and belong to
 ``engine/statistics.py``, where rule 2's eligibility and rule 3's conjunct are read; nothing
@@ -313,6 +321,7 @@ from crash_detector.engine.statistics import (
     Acute,
     AcuteUnknown,
     Count,
+    PROVISIONAL_ACUTE_RISE_DEADBAND,
     State,
     candidate_state_for_one_reading,
 )
@@ -404,7 +413,10 @@ def _acute_rising(acute: Acute, previous: Union[MachineStateRow, None]) -> bool:
     """
     if previous is None or previous.acute is None:
         return False
-    return acute.score > previous.acute
+    # WO-1.3b-II: THE DEADBAND (R2D2 REPORT.md §5), breadth's own two points. `acute` is a max over banded
+    # weighted means, so a rise of a few thousandths is band arithmetic, and a bare `>` flapped the flag. STRICT
+    # still: a move of exactly the deadband is not a rise. The lookback is unchanged (it is one row here).
+    return acute.score > previous.acute + PROVISIONAL_ACUTE_RISE_DEADBAND
 
 
 def official_state_for_dial(
@@ -415,6 +427,7 @@ def official_state_for_dial(
     acute,
     count: Count,
     trend_confirmed: bool,
+    alarm_lock_armed: bool,
 ) -> MachineStateRow:
     """THE DIAL'S OFFICIAL STATE FOR THIS READING, as the row that is ready to be appended.
 
@@ -424,6 +437,16 @@ def official_state_for_dial(
     fewer rows than that is a history that is genuinely too young and is read as "cannot
     confirm rising", not as "did not rise". An EMPTY history is this dial's first ever
     evaluation and is handled explicitly (see the module docstring).
+
+    ``alarm_lock_armed`` (WO-1.3b-II) is whether the POST-ALARM LOCK holds this dial: True means the dial's history
+    holds an ALARM that no CALM or RECOVERY row has followed (the store's
+    :meth:`~evaluator.history_store.MachineStateHistoryStore.alarm_lock_armed` answers it, over the whole
+    history and not over the :data:`BREADTH_LOOKBACK_ROWS` window ``history`` carries - the lock must outlive the
+    window). **IT HAS NO DEFAULT, AND THAT IS THE POINT:** a caller that forgot it would silently run without the
+    lock, which is the back door. A caller whose dial has no lock - today, the monetary dial, see
+    :func:`evaluator.pass_once.one_pass_for_dial` - says ``False`` in words. While True: a ``RECOVERY`` candidate
+    is valid whatever the previous state EXCEPT UNKNOWN (RECOVERY is the ONLY way out; a dial leaving UNKNOWN still floors at WATCH, R2D2 PR #14 D2), and a ``CALM`` candidate is floored at
+    ``WATCH``. The lock never makes a state MORE permissive.
 
     ``breadth``, ``acute``, ``count`` and ``trend_confirmed`` are this reading's statistics,
     the same four values
@@ -465,8 +488,18 @@ def official_state_for_dial(
     # with the dial's last row not ALARM, spec §3's "Else" chain falls past rule 5 to rule
     # 6. A dial with no history at all has no previous ALARM either, so its first reading
     # can never be a RECOVERY — which is the correct reading of "the dial was in ALARM".
-    if candidate is State.RECOVERY and (
-        previous is None or previous.machine_state is not State.ALARM
+    #
+    # WO-1.3b-II: with the lock armed, a RECOVERY candidate stands whatever the previous state is. R2D2's
+    # `run_machine` (engine_run.py) gates it on `armed` and not on `prev == ALARM`: the exit from ALARM runs
+    # ALARM -> WATCH on the way, and a dial in WATCH that has genuinely quietened AND confirmed its trend is
+    # exactly what RECOVERY is for. Without this a dial would have to sit in ALARM, officially, to recover.
+    #
+    # R2D2 PR #14 live re-audit, D2: THE LOCK DOES NOT OVERRIDE THE UNKNOWN-EXIT FLOOR. A dial whose last official state
+    # is UNKNOWN still floors at WATCH for one reading, armed or not: the armed term is False when `previous` is
+    # UNKNOWN, so the RECOVERY candidate is corrected to CALM here and the floor below then makes it WATCH.
+    if candidate is State.RECOVERY and not (
+        (alarm_lock_armed and not (previous is not None and previous.machine_state is State.UNKNOWN))
+        or (previous is not None and previous.machine_state is State.ALARM)
     ):
         candidate = State.CALM
 
@@ -490,7 +523,12 @@ def official_state_for_dial(
     # UNKNOWN row is not a recovery, the gate makes it CALM, and this floor then makes it
     # WATCH instead of letting it be CALM on one reading. Hence the gate runs FIRST.
     if previous is not None and candidate is State.CALM:
-        if previous.machine_state is State.ALARM:
+        if previous.machine_state is State.ALARM or alarm_lock_armed:
+            # WO-1.3b-II: `or alarm_lock_armed` - THE POST-ALARM LOCK (R2D2's F1, `eval_lock.py`). ALARM already
+            # could not exit straight to CALM; what it could do was pass THROUGH WATCH and then walk to CALM on
+            # two persistence counts, never meeting RECOVERY's gate. Armed, a CALM candidate is WATCH on every
+            # reading until a RECOVERY row (or, in the store's reading, a CALM one) has followed the ALARM. The
+            # persistence clock then counts WATCH against WATCH and the dial holds.
             # ALARM MAY NOT EXIT STRAIGHT TO CALM (R2D2's WO-1.3b finding B2). ON EVERY
             # READING WHILE THE DIAL IS STILL IN ALARM, not only the first: the condition is
             # read off the preceding row each time and is extinguished by the transition it

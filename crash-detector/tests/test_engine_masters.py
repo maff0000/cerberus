@@ -106,14 +106,13 @@ def test_a_clean_equity_reading_names_the_master_that_is_extreme():
     assert type(count) is Count
     assert count.at_or_beyond == ("vix_level",)
     assert count.count == 1
-    # Counted over what the reading carried, which is the same set breadth averages over.
+    # COUNT V2 (WO-1.3b-II): counted over the FAST, market-priced indicators the reading carried (R2D2's FAST2 set),
+    # which is a subset of what breadth averages over: chicago_fed_nfci is a weekly survey-index and is not
+    # considered, however high it scores.
     assert count.considered == (
-        "chicago_fed_nfci",
         "hy_oas",
         "vix_level",
         "vix_term_structure",
-        "yield_curve_10y2y",
-        "yield_curve_10y3m",
     )
 
 
@@ -146,13 +145,12 @@ def test_a_clean_monetary_reading_names_the_master_that_is_extreme():
     count = count_for_one_dial(reading)
 
     assert type(count) is Count
-    assert count.at_or_beyond == ("broad_dollar",)
-    assert count.count == 1
-    assert count.considered == (
-        "broad_dollar",
-        "monetisation_flag",
-        "real_rate_10y_tips",
-    )
+    # COUNT V2 (WO-1.3b-II): only R2D2's FAST2 indicators are counted, and of the monetary dial's three only
+    # real_rate_10y_tips is among them, so broad_dollar at 0.95 is NOT counted and the monetary count can never reach
+    # k = 2. That is a property of the measured set, not an oversight: R2D2 measured count v2 on the equity dial only.
+    assert count.at_or_beyond == ()
+    assert count.count == 0
+    assert count.considered == ("real_rate_10y_tips",)
 
 
 def test_the_two_watch_only_masters_are_carried_as_demoted_and_still_set_the_acute():

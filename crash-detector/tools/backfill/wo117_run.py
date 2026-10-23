@@ -142,6 +142,8 @@ __all__ = [
     "CALENDAR_TIMEOUT_SECONDS",
     "EPISODES",
     "LEAD_IN_CALENDAR_DAYS",
+    "OAS_FRED_FLOOR",
+    "OAS_WIDENED_ROWS",
     "Episode",
     "assemble_dates",
     "backfillable_population",
@@ -214,6 +216,12 @@ EPISODES: Tuple[Episode, ...] = (
     Episode("2022", "2022 (incl. gilt)", "2022-01-01", "2022-12-31"),
     Episode("apr-2025", "April 2025", "2025-03-01", "2025-05-31"),
 )
+
+#: WO-1.3b-II item 8. FRED keeps only three years of the ICE BofA OAS series (since April 2026), so the earliest
+#: observation it will serve is 2023-10-23. The April-2025 window opens 2024-12-31; for these two rows the request
+#: window is widened back to that floor, contiguously. Every other row, and every other episode, is unchanged.
+OAS_FRED_FLOOR = "2023-10-23"
+OAS_WIDENED_ROWS = ("fred.BAMLH0A0HYM2", "fred.BAMLC0A0CM")
 
 #: The deadline for ONE published-calendar GET. The three readers require ``timeout_seconds`` and
 #: supply no default on purpose — "a FRED body is tens of thousands of rows where a live poll is
@@ -422,6 +430,16 @@ def assemble_dates(published: Sequence[str], episodes: Sequence[Episode],
     return tuple(sorted(set(kept)))
 
 
+def _oas_widened_window(ing: Ingredient, episodes: Sequence[Episode]) -> Union[Tuple[str, str], None]:
+    """``[OAS_FRED_FLOOR, April-2025 window start)`` for the two OAS rows when that episode is selected, else None."""
+    if ing.source_id not in OAS_WIDENED_ROWS:
+        return None
+    apr = [e for e in episodes if e.key == "apr-2025"]
+    if not apr or apr[0].window_start <= OAS_FRED_FLOOR:
+        return None
+    return (OAS_FRED_FLOOR, apr[0].window_start)
+
+
 def row_dates(ing: Ingredient, episodes: Sequence[Episode], *,
               timeout_seconds: float = CALENDAR_TIMEOUT_SECONDS,
               getter: Callable[..., str] = http_get,
@@ -444,7 +462,12 @@ def row_dates(ing: Ingredient, episodes: Sequence[Episode], *,
         fetched = date_source(ing) != "formula"
         if cache is not None:
             cache[key] = published
-    return assemble_dates(published, episodes, cap=cap), fetched
+    dates = assemble_dates(published, episodes, cap=cap)
+    widened = _oas_widened_window(ing, episodes)
+    if widened is not None:
+        extra = [d for d in published if widened[0] <= d < widened[1]]
+        dates = tuple(sorted(set(dates) | set(extra[:cap] if cap is not None else extra)))
+    return dates, fetched
 
 
 def _clock() -> datetime:

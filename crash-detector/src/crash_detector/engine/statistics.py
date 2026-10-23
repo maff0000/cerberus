@@ -137,6 +137,9 @@ __all__ = [
     "PROVISIONAL_STRESS",
     "PROVISIONAL_EXIT",
     "COUNT_THRESHOLD",
+    "COUNT_INDICATOR_IDS",
+    "VOLATILITY_MASTER_STRESS",
+    "PROVISIONAL_ACUTE_RISE_DEADBAND",
     "PROVISIONAL_BREADTH_MID",
     "PROVISIONAL_BREADTH_HIGH",
     "PROVISIONAL_BREADTH_RISE_DEADBAND",
@@ -271,96 +274,90 @@ PROVISIONAL_STRESS = 0.85
 #: cannot flap. The gap is deliberate; its WIDTH is a placeholder like everything else here.
 PROVISIONAL_EXIT = 0.5
 
-#: PROVISIONAL (spec §1). The scaled score at or beyond which an indicator is counted by
-#: :func:`count_for_one_dial`. 0.9 means "essentially at its stress band".
-#:
-#: **READ THE MODULE DOCSTRING'S NOTE ON ``count`` BEFORE USING THIS NUMBER.** A clamped
-#: score of exactly 1.0 is counted here and clamping is saturation, not necessarily stress;
-#: that is a known, disclosed defect carried into WO-1.3b, not a property of the market.
-COUNT_THRESHOLD = 0.9
+#: WO-1.3b-II (R2D2 verdict ``r2d2:wo:cerberus_wo13b2:verdict``, REPORT.md §5). ``volatility_master``'s OWN
+#: stress threshold: 0.85 -> 0.70. It is the only master that has one. R2D2 measured it on the control history
+#: (1990-2026, leave-one-episode-out): at 0.85 the volatility master catches 7 of 10 declines >= 15%; at 0.70 it
+#: catches 10 of 10 (5 of them before the S&P is 10% off its high), and the share of the four >= 20% declines still
+#: AHEAD at first ALARM goes from 19% to 63%. The price is false-alarm spans (0.22 -> 0.52 a year, ALARM on 12.3% of
+#: days against 7.2%), which is the halt-biased cost this dial is designed to carry. 0.50-0.70 all catch 10 of 10;
+#: 0.70 is the highest that does, which is R2D2's pre-stated rule, and 0.75 loses 1990. WARNING (0.60) and EXIT
+#: (0.50) are unchanged: R2D2 found no evidence to move either. THIS IS STILL A MEASURED-IN-SAMPLE NUMBER, not an
+#: out-of-sample one (four >= 20% declines exist in 1990-2026); REPORT.md §2 says so and so does this line.
+VOLATILITY_MASTER_STRESS = 0.70
 
-#: PROVISIONAL (spec §3, ``B_mid``). The breadth at or beyond which breadth ALONE — when it
-#: is ALSO rising over the 20-reading lookback, by more than
-#: :data:`PROVISIONAL_BREADTH_RISE_DEADBAND` — is enough for ``WATCH`` under rule 4. Not
-#: calibrated, not backtested; one of spec §10's own "unset — calibration" rows.
-PROVISIONAL_BREADTH_MID = 0.35
+#: WO-1.3b-II. The scaled score at or beyond which an indicator is counted by :func:`count_for_one_dial`. COUNT V2
+#: (R2D2 REPORT.md §5, ``eval_count.py``): 0.8, from the spec's 0.9. Count v1 counted a CLAMPED 1.0 as stress and was
+#: saturated by three indicators that sit at exactly 1.0 (AUC 0.54); v2 counts only the fast, daily, market-priced
+#: inputs of :data:`COUNT_INDICATOR_IDS` at this threshold, and R2D2 found the maximum count ever observed over those
+#: is 3 of 6-10 considered. Still PROVISIONAL.
+COUNT_THRESHOLD = 0.8
 
-#: PROVISIONAL (spec §3, ``B_high``). The breadth which fires ``ALARM`` under rule 3 — ON ITS
-#: OWN since WO-1.3e. Spec §3 pairs it with ``count`` at or beyond
-#: :data:`PROVISIONAL_COUNT_K`; that conjunct was dropped on R2D2's interim recommendation
-#: (finding B3), so this band is now the WHOLE of rule 3 and the only number standing
-#: between a high breadth reading and ``ALARM``. Not calibrated.
+#: WO-1.3b-II, COUNT V2. The ONLY indicators :func:`count_for_one_dial` considers: R2D2's ``FAST2`` set, copied from
+#: ``eval_count.py`` as measured - market-priced, daily, and EXCLUDING the two defective ratios
+#: (``breadth_rsp_spy``, ``credit_stress_hyg_lqd``; see ``ingestion/wiring.py`` ``EXCLUDED_FROM_SCORING``). An
+#: indicator on a dial that is not named here is not counted, however high it scores: slow monthly/quarterly surveys
+#: and flags move with the calendar, not the tape, and counting them is what saturated v1. Sorted so the tuple is
+#: comparable; membership is by exact indicator id.
 #:
-#: Strictly ABOVE :data:`PROVISIONAL_BREADTH_MID`, asserted at import below for the reason
-#: :class:`Master` asserts ``exit < warning < stress`` about its own three: a high band at or
-#: under the mid band would have rules 3 and 4 disagree about which reading is the more
-#: serious, and the numbers being provisional is no licence for them to be incoherent.
-PROVISIONAL_BREADTH_HIGH = 0.55
+#: **THE TWO YIELD-CURVE INDICATORS ARE NOT IN THIS SET (R2D2 PR #14 live re-audit, D1).** R2D2's measured FAST2 set
+#: carried ``yield_curve_10y2y`` and ``yield_curve_10y3m``, but ``curve_master`` is ``alarm_eligible=False`` (WO-1.3e):
+#: a count rule that lets a WATCH-only master's own components vote ALARM defeats that demotion. The set is therefore
+#: FAST2 minus the curve pair, so that no component of any WATCH-only master can ever be counted.
+COUNT_INDICATOR_IDS = (
+    "copper_gold",
+    "cboe_skew",
+    "hy_oas",
+    "ig_oas",
+    "real_rate_10y_tips",
+    "spx_vs_200dma",
+    "vix_level",
+    "vix_term_structure",
+)
 
-#: PROVISIONAL (R2D2's WO-1.3b finding B1, remediated in WO-1.3e). HOW MUCH BREADTH MUST
-#: ACTUALLY HAVE RISEN over the lookback before rule 4's breadth limb will call it "rising".
-#:
-#: **THE DEFECT THIS CLOSES WAS LIVE.** Rule 4's limb compared ``here > earlier`` — a bare
-#: ``>`` — so with breadth sitting at or just past :data:`PROVISIONAL_BREADTH_MID` an uptick
-#: of 0.0001 between one reading and the reading 20 back was enough to turn ``CALM`` into a
-#: ``WATCH`` candidate, and the next 0.0001 downtick enough to turn it back. R2D2 observed
-#: exactly that flapping on the live dials. Breadth is a BANDED WEIGHTED MEAN of scaled
-#: scores, so its last decimals are the scaling bands' arithmetic and not a market signal;
-#: a rule that reads them is reading noise. The deadband says how big a move has to be
-#: before the number is allowed to mean something.
-#:
-#: Not calibrated, not backtested: 0.02 is R2D2's suggested placeholder, two breadth points
-#: on a 0-1 scale, and it is a placeholder in exactly the sense every other number here is.
-#: It is a ONE-SIDED band and deliberately so — it raises the bar for claiming a rise, and
-#: nothing anywhere reads "breadth fell", so there is no falling limb to widen symmetrically.
+#: **UNSET, ON PURPOSE - RULE 3 (THE COUNT RULE) IS REMOVED, PROVISIONALLY (R2D2 PR #14 live re-audit, D3).** WO-1.3b-II
+#: first set ``k`` 3 -> 2 on R2D2's count v2 recommendation. R2D2 has WITHDRAWN that recommendation: count v2 added no
+#: measured detection over the masters alone, and came within one bad day of a live false ALARM off
+#: ``real_rate_10y_tips`` alone. ``ALARM`` therefore fires through rule 2 (an ``alarm_eligible`` master at or beyond its
+#: own stress threshold) ONLY, until count is properly recalibrated. **This is a provisional removal, not a permanent
+#: one**: ``None`` means "no value; the rule does not exist" (as :data:`PROVISIONAL_BREADTH_MID` and
+#: :data:`PROVISIONAL_BREADTH_HIGH`), and restoring the rule is assigning an integer here after that recalibration, and
+#: nothing else. The count is still COMPUTED and PUBLISHED as context.
+PROVISIONAL_COUNT_K = None
+
+#: **UNSET, ON PURPOSE (WO-1.3b-II; DECISION-RULE.md §10).** ``B_mid`` is the breadth at which breadth ALONE, when
+#: also rising, would say WATCH under rule 4. R2D2 could find no value for it that the store supports: day-level AUC
+#: of breadth against the forward fall is 0.40 (below 0.5, so it peaks LATE), breadth at the S&P peak is about the
+#: unconditional level, and removing the breadth-rising limb moves WATCH days by -0.8 point with no change in
+#: protection. Her recommended configuration, and so the one this WO implements, runs with the limb OFF. The old
+#: placeholder 0.35 is NOT kept as a dormant default: a number nobody supports, sitting where a reader will assume it
+#: is live, is how an uncalibrated threshold ends up gating a decision. Breadth is still COMPUTED and PUBLISHED as
+#: context. ``None`` means "no value; the limb does not exist"; assigning a number here is a calibration decision for
+#: when the live 24-indicator composition has accrued (it is NOT in R2D2's measured store, whose composition lacks
+#: CAPE, Buffett, private credit and constituent breadth), and nothing else.
+PROVISIONAL_BREADTH_MID = None
+
+#: **UNSET, ON PURPOSE, AND RULE 3 IS DEAD AT TODAY'S STORE COMPOSITION (WO-1.3b-II; DECISION-RULE.md §10).**
+#: ``B_high`` was 0.55 and fired ALARM on breadth alone. The maximum breadth anywhere in R2D2's store is 0.489 and
+#: 0.55 was reached on 0.00% of 2,514 days, so the rule could not have fired in any replayed episode; and an ALARM
+#: that has never once been the thing that fired cannot be called measured. Same reasoning, same ``None``, same
+#: refusal to keep a dormant number, as :data:`PROVISIONAL_BREADTH_MID`. Rule 3 is now the COUNT rule
+#: (:data:`PROVISIONAL_COUNT_K`).
+PROVISIONAL_BREADTH_HIGH = None
+
+#: PROVISIONAL (R2D2's WO-1.3b finding B1, remediated in WO-1.3e). The size of the breadth rise that rule 4's breadth
+#: limb used to need. **NOTHING READS IT SINCE WO-1.3b-II**: the limb it served is off while :data:`PROVISIONAL_BREADTH_MID`
+#: is unset. It is kept, at its value, because it is the number the limb comes back with and the number
+#: :data:`PROVISIONAL_ACUTE_RISE_DEADBAND` matches. A reader who finds no use of it in the body has found the right thing.
 PROVISIONAL_BREADTH_RISE_DEADBAND = 0.02
 
-#: PROVISIONAL (spec §3, ``k``). How many of a dial's contributing indicators must be at or
-#: beyond :data:`COUNT_THRESHOLD` for rule 3's breadth-and-count ``ALARM``. An ``int``,
-#: because it is compared against :attr:`Count.count`, which is a LENGTH and not a
-#: measurement — there is no finite-float establishment to do on a count of names.
-#:
-#: **CURRENTLY UNUSED BY THE STATE MACHINE (WO-1.3e).** Rule 3 of
-#: :func:`candidate_state_for_one_reading` reads BREADTH ALONE since R2D2's WO-1.3b finding
-#: B3 — the count conjunct was dropped on R2D2's interim recommendation — so nothing in this
-#: package compares anything against this number today. **Do not read a state machine
-#: behaviour off it.**
-#:
-#: It is KEPT rather than deleted for two reasons. ``count`` itself is still fully computed
-#: by :func:`count_for_one_dial` and still PUBLISHED on the contract and in the state
-#: history, so the quantity this threshold is about remains a live reading. And the drop is
-#: INTERIM: a future redesign of rule 3 may reintroduce a gate over the count, for which the
-#: number spec §3 wrote down is the obvious starting point, where a deleted constant would
-#: have to be re-derived from nothing.
-#:
-#: **READ THE MODULE DOCSTRING'S NOTE ON ``count``.** Three indicators sit CLAMPED at exactly
-#: 1.0 on today's provisional bands, so this threshold is reachable by SATURATION alone. That
-#: is recorded here because it bears on any attempt to reintroduce the gate; it is NOT stated
-#: as R2D2's reason for the drop — the recommendation is theirs and this seat did not invent
-#: a rationale for it.
-PROVISIONAL_COUNT_K = 3
-
-if not PROVISIONAL_BREADTH_MID < PROVISIONAL_BREADTH_HIGH:
-    raise AssertionError(
-        f"the provisional breadth bands read mid={PROVISIONAL_BREADTH_MID}, "
-        f"high={PROVISIONAL_BREADTH_HIGH}. The two must read mid < high: spec §3 rule 3 "
-        "treats the high band as MORE serious than rule 4's mid band, and bands that "
-        "invert or coincide make the two rules describe the same reading differently."
-    )
-
-if not 0.0 < PROVISIONAL_BREADTH_RISE_DEADBAND < (
-    PROVISIONAL_BREADTH_HIGH - PROVISIONAL_BREADTH_MID
-):
-    raise AssertionError(
-        f"the breadth rise deadband reads {PROVISIONAL_BREADTH_RISE_DEADBAND} against a "
-        f"mid-to-high band of {PROVISIONAL_BREADTH_HIGH - PROVISIONAL_BREADTH_MID}. It must "
-        "be strictly positive, because a deadband of 0 IS the bare `>` comparison this "
-        "constant exists to replace and a negative one would let a FALL read as a rise; and "
-        "it must be strictly narrower than the gap between rule 4's mid band and rule 3's "
-        "high band, because a deadband at least that wide would make a rise harder to "
-        "evidence than the whole distance from WATCH's threshold to ALARM's — rule 4's limb "
-        "would then be unreachable for any reading rule 3 does not already answer."
-    )
+#: WO-1.3b-II (R2D2 REPORT.md §5, ``acute_rising``). The size of the rise in ``acute`` over the dial's previous row
+#: that ``acute_rising`` needs before it is True: ``acute > previous.acute + 0.02``, the same two points as breadth's
+#: band and for the same reason - ``acute`` is a MAX over masters that are banded weighted means, so its last decimals
+#: are band arithmetic and not market signal, and a bare ``>`` flaps. R2D2 measured the lookback (5/10/20/40 rows) as
+#: carrying no skill, slightly inverted, so the lookback STAYS as it is; only the deadband is new. The comparison stays
+#: STRICT. Epic 2 reads this flag ("no tranche while acute is rising"), at a measured cost of blocking about 44% of
+#: permitted days at the 20-row lookback with no measured risk reduction - R2D2's finding, passed on unchanged.
+PROVISIONAL_ACUTE_RISE_DEADBAND = 0.02
 
 
 @establishes(
@@ -519,7 +516,15 @@ class Master:
             )
 
 
-@establishes(master_id=str, dial_id=str, score=float, alarm_eligible=bool)
+@establishes(
+    master_id=str,
+    dial_id=str,
+    score=float,
+    warning_threshold=float,
+    stress_threshold=float,
+    exit_threshold=float,
+    alarm_eligible=bool,
+)
 @dataclass(frozen=True)
 class MasterScore:
     """ONE MASTER'S OWN SCORE for one reading, with the master and dial it belongs to.
@@ -546,14 +551,41 @@ class MasterScore:
     only alternatives are carrying it here or looking the row up by ``master_id`` in a table
     selected by ``dial_id``. That lookup is the dial-keyed dispatch PROPERTY 3 of the module
     docstring says does not exist in this module, and it is not being introduced for this.
+
+    ====================================================================================
+    WO-1.3b-II: THE THREE THRESHOLDS NOW RIDE ON THE SCORE TOO, FOR THE REASON ABOVE
+    ====================================================================================
+
+    The paragraph above was right while the thresholds were uniform and is superseded by the
+    day it said would come: ``volatility_master`` has its own stress threshold
+    (:data:`VOLATILITY_MASTER_STRESS`, 0.70), so the state machine can no longer judge every
+    score against one module-level number. The import-time uniformity assertion that used to
+    stand here said to "thread each master's OWN warning/stress/exit through the state machine
+    now - do not relax this assertion", and that is what this is: the thresholds are COPIED
+    FROM THE ROW by :func:`_master_result`, the one site that builds a score, and
+    :func:`candidate_state_for_one_reading` reads them off the score for rules 2, 4 and 5 (spec
+    §3: *its* stress, warning and exit threshold). There is no dial-keyed lookup, no table
+    selected by ``dial_id`` and no default on any of the three fields: a construction site that
+    forgot them raises instead of judging a master against a number it no longer declares.
     """
 
     #: SEALED (PO-DECISIONS-0016 ruling 2), for the reason given on :class:`Master`.
-    __slots__ = ("master_id", "dial_id", "score", "alarm_eligible")
+    __slots__ = (
+        "master_id",
+        "dial_id",
+        "score",
+        "warning_threshold",
+        "stress_threshold",
+        "exit_threshold",
+        "alarm_eligible",
+    )
 
     master_id: str
     dial_id: str
     score: float
+    warning_threshold: float
+    stress_threshold: float
+    exit_threshold: float
     alarm_eligible: bool
 
     def __post_init__(self) -> None:
@@ -564,9 +596,21 @@ class MasterScore:
                 raise TypeError(
                     f"MasterScore.{field_name} must be a str: {refusal}"
                 ) from None
-        object.__setattr__(
-            self, "score", require_finite_float("MasterScore", "score", self.score)
-        )
+        for field_name in ("score", "warning_threshold", "stress_threshold", "exit_threshold"):
+            object.__setattr__(
+                self,
+                field_name,
+                require_finite_float("MasterScore", field_name, getattr(self, field_name)),
+            )
+        # THE HYSTERESIS, REPEATED ON THE SCORE because this is the type the state machine reads: a score
+        # carrying thresholds that do not read exit < warning < stress would be judged by incoherent rules
+        # whichever row it came from.
+        if not self.exit_threshold < self.warning_threshold < self.stress_threshold:
+            raise ValueError(
+                f"MasterScore {self.master_id!r} carries exit={self.exit_threshold}, "
+                f"warning={self.warning_threshold}, stress={self.stress_threshold}. The three "
+                "must read exit < warning < stress."
+            )
         # Exact type and never truthiness, for the reason :class:`Master` records. There is
         # NO DEFAULT on this field and there must not be one: a default of ``True`` would
         # mean that a construction site which forgot to carry the row's eligibility through
@@ -839,7 +883,8 @@ EQUITY_CRASH_MASTERS = (
         component_ids=("vix_level", "vix_term_structure"),
         combine=MasterCombine.MAX,
         warning_threshold=PROVISIONAL_WARNING,
-        stress_threshold=PROVISIONAL_STRESS,
+        # WO-1.3b-II: THE ONE MASTER WITH A THRESHOLD OF ITS OWN (R2D2's measurement; see the constant).
+        stress_threshold=VOLATILITY_MASTER_STRESS,
         exit_threshold=PROVISIONAL_EXIT,
         alarm_eligible=True,
     ),
@@ -946,37 +991,32 @@ if _one_dial_only(MONETARY_DEBASEMENT_MASTERS, MONETARY_DIAL_ID) != MONETARY_DIA
     raise AssertionError("the monetary masters table does not name the monetary dial")
 
 
-# **WHY :func:`candidate_state_for_one_reading` MAY READ THE MODULE-LEVEL THRESHOLDS, AND
-# WHAT STOPS THAT BEING A LIE THE DAY THE TABLES CHANGE.**
-#
-# Spec §3 rules 2, 4 and 5 say "its stress threshold", "its warning threshold", "its exit
-# threshold" — PER MASTER. :class:`Master` carries exactly those three fields per row, and it
-# is :class:`MasterScore`, with no thresholds on it, that the state machine actually receives
-# inside :attr:`Acute.masters`. Resolving a score's own row would mean a ``master_id`` lookup
-# into the dial's table SELECTED BY :attr:`Acute.dial_id` — a dial-keyed dispatch, which is
-# precisely the structure PROPERTY 3 of the module docstring says does not exist here and
-# which spec §5 refused.
-#
-# So the state machine compares against the module-level constants, which is CORRECT ONLY
-# BECAUSE EVERY ROW OF BOTH TABLES CARRIES EXACTLY THOSE CONSTANTS — and that is asserted
-# here, at import, rather than left as a thing a reader would have to go and check. The day a
-# master is given its own calibrated numbers (WO-1.3b's whole purpose), THIS MODULE STOPS
-# IMPORTING and the next seat has to thread per-master thresholds through the state machine
-# properly. It does not quietly judge a recalibrated master against the old shared number.
+# **THE UNIFORMITY ASSERTION THAT STOOD HERE IS GONE, AND THIS IS WHAT REPLACED IT (WO-1.3b-II).** Until this WO every
+# row of both tables carried the module-level PROVISIONAL_WARNING / STRESS / EXIT and the state machine compared against
+# those, with an import-time assertion that STOPPED THIS MODULE IMPORTING the day a master was given thresholds of its
+# own - on the instruction to thread each master's own numbers through the state machine and not to relax the
+# assertion. ``volatility_master`` is that day (stress 0.70, R2D2's measurement). The numbers are now threaded:
+# :class:`MasterScore` carries its row's three thresholds, :func:`_master_result` copies them, and rules 2, 4 and 5 of
+# :func:`candidate_state_for_one_reading` read them off the score. The assertion below checks the one thing that is
+# still a property of the TABLES: every row's thresholds are coherent (exit < warning < stress is already enforced by
+# :class:`Master`), and no row carries a number outside the module's named constants other than the one declared
+# exception, so a stray edit to a row cannot silently recalibrate a master.
+_DECLARED_THRESHOLDS = {
+    "volatility_master": (PROVISIONAL_WARNING, VOLATILITY_MASTER_STRESS, PROVISIONAL_EXIT),
+}
 if any(
     (row.warning_threshold, row.stress_threshold, row.exit_threshold)
-    != (PROVISIONAL_WARNING, PROVISIONAL_STRESS, PROVISIONAL_EXIT)
+    != _DECLARED_THRESHOLDS.get(
+        row.master_id, (PROVISIONAL_WARNING, PROVISIONAL_STRESS, PROVISIONAL_EXIT)
+    )
     for table in (EQUITY_CRASH_MASTERS, MONETARY_DEBASEMENT_MASTERS)
     for row in table
 ):
     raise AssertionError(
-        "a master row carries thresholds of its own, and candidate_state_for_one_reading "
-        "compares every master's score against the module-level PROVISIONAL_WARNING / "
-        "PROVISIONAL_STRESS / PROVISIONAL_EXIT. That shortcut was sound only while the "
-        "tables were uniform. Thread each master's OWN warning/stress/exit through the "
-        "state machine now — do not relax this assertion, and do not judge a recalibrated "
-        "master against a threshold it no longer declares (spec §3 rules 2, 4 and 5 each "
-        "say *its* threshold)."
+        "a master row carries thresholds that are neither the module-level "
+        "PROVISIONAL_WARNING / PROVISIONAL_STRESS / PROVISIONAL_EXIT nor the declared exception "
+        "in _DECLARED_THRESHOLDS. A recalibrated master is declared THERE, with its measurement, "
+        "and not edited into a row."
     )
 
 
@@ -1090,6 +1130,9 @@ def _master_result(master: Master, scaled: dict):
             master.combine,
             tuple(scaled[component] for component in master.component_ids),
         ),
+        warning_threshold=master.warning_threshold,
+        stress_threshold=master.stress_threshold,
+        exit_threshold=master.exit_threshold,
         alarm_eligible=master.alarm_eligible,
     )
 
@@ -1168,7 +1211,7 @@ def monetary_debasement_acute(contributions: tuple):
 
 @admits(contributions=each_of(Contribution, within=(tuple,)))
 def count_for_one_dial(contributions: tuple) -> Count:
-    """How many of ONE dial's contributing indicators are at or beyond :data:`COUNT_THRESHOLD`.
+    """COUNT V2: how many of ONE dial's FAST, market-priced indicators (:data:`COUNT_INDICATOR_IDS`) are at or beyond :data:`COUNT_THRESHOLD`.
 
     ONE dial's contributions in, one dial's :class:`Count` out, and NO dial parameter: this
     statistic consults no per-dial table, so naming a dial here would be a label this module
@@ -1179,7 +1222,10 @@ def count_for_one_dial(contributions: tuple) -> Count:
     what that measures before reading the number as market stress.
     """
     scaled = _scaled_scores(contributions)
-    considered = tuple(sorted(scaled))
+    # COUNT V2 (WO-1.3b-II): ONLY the fast, market-priced inputs of COUNT_INDICATOR_IDS are considered. An
+    # indicator absent from the reading is simply not considered (never counted as calm), exactly as before;
+    # an indicator PRESENT but not in the set is not considered either, however high it scores.
+    considered = tuple(sorted(indicator for indicator in scaled if indicator in COUNT_INDICATOR_IDS))
     at_or_beyond = tuple(
         indicator for indicator in considered if scaled[indicator] >= COUNT_THRESHOLD
     )
@@ -1306,9 +1352,9 @@ def candidate_state_for_one_reading(
     if type(acute) is AcuteUnknown:
         return State.UNKNOWN
 
-    # RULE 2. ANY ``alarm_eligible`` master at or beyond its stress threshold, read PER
+    # RULE 2. ANY ``alarm_eligible`` master at or beyond ITS OWN stress threshold, read PER
     # MASTER and not off `acute.score`'s maximum. The spec says "any master", so the code
-    # says it too — and SINCE WO-1.3e THE TWO NO LONGER AGREE: `acute.score` can be the
+    # says it too - and SINCE WO-1.3e THE TWO NO LONGER AGREE: `acute.score` can be the
     # maximum of a WATCH-ONLY master's score, so reading the maximum here would fire ALARM
     # for exactly the rows R2D2's WO-1.3b finding B3 demoted (`curve_master`,
     # `fiscal_master`; the reasoning is on `Master.alarm_eligible` and on each row).
@@ -1318,57 +1364,50 @@ def candidate_state_for_one_reading(
     # meets before the threshold, and it is `master.alarm_eligible` and never a master id:
     # the policy lives on the row, which is the whole point of the field.
     #
+    # WO-1.3b-II: THE THRESHOLD IS THE SCORE'S OWN (`master.stress_threshold`), no longer the
+    # module-level PROVISIONAL_STRESS - `volatility_master` stresses at 0.70, everything else at 0.85.
+    #
     # Among the ELIGIBLE masters the rule is unchanged and unsoftened: no amount of calm
     # elsewhere in the reading outvotes a firing one (spec §3's parenthesis on this rule).
     if any(
-        master.alarm_eligible and master.score >= PROVISIONAL_STRESS
+        master.alarm_eligible and master.score >= master.stress_threshold
         for master in acute.masters
     ):
         return State.ALARM
 
-    # RULE 3. BREADTH ALONE SINCE WO-1.3e. Spec §3 writes this rule as breadth AND count
-    # together and the code read
-    # `here >= PROVISIONAL_BREADTH_HIGH and count.count >= PROVISIONAL_COUNT_K`; R2D2's
-    # WO-1.3b finding B3 recommends dropping the count conjunct as an INTERIM measure, and
-    # this is that drop. A reading at or beyond the high breadth band now fires ALARM with
-    # NOTHING counted at all.
-    #
-    # `PROVISIONAL_COUNT_K` IS THEREFORE CURRENTLY UNUSED BY THIS STATE MACHINE, and the
-    # constant is kept anyway — its docstring says why. `count` itself is untouched:
-    # `count_for_one_dial` still computes it, and the contract and the state history still
-    # publish it, because it is a reading operators read and the evidence any future
-    # recalibration of a count gate would need. ONLY THIS GATE CHANGED.
-    if here >= PROVISIONAL_BREADTH_HIGH:
+    # RULE 3. THE COUNT RULE - OFF WHILE PROVISIONAL_COUNT_K IS UNSET (R2D2 PR #14 live re-audit, D3: count v2 is
+    # withdrawn; ALARM fires through rule 2 only). When set: `PROVISIONAL_COUNT_K` or more of the fast, market-priced
+    # indicators of COUNT_INDICATOR_IDS at or beyond COUNT_THRESHOLD fires ALARM on its own. This is R2D2's
+    # `eval_count.py` semantics exactly: her harness adds a pseudo-master scoring 1.0 when the count reaches k,
+    # which fires the same stress rule 2 reads. It REPLACES the breadth rule that stood here from WO-1.3a (breadth
+    # >= B_high, with count; breadth alone since WO-1.3e): B_high is unset and that rule was never reached in
+    # 2,514 replayed days (see PROVISIONAL_BREADTH_HIGH). `breadth` is still validated above and still published.
+    if PROVISIONAL_COUNT_K is not None and count.count >= PROVISIONAL_COUNT_K:
         return State.ALARM
 
-    # RULE 4. EITHER limb is enough, and they are independent: a master at warning fires
-    # WATCH with breadth flat or falling, and breadth rising past the mid band fires WATCH
-    # with every master quiet. `earlier is not None` is the first term because an absent
-    # lookback means the comparison cannot be made at all.
-    #
-    # `> earlier + PROVISIONAL_BREADTH_RISE_DEADBAND` AND NOT `> earlier` (R2D2's WO-1.3b
-    # finding B1, remediated in WO-1.3e; the constant carries the reasoning). A rise has to
-    # be bigger than the deadband to count as one: with the bare `>`, breadth parked at the
-    # mid band flapped WATCH/CALM on the last decimals of a weighted mean. "Rising" stays a
-    # STRICT claim — a move of exactly the deadband is not a rise either, for the same
-    # reason an unchanged number never was.
+    # RULE 4. A master at ITS OWN warning threshold fires WATCH. WO-1.3b-II: THE BREADTH LIMB IS OFF while
+    # PROVISIONAL_BREADTH_MID is unset (R2D2: removing it moves WATCH days by -0.8 point and changes no protection;
+    # her recommended configuration runs without it). `earlier` (breadth 20 rows ago) is therefore read by no
+    # rule; the parameter and its finiteness check stay, because the caller's pairing of the three statistics is
+    # what the contract publishes and because the limb comes back the day B_mid is set. The deadband
+    # arithmetic is kept here in full, behind the None test, so that day is a one-constant change.
     rising_into_the_mid_band = (
-        earlier is not None
+        PROVISIONAL_BREADTH_MID is not None
+        and earlier is not None
         and here > earlier + PROVISIONAL_BREADTH_RISE_DEADBAND
         and here >= PROVISIONAL_BREADTH_MID
     )
     if (
-        any(master.score >= PROVISIONAL_WARNING for master in acute.masters)
+        any(master.score >= master.warning_threshold for master in acute.masters)
         or rising_into_the_mid_band
     ):
         return State.WATCH
 
-    # RULE 5. EVERY master under exit AND the trend confirmed — both, never either (spec §3,
-    # DECISION-RULE.md §6: late by design). Read the DECLARED LIMIT above: this is a
-    # candidate, because the previous state and the consecutive-readings requirement are
-    # the wrapper's to check.
+    # RULE 5. EVERY master under ITS OWN exit threshold AND the trend confirmed - both, never either (spec §3,
+    # DECISION-RULE.md §6: late by design). Read the DECLARED LIMIT above: this is a candidate, because the
+    # previous state and the consecutive-readings requirement are the wrapper's to check.
     if (
-        all(master.score <= PROVISIONAL_EXIT for master in acute.masters)
+        all(master.score <= master.exit_threshold for master in acute.masters)
         and trend_confirmed
     ):
         return State.RECOVERY

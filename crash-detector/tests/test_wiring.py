@@ -14,6 +14,7 @@ from ingestion.store import SqliteStore
 from ingestion.wiring import (
     DERIVED_FROM,
     DIALS,
+    EXCLUDED_FROM_SCORING,
     SCALING_JSON,
     POLARITY,
     _rows,
@@ -177,6 +178,8 @@ def _seed(store, wiring, values, *, age=timedelta(days=1), skip=()):
     for indicator, value in values.items():
         if indicator in skip:
             continue
+        if indicator in EXCLUDED_FROM_SCORING:
+            continue  # WO-1.3b-II: not wired, so there is nothing to feed; CALM still lists its figure for _expected's sake
         if indicator in wiring.derived_for:
             day = (NOW - age).date().isoformat()
             for source_id, payload in _derived_components(wiring, indicator, value, day,
@@ -204,6 +207,8 @@ def _expected(dial, values):
     tier = {r["id"]: r["tier"] for r in _rows()}
     num = den = 0.0
     for i, band in scaling.items():
+        if i in EXCLUDED_FROM_SCORING:
+            continue  # WO-1.3b-II: the band stays in the file for the re-spec; the model does not carry it
         w = {1: 3.0, 2: 2.0, 3: 1.0}[tier[i]]
         x = (values[i] - band["calm"]) / (band["stress"] - band["calm"])
         num += w * min(1.0, max(0.0, x))
@@ -231,8 +236,11 @@ def _mag(reading):
 
 def test_only_whole_quantity_ingredients_are_live_and_the_rest_is_pending_with_a_reason(wiring):
     assert len(wiring.ingredient_for) == 18  # + gold_spot (WO-1.6)
-    assert len(wiring.derived_for) == 13  # + buffett_indicator, monetisation_flag (WO-1.6); + gold_real_rate_cross, ism, sloos (WO-1.7); + private_credit_stress (WO-1.8); + constituent_breadth_200dma (WO-1.10)
-    assert set(wiring.pending) == set()  # WO-1.8: every ratified row is wired (private_credit_stress as a disclosed proxy)
+    assert len(wiring.derived_for) == 11  # 13 less the two WO-1.3b-II exclusions (breadth_rsp_spy, credit_stress_hyg_lqd)
+    # WO-1.8: every ratified row is wired (private_credit_stress as a disclosed proxy) - EXCEPT the two WO-1.3b-II
+    # exclusions, which are pending BY NAME with their reason, never silently absent.
+    assert set(wiring.pending) == {"breadth_rsp_spy", "credit_stress_hyg_lqd"} == set(EXCLUDED_FROM_SCORING)
+    assert all(wiring.pending[i].startswith("EXCLUDED (WO-1.3b-II)") for i in EXCLUDED_FROM_SCORING)
     assert wiring.live_ids | set(wiring.pending) == {r["id"] for r in _rows()}
     assert not wiring.live_ids & set(wiring.pending)
     assert not set(wiring.ingredient_for) & set(wiring.derived_for)
@@ -254,9 +262,13 @@ def test_scaling_band_order_agrees_with_the_ratified_polarity_for_every_dial(wir
             band = scaling[dial][row["id"]]
             rising_is_riskier = band["stress"] > band["calm"]
             assert rising_is_riskier == (POLARITY[pol].name == "RISING_MEANS_MORE_RISK"), (dial, row["id"])
-    # and nothing is scaled that is not live, nor bound to a dial it does not serve
+    # and nothing is scaled that is not live, nor bound to a dial it does not serve (the two WO-1.3b-II exclusions keep
+    # their old bands in the file for the re-spec and are the only scaled-but-not-live entries)
     for dial in DIALS:
         for indicator in scaling[dial]:
+            if indicator in EXCLUDED_FROM_SCORING:
+                assert indicator not in wiring.live_ids
+                continue
             assert indicator in wiring.live_ids and (indicator, dial) not in wiring.held
 
 
@@ -355,7 +367,10 @@ def test_coverage_discloses_that_a_fully_live_dial_is_built_from_part_of_the_rat
         assert (c["wired_weight"] == c["nominal_weight"]) == (not c["pending"])
         assert not set(c["pending"]) & set(wiring.ingredient_for)
     assert cov["monetary_debasement"]["pending"] == ["copper_gold"] and cov["monetary_debasement"]["fraction"] < 1.0
-    assert cov["equity_crash"]["pending"] == [] and cov["equity_crash"]["fraction"] == 1.0
+    # WO-1.3b-II: the equity dial now lists exactly the two exclusions as not-in-the-number, and its coverage is the
+    # honest 43/48 (nominal weight still counts them: x2 credit_stress_hyg_lqd + x3 breadth_rsp_spy).
+    assert sorted(cov["equity_crash"]["pending"]) == ["breadth_rsp_spy", "credit_stress_hyg_lqd"]
+    assert cov["equity_crash"]["fraction"] == pytest.approx(43.0 / 48.0)
     assert "private_credit_stress" not in cov["equity_crash"]["pending"]
     assert "gold_real_rate_cross" not in cov["monetary_debasement"]["pending"]
 

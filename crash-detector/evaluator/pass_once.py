@@ -41,12 +41,17 @@ honest readings and not one inconsistent one. The cost is one extra ``build_wiri
 one extra banded mean per pass, on a cadence measured in minutes.
 
 ====================================================================================
-3. ``trend_confirmed`` IS NOT COMPUTED. IT IS :data:`TREND_NOT_COMPUTED`, WHICH IS FALSE
+3. ``trend_confirmed``: COMPUTED FOR THE EQUITY DIAL (WO-1.3b-II), NOT COMPUTED FOR THE MONETARY ONE
 ====================================================================================
 
-See the constant. It is a stated scope cut (spec §7), not a signal, and it is passed as a
-NAMED constant rather than a literal ``False`` precisely so that the call site cannot be
-read as "the trend was checked and did not confirm".
+The EQUITY dial's trend is R2D2's S&P-above-a-flattening-200-day-mean test (:mod:`evaluator.trend`), read off the raw
+store's ^GSPC history in the same read-only handle as everything else, and it is what lets the post-ALARM lock be
+a lock and not a wall (see :func:`evaluator.resolve.official_state_for_dial`). The MONETARY dial is still
+:data:`TREND_NOT_COMPUTED`, which is FALSE: it is a stated scope cut (spec §7), not a signal, and it is passed as a
+NAMED constant rather than a literal ``False`` precisely so that the call site cannot be read as "the trend was
+checked and did not confirm". **THE LOCK IS NOT ARMED FOR THAT DIAL EITHER** - R2D2 measured it on the S&P history and
+there is no measure here that could ever release it, so arming it would halt the monetary dial forever after its
+first ALARM. That is a scope decision of this WO and is flagged, not buried.
 
 ====================================================================================
 4. A DIAL WITH NO READING AT ALL GETS AN UNKNOWN ROW, BUILT HERE
@@ -75,6 +80,7 @@ from crash_detector.engine.statistics import (
 from crash_detector.serving.dial_presentation import NotShown, present_dial
 from evaluator.history_store import MachineStateHistoryStore, MachineStateRow
 from evaluator.resolve import BREADTH_LOOKBACK_ROWS, official_state_for_dial
+from evaluator.trend import equity_trend_confirmed
 from ingestion.store import SqliteStore
 from ingestion.wiring import build_wiring, observations_from_store
 
@@ -231,8 +237,8 @@ def one_pass_for_dial(
        ``acute`` and ``count`` from this dial's own statistics over its contributions;
     3. this dial's recent rows, :data:`~evaluator.resolve.BREADTH_LOOKBACK_ROWS` of them,
        which is the window rule 4's lookback needs and the most any rule reads;
-    4. :func:`~evaluator.resolve.official_state_for_dial`, with
-       :data:`TREND_NOT_COMPUTED`;
+    4. :func:`~evaluator.resolve.official_state_for_dial`, with the equity dial's computed trend and the
+       post-ALARM lock (:data:`TREND_NOT_COMPUTED` and no lock for the monetary dial);
     5. the append.
     """
     if dial_id not in _PER_DIAL:
@@ -246,6 +252,11 @@ def one_pass_for_dial(
     wiring = build_wiring()
     with _raw_reader(raw_store_path) as raw:
         observations = observations_from_store(raw, wiring, now_utc)
+        # WO-1.3b-II: the equity dial's trend, from the same read-only handle (module docstring item 3). The
+        # monetary dial has none and says so with the named constant.
+        trend_confirmed = (
+            equity_trend_confirmed(raw, now_utc) if dial_id == EQUITY_DIAL_ID else TREND_NOT_COMPUTED
+        )
 
     # 2. THE THREE STATISTICS. `evaluate` computes the pair; this dial's reading is taken
     # and the other dial's is dropped, unexamined (module docstring item 2).
@@ -267,6 +278,9 @@ def one_pass_for_dial(
     # history carrying another dial's row — which is why the dial id is passed to `recent`
     # and not assumed from the handle.
     history_rows = history.recent(dial_id, limit=BREADTH_LOOKBACK_ROWS)
+    # THE POST-ALARM LOCK (WO-1.3b-II), asked of the WHOLE history because it must outlive the 20-row window above.
+    # Equity only, with the trend that releases it; the monetary dial is not locked (module docstring item 3).
+    lock_armed = history.alarm_lock_armed(dial_id) if dial_id == EQUITY_DIAL_ID else False
 
     # 4. THE STATE. `as_of` is the READING's instant — the oldest as_of among the inputs
     # this dial actually used — and not `now_utc`: a pass that runs at noon over a feed
@@ -277,7 +291,8 @@ def one_pass_for_dial(
         breadth=breadth,
         acute=acute,
         count=count,
-        trend_confirmed=TREND_NOT_COMPUTED,
+        trend_confirmed=trend_confirmed,
+        alarm_lock_armed=lock_armed,
     )
 
     # 5. THE APPEND. The real clock, read once, here. An IntegrityError from the schema is

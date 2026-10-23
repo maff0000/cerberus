@@ -36,12 +36,17 @@ takes the three statistics and returns a state; routing real indicator ids and a
 in front of it would put the masters tables between the input and the assertion while
 removing the ability to place a master's score exactly where a threshold boundary is.
 
+**THREE THINGS CHANGED IN WO-1.3b-II AND THE TESTS BELOW ARE WRITTEN AGAINST THE NEW ONES** (R2D2's calibration verdict
+``r2d2:wo:cerberus_wo13b2:verdict``). (1) A master's thresholds are its OWN: each :class:`MasterScore` carries
+warning/stress/exit and rules 2, 4 and 5 read them off the score (``volatility_master`` stresses at 0.70). (2) Rule 3 is
+now the COUNT rule - ``count >= PROVISIONAL_COUNT_K`` (2, count v2) is ``ALARM`` - and ``B_high`` is UNSET so a breadth
+reading alone fires nothing. (3) ``B_mid`` is UNSET so rule 4's breadth-rising limb is OFF; the tests of that limb's
+MECHANICS set a ``B_mid`` with ``monkeypatch`` (the day-one calibration path) and a separate test pins that it is off.
+
 EVERY NUMBER IN THIS FILE IS A TEST FIXTURE CHOSEN AGAINST A PROVISIONAL THRESHOLD. The
 thresholds themselves (``PROVISIONAL_WARNING`` 0.6, ``PROVISIONAL_STRESS`` 0.85,
-``PROVISIONAL_EXIT`` 0.5, ``COUNT_THRESHOLD`` 0.9, ``PROVISIONAL_BREADTH_MID`` 0.35,
-``PROVISIONAL_BREADTH_HIGH`` 0.55, ``PROVISIONAL_BREADTH_RISE_DEADBAND`` 0.02,
-``PROVISIONAL_COUNT_K`` 3, which no rule reads any more) are the Product Owner's
-uncalibrated placeholders per PO-DECISIONS-0025 r3, so no score, breadth or count below
+``PROVISIONAL_EXIT`` 0.5, ``COUNT_THRESHOLD`` 0.8, ``PROVISIONAL_BREADTH_RISE_DEADBAND`` 0.02,
+``PROVISIONAL_COUNT_K`` 2; ``B_mid``/``B_high`` are unset) are provisional placeholders per PO-DECISIONS-0025 r3, so no score, breadth or count below
 claims anything about any indicator's real distribution. They are compared against the
 CONSTANTS rather than against literals wherever the comparison is the point, so a
 recalibration in WO-1.3b moves the fixtures with the thresholds instead of silently
@@ -51,9 +56,8 @@ inverting what a test proves.
 from __future__ import annotations
 
 from crash_detector.dials.scores import EQUITY_DIAL_ID
+from crash_detector.engine import statistics as engine_statistics
 from crash_detector.engine.statistics import (
-    PROVISIONAL_BREADTH_HIGH,
-    PROVISIONAL_BREADTH_MID,
     PROVISIONAL_BREADTH_RISE_DEADBAND,
     PROVISIONAL_COUNT_K,
     PROVISIONAL_EXIT,
@@ -64,11 +68,17 @@ from crash_detector.engine.statistics import (
     Count,
     MasterScore,
     State,
+    VOLATILITY_MASTER_STRESS,
     candidate_state_for_one_reading,
 )
 
+#: The breadth-limb MECHANICS tests need a B_mid and a B_high to exist; the real ones are UNSET (None), so these are
+#: FIXTURE values, used only through ``monkeypatch`` and never as a claim about the product.
+FIXTURE_B_MID = 0.35
+FIXTURE_B_HIGH = 0.55
 
-def acute_of_rows(*rows: tuple) -> Acute:
+
+def acute_of_rows(*rows: tuple, stress: float = PROVISIONAL_STRESS) -> Acute:
     """An :class:`Acute` whose masters carry exactly these ``(score, alarm_eligible)`` rows.
 
     The master ids are ``master_1``, ``master_2``, ... and they are FIXTURE NAMES: the unit
@@ -90,6 +100,9 @@ def acute_of_rows(*rows: tuple) -> Acute:
             master_id=f"master_{position}",
             dial_id=EQUITY_DIAL_ID,
             score=score,
+            warning_threshold=PROVISIONAL_WARNING,
+            stress_threshold=stress,
+            exit_threshold=PROVISIONAL_EXIT,
             alarm_eligible=alarm_eligible,
         )
         for position, (score, alarm_eligible) in enumerate(rows, start=1)
@@ -153,8 +166,8 @@ def test_rule_1_beats_an_alarm_the_breadth_count_and_masters_would_otherwise_fir
     """Rule 1's "Stop; no other rule overrides this", measured against rules 2 AND 3.
 
     ONE reading, built to fire ``ALARM`` twice over — an eligible master at 0.95 (rule 2)
-    and breadth 0.90 (rule 3, which reads breadth alone since WO-1.3e; the four counted
-    indicators are left in the reading and no longer gate anything) — is run TWICE with
+    and a count of 4 (rule 3, the WO-1.3b-II count rule, k = 2; breadth is no longer a term
+    of any alarm rule) — is run TWICE with
     only the ``acute``
     argument swapped. With the masters resolvable it is ``ALARM``, which is what makes the
     second assertion mean something: the UNKNOWN answer is rule 1 winning, not a quiet
@@ -167,7 +180,6 @@ def test_rule_1_beats_an_alarm_the_breadth_count_and_masters_would_otherwise_fir
     """
     breadth = 0.90
     count = count_of(4)
-    assert breadth >= PROVISIONAL_BREADTH_HIGH
 
     with_every_master_scored = candidate_state_for_one_reading(
         breadth=breadth,
@@ -360,76 +372,18 @@ def test_a_watch_only_master_is_still_required_back_under_exit_before_recovery()
     assert recovering is State.RECOVERY
 
 
-def test_rule_3_breadth_alone_alarms_with_nothing_counted_and_every_master_quiet():
-    """Rule 3 SINCE WO-1.3e: breadth at the high band is ``ALARM`` with NOTHING counted.
-
-    **THIS READING DID NOT FIRE BEFORE WO-1.3e AND THAT IS THE POINT.** The rule read
-    ``breadth >= B_high AND count >= k``; ``count_of(0)`` made the second term false, so the
-    answer was ``CALM``. R2D2's WO-1.3b finding B3 recommends dropping the count conjunct as
-    an interim measure, and the widening is deliberate: breadth is now the WHOLE of rule 3.
-
-    Isolation, term by term:
-
-    * Rule 2 false — both masters sit at 0.55, under STRESS (and both are eligible, so it
-      is the SCORE that fails the rule here and not the demotion; the demotion tests below
-      hold the score high instead).
-    * Rule 4's master limb false — 0.55 is under WARNING (0.6) too.
-    * Rule 4's breadth limb false — the lookback is ``None``, so "rising" cannot be
-      established at all, which is what makes ``ALARM`` here unambiguously rule 3's.
-    * Rule 5 false — 0.55 is ABOVE the exit threshold (0.5), so "every master under exit"
-      does not hold. The masters are deliberately parked in the 0.5-0.6 gap, which is the
-      hysteresis band :class:`Master` enforces and the one place where no rule fires.
-    """
-    breadth = 0.60
-    count = count_of(0)
+def test_rule_3_the_count_rule_is_removed_so_a_count_at_or_above_any_k_never_alarms_on_its_own():
+    """R2D2 PR #14 live re-audit, D3: count v2 is withdrawn. ``PROVISIONAL_COUNT_K`` is unset, so a reading with every
+    master quiet (0.55: above exit, under warning, under stress) and a count of 4 is CALM, not ALARM. This reading was
+    ALARM under k = 2. PROVISIONAL removal: restoring the rule is assigning an integer to ``PROVISIONAL_COUNT_K``."""
     quiet = 0.55
-    assert breadth >= PROVISIONAL_BREADTH_HIGH
-    assert count.count == 0
     assert PROVISIONAL_EXIT < quiet < PROVISIONAL_WARNING
+    assert PROVISIONAL_COUNT_K is None
 
     state = candidate_state_for_one_reading(
-        breadth=breadth,
+        breadth=0.20,
         acute=acute_of(quiet, quiet),
-        count=count,
-        breadth_20_rows_ago=None,
-        trend_confirmed=False,
-    )
-
-    assert state is State.ALARM
-
-
-def test_rule_3_a_high_count_without_the_breadth_does_not_alarm():
-    """THE OTHER HALF OF THE DROP: ``count`` is not a rule 3 term in EITHER direction.
-
-    Dropping a conjunct could be read two ways — "the count is no longer REQUIRED alongside
-    breadth", or "the count is no longer part of the condition at all" — and only the second
-    is what WO-1.3e did. This reading separates them: EVERY considered indicator is at or
-    beyond ``COUNT_THRESHOLD`` (6 of 6, twice ``PROVISIONAL_COUNT_K``) while breadth sits
-    well under the high band. If the count had become a sufficient term of rule 3 in its own
-    right, this would be ``ALARM``.
-
-    It is ``CALM``: the masters are in the 0.5-0.6 hysteresis gap (rules 2, 4's master limb
-    and 5 all false), the lookback is ``None`` (rule 4's breadth limb cannot fire), and
-    breadth 0.20 is under the mid band as well as the high one.
-
-    The reading is INTERNALLY ODD — six indicators at 0.9+ would not yield a breadth of 0.20
-    through the real banded mean — and it is constructed that way on purpose, which is this
-    file's "CONSTRUCTED, NOT PIPED" rule doing its job: the function admits breadth and count
-    as independent arguments and cannot check that they came from one reading (its own
-    DECLARED LIMIT says so), so the only way to show that it ignores one of them is to hand
-    it a pair no real reading would produce.
-    """
-    breadth = 0.20
-    count = count_of(6)
-    quiet = 0.55
-    assert count.count >= PROVISIONAL_COUNT_K
-    assert breadth < PROVISIONAL_BREADTH_MID < PROVISIONAL_BREADTH_HIGH
-    assert PROVISIONAL_EXIT < quiet < PROVISIONAL_WARNING
-
-    state = candidate_state_for_one_reading(
-        breadth=breadth,
-        acute=acute_of(quiet, quiet),
-        count=count,
+        count=count_of(4),
         breadth_20_rows_ago=None,
         trend_confirmed=False,
     )
@@ -437,7 +391,75 @@ def test_rule_3_a_high_count_without_the_breadth_does_not_alarm():
     assert state is State.CALM
 
 
-def test_rule_4_breadth_rising_past_the_mid_band_watches_with_every_master_quiet():
+def test_rule_3_one_below_k_does_not_alarm_and_a_saturated_breadth_alone_does_not_either():
+    """THE OTHER HALF, and it carries two claims.
+
+    * ``count = k - 1`` is ``CALM``: the threshold is exactly k, not "some".
+    * Breadth 0.99 - far past the old ``B_high`` 0.55 - with nothing counted is ``CALM`` too. ``B_high`` is UNSET
+      (WO-1.3b-II): rule 3 as a breadth rule is dead, and a breadth reading no longer fires ALARM at any value. R2D2's
+      store never exceeded 0.489 in 2,514 days, so no replay ever exercised the old rule; a number nobody supports does
+      not get to halt the family's capital.
+    """
+    quiet = 0.55
+    assert engine_statistics.PROVISIONAL_BREADTH_HIGH is None
+
+    one_below = candidate_state_for_one_reading(
+        breadth=0.20,
+        acute=acute_of(quiet, quiet),
+        count=count_of(1),
+        breadth_20_rows_ago=None,
+        trend_confirmed=False,
+    )
+    saturated_breadth = candidate_state_for_one_reading(
+        breadth=0.99,
+        acute=acute_of(quiet, quiet),
+        count=count_of(0),
+        breadth_20_rows_ago=0.20,
+        trend_confirmed=False,
+    )
+
+    assert one_below is State.CALM
+    assert saturated_breadth is State.CALM
+
+
+def test_rule_2_reads_each_masters_own_stress_threshold_not_a_shared_one():
+    """WO-1.3b-II item 1: ``volatility_master`` stresses at 0.70; every other master at 0.85.
+
+    ONE score, 0.75, run against two thresholds and nothing else changed. Against a 0.70 stress threshold it is ``ALARM``;
+    against the shared 0.85 it is only ``WATCH`` (0.75 is past WARNING 0.60). The state machine judges a score against
+    the thresholds ITS OWN master declared, which is the thing the import-time uniformity assertion used to refuse to
+    let it skip.
+    """
+    at = 0.75
+    assert VOLATILITY_MASTER_STRESS == 0.70 < at < PROVISIONAL_STRESS
+
+    own = candidate_state_for_one_reading(
+        breadth=0.20, acute=acute_of_rows((at, True), (0.10, True), stress=VOLATILITY_MASTER_STRESS),
+        count=count_of(0), breadth_20_rows_ago=None, trend_confirmed=False)
+    shared = candidate_state_for_one_reading(
+        breadth=0.20, acute=acute_of_rows((at, True), (0.10, True)),
+        count=count_of(0), breadth_20_rows_ago=None, trend_confirmed=False)
+
+    assert own is State.ALARM
+    assert shared is State.WATCH
+
+
+def test_rule_4_the_breadth_limb_is_off_while_b_mid_is_unset():
+    """WO-1.3b-II: with ``B_mid`` unset, breadth rising from 0.30 to 0.40 (past the old 0.35 and the deadband) is ``CALM``.
+
+    The identical reading as ``test_rule_4_breadth_rising_past_the_mid_band...`` below, which sets a fixture B_mid and
+    gets ``WATCH``: the pair says the limb's mechanics are intact and it is the UNSET constant that switches it off.
+    """
+    assert engine_statistics.PROVISIONAL_BREADTH_MID is None
+
+    state = candidate_state_for_one_reading(
+        breadth=0.40, acute=acute_of(0.55, 0.55), count=count_of(0),
+        breadth_20_rows_ago=0.30, trend_confirmed=False)
+
+    assert state is State.CALM
+
+
+def test_rule_4_breadth_rising_past_the_mid_band_watches_with_every_master_quiet(monkeypatch):
     """Rule 4, BREADTH LIMB ALONE: no master is at warning, and breadth genuinely rose.
 
     0.30 twenty rows ago, 0.40 now: higher by 0.10, which clears
@@ -451,10 +473,11 @@ def test_rule_4_breadth_rising_past_the_mid_band_watches_with_every_master_quiet
 
     So the ONLY condition true in the whole precedence is the one this test names.
     """
+    monkeypatch.setattr(engine_statistics, "PROVISIONAL_BREADTH_MID", FIXTURE_B_MID)
     earlier, here = 0.30, 0.40
     quiet = 0.55
     assert here > earlier + PROVISIONAL_BREADTH_RISE_DEADBAND
-    assert PROVISIONAL_BREADTH_MID <= here < PROVISIONAL_BREADTH_HIGH
+    assert FIXTURE_B_MID <= here < FIXTURE_B_HIGH
     assert quiet < PROVISIONAL_WARNING
 
     state = candidate_state_for_one_reading(
@@ -495,7 +518,7 @@ def test_rule_4_a_master_at_warning_watches_even_though_breadth_fell():
     assert state is State.WATCH
 
 
-def test_rule_4_cannot_confirm_rising_when_there_are_fewer_than_20_rows_of_history():
+def test_rule_4_cannot_confirm_rising_when_there_are_fewer_than_20_rows_of_history(monkeypatch):
     """``breadth_20_rows_ago=None`` does not fire rule 4's breadth limb — and does not lie.
 
     THIS IS ``test_rule_4_breadth_rising...``'s READING WITH ONE ARGUMENT CHANGED. Breadth
@@ -513,9 +536,10 @@ def test_rule_4_cannot_confirm_rising_when_there_are_fewer_than_20_rows_of_histo
     ``test_rule_4_a_master_at_warning...`` shows with a lookback that exists. No rule in
     spec §3 reads a missing lookback as evidence of calm.
     """
+    monkeypatch.setattr(engine_statistics, "PROVISIONAL_BREADTH_MID", FIXTURE_B_MID)
     here = 0.40
     quiet = 0.55
-    assert here >= PROVISIONAL_BREADTH_MID
+    assert here >= FIXTURE_B_MID
 
     state = candidate_state_for_one_reading(
         breadth=here,
@@ -528,7 +552,7 @@ def test_rule_4_cannot_confirm_rising_when_there_are_fewer_than_20_rows_of_histo
     assert state is State.CALM
 
 
-def test_rule_4_a_rise_smaller_than_the_deadband_is_not_a_rise_and_does_not_watch():
+def test_rule_4_a_rise_smaller_than_the_deadband_is_not_a_rise_and_does_not_watch(monkeypatch):
     """THE DEADBAND, AND THE DEFECT IT CLOSES WAS LIVE (R2D2's finding B1, WO-1.3e).
 
     Breadth sits AT the mid band and ticks up by half the deadband. Before WO-1.3e rule 4's
@@ -548,14 +572,15 @@ def test_rule_4_a_rise_smaller_than_the_deadband_is_not_a_rise_and_does_not_watc
     ``trend_confirmed`` being ``False`` besides), breadth under the high band with nothing
     counted (rule 3).
     """
-    earlier = PROVISIONAL_BREADTH_MID
+    monkeypatch.setattr(engine_statistics, "PROVISIONAL_BREADTH_MID", FIXTURE_B_MID)
+    earlier = FIXTURE_B_MID
     quiet = 0.55
     assert quiet < PROVISIONAL_WARNING
 
     for here in (earlier + PROVISIONAL_BREADTH_RISE_DEADBAND / 2,
                  earlier + PROVISIONAL_BREADTH_RISE_DEADBAND):
         assert here > earlier
-        assert PROVISIONAL_BREADTH_MID <= here < PROVISIONAL_BREADTH_HIGH
+        assert FIXTURE_B_MID <= here < FIXTURE_B_HIGH
 
         state = candidate_state_for_one_reading(
             breadth=here,
@@ -568,7 +593,7 @@ def test_rule_4_a_rise_smaller_than_the_deadband_is_not_a_rise_and_does_not_watc
         assert state is State.CALM
 
 
-def test_rule_4_a_rise_bigger_than_the_deadband_is_still_a_rise_and_still_watches():
+def test_rule_4_a_rise_bigger_than_the_deadband_is_still_a_rise_and_still_watches(monkeypatch):
     """THE COMPANION, AND THE PAIR IS THE POINT: the deadband narrows the limb, not closes it.
 
     The identical reading as the test above with ONE number changed — breadth rises by twice
@@ -577,10 +602,11 @@ def test_rule_4_a_rise_bigger_than_the_deadband_is_still_a_rise_and_still_watche
     this one, and suppressing the limb is not what finding B1 asked for: a genuine move in
     breadth must still be able to say WATCH on its own.
     """
-    earlier = PROVISIONAL_BREADTH_MID
+    monkeypatch.setattr(engine_statistics, "PROVISIONAL_BREADTH_MID", FIXTURE_B_MID)
+    earlier = FIXTURE_B_MID
     here = earlier + PROVISIONAL_BREADTH_RISE_DEADBAND * 2
     quiet = 0.55
-    assert PROVISIONAL_BREADTH_MID <= here < PROVISIONAL_BREADTH_HIGH
+    assert FIXTURE_B_MID <= here < FIXTURE_B_HIGH
     assert quiet < PROVISIONAL_WARNING
 
     state = candidate_state_for_one_reading(
@@ -620,7 +646,7 @@ def test_rule_5_every_master_under_exit_and_the_trend_confirmed_is_recovery():
     under_exit = (0.40, 0.20)
     earlier, here = 0.05, 0.10
     assert all(score <= PROVISIONAL_EXIT for score in under_exit)
-    assert here > earlier and here < PROVISIONAL_BREADTH_MID
+    assert here > earlier and here < FIXTURE_B_MID
 
     recovering = candidate_state_for_one_reading(
         breadth=here,
